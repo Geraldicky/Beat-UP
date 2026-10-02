@@ -4,9 +4,20 @@ const ScoreIdentity = preload("res://scripts/score_identity.gd")
 
 const ChartIntegrityScript = preload("res://scripts/chart_integrity.gd")
 const LevelPackScript = preload("res://scripts/level_pack.gd")
+const RuntimeResourceAccessScript = preload("res://scripts/runtime_resource_access.gd")
 const MAX_CHART_FILE_BYTES := 8 * 1024 * 1024
 const MAX_IMPORTED_AUDIO_BYTES := 384 * 1024 * 1024
 const ALLOWED_DIFFICULTIES := ["normal", "hard", "master"]
+
+# Higher values win when multiple files declare the same logical chart.
+# Imported/custom songs are the primary writable source. Chart Studio exports
+# override bundled charts when the project package is read-only.
+const SOURCE_PRIORITY := {
+	"user_songs": 300,
+	"user_exports": 200,
+	"bundled": 100,
+	"other": 0,
+}
 
 @export var level_files: PackedStringArray = PackedStringArray()
 @export var scan_roots: PackedStringArray = PackedStringArray([
@@ -27,12 +38,24 @@ func load_all(force_refresh: bool = false) -> Array:
 			discovered_paths.append(path)
 	for root in scan_roots:
 		_scan_json_recursive(root, discovered_paths)
+	discovered_paths.sort()
 
+	var canonical_by_identity: Dictionary = {}
 	for path in discovered_paths:
 		var level: Dictionary = load_level_file(path)
-		if not level.is_empty():
-			level["_catalog_path"] = path
-			_cache.append(level)
+		if level.is_empty():
+			continue
+		level["_catalog_path"] = path
+		level["_catalog_source"] = _source_kind(path)
+		var identity: String = _logical_identity(level)
+		if identity.is_empty():
+			continue
+		if not canonical_by_identity.has(identity) or _candidate_precedes(level, canonical_by_identity[identity] as Dictionary):
+			canonical_by_identity[identity] = level
+
+	for identity_value: Variant in canonical_by_identity.keys():
+		_cache.append(canonical_by_identity[identity_value])
+	_cache.sort_custom(_catalog_entry_less)
 	return _cache
 
 func refresh() -> Array:
@@ -43,6 +66,66 @@ func get_level(index: int) -> Dictionary:
 	if index < 0 or index >= all_levels.size():
 		return {}
 	return all_levels[index]
+
+func resolve_playable(song_id: String, difficulty_id: String, force_refresh: bool = false) -> Dictionary:
+	var safe_song_id: String = _sanitize_id(song_id)
+	var safe_difficulty_id: String = _sanitize_id(difficulty_id).to_lower()
+	if safe_song_id.is_empty() or not ALLOWED_DIFFICULTIES.has(safe_difficulty_id):
+		return {
+			"ok": false,
+			"error": "Invalid song or difficulty identity.",
+			"song_id": safe_song_id,
+			"difficulty_id": safe_difficulty_id,
+		}
+
+	var target_identity := "%s::%s" % [safe_song_id, safe_difficulty_id]
+	for raw_level: Variant in load_all(force_refresh):
+		if not (raw_level is Dictionary):
+			continue
+		var level: Dictionary = raw_level as Dictionary
+		if _logical_identity(level) != target_identity:
+			continue
+
+		var validation: Dictionary = ChartIntegrityScript.validate_structure(level)
+		if not bool(validation.get("ok", false)):
+			return {
+				"ok": false,
+				"error": "; ".join(validation.get("errors", [])),
+				"song_id": safe_song_id,
+				"difficulty_id": safe_difficulty_id,
+				"source_path": str(level.get("_catalog_path", "")),
+			}
+		var audio_path: String = str(level.get("audio", ""))
+		if audio_path.is_empty() or not RuntimeResourceAccessScript.audio_exists(audio_path):
+			return {
+				"ok": false,
+				"error": "Audio missing. Install or re-import the matching audio file.",
+				"song_id": safe_song_id,
+				"difficulty_id": safe_difficulty_id,
+				"source_path": str(level.get("_catalog_path", "")),
+			}
+
+		var chart: Dictionary = level.duplicate(true)
+		var source_hash: String = str(chart.get("_source_chart_hash", ""))
+		if source_hash.is_empty():
+			source_hash = ScoreIdentity.chart_hash(chart)
+			chart["_source_chart_hash"] = source_hash
+		return {
+			"ok": true,
+			"chart": chart,
+			"song_id": safe_song_id,
+			"difficulty_id": safe_difficulty_id,
+			"source_path": str(chart.get("_catalog_path", "")),
+			"source_kind": str(chart.get("_catalog_source", "other")),
+			"source_hash": source_hash,
+		}
+
+	return {
+		"ok": false,
+		"error": "Chart not found for %s / %s." % [safe_song_id, safe_difficulty_id],
+		"song_id": safe_song_id,
+		"difficulty_id": safe_difficulty_id,
+	}
 
 func load_level_file(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
@@ -193,6 +276,38 @@ func _scan_json_recursive(root: String, output: Array[String]) -> void:
 		elif entry_name.get_extension().to_lower() == "json" and not output.has(full_path):
 			output.append(full_path)
 	dir.list_dir_end()
+
+func _logical_identity(chart: Dictionary) -> String:
+	var song_id: String = _sanitize_id(str(chart.get("song_id", chart.get("id", ""))))
+	var difficulty_id: String = _sanitize_id(str(chart.get("chart_difficulty", chart.get("difficulty", "")))).to_lower()
+	if song_id.is_empty() or not ALLOWED_DIFFICULTIES.has(difficulty_id):
+		return ""
+	return "%s::%s" % [song_id, difficulty_id]
+
+func _source_kind(path: String) -> String:
+	if path.begins_with("user://songs/"):
+		return "user_songs"
+	if path.begins_with("user://chart_exports/"):
+		return "user_exports"
+	if path.begins_with("res://charts/"):
+		return "bundled"
+	return "other"
+
+func _candidate_precedes(candidate: Dictionary, current: Dictionary) -> bool:
+	var candidate_kind: String = str(candidate.get("_catalog_source", _source_kind(str(candidate.get("_catalog_path", "")))))
+	var current_kind: String = str(current.get("_catalog_source", _source_kind(str(current.get("_catalog_path", "")))))
+	var candidate_priority: int = int(SOURCE_PRIORITY.get(candidate_kind, 0))
+	var current_priority: int = int(SOURCE_PRIORITY.get(current_kind, 0))
+	if candidate_priority != current_priority:
+		return candidate_priority > current_priority
+	return str(candidate.get("_catalog_path", "")) < str(current.get("_catalog_path", ""))
+
+func _catalog_entry_less(a: Dictionary, b: Dictionary) -> bool:
+	var a_identity: String = _logical_identity(a)
+	var b_identity: String = _logical_identity(b)
+	if a_identity == b_identity:
+		return str(a.get("_catalog_path", "")) < str(b.get("_catalog_path", ""))
+	return a_identity < b_identity
 
 func _sanitize_id(value: String) -> String:
 	var result: String = ""

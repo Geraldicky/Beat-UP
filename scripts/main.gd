@@ -288,49 +288,102 @@ func _ready() -> void:
 		get_tree().remove_meta(RESULT_DEBUG_REQUEST_META)
 		call_deferred("show_result_debug_screen")
 
-func _launch_from_song_library(request: Dictionary) -> void:
-	gameplay_transition_ready = false
+func prepare_launch_request(request: Dictionary, force_refresh: bool = true) -> Dictionary:
 	var song_id: String = str(request.get("song_id", ""))
 	var difficulty_id: String = str(request.get("difficulty_id", "normal")).to_lower()
-	random_mode_enabled = bool(request.get("random_mode", false))
-	practice_section_index = int(request.get("practice_section_index", -1))
+	var resolution: Dictionary = level_catalog.resolve_playable(song_id, difficulty_id, force_refresh)
+	if not bool(resolution.get("ok", false)):
+		return resolution
+
+	levels = level_catalog.load_all(false)
+	var chart_value: Variant = resolution.get("chart", {})
+	if not (chart_value is Dictionary):
+		return {
+			"ok": false,
+			"error": "Resolved chart data is unavailable.",
+			"song_id": song_id,
+			"difficulty_id": difficulty_id,
+		}
+	var chart: Dictionary = (chart_value as Dictionary).duplicate(true)
+	var loaded_stream: AudioStream = load_audio_stream(str(chart.get("audio", "")))
+	if loaded_stream == null:
+		return {
+			"ok": false,
+			"error": "Audio could not be loaded. Re-import it in Chart Studio (OGG Vorbis required).",
+			"song_id": song_id,
+			"difficulty_id": difficulty_id,
+			"source_path": str(resolution.get("source_path", "")),
+		}
+
+	var prepared_request: Dictionary = request.duplicate(true)
+	prepared_request["song_id"] = str(resolution.get("song_id", song_id))
+	prepared_request["difficulty_id"] = str(resolution.get("difficulty_id", difficulty_id))
+	prepared_request["_resolved_chart"] = chart
+	prepared_request["_resolved_audio_stream"] = loaded_stream
+	prepared_request["_resolved_source_path"] = str(resolution.get("source_path", ""))
+	prepared_request["_resolved_source_kind"] = str(resolution.get("source_kind", "other"))
+	prepared_request["_resolved_source_hash"] = str(resolution.get("source_hash", chart.get("_source_chart_hash", "")))
+	return {
+		"ok": true,
+		"request": prepared_request,
+		"chart": chart.duplicate(true),
+		"source_path": prepared_request["_resolved_source_path"],
+		"source_kind": prepared_request["_resolved_source_kind"],
+		"source_hash": prepared_request["_resolved_source_hash"],
+	}
+
+func _launch_from_song_library(request: Dictionary) -> bool:
+	gameplay_transition_ready = false
+	var prepared_request: Dictionary = request
+	if not prepared_request.has("_resolved_chart") or not prepared_request.has("_resolved_audio_stream"):
+		var preparation: Dictionary = prepare_launch_request(request, true)
+		if not bool(preparation.get("ok", false)):
+			push_error("Song Library launch failed: %s" % str(preparation.get("error", "Unknown chart error.")))
+			show_level_select()
+			gameplay_transition_ready = true
+			return false
+		prepared_request = preparation.get("request", {}) as Dictionary
+
+	var chart_value: Variant = prepared_request.get("_resolved_chart", {})
+	var loaded_stream: AudioStream = prepared_request.get("_resolved_audio_stream") as AudioStream
+	if not (chart_value is Dictionary) or loaded_stream == null:
+		gameplay_transition_ready = true
+		return false
+	var resolved_chart: Dictionary = (chart_value as Dictionary).duplicate(true)
+	var song_id: String = str(prepared_request.get("song_id", ""))
+	var difficulty_id: String = str(prepared_request.get("difficulty_id", "normal")).to_lower()
+	random_mode_enabled = bool(prepared_request.get("random_mode", false))
+	practice_section_index = int(prepared_request.get("practice_section_index", -1))
 	practice_mode_active = practice_section_index >= 0
 	practice_section.clear()
 	practice_loop_count = 0
 	replay_requested_data.clear()
-	var replay_value: Variant = request.get("replay_data", {})
+	var replay_value: Variant = prepared_request.get("replay_data", {})
 	if replay_value is Dictionary:
 		replay_requested_data = (replay_value as Dictionary).duplicate(true)
 	replay_playback_active = not replay_requested_data.is_empty()
 	selected_song_id = song_id
 	input_style = UserSettingsScript.get_input_style()
 	track.set_input_style(input_style)
-	var level_index: int = find_level_index(song_id, difficulty_id)
-	if level_index < 0:
-		push_error("Song Library launch target was not found: %s / %s" % [song_id, difficulty_id])
-		show_level_select()
+	if not _start_resolved_level(resolved_chart, loaded_stream):
 		gameplay_transition_ready = true
-		return
-	start_level(level_index)
-	if level_select.visible:
-		gameplay_transition_ready = true
-		return
+		return false
 	_prepare_gameplay_entry_motion()
 	# start_level has already loaded the chart, artwork and audio stream. The
 	# shared artwork handoff can now dissolve directly into gameplay; playback
 	# remains armed until that visual transition has completed.
 	gameplay_transition_ready = true
+	return true
 
 func is_gameplay_transition_ready() -> bool:
 	return gameplay_transition_ready
 
-func launch_from_app_shell(request: Dictionary) -> void:
+func launch_from_app_shell(request: Dictionary) -> bool:
 	# AppShell keeps this gameplay controller alive for the whole process. Reuse
 	# the same node for every run instead of reloading main.tscn.
 	if get_tree().has_meta(PENDING_LIBRARY_LAUNCH_META):
 		get_tree().remove_meta(PENDING_LIBRARY_LAUNCH_META)
-	_set_primary_screen(PrimaryScreen.GAMEPLAY)
-	_launch_from_song_library(request)
+	return _launch_from_song_library(request)
 
 
 func _prepare_gameplay_entry_motion() -> void:
@@ -615,7 +668,7 @@ func resume_gameplay() -> void:
 func retry_gameplay() -> void:
 	if SceneTransition.is_transitioning():
 		return
-	if current_level_index < 0 or current_level_index >= levels.size():
+	if _current_chart_identity().is_empty():
 		return
 	playtest_telemetry.abort_session("retry")
 	var replay: Node = get_node_or_null("/root/ReplayManager")
@@ -627,7 +680,7 @@ func retry_gameplay() -> void:
 	if music != null:
 		music.stream_paused = false
 		music.stop()
-	_transition_to_level(current_level_index, "RESTARTING CHART")
+	_transition_to_current_chart("RESTARTING CHART")
 
 func exit_to_startup() -> void:
 	game_paused = false
@@ -783,14 +836,69 @@ func _transition_to_level(level_index: int, _status: String = "PREPARING CHART")
 		return
 	if level_index < 0 or level_index >= levels.size():
 		return
-	var visual_payload: Dictionary = _build_gameplay_launch_payload(level_index)
+	var raw_level: Variant = levels[level_index]
+	if not (raw_level is Dictionary):
+		return
+	var selected_level: Dictionary = raw_level as Dictionary
+	_transition_to_identity(
+		str(selected_level.get("song_id", selected_level.get("id", ""))),
+		str(selected_level.get("chart_difficulty", selected_level.get("difficulty", "normal"))).to_lower(),
+		_status
+	)
+
+func _transition_to_identity(song_id: String, difficulty_id: String, _status: String = "PREPARING CHART") -> void:
+	if SceneTransition.is_transitioning():
+		return
+	var preparation: Dictionary = prepare_launch_request({
+		"song_id": song_id,
+		"difficulty_id": difficulty_id,
+		"random_mode": random_mode_enabled,
+	}, true)
+	_transition_to_prepared_request(preparation)
+
+func _transition_to_prepared_request(preparation: Dictionary) -> void:
+	if not bool(preparation.get("ok", false)):
+		push_warning("Cannot play: %s" % str(preparation.get("error", "Chart resolution failed.")))
+		if level_select.visible and level_select.has_method("show_playback_error"):
+			level_select.call("show_playback_error", str(preparation.get("error", "CHART COULD NOT BE LOADED")))
+		return
+	var prepared_request: Dictionary = preparation.get("request", {}) as Dictionary
+	var chart: Dictionary = preparation.get("chart", {}) as Dictionary
+	var visual_payload: Dictionary = _build_gameplay_launch_payload_from_chart(chart)
 	SceneTransition.transition_action_to_gameplay(
-		_start_level_with_launch_motion.bind(level_index),
+		_start_level_with_launch_motion.bind(prepared_request),
 		visual_payload
 	)
 
-func _start_level_with_launch_motion(level_index: int) -> void:
-	start_level(level_index)
+func _current_chart_identity() -> Dictionary:
+	var song_id: String = str(level_data.get("song_id", level_data.get("id", selected_song_id)))
+	var difficulty_id: String = str(level_data.get("chart_difficulty", level_data.get("difficulty", "normal"))).to_lower()
+	if song_id.is_empty() or difficulty_id.is_empty():
+		return {}
+	return {"song_id": song_id, "difficulty_id": difficulty_id}
+
+func prepare_retry_request(force_refresh: bool = true) -> Dictionary:
+	var identity: Dictionary = _current_chart_identity()
+	if identity.is_empty():
+		return {"ok": false, "error": "No active chart identity is available."}
+	return prepare_launch_request({
+		"song_id": str(identity.get("song_id", "")),
+		"difficulty_id": str(identity.get("difficulty_id", "normal")),
+		"random_mode": random_mode_enabled,
+	}, force_refresh)
+
+func _transition_to_current_chart(_status: String = "RESTARTING CHART") -> void:
+	if SceneTransition.is_transitioning():
+		return
+	# Retry resolves from the active chart identity and refreshes the catalog; it
+	# never trusts current_level_index, which may have shifted after an edit.
+	var preparation: Dictionary = prepare_retry_request(true)
+	_transition_to_prepared_request(preparation)
+
+func _start_level_with_launch_motion(prepared_request: Dictionary) -> void:
+	var chart: Dictionary = prepared_request.get("_resolved_chart", {}) as Dictionary
+	var loaded_stream: AudioStream = prepared_request.get("_resolved_audio_stream") as AudioStream
+	_start_resolved_level(chart, loaded_stream)
 	# If start_level failed it returns to Song Select. Do not fade gameplay layers
 	# in over the error state. On a valid launch, match the first-launch choreography.
 	if not level_select.visible:
@@ -802,7 +910,9 @@ func _build_gameplay_launch_payload(level_index: int) -> Dictionary:
 	var raw_level: Variant = levels[level_index]
 	if not (raw_level is Dictionary):
 		return {}
-	var launch_level: Dictionary = raw_level as Dictionary
+	return _build_gameplay_launch_payload_from_chart(raw_level as Dictionary)
+
+func _build_gameplay_launch_payload_from_chart(launch_level: Dictionary) -> Dictionary:
 	var difficulty_text: String = str(launch_level.get("difficulty", launch_level.get("chart_difficulty", "NORMAL"))).to_upper()
 	return {
 		"title": str(launch_level.get("title", launch_level.get("song_id", "UNTITLED"))),
@@ -988,19 +1098,42 @@ func start_selected_difficulty(difficulty_id: String) -> void:
 	if level_index >= 0:
 		start_level(level_index)
 
-func start_level(index: int) -> void:
-	run_session.begin()
+func start_level(index: int) -> bool:
 	if index < 0 or index >= levels.size():
-		return
-	var launch_chart: Dictionary = levels[index]
-	if not RuntimeResourceAccessScript.audio_exists(str(launch_chart.get("audio", ""))) or not bool(preload("res://scripts/chart_integrity.gd").validate_structure(launch_chart).get("ok", false)):
+		return false
+	var raw_level: Variant = levels[index]
+	if not (raw_level is Dictionary):
+		return false
+	var selected_level: Dictionary = raw_level as Dictionary
+	var preparation: Dictionary = prepare_launch_request({
+		"song_id": str(selected_level.get("song_id", selected_level.get("id", ""))),
+		"difficulty_id": str(selected_level.get("chart_difficulty", selected_level.get("difficulty", "normal"))).to_lower(),
+		"random_mode": random_mode_enabled,
+	}, true)
+	if not bool(preparation.get("ok", false)):
 		push_warning("Cannot play: chart invalid or audio missing. Install the matching Audio Pack.")
-		return
+		return false
+	var prepared_request: Dictionary = preparation.get("request", {}) as Dictionary
+	return _start_resolved_level(
+		prepared_request.get("_resolved_chart", {}) as Dictionary,
+		prepared_request.get("_resolved_audio_stream") as AudioStream
+	)
+
+func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream) -> bool:
+	if launch_chart.is_empty() or loaded_stream == null:
+		return false
+	if not RuntimeResourceAccessScript.audio_exists(str(launch_chart.get("audio", ""))) or not bool(preload("res://scripts/chart_integrity.gd").validate_structure(launch_chart).get("ok", false)):
+		return false
+	run_session.begin()
 	game_paused = false
 	if music != null:
 		music.stream_paused = false
-	current_level_index = index
-	level_data = (levels[index] as Dictionary).duplicate(true)
+	selected_song_id = str(launch_chart.get("song_id", launch_chart.get("id", selected_song_id)))
+	var launch_difficulty_id: String = str(launch_chart.get("chart_difficulty", launch_chart.get("difficulty", "normal"))).to_lower()
+	current_level_index = find_level_index(selected_song_id, launch_difficulty_id)
+	# The catalog winner is immutable source data for this run. All legacy
+	# direction authoring, RANDOM state and 4K projection happen on this deep copy.
+	level_data = launch_chart.duplicate(true)
 	replay_playback_active = (not practice_mode_active) and (not replay_requested_data.is_empty())
 	if not level_data.has("_source_chart_hash"):
 		level_data["_source_chart_hash"] = ScoreIdentity.chart_hash(level_data)
@@ -1013,7 +1146,7 @@ func start_level(index: int) -> void:
 	var chart_events: Variant = level_data.get("events", [])
 	if not (chart_events is Array):
 		push_error("Level has no events array")
-		return
+		return false
 	_prepare_runtime_direction_layouts(chart_events as Array)
 
 	sync_battle_layout()
@@ -1060,19 +1193,13 @@ func start_level(index: int) -> void:
 		music.stream_paused = false
 	background_visual.set_process(true)
 
-	var audio_path: String = str(level_data.get("audio", ""))
-	var loaded_stream: AudioStream = load_audio_stream(audio_path)
-	if loaded_stream == null:
-		push_error("Could not load song: %s" % audio_path)
-		show_level_select()
-		level_select.call("show_playback_error", "AUDIO COULD NOT BE LOADED · RE-IMPORT IT IN CHART EDITOR (OGG VORBIS REQUIRED)")
-		return
 	music.stream = loaded_stream
 	_begin_v18_replay_session()
 	if not practice_mode_active and not replay_playback_active:
 		_begin_playtest_session()
 	_arm_gameplay_start()
 	update_hud()
+	return true
 
 func _configure_v18_session_mode() -> void:
 	practice_section.clear()
@@ -1518,8 +1645,7 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if is_numpad_key(key_event, KEY_KP_5):
-			if current_level_index >= 0:
-				_transition_to_level(current_level_index, "RESTARTING CHART")
+			_transition_to_current_chart("RESTARTING CHART")
 			get_viewport().set_input_as_handled()
 		elif key_event.keycode == KEY_ESCAPE:
 			_transition_to_song_library()
@@ -1529,8 +1655,7 @@ func _input(event: InputEvent) -> void:
 			# preserve the historical Enter-to-retry fallback.
 			var focused_control := get_viewport().gui_get_focus_owner()
 			if not (focused_control is Button):
-				if current_level_index >= 0:
-					_transition_to_level(current_level_index, "RESTARTING CHART")
+				_transition_to_current_chart("RESTARTING CHART")
 				get_viewport().set_input_as_handled()
 		return
 
@@ -1976,8 +2101,7 @@ func _on_result_back_pressed() -> void:
 func _on_result_replay_pressed() -> void:
 	if SceneTransition.is_transitioning():
 		return
-	if current_level_index >= 0:
-		_transition_to_level(current_level_index, "RESTARTING CHART")
+	_transition_to_current_chart("RESTARTING CHART")
 
 func format_result_number(value: int) -> String:
 	var digits: String = str(maxi(0, value))

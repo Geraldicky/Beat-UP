@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
     if imported.returncode or 'SCRIPT ERROR:' in import_output or 'ERROR:' in import_output or 'GDScript::reload:' in import_output or 'WARNING:' in import_output:
         print(imported.stdout, imported.stderr)
         raise SystemExit('Import/parser/warning check failed')
-    for name in ['records_foundation_test.gd', 'live_records_foundation_test.gd', 'library_layout_foundation_test.gd', 'v1870_level_pack_test.gd']:
+    for name in ['records_foundation_test.gd', 'live_records_foundation_test.gd', 'library_layout_foundation_test.gd', 'v1870_level_pack_test.gd', 'authoritative_launch_resolution_test.gd']:
         isolated = base/name
         isolated.mkdir()
         env = dict(os.environ, XDG_DATA_HOME=str(isolated), APPDATA=str(isolated))

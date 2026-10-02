@@ -83,7 +83,10 @@ func request_gameplay(request: Dictionary, visual_payload: Dictionary) -> void:
 	if shell != null and shell.has_method("launch_gameplay"):
 		var previous: String = get_active_route()
 		_begin_navigation()
-		shell.call("launch_gameplay", request, visual_payload)
+		var accepted_value: Variant = shell.call("launch_gameplay", request, visual_payload)
+		if accepted_value is bool and not bool(accepted_value):
+			_end_navigation(previous, previous)
+			return
 		# Gameplay uses SceneTransition's artwork handoff. AppShell will report the
 		# new active route once the transition action activates the resident player.
 		call_deferred("_finish_gameplay_navigation_when_ready", previous)

@@ -233,33 +233,70 @@ func _report_runtime(category: String, message: String, context: Dictionary = {}
 	if guard != null and guard.has_method("report"):
 		guard.call("report", category, message, context)
 
-func launch_gameplay(request: Dictionary, visual_payload: Dictionary) -> void:
+func launch_gameplay(request: Dictionary, visual_payload: Dictionary) -> bool:
 	if _navigation_blocked():
-		return
+		return false
 	var transition: Node = get_node_or_null("/root/SceneTransition")
 	if transition == null or not transition.has_method("transition_action_to_gameplay"):
-		return
+		return false
+	if not gameplay_screen.has_method("prepare_launch_request"):
+		_notify_gameplay_launch_failure("Gameplay could not prepare this chart.")
+		return false
+	var preparation_value: Variant = gameplay_screen.call("prepare_launch_request", request, true)
+	var preparation: Dictionary = preparation_value as Dictionary if preparation_value is Dictionary else {}
+	if not bool(preparation.get("ok", false)):
+		_notify_gameplay_launch_failure(str(preparation.get("error", "Chart could not be loaded.")))
+		return false
+	var prepared_request: Dictionary = preparation.get("request", {}) as Dictionary
+	# Build the handoff from the exact chart object gameplay will consume, not a
+	# second catalog lookup or the Song Library's pre-click snapshot.
+	var resolved_chart: Dictionary = prepared_request.get("_resolved_chart", {}) as Dictionary
+	var resolved_visual_payload: Dictionary = _gameplay_visual_payload(resolved_chart, prepared_request, visual_payload)
 	var context: Dictionary = {
-		"request": request.duplicate(true),
+		"request": prepared_request.duplicate(true),
 		"from_route": active_screen,
 		"to_route": ROUTE_GAMEPLAY,
 	}
 	_notify_screen(_active_control(), "shell_will_suspend", context)
 	transition.call(
 		"transition_action_to_gameplay",
-		Callable(self, "_activate_gameplay_request").bind(request, context),
-		visual_payload
+		Callable(self, "_activate_gameplay_request").bind(prepared_request, context),
+		resolved_visual_payload
 	)
+	return true
+
+func _gameplay_visual_payload(chart: Dictionary, request: Dictionary, fallback: Dictionary) -> Dictionary:
+	var payload: Dictionary = fallback.duplicate(true)
+	payload["title"] = str(chart.get("title", chart.get("song_id", "UNTITLED")))
+	payload["artist"] = str(chart.get("artist", "Unknown Artist"))
+	var difficulty_text: String = str(chart.get("difficulty", chart.get("chart_difficulty", "NORMAL"))).to_upper()
+	if request.has("practice_section_index"):
+		difficulty_text = "PRACTICE"
+	elif request.has("replay_data"):
+		difficulty_text = "REPLAY"
+	payload["difficulty"] = difficulty_text
+	payload["bpm"] = float(chart.get("bpm", 0.0))
+	payload["star_rating"] = int(chart.get("star_rating", 0))
+	payload["background"] = str(chart.get("background", ""))
+	payload["random_mode"] = bool(request.get("random_mode", false))
+	payload["source_path"] = str(request.get("_resolved_source_path", ""))
+	payload["source_hash"] = str(request.get("_resolved_source_hash", ""))
+	return payload
+
+func _notify_gameplay_launch_failure(message: String) -> void:
+	_report_runtime("gameplay_launch", message, {"route": active_screen})
+	_notify_screen(_active_control(), "handle_gameplay_launch_failure", {"error": message})
 
 func _activate_gameplay_request(request: Dictionary, context: Dictionary) -> void:
+	if not gameplay_screen.has_method("launch_from_app_shell") or not bool(gameplay_screen.call("launch_from_app_shell", request)):
+		_notify_gameplay_launch_failure("Gameplay rejected the prepared chart.")
+		return
 	var outgoing: Control = _active_control()
 	_set_screen_state(outgoing, false)
 	_set_screen_state(gameplay_screen, true)
 	active_screen = ROUTE_GAMEPLAY
 	_notify_screen(outgoing, "shell_did_suspend", context)
 	_notify_screen(gameplay_screen, "shell_will_resume", context)
-	if gameplay_screen.has_method("launch_from_app_shell"):
-		gameplay_screen.call("launch_from_app_shell", request)
 	_notify_screen(gameplay_screen, "shell_did_resume", context)
 
 func is_gameplay_transition_ready() -> bool:

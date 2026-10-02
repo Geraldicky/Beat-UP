@@ -57,6 +57,12 @@ func receive_best_stats(store: Dictionary) -> void:
 	if is_visible_in_tree() and process_mode != Node.PROCESS_MODE_DISABLED:
 		_apply_pending_best_stats()
 
+func handle_gameplay_launch_failure(context: Dictionary) -> void:
+	action_locked = false
+	var message: String = str(context.get("error", "CHART COULD NOT BE LOADED"))
+	if song_select.has_method("show_playback_error"):
+		song_select.call("show_playback_error", message)
+
 func _apply_pending_best_stats() -> void:
 	if not _best_stats_dirty:
 		return
