@@ -38,9 +38,13 @@ func run() -> void:
 	check(selector.search_input.is_visible_in_tree(), "Search is not visible.")
 	check(selector.back_button.is_visible_in_tree(), "Back control is not visible.")
 	check(selector.title_label.text == "S O N G   L I B R A R Y", "Tracked Song Library header title is missing.")
+	var title_block := selector.title_label.get_parent() as Control
+	var library_toolbar := selector.search_input.get_parent() as Control
+	check(title_block != null and library_toolbar != null and title_block.get_index() < library_toolbar.get_index(), "Song Library title is not placed before the search/filter toolbar.")
+	check(title_block.get_global_rect().end.x <= selector.search_input.get_global_rect().position.x, "Song Library title overlaps or trails the search field.")
 	check(selector.sort_filter.is_visible_in_tree() and selector.sort_filter.text == "BPM ASC", "Custom sort control or default BPM ascending mode is missing.")
 	check(selector.artist_filter.is_visible_in_tree() and selector.difficulty_filter.is_visible_in_tree(), "Primary Artist/Difficulty header filters are missing.")
-	check(selector.album_flow_filter_button != null and selector.album_flow_filter_button.visible and selector.album_flow_filter_button.text == "⋯", "Compact overflow filter control is missing.")
+	check(selector.album_flow_filter_button != null and not selector.album_flow_filter_button.visible, "Legacy overflow/ellipsis control leaked into the mockup-matched top bar.")
 	check(selector.album_flow_difficulty_row.is_visible_in_tree(), "Difficulty selector is not permanently visible.")
 	check(selector.album_flow_difficulty_row.get_child_count() == 3, "Normal, Hard, and Master selectors are not all represented.")
 	check(selector.play_button.is_visible_in_tree() and not selector.play_button.disabled, "Play is not visibly available for the selected chart.")
