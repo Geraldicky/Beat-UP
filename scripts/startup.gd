@@ -538,7 +538,7 @@ func _apply_layout_config() -> void:
 	# Current-song artwork remains full-bleed atmosphere. The foreground anchor is
 	# now exclusively Beat UP! branding, positioned left of the primary actions.
 	var hero_radius: float = clampf(minf(viewport_size.x * 0.145, viewport_size.y * 0.25), 164.0, 270.0)
-	var hero_center := Vector2(viewport_size.x * 0.36, viewport_size.y * 0.55)
+	var hero_center := Vector2(viewport_size.x * 0.36, viewport_size.y * 0.52)
 	orb_cluster.visible = false
 	orb_cluster.position = Vector2.ZERO
 	orb_cluster.size = Vector2.ZERO
@@ -561,7 +561,7 @@ func _apply_layout_config() -> void:
 	var play_height: float = clampf(64.0 * reference_scale, 58.0, 70.0)
 	var item_gap: int = roundi(clampf(9.0 * reference_scale, 7.0, 11.0))
 	var rail_x: float = clampf(viewport_size.x * 0.70, hero_center.x + hero_radius + 72.0, viewport_size.x - margin - rail_width)
-	var rail_y: float = clampf(viewport_size.y * 0.35, 238.0, 378.0)
+	var rail_y: float = clampf(viewport_size.y * 0.32, 220.0, 350.0)
 	var primary_buttons: Array[Button] = [play_button, chart_studio_button, settings_button, exit_button]
 	var rail_height: float = play_height + item_height * 3.0 + float(item_gap) * 3.0
 	menu_stack.custom_minimum_size = Vector2(rail_width, 0.0)
@@ -702,8 +702,8 @@ func _apply_theme() -> void:
 	now_playing_artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	now_playing_artist.custom_minimum_size.x = 132.0
 	MinimalThemeScript.apply_mono(duration_value, 10, Color(1.0, 1.0, 1.0, 0.74))
-	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.10), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
-	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.86), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
+	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.14), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
+	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.94), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
 	for transport_button in [prev_track_button, play_pause_track_button, next_track_button]:
 		transport_button.focus_mode = Control.FOCUS_ALL
 		transport_button.flat = true
@@ -865,15 +865,15 @@ func _style_main_menu_button(button: Button, _index: int) -> void:
 			style.content_margin_right = 42.0
 			style.border_width_bottom = 1
 		normal_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
-		normal_style.border_color = Color(MinimalThemeScript.TEXT, 0.26)
+		normal_style.border_color = Color(MinimalThemeScript.TEXT, 0.16)
 		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.14)
-		hover_style.border_color = Color(accent, 0.64)
-		hover_style.border_width_bottom = 2
+		hover_style.border_color = Color(accent, 0.72)
+		hover_style.border_width_bottom = 1
 		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.22)
 		pressed_style.border_color = Color(accent, 0.84)
 		pressed_style.border_width_bottom = 2
 		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.18)
-		focus_style.border_color = Color(accent, 0.84)
+		focus_style.border_color = Color(accent, 0.90)
 		focus_style.border_width_bottom = 2
 
 	button.add_theme_stylebox_override("normal", normal_style)
@@ -881,7 +881,7 @@ func _style_main_menu_button(button: Button, _index: int) -> void:
 	button.add_theme_stylebox_override("pressed", pressed_style)
 	button.add_theme_stylebox_override("focus", focus_style)
 
-	var normal_color := Color(MinimalThemeScript.TEXT, 0.98 if is_primary else (0.78 if is_utility else 0.92))
+	var normal_color := Color(MinimalThemeScript.TEXT, 0.98 if is_primary else (0.88 if is_utility else 0.92))
 	if is_exit:
 		normal_color = Color(MinimalThemeScript.TEXT, 0.86)
 	button.add_theme_color_override("font_color", normal_color)
