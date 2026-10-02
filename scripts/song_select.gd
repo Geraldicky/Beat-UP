@@ -536,13 +536,24 @@ func _install_album_flow_song_library_layout() -> void:
 	backdrop_visual.visible = true
 	backdrop_visual.modulate = Color(1.0, 1.0, 1.0, 0.18)
 	header_row.visible = true
-	title_label.text = "SONG LIBRARY"
+	title_label.text = "S O N G   L I B R A R Y"
 	count_label.text = "BEAT UP!"
 	count_label.visible = false
 	back_button.reparent(header_row)
 	header_row.move_child(back_button, 0)
 	back_button.text = "‹  BACK"
 	back_button.visible = true
+	var header_divider := ColorRect.new()
+	header_divider.name = "LibraryHeaderDivider"
+	header_divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header_divider.custom_minimum_size = Vector2(1, 40)
+	header_divider.color = Color(MinimalThemeScript.BORDER, 0.34)
+	header_row.add_child(header_divider)
+	header_row.move_child(header_divider, 1)
+	var header_rule := HSeparator.new()
+	header_rule.name = "LibraryHeaderRule"
+	root_vbox.add_child(header_rule)
+	root_vbox.move_child(header_rule, header_row.get_index() + 1)
 
 	var info_header := info_vbox.get_node_or_null("InfoHeader") as Control
 	if info_header != null:
@@ -1184,8 +1195,8 @@ func _apply_album_flow_song_library_theme() -> void:
 	if album_flow_showcase_row == null:
 		return
 
-	title_label.add_theme_font_override("font", MinimalThemeScript.display_font())
-	title_label.add_theme_font_size_override("font_size", 21)
+	title_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
+	title_label.add_theme_font_size_override("font_size", 16)
 	title_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	count_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	count_label.add_theme_font_size_override("font_size", 9)
@@ -1338,10 +1349,11 @@ func _refresh_album_flow_difficulty_row() -> void:
 		stack.add_child(name_label)
 		var diamond := Label.new()
 		diamond.name = "DifficultyDiamond"
-		diamond.text = "◆" if selected else "◇"
+		diamond.text = "◇" if selected else ""
 		diamond.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		MinimalThemeScript.apply_mono(diamond, 8, accent if selected else Color(MinimalThemeScript.MUTED, 0.28 if available else 0.10))
 		stack.add_child(diamond)
+		stack.move_child(diamond, 0)
 		album_flow_difficulty_row.add_child(chip)
 		InteractionPolishScript.install_buttons([chip])
 		if selected:
@@ -1365,6 +1377,8 @@ func _refresh_album_flow_best_card(chart: Dictionary) -> void:
 	album_flow_best_caption_value.text = "BEST RECORD"
 	album_flow_best_rank_value.text = str(entry.get("best_rank", entry.get("rank", ""))) if has_record else ""
 	album_flow_best_card.visible = has_record
+	if album_flow_record_panel != null:
+		album_flow_record_panel.custom_minimum_size.y = 204.0 if has_record else 116.0
 	var score_value := int(entry.get("score", 0))
 	album_flow_best_score_value.text = _format_album_flow_score(score_value) if has_record else "NO RECORD"
 	var combo_value := int(entry.get("best_max_combo", entry.get("max_combo", 0)))
@@ -2197,6 +2211,15 @@ func _rebuild_filters() -> void:
 	for sort_label in ["BPM Asc", "BPM Desc", "Title A–Z", "Star Rating", "Best Rank", "Unplayed First"]:
 		sort_filter.add_item(sort_label)
 	_select_option_text(sort_filter, selected_sort_mode)
+	_sync_album_flow_header_filter_labels()
+
+func _sync_album_flow_header_filter_labels() -> void:
+	if artist_filter != null:
+		artist_filter.text = selected_artist_filter.to_upper()
+	if difficulty_filter != null:
+		difficulty_filter.text = selected_difficulty_filter.to_upper()
+	if sort_filter != null:
+		sort_filter.text = selected_sort_mode.to_upper()
 
 func _select_option_text(button, target: String) -> void:
 	for i in range(button.get_item_count()):
@@ -2254,6 +2277,7 @@ func _apply_filters(animated: bool = true) -> void:
 	_ensure_difficulty_valid()
 	_rebuild_song_list()
 	_update_detail(animated)
+	_sync_album_flow_header_filter_labels()
 
 func _clear_children(node: Node) -> void:
 	for child in node.get_children():
@@ -2396,7 +2420,7 @@ func _populate_song_header_button(button: Button, index: int, rep: Dictionary, s
 	var marker := Label.new()
 	marker.name = "SongMarker"
 	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	marker.text = "◇"
+	marker.text = ""
 	marker.custom_minimum_size.x = 16
 	marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	MinimalThemeScript.apply_mono(marker, 9, Color(LIBRARY_ACCENT, 0.70))
@@ -2671,7 +2695,7 @@ func _refresh_song_rows(animated: bool) -> void:
 		_apply_song_header_text_emphasis(button, is_selected, distance)
 		var marker := button.find_child("SongMarker", true, false) as Label
 		if marker != null:
-			marker.text = "◆" if is_selected else "◇"
+			marker.text = "◆" if is_selected else ""
 			marker.add_theme_color_override("font_color", Color(LIBRARY_ACCENT, 0.96 if is_selected else 0.18))
 		var index_label := button.find_child("SongIndex", true, false) as Label
 		if index_label != null:
@@ -2850,6 +2874,8 @@ func _update_detail(animated: bool = true) -> void:
 		detail_meta.text = ""
 		detail_description.text = "SELECT ANOTHER FILTER OR IMPORT CHART JSON FILES"
 		detail_flavor.text = ""
+		if album_flow_meta_line != null:
+			album_flow_meta_line.text = ""
 		selection_index.text = "TRACK 00 / 00"
 		mode_status.visible = false
 		mode_status.text = ""
