@@ -38,11 +38,8 @@ func run() -> void:
 	check(selector.search_input.is_visible_in_tree(), "Search is not visible.")
 	check(selector.back_button.is_visible_in_tree(), "Back control is not visible.")
 	check(selector.sort_filter.is_visible_in_tree() and selector.sort_filter.text == "BPM Asc", "Custom sort control or default BPM ascending mode is missing.")
-	check(selector.album_flow_filter_button != null and selector.album_flow_filter_button.text.begins_with("FILTER"), "Consolidated filter control is missing.")
-	selector.album_flow_filter_button.pressed.emit()
-	await process_frame
-	check(selector.composition.filter_row.visible and selector.artist_filter.visible and selector.difficulty_filter.visible and selector.progress_filter.visible, "Filter control does not expose all existing filter types.")
-	selector.album_flow_filter_button.pressed.emit()
+	check(selector.artist_filter.is_visible_in_tree() and selector.difficulty_filter.is_visible_in_tree(), "Primary Artist/Difficulty header filters are missing.")
+	check(selector.album_flow_filter_button != null and not selector.album_flow_filter_button.visible, "Legacy aggregate filter should not occupy the primary header.")
 	check(selector.album_flow_difficulty_row.is_visible_in_tree(), "Difficulty selector is not permanently visible.")
 	check(selector.album_flow_difficulty_row.get_child_count() == 3, "Normal, Hard, and Master selectors are not all represented.")
 	check(selector.play_button.is_visible_in_tree() and not selector.play_button.disabled, "Play is not visibly available for the selected chart.")
@@ -59,8 +56,10 @@ func run() -> void:
 	check(selector.play_button.get_parent() == selector.album_flow_sidebar and selector.play_button.size.y >= 70.0, "Play is not the dominant bottom-right call to action.")
 	check(selector.album_flow_bottom_panel != null and not selector.album_flow_bottom_panel.visible, "Legacy detached Difficulty/Play dock is still visible.")
 	check(selector.album_flow_list_header != null and selector.album_flow_list_header.is_visible_in_tree(), "Dense song-list column header is missing.")
-	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a <= 0.25, "Selected-song background atmosphere is missing or too strong.")
-	check(selector.album_flow_ambient != null and selector.album_flow_ambient.is_visible_in_tree(), "Right-side ambient geometry is missing.")
+	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a <= 0.30, "Selected-song background atmosphere is missing or too strong.")
+	check(selector.album_flow_ambient != null and not selector.album_flow_ambient.visible, "Abstract ambient geometry should be suppressed in the mockup-matched composition.")
+	check(selector.album_flow_meta_line != null and selector.album_flow_meta_line.text.contains("BPM"), "Inline song metadata is missing.")
+	check(selector.album_flow_prev_song_button != null and selector.album_flow_next_song_button != null, "Track previous/next controls are missing.")
 
 	var selected_index: int = selector.filtered_song_ids.find(selector.selected_song_id)
 	check(selected_index >= 0, "No initial song was selected.")
@@ -141,7 +140,7 @@ func run() -> void:
 	await process_frame
 	check(selector.album_flow_best_rank_value.text == "S", "Best rank did not refresh.")
 	check(selector.album_flow_best_score_value.text == "10,680,000", "Best score did not refresh or format correctly.")
-	check(selector.album_flow_best_accuracy_value.text == "98.42%  ACCURACY", "Best accuracy did not refresh.")
+	check(selector.album_flow_best_accuracy_value.text == "98.42%", "Best accuracy did not refresh.")
 	selector.set_best_stats_store({})
 	await process_frame
 	check(selector.album_flow_best_score_value.text == "NO RECORD" and selector.album_flow_best_rank_value.text.is_empty(), "No-record state still shows meaningless placeholders.")
