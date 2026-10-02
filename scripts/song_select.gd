@@ -989,9 +989,11 @@ func _install_album_flow_filter_tabs() -> void:
 
 	# Keep the old aggregate filter object alive for compatibility, but the
 	# primary header now exposes the two filters shown in the approved mockup.
-	album_flow_filter_button = _album_flow_filter_button("FILTERS")
+	album_flow_filter_button = _album_flow_filter_button("⋯")
 	album_flow_filter_button.name = "LibraryFilterButton"
-	album_flow_filter_button.visible = false
+	album_flow_filter_button.visible = true
+	album_flow_filter_button.tooltip_text = "More filters"
+	album_flow_filter_button.custom_minimum_size = Vector2(40, 40)
 	album_flow_filter_button.set_meta("filter_kind", "filters")
 	album_flow_filter_button.pressed.connect(_album_flow_toggle_filters)
 	album_flow_filter_tabs.add_child(album_flow_filter_button)
@@ -1055,9 +1057,11 @@ func _album_flow_toggle_filters() -> void:
 	if composition.filter_row == null:
 		return
 	composition.filter_row.visible = not composition.filter_row.visible
+	# Artist and difficulty live permanently in the top bar. Keep only the
+	# secondary progress filter in this compact overflow row.
 	artist_filter.visible = true
 	difficulty_filter.visible = true
-	progress_filter.visible = true
+	progress_filter.visible = composition.filter_row.visible
 	_apply_album_flow_filter_tab_style()
 
 func _album_flow_toggle_bpm_sort() -> void:
@@ -1177,8 +1181,7 @@ func _apply_album_flow_filter_tab_style() -> void:
 				active = selected_progress_filter != "All Progress"
 			"filters":
 				active = composition.filter_row != null and composition.filter_row.visible
-				var active_count := int(selected_artist_filter != "All Artists") + int(selected_difficulty_filter != "All Difficulties") + int(selected_progress_filter != "All Progress")
-				button.text = "FILTERS" if active_count <= 0 else "FILTERS · %d" % active_count
+				button.text = "⋯"
 		button.add_theme_color_override("font_color", MinimalThemeScript.TEXT if active else Color(MinimalThemeScript.TEXT, 0.56))
 		button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 		button.add_theme_color_override("font_pressed_color", MinimalThemeScript.ACCENT)
