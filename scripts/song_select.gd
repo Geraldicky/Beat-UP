@@ -1113,8 +1113,10 @@ func _apply_album_flow_song_library_layout() -> void:
 		album_flow_header_spacer.custom_minimum_size.x = 12 if compact else 28
 	var library_toolbar := search_input.get_parent() as Control
 	if library_toolbar != null:
-		library_toolbar.custom_minimum_size.x = 0
-		library_toolbar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Match the mockup's centered-right toolbar instead of stretching controls
+		# all the way to the screen edge. Width scales with the viewport.
+		library_toolbar.custom_minimum_size.x = clampf(size.x * 0.58, 820.0, 1120.0)
+		library_toolbar.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 
 	if album_flow_detail_top_spacer != null:
 		album_flow_detail_top_spacer.custom_minimum_size.y = 4 if compact else 8
