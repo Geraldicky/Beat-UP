@@ -91,8 +91,8 @@ func update_selection(button: Button) -> void:
 	selection_index.add_theme_color_override("font_color", accent)
 	orb_ring.set("accent", accent)
 	orb_ring.queue_redraw()
-	orb_fill.set("fill_color", Color(0.018, 0.024, 0.034, 0.66))
-	orb_fill.set("stroke_color", Color(accent, 0.90))
+	orb_fill.set("fill_color", Color(0.018, 0.024, 0.034, 0.44))
+	orb_fill.set("stroke_color", Color(accent, 0.78))
 	orb_fill.queue_redraw()
 	_move_selection_rule(button, accent)
 	if menu_visual != null and menu_visual.has_method("set_selection"):
