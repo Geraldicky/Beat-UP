@@ -47,12 +47,12 @@ func _draw() -> void:
 
 func _draw_banner(rect: Rect2) -> void:
 	if card_variant == "compact_song":
-		var surface := Color("171d29") if button_pressed else (Color("141a24") if is_hovered() else Color("111621"))
+		var surface := Color("142334") if button_pressed else (Color("111b28") if is_hovered() else Color("0d141e"))
 		draw_rect(rect, surface)
 		if button_pressed:
-			# A quiet inner lift makes the selected row read as elevated without
-			# turning every list item into a bordered card.
-			draw_rect(Rect2(Vector2(4.0, 1.0), Vector2(maxf(0.0, rect.size.x - 5.0), maxf(0.0, rect.size.y - 2.0))), Color(accent_color, 0.035))
+			draw_rect(Rect2(Vector2(4.0, 1.0), Vector2(maxf(0.0, rect.size.x - 5.0), maxf(0.0, rect.size.y - 2.0))), Color(accent_color, 0.075))
+		elif is_hovered():
+			draw_rect(rect, Color(accent_color, 0.025))
 		return
 	if banner_texture == null:
 		draw_rect(rect, FALLBACK_BG)
@@ -72,7 +72,7 @@ func _draw_banner(rect: Rect2) -> void:
 func _draw_overlay(rect: Rect2) -> void:
 	if card_variant == "compact_song":
 		if is_hovered() and not button_pressed:
-			draw_rect(rect, Color(1, 1, 1, 0.018))
+			draw_rect(rect, Color(1, 1, 1, 0.022))
 		return
 	var selected := button_pressed
 	# Distance affects only the artwork treatment. Child labels stay fully opaque.
@@ -104,17 +104,17 @@ func _draw_overlay(rect: Rect2) -> void:
 	draw_rect(rect, Color(accent_color, tint_alpha))
 
 func _draw_accent(rect: Rect2) -> void:
-	var border_alpha := 0.72 if button_pressed else 0.015
+	var border_alpha := 0.34 if button_pressed else 0.025
 	if card_variant != "compact_song":
 		border_alpha = 1.0 if button_pressed else 0.14
 	if is_hovered() and not button_pressed:
-		border_alpha = 0.42
+		border_alpha = 0.24 if card_variant == "compact_song" else 0.42
 	if has_focus():
 		border_alpha = maxf(border_alpha, 0.75)
 	var border_color := Color(accent_color, border_alpha)
 	draw_rect(rect, border_color, false, 1.0)
-	var strip_width := 3.0 if card_variant == "compact_song" else (5.0 if card_variant == "song" else 3.0)
-	var strip_alpha := 0.95 if button_pressed else 0.0
+	var strip_width := 4.0 if card_variant == "compact_song" else (5.0 if card_variant == "song" else 3.0)
+	var strip_alpha := 1.0 if button_pressed else 0.0
 	if strip_alpha > 0.0:
 		draw_rect(Rect2(Vector2.ZERO, Vector2(strip_width, rect.size.y)), Color(accent_color, strip_alpha))
 	var shine_alpha := 0.16 if button_pressed else 0.0
