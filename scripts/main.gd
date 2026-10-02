@@ -161,6 +161,10 @@ var legacy_direction_author := WavAutoAnalyzerScript.new()
 var user_input_offset_ms := 0.0
 var user_audio_offset_ms := 0.0
 var input_style := "8_direction"
+var run_input_binding_snapshot: Dictionary = {
+	"input_style": UserSettingsScript.DEFAULT_INPUT_STYLE,
+	"bindings": UserSettingsScript.DEFAULT_GAMEPLAY_BINDINGS.duplicate(true),
+}
 var timing_debug_visible := false
 var last_raw_hit_delta_ms := 0.0
 var last_compensated_hit_delta_ms := 0.0
@@ -363,8 +367,6 @@ func _launch_from_song_library(request: Dictionary) -> bool:
 		replay_requested_data = (replay_value as Dictionary).duplicate(true)
 	replay_playback_active = not replay_requested_data.is_empty()
 	selected_song_id = song_id
-	input_style = UserSettingsScript.get_input_style()
-	track.set_input_style(input_style)
 	if not _start_resolved_level(resolved_chart, loaded_stream):
 		gameplay_transition_ready = true
 		return false
@@ -1124,6 +1126,7 @@ func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream)
 		return false
 	if not RuntimeResourceAccessScript.audio_exists(str(launch_chart.get("audio", ""))) or not bool(preload("res://scripts/chart_integrity.gd").validate_structure(launch_chart).get("ok", false)):
 		return false
+	_capture_run_input_binding_snapshot()
 	run_session.begin()
 	game_paused = false
 	if music != null:
@@ -1670,7 +1673,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	if UserSettingsScript.event_matches_gameplay_binding(key_event, "space"):
+	if _event_matches_run_binding(key_event, "space"):
 		get_viewport().set_input_as_handled()
 		fight_time = get_music_time()
 		_record_v18_replay_action("space", key_event, fight_time)
@@ -2801,7 +2804,7 @@ func get_pressed_gameplay_key(event: InputEventKey) -> int:
 			{"action": "4k_down", "key": KEY_DOWN},
 		]
 		for row: Dictionary in four_map:
-			if UserSettingsScript.event_matches_gameplay_binding(event, str(row.get("action", ""))):
+			if _event_matches_run_binding(event, str(row.get("action", ""))):
 				return int(row.get("key", KEY_NONE))
 		return KEY_NONE
 	return get_pressed_numpad_key(event)
@@ -2814,9 +2817,31 @@ func get_pressed_numpad_key(event: InputEventKey) -> int:
 		{"action": "8k_8", "key": KEY_KP_8}, {"action": "8k_9", "key": KEY_KP_9},
 	]
 	for row: Dictionary in eight_map:
-		if UserSettingsScript.event_matches_gameplay_binding(event, str(row.get("action", ""))):
+		if _event_matches_run_binding(event, str(row.get("action", ""))):
 			return int(row.get("key", KEY_NONE))
 	return KEY_NONE
+
+func _capture_run_input_binding_snapshot() -> void:
+	var snapshot: Dictionary = UserSettingsScript.create_gameplay_input_snapshot()
+	var bindings_value: Variant = snapshot.get("bindings", {})
+	var bindings: Dictionary = bindings_value as Dictionary if bindings_value is Dictionary else {}
+	run_input_binding_snapshot = {
+		"input_style": str(snapshot.get("input_style", UserSettingsScript.DEFAULT_INPUT_STYLE)),
+		"bindings": bindings.duplicate(true),
+	}
+	input_style = str(run_input_binding_snapshot.get("input_style", UserSettingsScript.DEFAULT_INPUT_STYLE))
+	if track != null:
+		track.set_input_style(input_style)
+
+func get_run_input_binding_snapshot() -> Dictionary:
+	return run_input_binding_snapshot.duplicate(true)
+
+func _event_matches_run_binding(event: InputEventKey, action: String) -> bool:
+	var bindings_value: Variant = run_input_binding_snapshot.get("bindings", {})
+	if not (bindings_value is Dictionary):
+		return false
+	var expected: int = int((bindings_value as Dictionary).get(action, KEY_NONE))
+	return expected != KEY_NONE and (event.keycode == expected or event.physical_keycode == expected)
 
 func is_numpad_key(event: InputEventKey, expected_key: int) -> bool:
 	return event.keycode == expected_key or event.physical_keycode == expected_key

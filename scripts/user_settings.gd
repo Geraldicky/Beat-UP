@@ -226,6 +226,30 @@ static func get_gameplay_binding(action: String) -> int:
 	return _read_int(config, "controls", action, fallback_key, 1, 0x7fffffff)
 
 
+static func create_gameplay_input_snapshot() -> Dictionary:
+	# One normalized persistence read at the run boundary. Gameplay owns the
+	# returned value and never consults ConfigFile again for this run.
+	var config: ConfigFile = load_config()
+	var style := _read_string(config, "gameplay", "input_style", DEFAULT_INPUT_STYLE).to_lower()
+	if not VALID_INPUT_STYLES.has(style):
+		style = DEFAULT_INPUT_STYLE
+	var bindings: Dictionary = {}
+	for action_value: Variant in DEFAULT_GAMEPLAY_BINDINGS.keys():
+		var action: String = str(action_value)
+		bindings[action] = _read_int(
+			config,
+			"controls",
+			action,
+			int(DEFAULT_GAMEPLAY_BINDINGS[action]),
+			1,
+			0x7fffffff
+		)
+	return {
+		"input_style": style,
+		"bindings": bindings,
+	}
+
+
 static func set_gameplay_binding(action: String, keycode: int) -> bool:
 	if not DEFAULT_GAMEPLAY_BINDINGS.has(action) or keycode == KEY_NONE:
 		return false
