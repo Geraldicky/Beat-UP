@@ -534,7 +534,7 @@ func _install_album_flow_song_library_layout() -> void:
 	header_row.visible = true
 	title_label.text = "SONG LIBRARY"
 	count_label.text = "BEAT UP!"
-	count_label.visible = true
+	count_label.visible = false
 	back_button.reparent(header_row)
 	header_row.move_child(back_button, 0)
 	back_button.text = "‹  BACK"
@@ -748,7 +748,8 @@ void fragment() {
 		var value := Label.new()
 		value.text = "0"
 		value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		MinimalThemeScript.apply_numeric(value, 20, judgement_def[1] as Color)
+		var judgement_color: Color = judgement_def[1]
+		MinimalThemeScript.apply_numeric(value, 20, judgement_color)
 		cell.add_child(value)
 		match str(judgement_def[0]):
 			"PERFECT": album_flow_record_perfect_value = value
@@ -871,9 +872,20 @@ func _install_album_flow_filter_tabs() -> void:
 		composition.filter_row.visible = false
 	if composition.chips != null:
 		composition.chips.visible = false
-	var wheel_header := library_box.get_node_or_null("WheelHeader") as Control
+	var wheel_header := library_box.get_node_or_null("WheelHeader") as HBoxContainer
 	if wheel_header != null:
-		wheel_header.visible = false
+		album_flow_list_header = wheel_header
+		wheel_header.visible = true
+		wheel_header.custom_minimum_size.y = 28
+		var wheel_caption := wheel_header.get_node_or_null("WheelCaption") as Label
+		if wheel_caption != null:
+			wheel_caption.text = "#    TITLE"
+			wheel_caption.custom_minimum_size.x = 240
+			MinimalThemeScript.apply_mono(wheel_caption, 9, Color(MinimalThemeScript.TEXT, 0.48))
+		var mode_header := wheel_header.get_node_or_null("WheelModeLabel") as Label
+		if mode_header != null:
+			mode_header.text = "ARTIST                     BPM"
+			MinimalThemeScript.apply_mono(mode_header, 9, Color(MinimalThemeScript.TEXT, 0.48))
 	library_hint.visible = false
 	var separator := library_box.get_node_or_null("ListSeparator") as Control
 	if separator != null:
@@ -887,7 +899,7 @@ func _install_album_flow_filter_tabs() -> void:
 		library_box.move_child(composition.filter_row, song_scroll.get_index())
 	if composition.chips != null:
 		library_box.move_child(composition.chips, song_scroll.get_index())
-	album_flow_filter_button = _album_flow_filter_button("FILTER")
+	album_flow_filter_button = _album_flow_filter_button("FILTERS")
 	album_flow_filter_button.name = "LibraryFilterButton"
 	album_flow_filter_button.set_meta("filter_kind", "filters")
 	album_flow_filter_button.custom_minimum_size = Vector2(92, 42)
@@ -904,7 +916,7 @@ func _install_album_flow_filter_tabs() -> void:
 	header_row.add_child(album_flow_header_spacer)
 	album_flow_list_spacer = Control.new()
 	album_flow_list_spacer.name = "AlbumFlowListTopSpacer"
-	album_flow_list_spacer.custom_minimum_size.y = 26
+	album_flow_list_spacer.custom_minimum_size.y = 6
 	library_box.add_child(album_flow_list_spacer)
 	library_box.move_child(album_flow_list_spacer, song_scroll.get_index())
 
@@ -1709,62 +1721,69 @@ func _style_mod_option(button: Button, active: bool, accent: Color) -> void:
 	button.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT)
 
 func _style_album_segment_button(button: Button, active: bool) -> void:
-	var accent := LIBRARY_ACCENT
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(accent, 0.09) if active else Color(0, 0, 0, 0)
-	normal.border_color = Color(accent, 0.94) if active else Color(MinimalThemeScript.BORDER, 0.24)
-	normal.border_width_bottom = 3 if active else 1
-	normal.content_margin_left = 10.0
-	normal.content_margin_right = 10.0
-	normal.content_margin_top = 5.0
-	normal.content_margin_bottom = 5.0
-	var hover := normal.duplicate() as StyleBoxFlat
-	hover.bg_color = Color(accent, 0.13)
-	hover.border_color = Color(accent, 0.82)
-	var pressed := hover.duplicate() as StyleBoxFlat
-	pressed.bg_color = Color(accent, 0.19)
-	for pair in [["normal", normal], ["hover", hover], ["pressed", pressed], ["focus", hover]]:
-		button.add_theme_stylebox_override(pair[0], pair[1])
+	var accent := MinimalThemeScript.CYAN
+	var normal := MinimalThemeScript.button_style(Color(MinimalThemeScript.BG, 0.38), Color(MinimalThemeScript.BORDER, 0.24), 4)
+	var hover := MinimalThemeScript.button_style(Color(accent, 0.08), Color(accent, 0.58), 4)
+	var pressed := MinimalThemeScript.button_style(Color(accent, 0.13), Color(accent, 0.92), 4)
+	var focus := hover
+	if active:
+		normal = MinimalThemeScript.button_style(Color(accent, 0.11), Color(accent, 0.96), 4)
+		hover = MinimalThemeScript.button_style(Color(accent, 0.15), accent, 4)
+		pressed = hover
+		focus = hover
+	for style in [normal, hover, pressed, focus]:
+		style.content_margin_left = 12.0
+		style.content_margin_right = 12.0
+		style.content_margin_top = 9.0
+		style.content_margin_bottom = 9.0
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("focus", focus)
 	button.add_theme_font_override("font", MinimalThemeScript.semibold_font())
-	button.add_theme_font_size_override("font_size", 13)
-	button.add_theme_color_override("font_color", MinimalThemeScript.TEXT if active else Color(MinimalThemeScript.TEXT, 0.54))
+	button.add_theme_font_size_override("font_size", 14)
+	button.add_theme_color_override("font_color", MinimalThemeScript.TEXT if active else Color(MinimalThemeScript.TEXT, 0.62))
 	button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
 	button.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT)
 
 func _style_album_secondary_chip(button: Button, active: bool, accent: Color) -> void:
-	var normal := MinimalThemeScript.button_style(Color(accent, 0.10) if active else Color(0, 0, 0, 0), Color(accent, 0.62) if active else Color(MinimalThemeScript.BORDER, 0.18), 5)
-	var hover := MinimalThemeScript.button_style(Color(accent, 0.10), Color(accent, 0.52), 5)
-	var pressed := MinimalThemeScript.button_style(Color(accent, 0.16), Color(accent, 0.78), 5)
+	var normal := MinimalThemeScript.button_style(Color(MinimalThemeScript.BG, 0.34), Color(MinimalThemeScript.BORDER, 0.24), 4)
+	var hover := MinimalThemeScript.button_style(Color(accent, 0.08), Color(accent, 0.56), 4)
+	var pressed := MinimalThemeScript.button_style(Color(accent, 0.13), Color(accent, 0.82), 4)
+	if active:
+		normal = MinimalThemeScript.button_style(Color(accent, 0.11), Color(accent, 0.88), 4)
 	for style in [normal, hover, pressed]:
 		style.content_margin_left = 10.0
 		style.content_margin_right = 10.0
-		style.content_margin_top = 4.0
-		style.content_margin_bottom = 4.0
+		style.content_margin_top = 8.0
+		style.content_margin_bottom = 8.0
 	button.add_theme_stylebox_override("normal", normal)
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", pressed)
 	button.add_theme_stylebox_override("focus", hover)
 	button.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	button.add_theme_font_size_override("font_size", 10)
-	button.add_theme_color_override("font_color", accent if active else Color(MinimalThemeScript.TEXT, 0.54))
+	button.add_theme_color_override("font_color", accent if active else Color(MinimalThemeScript.TEXT, 0.68))
 	button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
 
 func _style_album_difficulty_button(button: Button, selected: bool, available: bool, accent: Color) -> void:
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(MinimalThemeScript.SURFACE_RAISED, 0.52) if selected else Color(MinimalThemeScript.SURFACE, 0.16 if available else 0.05)
-	normal.border_color = Color(accent, 0.92) if selected else Color(MinimalThemeScript.BORDER, 0.14 if available else 0.04)
-	normal.border_width_bottom = 4 if selected else 1
-	normal.set_corner_radius_all(5)
-	var hover := normal.duplicate() as StyleBoxFlat
-	hover.bg_color = Color(accent, 0.10)
-	hover.border_color = Color(accent, 0.68)
-	var pressed := hover.duplicate() as StyleBoxFlat
-	pressed.bg_color = Color(accent, 0.17)
+	var normal := MinimalThemeScript.button_style(
+		Color(accent, 0.10) if selected else Color(MinimalThemeScript.BG, 0.32),
+		Color(accent, 0.90) if selected else Color(MinimalThemeScript.BORDER, 0.22 if available else 0.08),
+		4
+	)
+	var hover := MinimalThemeScript.button_style(Color(accent, 0.09), Color(accent, 0.64), 4)
+	var pressed := MinimalThemeScript.button_style(Color(accent, 0.16), Color(accent, 0.92), 4)
+	for style in [normal, hover, pressed]:
+		style.content_margin_left = 8.0
+		style.content_margin_right = 8.0
+		style.content_margin_top = 7.0
+		style.content_margin_bottom = 7.0
 	for pair in [["normal", normal], ["hover", hover], ["pressed", pressed], ["focus", hover], ["disabled", normal]]:
 		button.add_theme_stylebox_override(pair[0], pair[1])
-	button.modulate.a = 1.0 if available else 0.42
+	button.modulate.a = 1.0 if available else 0.38
 
 func _style_album_play_button() -> void:
 	play_button.text = "PLAY" if not play_button.disabled else play_button.text
@@ -2245,6 +2264,15 @@ func _populate_song_header_button(button: Button, index: int, rep: Dictionary, s
 	MinimalThemeScript.apply_mono(index_label, 10, Color(MinimalThemeScript.TEXT, 0.52))
 	row.add_child(index_label)
 
+	var marker := Label.new()
+	marker.name = "SongMarker"
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marker.text = "◇"
+	marker.custom_minimum_size.x = 16
+	marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	MinimalThemeScript.apply_mono(marker, 9, Color(LIBRARY_ACCENT, 0.70))
+	row.add_child(marker)
+
 	var thumb := TextureRect.new()
 	thumb.name = "SongJacket"
 	thumb.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -2512,6 +2540,13 @@ func _refresh_song_rows(animated: bool) -> void:
 		button.call("set_visual_emphasis", art_emphasis)
 		button.add_theme_font_size_override("font_size", theme_config.body_size - 1 if is_selected else theme_config.body_size - 2)
 		_apply_song_header_text_emphasis(button, is_selected, distance)
+		var marker := button.find_child("SongMarker", true, false) as Label
+		if marker != null:
+			marker.text = "◆" if is_selected else "◇"
+			marker.add_theme_color_override("font_color", Color(LIBRARY_ACCENT, 0.96 if is_selected else 0.18))
+		var index_label := button.find_child("SongIndex", true, false) as Label
+		if index_label != null:
+			index_label.add_theme_color_override("font_color", Color(LIBRARY_ACCENT, 0.92) if is_selected else Color(MinimalThemeScript.TEXT, 0.46))
 		var jacket := button.find_child("SongJacket", true, false) as TextureRect
 		if jacket != null:
 			jacket.custom_minimum_size = Vector2(52, 52) if is_selected else Vector2(44, 44)
