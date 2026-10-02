@@ -106,7 +106,7 @@ func _draw_ambient_motifs(accent: Color) -> void:
 
 func _brand_geometry() -> Dictionary:
 	return {
-		"center": Vector2(size.x * 0.36, size.y * 0.55),
+		"center": Vector2(size.x * 0.36, size.y * 0.52),
 		"radius": clampf(minf(size.x * 0.145, size.y * 0.25), 164.0, 270.0),
 	}
 
@@ -122,8 +122,8 @@ func has_foreground_artwork_card() -> bool:
 func _draw_brand_panel(center: Vector2, radius: float, accent: Color) -> void:
 	var outer_points := _rounded_diamond_points(center, radius, radius * 0.075, 5)
 	var shadow_points := _rounded_diamond_points(center + Vector2(10.0, 14.0), radius, radius * 0.075, 5)
-	draw_colored_polygon(shadow_points, Color(0.0, 0.0, 0.0, 0.26))
-	draw_colored_polygon(outer_points, Color(MinimalThemeScript.BG, 0.80))
+	draw_colored_polygon(shadow_points, Color(0.0, 0.0, 0.0, 0.20))
+	draw_colored_polygon(outer_points, Color(MinimalThemeScript.BG, 0.66))
 	draw_polyline(_closed(outer_points), Color(accent, 0.72), 2.0, true)
 
 	var inset := radius * 0.76
@@ -194,14 +194,14 @@ func _draw_rhythm_connector(hero_center: Vector2, hero_radius: float, accent: Co
 	var end_x := size.x * 0.68
 	if end_x <= start_x:
 		return
-	draw_line(Vector2(start_x, y), Vector2(end_x, y), Color(MinimalThemeScript.TEXT, 0.16), 1.0, true)
-	_draw_small_diamond(Vector2(end_x, y), 4.0, Color(accent, 0.70))
+	draw_line(Vector2(start_x, y), Vector2(end_x, y), Color(MinimalThemeScript.TEXT, 0.22), 1.0, true)
+	_draw_small_diamond(Vector2(end_x, y), 4.0, Color(accent, 0.78))
 	var span := end_x - start_x
 	for i in range(1, 9):
 		var x := start_x + span * float(i) / 9.0
 		var major := i % 3 == 0
 		var tick_h := 12.0 if major else 6.0
-		var alpha := 0.22 if major else 0.12
+		var alpha := 0.28 if major else 0.16
 		draw_line(Vector2(x, y - tick_h * 0.5), Vector2(x, y + tick_h * 0.5), Color(accent, alpha), 1.0, true)
 
 func _draw_small_diamond(center: Vector2, radius: float, color: Color) -> void:
