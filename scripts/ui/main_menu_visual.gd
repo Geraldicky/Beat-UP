@@ -74,28 +74,77 @@ func _draw() -> void:
 		return
 	var accent := _selection_accent()
 
-	# Controlled vignette keeps full-bleed song artwork legible without turning
-	# the Main Menu into a collection of foreground cards.
+	# Keep the full-screen artwork quiet, but give the canvas directional depth:
+	# darker at the navigation rail, slightly more open around the hero.
+	_draw_edge_vignette()
+
+	var hero_center := Vector2(size.x * 0.685, size.y * 0.455)
+	var hero_radius := clampf(minf(size.x * 0.165, size.y * 0.275), 178.0, 282.0)
+
+	# Reintroduce song identity as atmosphere rather than a foreground album card.
+	_draw_ghost_artwork(hero_center, hero_radius)
+
+	# One visual anchor with distinct hierarchy instead of several equally-faint
+	# outlines. The outer field supplies scale; the primary diamond owns focus.
+	_draw_diamond(hero_center, hero_radius * 1.28, Color(accent, 0.045), 1.0)
+	_draw_diamond(hero_center, hero_radius * 1.06, Color(accent, 0.24), 2.0)
+	_draw_diamond(hero_center, hero_radius * 0.77, Color(MinimalThemeScript.TEXT, 0.10), 1.0)
+	_draw_diamond(hero_center, hero_radius * 0.54, Color(accent, 0.055), 1.0)
+	_draw_audio_diamond(hero_center, hero_radius * 1.095, accent)
+
+	# Rhythm connector ties the left navigation and hero into one composition.
+	_draw_rhythm_connector(hero_center, hero_radius, accent)
+
+func _draw_edge_vignette() -> void:
+	for i in range(20):
+		var t := float(i) / 20.0
+		var h := size.y * 0.017
+		draw_rect(Rect2(0, i * h, size.x, h + 1.0), Color(0.005, 0.009, 0.017, lerpf(0.30, 0.0, t)))
+		draw_rect(Rect2(0, size.y - (i + 1) * h, size.x, h + 1.0), Color(0.005, 0.009, 0.017, lerpf(0.26, 0.0, t)))
+	# Navigation-side scrim. This is intentionally broad and borderless.
 	for i in range(18):
 		var t := float(i) / 18.0
-		var h := size.y * 0.018
-		draw_rect(Rect2(0, i * h, size.x, h + 1.0), Color(0.005, 0.010, 0.018, lerpf(0.28, 0.0, t)))
-		draw_rect(Rect2(0, size.y - (i + 1) * h, size.x, h + 1.0), Color(0.005, 0.010, 0.018, lerpf(0.24, 0.0, t)))
+		var x := size.x * 0.035 + size.x * 0.022 * float(i)
+		var w := size.x * 0.025
+		draw_rect(Rect2(x, 0.0, w, size.y), Color(0.004, 0.008, 0.015, lerpf(0.18, 0.0, t)))
 
-	var hero_center := Vector2(size.x * 0.715, size.y * 0.47)
-	var hero_radius := clampf(minf(size.x * 0.14, size.y * 0.24), 160.0, 250.0)
+func _draw_ghost_artwork(center: Vector2, hero_radius: float) -> void:
+	var main_menu := get_parent()
+	if main_menu == null:
+		return
+	var background := main_menu.get_node_or_null("MenuBackground") as TextureRect
+	var tex: Texture2D = background.texture if background != null else null
+	if tex == null:
+		return
+	var tex_size := tex.get_size()
+	if tex_size.x <= 1.0 or tex_size.y <= 1.0:
+		return
+	var side := hero_radius * 2.55
+	var dst := Rect2(center - Vector2.ONE * side * 0.5, Vector2.ONE * side)
+	var crop_side := minf(tex_size.x, tex_size.y)
+	var src := Rect2(
+		Vector2((tex_size.x - crop_side) * 0.5, (tex_size.y - crop_side) * 0.5),
+		Vector2(crop_side, crop_side)
+	)
+	draw_texture_rect_region(tex, dst, src, Color(1.0, 1.0, 1.0, 0.105))
+	# Fade the square silhouette back into the canvas with a soft dark field.
+	draw_circle(center, side * 0.54, Color(0.006, 0.012, 0.022, 0.10))
 
-	# One visual anchor: layered diamonds and an audio-reactive perimeter.
-	_draw_diamond(hero_center, hero_radius * 1.18, Color(accent, 0.050), 1.0)
-	_draw_diamond(hero_center, hero_radius, Color(accent, 0.18), 1.5)
-	_draw_diamond(hero_center, hero_radius * 0.74, Color(MinimalThemeScript.TEXT, 0.075), 1.0)
-	_draw_audio_diamond(hero_center, hero_radius * 1.03, accent)
-
-	# A restrained horizontal guide visually ties navigation to the hero without
-	# introducing another panel or artwork card.
-	var guide_y := hero_center.y
-	draw_line(Vector2(size.x * 0.34, guide_y), Vector2(hero_center.x - hero_radius * 1.25, guide_y), Color(MinimalThemeScript.TEXT, 0.045), 1.0, true)
-	draw_circle(Vector2(hero_center.x - hero_radius * 1.25, guide_y), 2.0, Color(accent, 0.36))
+func _draw_rhythm_connector(hero_center: Vector2, hero_radius: float, accent: Color) -> void:
+	var y := hero_center.y
+	var start_x := size.x * 0.335
+	var end_x := hero_center.x - hero_radius * 1.34
+	if end_x <= start_x:
+		return
+	draw_line(Vector2(start_x, y), Vector2(end_x, y), Color(MinimalThemeScript.TEXT, 0.085), 1.0, true)
+	draw_circle(Vector2(end_x, y), 2.5, Color(accent, 0.52))
+	var span := end_x - start_x
+	for i in range(1, 9):
+		var x := start_x + span * float(i) / 9.0
+		var major := i % 3 == 0
+		var tick_h := 12.0 if major else 6.0
+		var alpha := 0.16 if major else 0.085
+		draw_line(Vector2(x, y - tick_h * 0.5), Vector2(x, y + tick_h * 0.5), Color(accent, alpha), 1.0, true)
 
 func _draw_audio_diamond(center: Vector2, radius: float, accent: Color) -> void:
 	var energy_sum := 0.0
