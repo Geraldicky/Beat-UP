@@ -229,6 +229,10 @@ var album_flow_record_great_value: Label
 var album_flow_record_good_value: Label
 var album_flow_record_miss_value: Label
 var album_flow_list_header: HBoxContainer
+var album_flow_meta_line: Label
+var album_flow_prev_song_button: Button
+var album_flow_next_song_button: Button
+var album_flow_center_divider: ColorRect
 
 
 func _ready() -> void:
@@ -592,6 +596,7 @@ func _install_album_flow_song_library_layout() -> void:
 	album_flow_ambient.name = "SongLibraryAmbient"
 	album_flow_ambient.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	album_flow_ambient.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	album_flow_ambient.visible = false
 	info_panel.add_child(album_flow_ambient)
 	info_panel.move_child(album_flow_ambient, 2)
 	info_panel.move_child(info_vbox, 3)
@@ -617,6 +622,14 @@ func _install_album_flow_song_library_layout() -> void:
 	album_flow_center_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	album_flow_center_column.add_theme_constant_override("separation", 14)
 	album_flow_showcase_row.add_child(album_flow_center_column)
+
+	album_flow_center_divider = ColorRect.new()
+	album_flow_center_divider.name = "DetailColumnDivider"
+	album_flow_center_divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	album_flow_center_divider.custom_minimum_size.x = 1.0
+	album_flow_center_divider.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	album_flow_center_divider.color = Color(MinimalThemeScript.BORDER, 0.26)
+	album_flow_showcase_row.add_child(album_flow_center_divider)
 
 	album_flow_sidebar = VBoxContainer.new()
 	album_flow_sidebar.name = "AlbumFlowSidebar"
@@ -667,7 +680,8 @@ void fragment() {
 	hero_content.add_child(album_flow_artwork)
 	hero_content.move_child(album_flow_artwork, 0)
 
-	# Center-column Best Record block.
+	# Center-column Best Record block: section header, accuracy/score/rank,
+	# then judgement breakdown, matching the approved reference hierarchy.
 	album_flow_record_panel = PanelContainer.new()
 	album_flow_record_panel.name = "AlbumFlowRecordPanel"
 	album_flow_record_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -675,42 +689,72 @@ void fragment() {
 	var record_margin := MarginContainer.new()
 	record_margin.add_theme_constant_override("margin_left", 4)
 	record_margin.add_theme_constant_override("margin_right", 4)
-	record_margin.add_theme_constant_override("margin_top", 12)
+	record_margin.add_theme_constant_override("margin_top", 10)
 	record_margin.add_theme_constant_override("margin_bottom", 8)
 	album_flow_record_panel.add_child(record_margin)
-	var record_vbox := VBoxContainer.new()
-	record_vbox.add_theme_constant_override("separation", 9)
-	record_margin.add_child(record_vbox)
-	var record_header := HBoxContainer.new()
-	record_header.add_theme_constant_override("separation", 14)
-	record_vbox.add_child(record_header)
 
 	album_flow_score_cluster = VBoxContainer.new()
 	album_flow_score_cluster.name = "AlbumFlowScoreCluster"
 	album_flow_score_cluster.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	album_flow_score_cluster.add_theme_constant_override("separation", 2)
-	record_header.add_child(album_flow_score_cluster)
+	album_flow_score_cluster.add_theme_constant_override("separation", 8)
+	record_margin.add_child(album_flow_score_cluster)
+
+	var record_title_row := HBoxContainer.new()
+	record_title_row.add_theme_constant_override("separation", 12)
+	album_flow_score_cluster.add_child(record_title_row)
 	album_flow_best_caption_value = Label.new()
 	album_flow_best_caption_value.text = "BEST RECORD"
 	album_flow_best_caption_value.set_meta("album_role", "caption")
-	album_flow_score_cluster.add_child(album_flow_best_caption_value)
+	record_title_row.add_child(album_flow_best_caption_value)
+	var record_title_rule := HSeparator.new()
+	record_title_rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	record_title_rule.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	record_title_row.add_child(record_title_rule)
+	album_flow_best_combo_value = Label.new()
+	album_flow_best_combo_value.text = ""
+	album_flow_best_combo_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	album_flow_best_combo_value.set_meta("album_role", "combo_value")
+	record_title_row.add_child(album_flow_best_combo_value)
+
+	var record_metrics := HBoxContainer.new()
+	record_metrics.name = "AlbumFlowRecordMetrics"
+	record_metrics.add_theme_constant_override("separation", 18)
+	album_flow_score_cluster.add_child(record_metrics)
+
+	var accuracy_stack := VBoxContainer.new()
+	accuracy_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	accuracy_stack.add_theme_constant_override("separation", 2)
+	record_metrics.add_child(accuracy_stack)
+	var accuracy_caption := Label.new()
+	accuracy_caption.text = "ACCURACY"
+	accuracy_caption.set_meta("album_role", "metric_caption")
+	accuracy_stack.add_child(accuracy_caption)
+	album_flow_best_accuracy_value = Label.new()
+	album_flow_best_accuracy_value.text = "—"
+	album_flow_best_accuracy_value.set_meta("album_role", "accuracy_value")
+	accuracy_stack.add_child(album_flow_best_accuracy_value)
+
+	var metric_divider := VSeparator.new()
+	metric_divider.custom_minimum_size.x = 1
+	record_metrics.add_child(metric_divider)
+
+	var score_stack := VBoxContainer.new()
+	score_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	score_stack.add_theme_constant_override("separation", 2)
+	record_metrics.add_child(score_stack)
+	var score_caption := Label.new()
+	score_caption.text = "SCORE"
+	score_caption.set_meta("album_role", "metric_caption")
+	score_stack.add_child(score_caption)
 	album_flow_best_score_value = Label.new()
 	album_flow_best_score_value.text = "NO RECORD"
 	album_flow_best_score_value.set_meta("album_role", "score_value")
-	album_flow_score_cluster.add_child(album_flow_best_score_value)
-	album_flow_best_accuracy_value = Label.new()
-	album_flow_best_accuracy_value.text = "PLAY THIS CHART TO SET A SCORE"
-	album_flow_best_accuracy_value.set_meta("album_role", "accuracy_value")
-	album_flow_score_cluster.add_child(album_flow_best_accuracy_value)
-	album_flow_best_combo_value = Label.new()
-	album_flow_best_combo_value.text = ""
-	album_flow_best_combo_value.set_meta("album_role", "combo_value")
-	album_flow_score_cluster.add_child(album_flow_best_combo_value)
+	score_stack.add_child(album_flow_best_score_value)
 
 	album_flow_best_card = PanelContainer.new()
 	album_flow_best_card.name = "AlbumFlowBestCard"
 	album_flow_best_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	record_header.add_child(album_flow_best_card)
+	record_metrics.add_child(album_flow_best_card)
 	var best_margin := MarginContainer.new()
 	best_margin.add_theme_constant_override("margin_left", 10)
 	best_margin.add_theme_constant_override("margin_right", 10)
@@ -724,10 +768,12 @@ void fragment() {
 	album_flow_best_rank_value.set_meta("album_role", "rank")
 	best_margin.add_child(album_flow_best_rank_value)
 
+	var record_breakdown_rule := HSeparator.new()
+	album_flow_score_cluster.add_child(record_breakdown_rule)
 	album_flow_record_breakdown_row = HBoxContainer.new()
 	album_flow_record_breakdown_row.name = "AlbumFlowJudgementBreakdown"
 	album_flow_record_breakdown_row.add_theme_constant_override("separation", 1)
-	record_vbox.add_child(album_flow_record_breakdown_row)
+	album_flow_score_cluster.add_child(album_flow_record_breakdown_row)
 	var judgement_defs: Array = [
 		["PERFECT", MinimalThemeScript.CYAN],
 		["GREAT", MinimalThemeScript.SUCCESS],
@@ -758,18 +804,48 @@ void fragment() {
 			"MISS": album_flow_record_miss_value = value
 
 	# Right-side selected-song identity.
-	selection_index.reparent(album_flow_sidebar)
+	# Right-side selected-song identity.
+	var track_nav_row := HBoxContainer.new()
+	track_nav_row.name = "AlbumFlowTrackNav"
+	track_nav_row.add_theme_constant_override("separation", 6)
+	album_flow_sidebar.add_child(track_nav_row)
+	selection_index.reparent(track_nav_row)
+	selection_index.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	album_flow_prev_song_button = Button.new()
+	album_flow_prev_song_button.name = "PreviousSongButton"
+	album_flow_prev_song_button.text = "‹"
+	album_flow_prev_song_button.flat = true
+	album_flow_prev_song_button.focus_mode = Control.FOCUS_NONE
+	album_flow_prev_song_button.custom_minimum_size = Vector2(30, 30)
+	album_flow_prev_song_button.pressed.connect(_select_song_relative.bind(-1))
+	track_nav_row.add_child(album_flow_prev_song_button)
+	album_flow_next_song_button = Button.new()
+	album_flow_next_song_button.name = "NextSongButton"
+	album_flow_next_song_button.text = "›"
+	album_flow_next_song_button.flat = true
+	album_flow_next_song_button.focus_mode = Control.FOCUS_NONE
+	album_flow_next_song_button.custom_minimum_size = Vector2(30, 30)
+	album_flow_next_song_button.pressed.connect(_select_song_relative.bind(1))
+	track_nav_row.add_child(album_flow_next_song_button)
+
 	detail_title.reparent(album_flow_sidebar)
 	detail_meta.reparent(album_flow_sidebar)
 	detail_flavor.visible = false
 	detail_description.visible = false
 	mode_status.reparent(album_flow_sidebar)
 
+	album_flow_meta_line = Label.new()
+	album_flow_meta_line.name = "AlbumFlowMetaLine"
+	album_flow_meta_line.text = "— BPM   ·   —   ·   8K"
+	album_flow_meta_line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	album_flow_sidebar.add_child(album_flow_meta_line)
+
 	var metadata_separator := HSeparator.new()
 	metadata_separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	album_flow_sidebar.add_child(metadata_separator)
 
 	quick_stats.reparent(album_flow_sidebar)
+	quick_stats.visible = false
 	var notes_caption_label := quick_stats.get_node_or_null("NotesCard/VBox/NotesCaption") as Label
 	if notes_caption_label != null:
 		notes_caption_label.text = "MODE"
@@ -864,14 +940,17 @@ func _install_album_flow_filter_tabs() -> void:
 		var toolbar_spacer := toolbar.get_node_or_null("LibraryToolbarSpacer") as Control
 		if toolbar_spacer != null:
 			toolbar_spacer.visible = false
-		search_input.placeholder_text = "Search title or artist"
+		search_input.placeholder_text = "Search songs, artists, or tags..."
 		search_input.visible = true
+
 	filters_panel.visible = false
+	progress_filter.visible = false
 	sort_filter.visible = true
 	if composition.filter_row != null:
 		composition.filter_row.visible = false
 	if composition.chips != null:
 		composition.chips.visible = false
+
 	var wheel_header := library_box.get_node_or_null("WheelHeader") as HBoxContainer
 	if wheel_header != null:
 		album_flow_list_header = wheel_header
@@ -879,44 +958,54 @@ func _install_album_flow_filter_tabs() -> void:
 		wheel_header.custom_minimum_size.y = 28
 		var wheel_caption := wheel_header.get_node_or_null("WheelCaption") as Label
 		if wheel_caption != null:
-			wheel_caption.text = "#    TITLE"
-			wheel_caption.custom_minimum_size.x = 240
+			wheel_caption.text = "#     TITLE"
+			wheel_caption.custom_minimum_size.x = 252
 			MinimalThemeScript.apply_mono(wheel_caption, 9, Color(MinimalThemeScript.TEXT, 0.48))
 		var mode_header := wheel_header.get_node_or_null("WheelModeLabel") as Label
 		if mode_header != null:
-			mode_header.text = "ARTIST                     BPM"
+			mode_header.text = "ARTIST                    BPM"
 			MinimalThemeScript.apply_mono(mode_header, 9, Color(MinimalThemeScript.TEXT, 0.48))
 	library_hint.visible = false
 	var separator := library_box.get_node_or_null("ListSeparator") as Control
 	if separator != null:
 		separator.visible = false
+
 	album_flow_filter_tabs = HBoxContainer.new()
 	album_flow_filter_tabs.name = "AlbumFlowFilterTabs"
 	album_flow_filter_tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	album_flow_filter_tabs.add_theme_constant_override("separation", 8)
+	album_flow_filter_tabs.add_theme_constant_override("separation", 10)
 	toolbar.add_child(album_flow_filter_tabs)
+
+	# Keep the old aggregate filter object alive for compatibility, but the
+	# primary header now exposes the two filters shown in the approved mockup.
+	album_flow_filter_button = _album_flow_filter_button("FILTERS")
+	album_flow_filter_button.name = "LibraryFilterButton"
+	album_flow_filter_button.visible = false
+	album_flow_filter_button.set_meta("filter_kind", "filters")
+	album_flow_filter_button.pressed.connect(_album_flow_toggle_filters)
+	album_flow_filter_tabs.add_child(album_flow_filter_button)
+
+	artist_filter.reparent(album_flow_filter_tabs)
+	artist_filter.custom_minimum_size = Vector2(150, 40)
+	difficulty_filter.reparent(album_flow_filter_tabs)
+	difficulty_filter.custom_minimum_size = Vector2(164, 40)
+	sort_filter.reparent(album_flow_filter_tabs)
+	sort_filter.name = "LibrarySortDropdown"
+	sort_filter.custom_minimum_size = Vector2(124, 40)
+	album_flow_bpm_button = sort_filter
+
 	if composition.filter_row != null:
 		library_box.move_child(composition.filter_row, song_scroll.get_index())
 	if composition.chips != null:
 		library_box.move_child(composition.chips, song_scroll.get_index())
-	album_flow_filter_button = _album_flow_filter_button("FILTERS")
-	album_flow_filter_button.name = "LibraryFilterButton"
-	album_flow_filter_button.set_meta("filter_kind", "filters")
-	album_flow_filter_button.custom_minimum_size = Vector2(92, 42)
-	album_flow_filter_button.pressed.connect(_album_flow_toggle_filters)
-	album_flow_filter_tabs.add_child(album_flow_filter_button)
-	sort_filter.reparent(album_flow_filter_tabs)
-	sort_filter.name = "LibrarySortDropdown"
-	sort_filter.custom_minimum_size = Vector2(142, 42)
-	album_flow_bpm_button = sort_filter
-	InteractionPolishScript.install_buttons([album_flow_filter_button])
+
 	album_flow_header_spacer = Control.new()
 	album_flow_header_spacer.name = "AlbumFlowHeaderSpacer"
 	album_flow_header_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header_row.add_child(album_flow_header_spacer)
 	album_flow_list_spacer = Control.new()
 	album_flow_list_spacer.name = "AlbumFlowListTopSpacer"
-	album_flow_list_spacer.custom_minimum_size.y = 6
+	album_flow_list_spacer.custom_minimum_size.y = 4
 	library_box.add_child(album_flow_list_spacer)
 	library_box.move_child(album_flow_list_spacer, song_scroll.get_index())
 
@@ -971,6 +1060,7 @@ func _apply_album_flow_song_library_layout() -> void:
 		return
 	now_playing_card.visible = false
 	backdrop_visual.visible = true
+	backdrop_visual.modulate = Color(1.0, 1.0, 1.0, 0.27)
 	header_row.visible = true
 	for legacy_control: Control in [info_tabs, details_panel, best_card, action_row, footer_panel]:
 		legacy_control.visible = false
@@ -1000,19 +1090,19 @@ func _apply_album_flow_song_library_layout() -> void:
 	body.add_theme_constant_override("separation", 14 if compact else 18)
 	wheel_column.custom_minimum_size.x = 0
 	wheel_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	wheel_column.size_flags_stretch_ratio = 0.36
+	wheel_column.size_flags_stretch_ratio = 0.35
 	info_panel.custom_minimum_size.x = 0
 	info_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info_panel.size_flags_stretch_ratio = 0.64
+	info_panel.size_flags_stretch_ratio = 0.65
 	info_vbox.add_theme_constant_override("separation", 0)
 
 	album_flow_showcase_row.add_theme_constant_override("separation", 18 if compact else 26)
-	album_flow_center_column.size_flags_stretch_ratio = 0.48
-	album_flow_sidebar.size_flags_stretch_ratio = 0.52
-	album_flow_sidebar.custom_minimum_size.x = 300 if compact else 360
+	album_flow_center_column.size_flags_stretch_ratio = 0.56
+	album_flow_sidebar.size_flags_stretch_ratio = 0.44
+	album_flow_sidebar.custom_minimum_size.x = 300 if compact else 390
 	album_flow_sidebar.add_theme_constant_override("separation", 8 if compact else 12)
 
-	var artwork_size: float = clampf(minf(info_panel.size.x * 0.46, size.y * 0.52), 250.0, 520.0)
+	var artwork_size: float = clampf(minf(info_panel.size.x * 0.54, size.y * 0.54), 270.0, 535.0)
 	album_flow_artwork_slot.custom_minimum_size = Vector2(artwork_size, artwork_size)
 	hero_panel.custom_minimum_size = Vector2(artwork_size, artwork_size)
 	if album_flow_artwork != null and album_flow_artwork.material is ShaderMaterial:
@@ -1024,13 +1114,13 @@ func _apply_album_flow_song_library_layout() -> void:
 	album_flow_showcase_row.custom_minimum_size.y = 0
 
 	if album_flow_record_panel != null:
-		album_flow_record_panel.custom_minimum_size.y = 150 if compact else 215
+		album_flow_record_panel.custom_minimum_size.y = 148 if compact else 206
 	if album_flow_best_card != null:
-		album_flow_best_card.custom_minimum_size = Vector2(66 if compact else 86, 66 if compact else 86)
+		album_flow_best_card.custom_minimum_size = Vector2(62 if compact else 82, 62 if compact else 82)
 	if album_flow_score_cluster != null:
 		album_flow_score_cluster.custom_minimum_size.y = 72 if compact else 96
 
-	quick_stats.custom_minimum_size.y = 48 if compact else 58
+	quick_stats.custom_minimum_size.y = 0
 	for card_name in ["BpmCard", "DurationCard", "NotesCard"]:
 		var quick_card := quick_stats.get_node_or_null(card_name) as Control
 		if quick_card != null:
@@ -1048,7 +1138,7 @@ func _apply_album_flow_song_library_layout() -> void:
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	play_button.size_flags_vertical = Control.SIZE_SHRINK_END
 
-	search_input.custom_minimum_size = Vector2(0, 40)
+	search_input.custom_minimum_size = Vector2(360 if compact else 500, 40)
 	search_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	if album_flow_list_header != null:
 		album_flow_list_header.custom_minimum_size.y = 28
@@ -1077,7 +1167,7 @@ func _apply_album_flow_filter_tab_style() -> void:
 			"filters":
 				active = composition.filter_row != null and composition.filter_row.visible
 				var active_count := int(selected_artist_filter != "All Artists") + int(selected_difficulty_filter != "All Difficulties") + int(selected_progress_filter != "All Progress")
-				button.text = "FILTER" if active_count <= 0 else "FILTER · %d" % active_count
+				button.text = "FILTERS" if active_count <= 0 else "FILTERS · %d" % active_count
 		button.add_theme_color_override("font_color", MinimalThemeScript.TEXT if active else Color(MinimalThemeScript.TEXT, 0.56))
 		button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 		button.add_theme_color_override("font_pressed_color", MinimalThemeScript.ACCENT)
@@ -1095,20 +1185,20 @@ func _apply_album_flow_song_library_theme() -> void:
 		return
 
 	title_label.add_theme_font_override("font", MinimalThemeScript.display_font())
-	title_label.add_theme_font_size_override("font_size", 27)
+	title_label.add_theme_font_size_override("font_size", 21)
 	title_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	count_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	count_label.add_theme_font_size_override("font_size", 9)
 	count_label.add_theme_color_override("font_color", Color(LIBRARY_ACCENT, 0.72))
 
 	detail_title.add_theme_font_override("font", MinimalThemeScript.display_font())
-	detail_title.add_theme_font_size_override("font_size", 34)
+	detail_title.add_theme_font_size_override("font_size", 32)
 	detail_title.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	detail_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail_title.max_lines_visible = 2
-	detail_title.clip_text = true
-	detail_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	detail_title.custom_minimum_size.y = 68
+	detail_title.clip_text = false
+	detail_title.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+	detail_title.custom_minimum_size.y = 84
 	detail_meta.add_theme_font_override("font", MinimalThemeScript.body_font())
 	detail_meta.add_theme_font_size_override("font_size", 17)
 	detail_meta.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.74))
@@ -1117,6 +1207,19 @@ func _apply_album_flow_song_library_theme() -> void:
 	selection_index.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.56))
 	mode_status.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	mode_status.add_theme_font_size_override("font_size", 9)
+	if album_flow_meta_line != null:
+		MinimalThemeScript.apply_mono(album_flow_meta_line, 11, Color(MinimalThemeScript.TEXT, 0.72))
+	if album_flow_prev_song_button != null and album_flow_next_song_button != null:
+		for nav_button in [album_flow_prev_song_button, album_flow_next_song_button]:
+			nav_button.add_theme_font_override("font", MinimalThemeScript.display_font())
+			nav_button.add_theme_font_size_override("font_size", 24)
+			nav_button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.68))
+			nav_button.add_theme_color_override("font_hover_color", MinimalThemeScript.CYAN)
+			nav_button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+			nav_button.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+			nav_button.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+			nav_button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	hero_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(0, 0, 0, 0), 2, Color(MinimalThemeScript.CYAN, 0.34), 1, 0.0))
 
 	for card_name in ["BpmCard", "DurationCard", "NotesCard"]:
 		var card := quick_stats.get_node_or_null(card_name) as PanelContainer
@@ -1152,14 +1255,19 @@ func _apply_album_flow_song_library_theme() -> void:
 			var label := node as Label
 			var role := str(label.get_meta("album_role", ""))
 			match role:
+				"metric_caption":
+					label.add_theme_font_override("font", MinimalThemeScript.mono_font())
+					label.add_theme_font_size_override("font_size", 9)
+					label.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.50))
 				"score_value":
 					label.add_theme_font_override("font", MinimalThemeScript.semibold_font())
-					label.add_theme_font_size_override("font_size", 28)
+					label.add_theme_font_size_override("font_size", 27)
 					label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 				"accuracy_value":
 					label.add_theme_font_override("font", MinimalThemeScript.medium_font())
-					label.add_theme_font_size_override("font_size", 12)
-					label.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.76))
+					label.add_theme_font_override("font", MinimalThemeScript.semibold_font())
+					label.add_theme_font_size_override("font_size", 27)
+					label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 				"combo_value":
 					label.add_theme_font_override("font", MinimalThemeScript.mono_font())
 					label.add_theme_font_size_override("font_size", 10)
@@ -1169,6 +1277,10 @@ func _apply_album_flow_song_library_theme() -> void:
 					label.add_theme_font_size_override("font_size", 10)
 					label.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.62))
 
+	for header_filter in [artist_filter, difficulty_filter, sort_filter]:
+		header_filter.add_theme_font_override("font", MinimalThemeScript.mono_font())
+		header_filter.add_theme_font_size_override("font_size", 10)
+		header_filter.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.78))
 	_style_album_play_button()
 	_style_album_secondary_chip(album_flow_random_button, random_mode_enabled, MinimalThemeScript.PINK)
 	_style_album_secondary_chip(practice_button, false, LIBRARY_ACCENT)
@@ -1252,12 +1364,13 @@ func _refresh_album_flow_best_card(chart: Dictionary) -> void:
 	var has_record := not entry.is_empty() and int(entry.get("score", 0)) > 0
 	album_flow_best_caption_value.text = "BEST RECORD"
 	album_flow_best_rank_value.text = str(entry.get("best_rank", entry.get("rank", ""))) if has_record else ""
+	album_flow_best_card.visible = has_record
 	var score_value := int(entry.get("score", 0))
 	album_flow_best_score_value.text = _format_album_flow_score(score_value) if has_record else "NO RECORD"
 	var combo_value := int(entry.get("best_max_combo", entry.get("max_combo", 0)))
 	var accuracy_value := float(entry.get("best_accuracy", entry.get("accuracy", 0.0)))
-	album_flow_best_accuracy_value.text = ("%.2f%%  ACCURACY" % accuracy_value) if has_record else "PLAY THIS CHART TO SET A SCORE"
-	album_flow_best_combo_value.text = ("MAX COMBO  %d" % combo_value) if has_record and combo_value > 0 else ""
+	album_flow_best_accuracy_value.text = ("%.2f%%" % accuracy_value) if has_record else "—"
+	album_flow_best_combo_value.text = ("MAX COMBO  %d" % combo_value) if has_record and combo_value > 0 else "PLAY THIS CHART TO SET A SCORE"
 	if album_flow_record_breakdown_row != null:
 		album_flow_record_breakdown_row.visible = has_record
 	if album_flow_record_perfect_value != null:
@@ -1785,8 +1898,23 @@ func _style_album_difficulty_button(button: Button, selected: bool, available: b
 		button.add_theme_stylebox_override(pair[0], pair[1])
 	button.modulate.a = 1.0 if available else 0.38
 
+func _set_album_flow_play_text(label_text: String) -> void:
+	if play_button == null:
+		return
+	play_button.text = "◇     PLAY     →" if label_text == "PLAY" else label_text
+
+func _select_song_relative(delta: int) -> void:
+	if filtered_song_ids.is_empty():
+		return
+	var current_index := filtered_song_ids.find(selected_song_id)
+	if current_index < 0:
+		current_index = 0
+	current_index = wrapi(current_index + delta, 0, filtered_song_ids.size())
+	_select_song(filtered_song_ids[current_index])
+
 func _style_album_play_button() -> void:
-	play_button.text = "PLAY" if not play_button.disabled else play_button.text
+	if not play_button.disabled:
+		_set_album_flow_play_text("PLAY")
 	var normal := MinimalThemeScript.button_style(Color(MinimalThemeScript.BG, 0.84), Color(MinimalThemeScript.CYAN, 0.82), 5)
 	var hover := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE_RAISED, 0.90), MinimalThemeScript.CYAN, 5)
 	var pressed := MinimalThemeScript.button_style(Color(MinimalThemeScript.CYAN, 0.16), MinimalThemeScript.CYAN, 5)
@@ -1800,7 +1928,7 @@ func _style_album_play_button() -> void:
 	play_button.add_theme_stylebox_override("focus", hover)
 	play_button.add_theme_stylebox_override("disabled", disabled)
 	play_button.add_theme_font_override("font", MinimalThemeScript.display_font())
-	play_button.add_theme_font_size_override("font_size", 25)
+	play_button.add_theme_font_size_override("font_size", 23)
 	play_button.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	play_button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 	play_button.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
@@ -2236,9 +2364,10 @@ func _rebuild_song_list() -> void:
 		song_buttons.append(button)
 	var totals := _completion_totals()
 	count_label.text = "SONG LIBRARY"
-	wheel_mode_label.text = "%d TRACK%s" % [song_ids.size(), "" if song_ids.size() == 1 else "S"]
+	wheel_mode_label.text = "ARTIST                    BPM" if is_album_flow_library_layout_active() else "%d TRACK%s" % [song_ids.size(), "" if song_ids.size() == 1 else "S"]
 	library_hint.text = "%d VISIBLE  ·  %d CLEARED" % [filtered_song_ids.size(), totals[0]]
 	_refresh_song_rows(false)
+	call_deferred("_center_selected_row", false)
 
 func _populate_song_header_button(button: Button, index: int, rep: Dictionary, song_id: String) -> void:
 	var content := MarginContainer.new()
@@ -2749,7 +2878,7 @@ func _update_detail(animated: bool = true) -> void:
 		best_grid.visible = false
 		rank_label.visible = false
 		play_button.disabled = true
-		play_button.text = "NO PLAYABLE CHART"
+		_set_album_flow_play_text("NO PLAYABLE CHART")
 		footer_status.text = ""
 		footer_status.add_theme_color_override("font_color", MinimalThemeScript.MUTED)
 		preview_player.stop_immediately()
@@ -2803,6 +2932,8 @@ func _update_detail(animated: bool = true) -> void:
 	bpm_value.text = str(bpm)
 	duration_value.text = _format_duration(duration)
 	notes_value.text = "4 KEY" if UserSettingsScript.get_input_style() == "4_arrow" else "8 KEY"
+	if album_flow_meta_line != null:
+		album_flow_meta_line.text = "%d BPM   ·   %s   ·   %s" % [bpm, _format_duration(duration), "4K" if UserSettingsScript.get_input_style() == "4_arrow" else "8K"]
 	_update_chart_breakdown(chart, events_value, input_mode_label, stars, recommendation, standard_progress, chart_playable)
 	ranking_context.text = ""
 	ranking_context.visible = false
@@ -2829,7 +2960,7 @@ func _update_detail(animated: bool = true) -> void:
 	_refresh_album_flow_best_card(chart)
 	_update_album_flow_modifier_state()
 	play_button.disabled = not chart_playable
-	play_button.text = "PLAY" if chart_playable else ("AUDIO MISSING" if not RuntimeResourceAccessScript.audio_exists(str(chart.get("audio", ""))) else "INVALID CHART")
+	_set_album_flow_play_text("PLAY" if chart_playable else ("AUDIO MISSING" if not RuntimeResourceAccessScript.audio_exists(str(chart.get("audio", ""))) else "INVALID CHART"))
 	if practice_button != null:
 		var sections_value_v18: Variant = chart.get("sections", [])
 		practice_button.disabled = (not chart_playable) or not (sections_value_v18 is Array) or (sections_value_v18 as Array).is_empty()
@@ -3556,7 +3687,7 @@ func show_playback_error(message: String) -> void:
 	footer_panel.modulate.a = 1.0
 	_unlock_navigation_controls(false)
 	play_button.disabled = true
-	play_button.text = "AUDIO UNAVAILABLE"
+	_set_album_flow_play_text("AUDIO UNAVAILABLE")
 	mode_status.visible = true
 	mode_status.text = "AUDIO ERROR"
 	mode_status.add_theme_color_override("font_color", MinimalThemeScript.DANGER)
