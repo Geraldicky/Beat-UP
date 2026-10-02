@@ -47,7 +47,7 @@ func _apply_album_flow_structure() -> void:
 	var main_menu := get_parent()
 	if main_menu == null:
 		return
-	for node_name in ["MenuBackground", "MenuDim", "MenuTitle", "MenuRule", "NowPlayingCard", "OrbCluster"]:
+	for node_name in ["MenuBackground", "MenuDim", "MenuTitle", "MenuRule", "NowPlayingCard", "OrbCluster", "MenuVersion"]:
 		var node := main_menu.get_node_or_null(node_name) as CanvasItem
 		if node != null:
 			node.show()
