@@ -537,8 +537,8 @@ func _apply_layout_config() -> void:
 	# Main Menu composition: one left navigation rail, one right-side Beat UP!
 	# hero diamond, and one bottom Now Playing rail. Song artwork stays full-bleed
 	# behind the composition instead of competing as a second foreground card.
-	var hero_size: float = clampf(minf(viewport_size.x * 0.28, viewport_size.y * 0.48), 320.0, 500.0)
-	var hero_center := Vector2(viewport_size.x * 0.715, viewport_size.y * 0.47)
+	var hero_size: float = clampf(minf(viewport_size.x * 0.33, viewport_size.y * 0.56), 360.0, 560.0)
+	var hero_center := Vector2(viewport_size.x * 0.685, viewport_size.y * 0.455)
 	orb_cluster.visible = true
 	orb_cluster.position = hero_center - Vector2.ONE * hero_size * 0.5
 	orb_cluster.size = Vector2.ONE * hero_size
@@ -554,20 +554,20 @@ func _apply_layout_config() -> void:
 	selection_index.visible = false
 
 	# The wordmark belongs to the hero, not to a separate top-left composition.
-	var title_width: float = hero_size * 0.72
-	var title_height: float = clampf(hero_size * 0.19, 64.0, 98.0)
+	var title_width: float = hero_size * 0.68
+	var title_height: float = clampf(hero_size * 0.17, 66.0, 102.0)
 	menu_title.position = hero_center - Vector2(title_width * 0.5, title_height * 0.5)
 	menu_title.size = Vector2(title_width, title_height)
 	menu_title.pivot_offset = menu_title.size * 0.5
 
 	# Text-first navigation. Selection is carried by the moving rule and type,
 	# not by a permanent rectangle.
-	var rail_width: float = clampf(viewport_size.x * 0.18, 260.0, 330.0)
+	var rail_width: float = clampf(viewport_size.x * 0.175, 260.0, 320.0)
 	var item_height: float = clampf(45.0 * reference_scale, float(MinimalThemeScript.MIN_ACTION_HEIGHT), 49.0)
 	var play_height: float = clampf(58.0 * reference_scale, 54.0, 64.0)
 	var item_gap: int = roundi(clampf(5.0 * reference_scale, 4.0, 7.0))
 	var rail_x: float = margin
-	var rail_y: float = clampf(viewport_size.y * 0.34, 238.0, 366.0)
+	var rail_y: float = clampf(viewport_size.y * 0.315, 224.0, 340.0)
 	var rail_height: float = play_height + item_height * float(menu_buttons.size() - 1) + float(item_gap) * float(menu_buttons.size() - 1)
 	menu_stack.custom_minimum_size = Vector2(rail_width, 0.0)
 	menu_stack.size = Vector2(rail_width, rail_height)
@@ -681,19 +681,19 @@ func _apply_theme() -> void:
 	menu_version.add_theme_font_size_override("font_size", 11)
 	menu_version.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.54))
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.34), 0, Color(MinimalThemeScript.TEXT, 0.12), 1, 0.0))
+	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.24), 0, Color(MinimalThemeScript.TEXT, 0.085), 1, 0.0))
 	MinimalThemeScript.apply_mono(now_playing_kicker, 9, Color(MinimalThemeScript.ACCENT, 0.92))
 	now_playing_kicker.add_theme_font_size_override("font_size", 9)
 	MinimalThemeScript.apply_heading(now_playing_title, 16, MinimalThemeScript.TEXT)
 	now_playing_title.add_theme_font_size_override("font_size", 16)
 	now_playing_title.clip_text = true
 	now_playing_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_title.custom_minimum_size.x = 132.0
+	now_playing_title.custom_minimum_size.x = 238.0
 	MinimalThemeScript.apply_body(now_playing_artist, 11, Color(1.0, 1.0, 1.0, 0.72))
 	now_playing_artist.add_theme_font_override("font", MinimalThemeScript.medium_font())
 	now_playing_artist.clip_text = true
 	now_playing_artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_artist.custom_minimum_size.x = 92.0
+	now_playing_artist.custom_minimum_size.x = 138.0
 	MinimalThemeScript.apply_mono(duration_value, 10, Color(1.0, 1.0, 1.0, 0.74))
 	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.10), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
 	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.86), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
@@ -830,11 +830,11 @@ func _style_main_menu_button(button: Button, index: int) -> void:
 	normal_style.content_margin_right = 14.0
 
 	var hover_style: StyleBoxFlat = normal_style.duplicate() as StyleBoxFlat
-	hover_style.bg_color = Color(accent, 0.065)
+	hover_style.bg_color = Color(accent, 0.032)
 	var pressed_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	pressed_style.bg_color = Color(accent, 0.11)
+	pressed_style.bg_color = Color(accent, 0.060)
 	var focus_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	focus_style.bg_color = Color(accent, 0.085)
+	focus_style.bg_color = Color(accent, 0.026)
 
 	button.add_theme_stylebox_override("normal", normal_style)
 	button.add_theme_stylebox_override("hover", hover_style)
