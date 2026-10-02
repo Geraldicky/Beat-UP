@@ -686,7 +686,7 @@ func _apply_theme() -> void:
 	menu_version.add_theme_font_size_override("font_size", 11)
 	menu_version.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.54))
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.54), 12, Color(MinimalThemeScript.TEXT, 0.10), 1, 0.0))
+	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.62), 12, Color(MinimalThemeScript.ACCENT_LIGHT, 0.20), 1, 0.0))
 	MinimalThemeScript.apply_mono(now_playing_kicker, 9, Color(MinimalThemeScript.ACCENT, 0.92))
 	now_playing_kicker.add_theme_font_size_override("font_size", 9)
 	now_playing_kicker.visible = true
@@ -695,12 +695,12 @@ func _apply_theme() -> void:
 	now_playing_title.add_theme_font_size_override("font_size", 16)
 	now_playing_title.clip_text = true
 	now_playing_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_title.custom_minimum_size.x = 238.0
+	now_playing_title.custom_minimum_size.x = 310.0
 	MinimalThemeScript.apply_body(now_playing_artist, 11, Color(1.0, 1.0, 1.0, 0.72))
 	now_playing_artist.add_theme_font_override("font", MinimalThemeScript.medium_font())
 	now_playing_artist.clip_text = true
 	now_playing_artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_artist.custom_minimum_size.x = 138.0
+	now_playing_artist.custom_minimum_size.x = 132.0
 	MinimalThemeScript.apply_mono(duration_value, 10, Color(1.0, 1.0, 1.0, 0.74))
 	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.10), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
 	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.86), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
@@ -825,10 +825,6 @@ func _style_main_menu_button(button: Button, _index: int) -> void:
 	button.add_theme_font_size_override("font_size", 11 if is_utility else theme_config.button_size + (6 if is_primary else 1))
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT if not is_utility else HORIZONTAL_ALIGNMENT_CENTER
 
-	# Three-level action hierarchy:
-	# 1) PLAY is a contained glass action with a crisp accent frame.
-	# 2) Core secondary actions use a quiet dark rail with an accent underline.
-	# 3) Utility links stay lightweight and borderless.
 	var normal_style := StyleBoxFlat.new()
 	var hover_style := StyleBoxFlat.new()
 	var pressed_style := StyleBoxFlat.new()
@@ -837,17 +833,17 @@ func _style_main_menu_button(button: Button, _index: int) -> void:
 	if is_primary:
 		for style in [normal_style, hover_style, pressed_style, focus_style]:
 			style.set_corner_radius_all(12)
-			style.content_margin_left = 22.0
-			style.content_margin_right = 20.0
+			style.content_margin_left = 54.0
+			style.content_margin_right = 46.0
 			style.set_border_width_all(1)
-		normal_style.bg_color = Color(MinimalThemeScript.BG, 0.74)
-		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.52)
-		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.84)
-		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.82)
-		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.90)
-		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.96)
-		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.82)
-		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.92)
+		normal_style.bg_color = Color(MinimalThemeScript.BG, 0.78)
+		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.72)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.88)
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.96)
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.94)
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 1.0)
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.88)
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 1.0)
 		button.text = "PLAY"
 	elif is_utility:
 		for style in [normal_style, hover_style, pressed_style, focus_style]:
@@ -856,27 +852,28 @@ func _style_main_menu_button(button: Button, _index: int) -> void:
 			style.content_margin_left = 8.0
 			style.content_margin_right = 8.0
 		hover_style.border_width_bottom = 1
-		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.50)
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.52)
 		pressed_style.border_width_bottom = 1
-		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.72)
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.78)
 		focus_style.border_width_bottom = 1
-		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.72)
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.78)
 	else:
+		# Secondary actions are text-first rails, not stacked cards.
 		for style in [normal_style, hover_style, pressed_style, focus_style]:
-			style.set_corner_radius_all(8)
-			style.content_margin_left = 18.0
-			style.content_margin_right = 16.0
+			style.set_corner_radius_all(4)
+			style.content_margin_left = 10.0
+			style.content_margin_right = 42.0
 			style.border_width_bottom = 1
-		normal_style.bg_color = Color(MinimalThemeScript.BG, 0.34)
-		normal_style.border_color = Color(MinimalThemeScript.TEXT, 0.18)
-		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.52)
-		hover_style.border_color = Color(accent, 0.60)
+		normal_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+		normal_style.border_color = Color(MinimalThemeScript.TEXT, 0.26)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.14)
+		hover_style.border_color = Color(accent, 0.64)
 		hover_style.border_width_bottom = 2
-		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.62)
-		pressed_style.border_color = Color(accent, 0.78)
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.22)
+		pressed_style.border_color = Color(accent, 0.84)
 		pressed_style.border_width_bottom = 2
-		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.50)
-		focus_style.border_color = Color(accent, 0.78)
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.18)
+		focus_style.border_color = Color(accent, 0.84)
 		focus_style.border_width_bottom = 2
 
 	button.add_theme_stylebox_override("normal", normal_style)
@@ -884,14 +881,72 @@ func _style_main_menu_button(button: Button, _index: int) -> void:
 	button.add_theme_stylebox_override("pressed", pressed_style)
 	button.add_theme_stylebox_override("focus", focus_style)
 
-	var normal_color := Color(MinimalThemeScript.TEXT, 0.96 if is_primary else (0.68 if is_utility else 0.86))
+	var normal_color := Color(MinimalThemeScript.TEXT, 0.98 if is_primary else (0.78 if is_utility else 0.92))
 	if is_exit:
-		normal_color = Color(MinimalThemeScript.TEXT, 0.80)
+		normal_color = Color(MinimalThemeScript.TEXT, 0.86)
 	button.add_theme_color_override("font_color", normal_color)
 	button.add_theme_color_override("font_hover_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
 	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
 	button.add_theme_color_override("font_focus_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
 	button.add_theme_color_override("font_hover_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+
+	_ensure_main_menu_action_decorations(button, is_primary, is_utility)
+
+func _ensure_main_menu_action_decorations(button: Button, is_primary: bool, is_utility: bool) -> void:
+	var glyph := button.get_node_or_null("ActionGlyph") as Label
+	var chevron := button.get_node_or_null("ActionChevron") as Label
+
+	if is_utility:
+		if glyph != null:
+			glyph.visible = false
+		if chevron != null:
+			chevron.visible = false
+		return
+
+	if chevron == null:
+		chevron = Label.new()
+		chevron.name = "ActionChevron"
+		chevron.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(chevron)
+	chevron.visible = true
+	chevron.text = "›"
+	chevron.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	chevron.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	chevron.anchor_left = 1.0
+	chevron.anchor_right = 1.0
+	chevron.anchor_top = 0.5
+	chevron.anchor_bottom = 0.5
+	chevron.offset_left = -34.0
+	chevron.offset_right = -12.0
+	chevron.offset_top = -14.0
+	chevron.offset_bottom = 14.0
+	chevron.add_theme_font_override("font", MinimalThemeScript.medium_font())
+	chevron.add_theme_font_size_override("font_size", 22 if is_primary else 18)
+	chevron.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.88 if is_primary else 0.70))
+
+	if is_primary:
+		if glyph == null:
+			glyph = Label.new()
+			glyph.name = "ActionGlyph"
+			glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			button.add_child(glyph)
+		glyph.visible = true
+		glyph.text = "◆"
+		glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		glyph.anchor_left = 0.0
+		glyph.anchor_right = 0.0
+		glyph.anchor_top = 0.5
+		glyph.anchor_bottom = 0.5
+		glyph.offset_left = 18.0
+		glyph.offset_right = 38.0
+		glyph.offset_top = -12.0
+		glyph.offset_bottom = 12.0
+		glyph.add_theme_font_override("font", MinimalThemeScript.medium_font())
+		glyph.add_theme_font_size_override("font_size", 13)
+		glyph.add_theme_color_override("font_color", Color(MinimalThemeScript.ACCENT_LIGHT, 0.98))
+	elif glyph != null:
+		glyph.visible = false
 
 func _setup_display_controls() -> void:
 	resolution_values.clear()
