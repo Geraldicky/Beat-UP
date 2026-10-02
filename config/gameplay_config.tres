@@ -1,0 +1,30 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://config/gameplay_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+perfect_window = 0.035
+great_window = 0.06
+good_window = 0.09
+space_perfect_window = 0.06
+space_great_window = 0.11
+space_good_window = 0.17
+space_approach_time = 0.8
+perfect_score = 120
+great_score = 95
+good_score = 70
+reverse_score_bonus = 35
+space_base_score = 250
+space_perfect_multiplier = 1.2
+space_great_multiplier = 1.0
+space_good_multiplier = 0.8
+score_scale_multiplier = 13.0
+combo_thresholds = PackedInt32Array(10, 25, 50, 100, 200)
+combo_multipliers = PackedFloat32Array(1.25, 1.5, 2.0, 2.5, 3.0)
+scroll_speed_multiplier = 1.0
+reference_bpm = 120.0
+base_travel_time = 1.8
+bpm_speed_influence = 1.8
+minimum_travel_time = 0.5
+maximum_travel_time = 2.6

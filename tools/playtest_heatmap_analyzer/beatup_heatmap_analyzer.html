@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beat UP! Playtest Heatmap Analyzer</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #121a2f;
+      --panel-2: #18233d;
+      --line: #2c3756;
+      --text: #ebf0ff;
+      --muted: #a7b4d6;
+      --accent: #7dd3fc;
+      --perfect: #f472b6;
+      --great: #34d399;
+      --good: #22d3ee;
+      --miss: #f87171;
+      --warning: #fbbf24;
+      --shadow: 0 12px 30px rgba(0,0,0,0.35);
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #0b1020 0%, #0e1528 50%, #0b1020 100%);
+      color: var(--text);
+    }
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1, h2, h3, h4, p { margin: 0; }
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .hero-card, .panel {
+      background: rgba(18, 26, 47, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+    .hero-card {
+      padding: 20px 22px;
+      flex: 1 1 720px;
+    }
+    .hero h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+    .sub {
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 1000px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(125, 211, 252, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(125, 211, 252, 0.24);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .controls {
+      grid-template-columns: 1.3fr 1fr;
+      margin-bottom: 16px;
+    }
+    .panel {
+      padding: 18px;
+    }
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .controls .row,
+    .filter-grid,
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 180px;
+      flex: 1 1 180px;
+    }
+    .field label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    select, input[type="file"], button {
+      background: #0e162a;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 14px;
+    }
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+    }
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      border-color: #4b5d87;
+      background: #101c33;
+    }
+    .summary-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: rgba(24, 35, 61, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 108px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .stat-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .two-col {
+      grid-template-columns: 2fr 1fr;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    .heatmap-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .heatmap-scroll {
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .heatmap-stack {
+      min-width: fit-content;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .heatmap-row {
+      display: grid;
+      grid-template-columns: 260px auto;
+      gap: 12px;
+      align-items: start;
+    }
+    .heatmap-label {
+      min-height: 82px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(14, 22, 42, 0.75);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+    .heatmap-label .title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .heatmap-label .meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .cell-track {
+      display: flex;
+      gap: 5px;
+      align-items: flex-end;
+      min-height: 82px;
+      padding-top: 4px;
+    }
+    .cell-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .cell {
+      width: 18px;
+      height: 64px;
+      border-radius: 7px;
+      border: 1px solid #32405f;
+      background: rgba(7, 11, 24, 0.9);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+    .cell:hover {
+      border-color: #9fb6ff;
+      transform: translateY(-1px);
+    }
+    .cell.selected {
+      border-color: #ffffff;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
+    }
+    .stack-fill {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column-reverse;
+    }
+    .seg { width: 100%; }
+    .time-label {
+      font-size: 10px;
+      color: var(--muted);
+      min-height: 12px;
+      white-space: nowrap;
+    }
+    .empty-note {
+      color: var(--muted);
+      font-size: 14px;
+      padding: 18px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      background: rgba(14, 22, 42, 0.55);
+    }
+    .detail-panel h3,
+    .table-panel h3 {
+      margin-bottom: 12px;
+      font-size: 17px;
+    }
+    .detail-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .detail-item {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(14, 22, 42, 0.75);
+      border: 1px solid var(--line);
+    }
+    .detail-item .k {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+    .detail-item .v {
+      font-size: 19px;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead th {
+      text-align: left;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    tbody td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(44, 55, 86, 0.7);
+      vertical-align: top;
+    }
+    tbody tr:hover {
+      background: rgba(24, 35, 61, 0.45);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(14, 22, 42, 0.7);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .muted { color: var(--muted); }
+    .foot {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 14px;
+    }
+    .ok { color: var(--great); }
+    .warn { color: var(--warning); }
+    .bad { color: var(--miss); }
+    .info { color: var(--accent); }
+    @media (max-width: 1100px) {
+      .controls, .two-col { grid-template-columns: 1fr; }
+      .heatmap-row { grid-template-columns: 1fr; }
+      .heatmap-label { min-height: auto; }
+    }
+    @media (max-width: 700px) {
+      .page { padding: 14px; }
+      .detail-list { grid-template-columns: 1fr; }
+      .cell { width: 16px; }
+      .heatmap-row { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="hero">
+      <div class="hero-card">
+        <div class="pill">Beat UP! • Playtest Heatmap Analyzer • v17.4.15</div>
+        <h1>Playtest Heatmap Analyzer</h1>
+        <p class="sub">
+          Load one or more telemetry session JSON files from <strong>user://playtest_data/sessions/</strong>.
+          This tool helps you see which songs and sections cause the most MISS / GOOD / GREAT / PERFECT,
+          with a timeline heatmap, hotspot list, and per-session summary.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid controls">
+      <div class="panel">
+        <h2>1) Load session files</h2>
+        <div class="grid" style="gap:12px;">
+          <div class="field">
+            <label>Select one or more JSON files</label>
+            <input id="fileInput" type="file" accept=".json,application/json" multiple />
+          </div>
+          <div class="field">
+            <label>Or select a whole sessions folder (Chrome / Edge)</label>
+            <input id="folderInput" type="file" accept=".json,application/json" multiple webkitdirectory />
+          </div>
+          <div class="action-row">
+            <button id="clearButton" type="button">Clear Loaded Sessions</button>
+                      </div>
+          <div class="foot">
+            Tip: on Windows, your files are usually under <strong>%APPDATA%\Godot\app_userdata\Beat UP!\playtest_data\sessions</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>2) Filters</h2>
+        <div class="filter-grid">
+          <div class="field">
+            <label>Song</label>
+            <select id="songFilter"></select>
+          </div>
+          <div class="field">
+            <label>Difficulty</label>
+            <select id="difficultyFilter"></select>
+          </div>
+          <div class="field">
+            <label>Session</label>
+            <select id="sessionFilter"></select>
+          </div>
+          <div class="field">
+            <label>Bin size</label>
+            <select id="binSizeFilter">
+              <option value="2">2 sec</option>
+              <option value="3" selected>3 sec</option>
+              <option value="5">5 sec</option>
+              <option value="10">10 sec</option>
+            </select>
+          </div>
+        </div>
+        <div class="foot" id="filterStatus">No session loaded yet.</div>
+      </div>
+    </div>
+
+    <div id="summaryGrid" class="grid summary-grid"></div>
+
+    <div class="grid two-col">
+      <div class="panel">
+        <div class="heatmap-toolbar">
+          <div>
+            <h2>Timeline heatmap</h2>
+            <div class="foot" id="heatmapSubtitle">Choose a song to inspect its timeline.</div>
+          </div>
+          <div class="legend">
+            <span class="legend-item"><span class="swatch" style="background:var(--perfect)"></span>Perfect</span>
+            <span class="legend-item"><span class="swatch" style="background:var(--great)"></span>Great</span>
+            <span class="legend-item"><span class="swatch" style="background:var(--good)"></span>Good</span>
+            <span class="legend-item"><span class="swatch" style="background:var(--miss)"></span>Miss</span>
+          </div>
+        </div>
+        <div class="heatmap-scroll">
+          <div id="heatmapArea" class="heatmap-stack"></div>
+        </div>
+        <div class="foot">
+          Each column is a time bin. Taller cells mean denser sections. The color stack inside a cell shows judgement composition.
+          Click a cell to inspect its details.
+        </div>
+      </div>
+
+      <div class="panel detail-panel">
+        <h3>Selected bin details</h3>
+        <div id="detailContent" class="empty-note">Click any heatmap cell to inspect that section.</div>
+      </div>
+    </div>
+
+    <div class="grid two-col">
+      <div class="panel table-panel">
+        <h3>Hotspot list</h3>
+        <div id="hotspotTableWrap"></div>
+      </div>
+      <div class="panel table-panel">
+        <h3>Loaded session summary</h3>
+        <div id="songSummaryWrap"></div>
+      </div>
+    </div>
+
+    <div class="panel table-panel">
+      <h3>Loaded sessions</h3>
+      <div id="sessionTableWrap"></div>
+    </div>
+  </div>
+
+  <script>
+    const appState = {
+      sessions: [],
+      selectedSongId: 'ALL',
+      selectedDifficulty: 'ALL',
+      selectedSessionId: 'ALL',
+      binSizeSec: 3,
+      selectedCellKey: '',
+    };
+
+    const ui = {
+      fileInput: document.getElementById('fileInput'),
+      folderInput: document.getElementById('folderInput'),
+      clearButton: document.getElementById('clearButton'),
+      songFilter: document.getElementById('songFilter'),
+      difficultyFilter: document.getElementById('difficultyFilter'),
+      sessionFilter: document.getElementById('sessionFilter'),
+      binSizeFilter: document.getElementById('binSizeFilter'),
+      filterStatus: document.getElementById('filterStatus'),
+      summaryGrid: document.getElementById('summaryGrid'),
+      heatmapArea: document.getElementById('heatmapArea'),
+      heatmapSubtitle: document.getElementById('heatmapSubtitle'),
+      detailContent: document.getElementById('detailContent'),
+      hotspotTableWrap: document.getElementById('hotspotTableWrap'),
+      songSummaryWrap: document.getElementById('songSummaryWrap'),
+      sessionTableWrap: document.getElementById('sessionTableWrap'),
+    };
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function fmtNumber(value, digits = 0) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return '—';
+      return num.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    }
+
+    function fmtPercent(value, digits = 2) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return '—';
+      return `${num.toFixed(digits)}%`;
+    }
+
+    function fmtMs(value, digits = 1) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return '—';
+      const sign = num > 0 ? '+' : '';
+      return `${sign}${num.toFixed(digits)} ms`;
+    }
+
+    function fmtTimeFromMs(ms) {
+      const safe = Math.max(0, Number(ms) || 0);
+      const totalSeconds = safe / 1000;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = Math.floor(totalSeconds % 60);
+      const centiseconds = Math.floor((totalSeconds - Math.floor(totalSeconds)) * 100);
+      return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}.${String(centiseconds).padStart(2,'0')}`;
+    }
+
+    function median(values) {
+      const arr = values.filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+      if (!arr.length) return null;
+      const mid = Math.floor(arr.length / 2);
+      return arr.length % 2 === 0 ? (arr[mid - 1] + arr[mid]) / 2 : arr[mid];
+    }
+
+    function mean(values) {
+      const arr = values.filter((v) => Number.isFinite(v));
+      if (!arr.length) return null;
+      return arr.reduce((sum, v) => sum + v, 0) / arr.length;
+    }
+
+    function normalizeEvent(raw) {
+      return {
+        kind: String(raw.kind || 'note').toLowerCase(),
+        noteType: String(raw.note_type || '').toLowerCase(),
+        expectedInput: String(raw.expected_input || ''),
+        displayedInput: String(raw.displayed_input || ''),
+        playerInput: String(raw.player_input || ''),
+        judgement: String(raw.judgement || 'MISS').toUpperCase(),
+        targetTimeMs: Number(raw.target_time_ms ?? 0),
+        inputTimeMs: raw.input_time_ms == null ? null : Number(raw.input_time_ms),
+        timingErrorMs: raw.timing_error_ms == null ? null : Number(raw.timing_error_ms),
+        automatic: Boolean(raw.automatic),
+        reason: String(raw.reason || ''),
+        comboAfter: Number(raw.combo_after ?? 0),
+        scoreAfter: Number(raw.score_after ?? 0),
+        authoredDirection: raw.authored_direction == null ? null : Number(raw.authored_direction),
+      };
+    }
+
+    function normalizeSession(raw, sourceName) {
+      const song = raw.song || {};
+      const result = raw.result || {};
+      const expected = raw.expected || {};
+      const integrity = raw.integrity || {};
+      const events = Array.isArray(raw.events) ? raw.events.map(normalizeEvent).sort((a, b) => a.targetTimeMs - b.targetTimeMs) : [];
+      const maxTargetMs = events.reduce((max, e) => Math.max(max, Number(e.targetTimeMs) || 0), 0);
+      const durationS = Number(song.duration_s ?? 0);
+      const derivedDurationS = durationS > 0 ? durationS : (maxTargetMs / 1000);
+      const noteEvents = events.filter((e) => e.kind === 'note');
+      const spaceEvents = events.filter((e) => e.kind === 'space');
+      const reverseEvents = noteEvents.filter((e) => e.noteType === 'reverse');
+      const successfulHits = events.filter((e) => e.judgement !== 'MISS' && Number.isFinite(e.timingErrorMs));
+
+      return {
+        sourceName,
+        sessionId: String(raw.session_id || sourceName),
+        status: String(raw.status || 'unknown'),
+        abortReason: String(raw.abort_reason || ''),
+        appVersion: String(raw.app_version || 'unknown'),
+        buildChannel: String(raw.build_channel || 'unknown'),
+        schemaVersion: Number(raw.schema_version ?? 0),
+        startedAtUnixMs: Number(raw.started_at_unix_ms ?? 0),
+        completedAtUnixMs: Number(raw.completed_at_unix_ms ?? 0),
+        pauseCount: Number(raw.pause_count ?? 0),
+        songId: String(song.song_id || 'unknown-song'),
+        title: String(song.title || 'Unknown Song'),
+        artist: String(song.artist || 'Unknown Artist'),
+        difficulty: String(song.difficulty_label || song.difficulty || 'UNKNOWN').toUpperCase(),
+        difficultyRaw: String(song.difficulty || '').toLowerCase(),
+        bpm: Number(song.bpm ?? 0),
+        starRating: Number(song.star_rating ?? 0),
+        durationS: derivedDurationS,
+        durationMs: Math.max(maxTargetMs, Math.round(derivedDurationS * 1000)),
+        accuracy: Number(result.accuracy ?? NaN),
+        rank: String(result.rank || '—'),
+        rankSub: String(result.rank_sub || ''),
+        score: Number(result.score ?? 0),
+        perfect: Number(result.perfect ?? 0),
+        great: Number(result.great ?? 0),
+        good: Number(result.good ?? 0),
+        miss: Number(result.miss ?? 0),
+        maxCombo: Number(result.max_combo ?? 0),
+        reverseHits: Number(result.reverse_hits ?? 0),
+        reverseMisses: Number(result.reverse_misses ?? 0),
+        spaceHits: Number(result.space_hits ?? 0),
+        spaceMisses: Number(result.space_misses ?? 0),
+        expectedNotes: Number(expected.notes ?? noteEvents.length),
+        expectedSpace: Number(expected.space ?? spaceEvents.length),
+        expectedTotal: Number(expected.total ?? events.length),
+        completeCoverage: Boolean(integrity.complete_event_coverage),
+        recordedEventCount: Number(integrity.recorded_event_count ?? events.length),
+        expectedEventCount: Number(integrity.expected_event_count ?? events.length),
+        gameplay: raw.gameplay || {},
+        events,
+        noteEvents,
+        spaceEvents,
+        reverseEvents,
+        timingErrors: successfulHits.map((e) => e.timingErrorMs),
+      };
+    }
+
+    async function loadFiles(fileList) {
+      const files = Array.from(fileList || []).filter((file) => file.name.toLowerCase().endsWith('.json'));
+      if (!files.length) return;
+
+      const loaded = [];
+      for (const file of files) {
+        const text = await file.text();
+        try {
+          const json = JSON.parse(text);
+          if (!json || typeof json !== 'object') throw new Error('Not a JSON object');
+          loaded.push(normalizeSession(json, file.webkitRelativePath || file.name));
+        } catch (error) {
+          console.warn(`Skipping invalid file: ${file.name}`, error);
+        }
+      }
+
+      const existingIds = new Set(appState.sessions.map((s) => s.sessionId));
+      for (const session of loaded) {
+        if (!existingIds.has(session.sessionId)) {
+          appState.sessions.push(session);
+          existingIds.add(session.sessionId);
+        }
+      }
+
+      autoSelectDefaultSong();
+      refreshAll();
+    }
+
+    function autoSelectDefaultSong() {
+      const songIds = [...new Set(appState.sessions.map((s) => s.songId))];
+      if (!songIds.length) {
+        appState.selectedSongId = 'ALL';
+        return;
+      }
+      if (appState.selectedSongId === 'ALL' || !songIds.includes(appState.selectedSongId)) {
+        appState.selectedSongId = songIds[0];
+      }
+    }
+
+    function getFilteredSessions() {
+      return appState.sessions.filter((session) => {
+        if (appState.selectedSongId !== 'ALL' && session.songId !== appState.selectedSongId) return false;
+        if (appState.selectedDifficulty !== 'ALL' && session.difficulty !== appState.selectedDifficulty) return false;
+        if (appState.selectedSessionId !== 'ALL' && session.sessionId !== appState.selectedSessionId) return false;
+        return true;
+      });
+    }
+
+    function buildOptions(selectEl, entries, currentValue, includeAllLabel) {
+      const options = [];
+      if (includeAllLabel) {
+        options.push(`<option value="ALL">${escapeHtml(includeAllLabel)}</option>`);
+      }
+      for (const entry of entries) {
+        options.push(`<option value="${escapeHtml(entry.value)}">${escapeHtml(entry.label)}</option>`);
+      }
+      selectEl.innerHTML = options.join('');
+      if ([...selectEl.options].some((opt) => opt.value === currentValue)) {
+        selectEl.value = currentValue;
+      }
+    }
+
+    function refreshFilters() {
+      const songEntries = [...new Map(appState.sessions.map((s) => [s.songId, { value: s.songId, label: `${s.title} • ${s.artist}` }])).values()];
+      buildOptions(ui.songFilter, songEntries, appState.selectedSongId, appState.sessions.length > 1 ? 'All Songs' : null);
+
+      const difficultiesSource = appState.selectedSongId === 'ALL'
+        ? appState.sessions
+        : appState.sessions.filter((s) => s.songId === appState.selectedSongId);
+      const difficultyEntries = [...new Set(difficultiesSource.map((s) => s.difficulty))].sort().map((d) => ({ value: d, label: d }));
+      buildOptions(ui.difficultyFilter, difficultyEntries, appState.selectedDifficulty, 'All Difficulties');
+      if (![...ui.difficultyFilter.options].some((opt) => opt.value === appState.selectedDifficulty)) {
+        appState.selectedDifficulty = 'ALL';
+        ui.difficultyFilter.value = 'ALL';
+      }
+
+      const sessionSource = appState.sessions.filter((session) => {
+        if (appState.selectedSongId !== 'ALL' && session.songId !== appState.selectedSongId) return false;
+        if (appState.selectedDifficulty !== 'ALL' && session.difficulty !== appState.selectedDifficulty) return false;
+        return true;
+      });
+      const sessionEntries = sessionSource.map((s) => ({
+        value: s.sessionId,
+        label: `${s.title} ${s.difficulty} • ${s.sourceName}`,
+      }));
+      buildOptions(ui.sessionFilter, sessionEntries, appState.selectedSessionId, 'All Matching Sessions');
+      if (![...ui.sessionFilter.options].some((opt) => opt.value === appState.selectedSessionId)) {
+        appState.selectedSessionId = 'ALL';
+        ui.sessionFilter.value = 'ALL';
+      }
+
+      if (!appState.sessions.length) {
+        ui.filterStatus.textContent = 'No session loaded yet.';
+      } else {
+        const filtered = getFilteredSessions();
+        ui.filterStatus.innerHTML = `Loaded <strong>${fmtNumber(appState.sessions.length)}</strong> sessions. Current filter matches <strong>${fmtNumber(filtered.length)}</strong> session(s).`;
+      }
+    }
+
+    function renderSummaryCards() {
+      if (!appState.sessions.length) {
+        ui.summaryGrid.innerHTML = `<div class="stat-card"><div class="stat-label">Waiting for data</div><div class="stat-value">0</div><div class="stat-sub">Load session JSON files to see overall metrics.</div></div>`;
+        return;
+      }
+      const filtered = getFilteredSessions();
+      if (!filtered.length) {
+        ui.summaryGrid.innerHTML = `<div class="stat-card"><div class="stat-label">No matching sessions</div><div class="stat-value">0</div><div class="stat-sub">Change filters to inspect loaded sessions.</div></div>`;
+        return;
+      }
+
+      const totalEvents = filtered.reduce((sum, s) => sum + s.expectedTotal, 0);
+      const totalMiss = filtered.reduce((sum, s) => sum + s.miss, 0);
+      const totalReverse = filtered.reduce((sum, s) => sum + s.reverseHits + s.reverseMisses, 0);
+      const totalReverseMisses = filtered.reduce((sum, s) => sum + s.reverseMisses, 0);
+      const totalSpace = filtered.reduce((sum, s) => sum + s.spaceHits + s.spaceMisses, 0);
+      const totalSpaceMisses = filtered.reduce((sum, s) => sum + s.spaceMisses, 0);
+      const timingMedian = median(filtered.flatMap((s) => s.timingErrors));
+      const avgAcc = mean(filtered.map((s) => s.accuracy));
+      const avgMaxCombo = mean(filtered.map((s) => s.maxCombo));
+      const avgStar = mean(filtered.map((s) => s.starRating));
+      const coverageOk = filtered.filter((s) => s.completeCoverage).length;
+
+      const cards = [
+        {
+          label: 'Sessions',
+          value: fmtNumber(filtered.length),
+          sub: `Across ${fmtNumber(new Set(filtered.map((s) => s.songId + ':' + s.difficulty)).size)} song+difficulty group(s).`,
+        },
+        {
+          label: 'Avg Accuracy',
+          value: fmtPercent(avgAcc, 2),
+          sub: `Average max combo ${fmtNumber(avgMaxCombo, 1)}.`,
+        },
+        {
+          label: 'Overall Miss Rate',
+          value: fmtPercent(totalEvents ? (totalMiss / totalEvents) * 100 : 0, 2),
+          sub: `${fmtNumber(totalMiss)} miss out of ${fmtNumber(totalEvents)} expected events.`,
+        },
+        {
+          label: 'Reverse Miss Rate',
+          value: totalReverse ? fmtPercent((totalReverseMisses / totalReverse) * 100, 2) : '—',
+          sub: `${fmtNumber(totalReverseMisses)} reverse miss out of ${fmtNumber(totalReverse)} reverse events.`,
+        },
+        {
+          label: 'SPACE Miss Rate',
+          value: totalSpace ? fmtPercent((totalSpaceMisses / totalSpace) * 100, 2) : '—',
+          sub: `${fmtNumber(totalSpaceMisses)} miss out of ${fmtNumber(totalSpace)} SPACE events.`,
+        },
+        {
+          label: 'Median Hit Bias',
+          value: timingMedian == null ? '—' : fmtMs(timingMedian, 1),
+          sub: timingMedian == null ? 'No valid timing data.' : (timingMedian < 0 ? 'Player tends to hit early.' : timingMedian > 0 ? 'Player tends to hit late.' : 'Centered on time.'),
+        },
+        {
+          label: 'Avg Star Rating',
+          value: fmtNumber(avgStar, 1),
+          sub: 'Based on filtered sessions only.',
+        },
+        {
+          label: 'Coverage OK',
+          value: `${fmtNumber(coverageOk)} / ${fmtNumber(filtered.length)}`,
+          sub: 'Sessions with complete event coverage telemetry.',
+        },
+      ];
+
+      ui.summaryGrid.innerHTML = cards.map((card) => `
+        <div class="stat-card">
+          <div class="stat-label">${escapeHtml(card.label)}</div>
+          <div class="stat-value">${escapeHtml(card.value)}</div>
+          <div class="stat-sub">${escapeHtml(card.sub)}</div>
+        </div>
+      `).join('');
+    }
+
+    function buildBins(sessions, binSizeSec) {
+      if (!sessions.length) return null;
+      const binSizeMs = Math.max(1000, Math.round(binSizeSec * 1000));
+      const durationMs = Math.max(...sessions.map((s) => Math.max(s.durationMs, ...s.events.map((e) => e.targetTimeMs || 0))));
+      const binCount = Math.max(1, Math.ceil(durationMs / binSizeMs));
+      const bins = Array.from({ length: binCount }, (_, index) => ({
+        index,
+        startMs: index * binSizeMs,
+        endMs: Math.min(durationMs, (index + 1) * binSizeMs),
+        total: 0,
+        noteCount: 0,
+        spaceCount: 0,
+        reverseCount: 0,
+        perfect: 0,
+        great: 0,
+        good: 0,
+        miss: 0,
+        automaticMiss: 0,
+        wrongInputMiss: 0,
+        timingErrors: [],
+      }));
+
+      for (const session of sessions) {
+        for (const event of session.events) {
+          const idx = Math.min(binCount - 1, Math.max(0, Math.floor((Number(event.targetTimeMs) || 0) / binSizeMs)));
+          const bin = bins[idx];
+          bin.total += 1;
+          if (event.kind === 'space') bin.spaceCount += 1;
+          else bin.noteCount += 1;
+          if (event.noteType === 'reverse') bin.reverseCount += 1;
+          const j = event.judgement;
+          if (j === 'PERFECT') bin.perfect += 1;
+          else if (j === 'GREAT') bin.great += 1;
+          else if (j === 'GOOD') bin.good += 1;
+          else {
+            bin.miss += 1;
+            if (event.automatic) bin.automaticMiss += 1;
+            if (String(event.reason || '').toUpperCase().includes('WRONG')) bin.wrongInputMiss += 1;
+          }
+          if (Number.isFinite(event.timingErrorMs)) bin.timingErrors.push(event.timingErrorMs);
+        }
+      }
+
+      let maxTotal = 1;
+      for (const bin of bins) {
+        bin.missRate = bin.total ? bin.miss / bin.total : 0;
+        bin.avgTimingError = mean(bin.timingErrors);
+        bin.badness = bin.total ? ((bin.miss * 1.0) + (bin.good * 0.45) + (bin.great * 0.18)) / bin.total : 0;
+        maxTotal = Math.max(maxTotal, bin.total);
+      }
+
+      return { bins, binSizeMs, durationMs, maxTotal };
+    }
+
+    function cellAccent(bin) {
+      if (!bin || !bin.total) return '#32405f';
+      if (bin.missRate >= 0.4) return '#ef4444';
+      if (bin.missRate >= 0.2) return '#f59e0b';
+      if (bin.good > 0) return '#22d3ee';
+      return '#4b5d87';
+    }
+
+    function makeCellTitle(rowLabel, bin) {
+      const avgText = bin.avgTimingError == null ? '—' : fmtMs(bin.avgTimingError, 1);
+      return `${rowLabel}\n${fmtTimeFromMs(bin.startMs)} - ${fmtTimeFromMs(bin.endMs)}\nTotal: ${bin.total}\nPerfect: ${bin.perfect}\nGreat: ${bin.great}\nGood: ${bin.good}\nMiss: ${bin.miss}\nMiss Rate: ${fmtPercent(bin.missRate * 100, 2)}\nReverse: ${bin.reverseCount}\nSPACE: ${bin.spaceCount}\nWrong Input Miss: ${bin.wrongInputMiss}\nAutomatic Miss: ${bin.automaticMiss}\nAvg Timing Error: ${avgText}`;
+    }
+
+    function renderHeatmapRows() {
+      if (!appState.sessions.length) {
+        ui.heatmapArea.innerHTML = `<div class="empty-note">Load session JSON files first.</div>`;
+        ui.heatmapSubtitle.textContent = 'Choose a song to inspect its timeline.';
+        return;
+      }
+      const filtered = getFilteredSessions();
+      if (!filtered.length) {
+        ui.heatmapArea.innerHTML = `<div class="empty-note">No session matches the current filters.</div>`;
+        ui.heatmapSubtitle.textContent = 'No matching data.';
+        return;
+      }
+      const songIds = [...new Set(filtered.map((s) => s.songId))];
+      if (songIds.length !== 1) {
+        ui.heatmapArea.innerHTML = `<div class="empty-note">Please choose a single song to render the heatmap. Right now the filter includes ${fmtNumber(songIds.length)} different songs.</div>`;
+        ui.heatmapSubtitle.textContent = 'Choose one song for timeline inspection.';
+        return;
+      }
+
+      const sessionGroups = [];
+      const aggregateBins = buildBins(filtered, appState.binSizeSec);
+      const songMeta = filtered[0];
+      ui.heatmapSubtitle.innerHTML = `${escapeHtml(songMeta.title)} • ${escapeHtml(songMeta.artist)} • ${escapeHtml(appState.selectedDifficulty === 'ALL' ? 'All selected difficulties' : songMeta.difficulty)} • ${fmtNumber(filtered.length)} session(s)`;
+
+      if (!aggregateBins) {
+        ui.heatmapArea.innerHTML = `<div class="empty-note">No bin data available.</div>`;
+        return;
+      }
+
+      sessionGroups.push({
+        key: 'aggregate',
+        title: `Aggregate`,
+        meta: `${filtered.length} session(s) • ${songMeta.title}`,
+        binsData: aggregateBins,
+      });
+
+      for (const session of filtered) {
+        sessionGroups.push({
+          key: session.sessionId,
+          title: session.sourceName,
+          meta: `${session.difficulty} • Acc ${fmtPercent(session.accuracy, 2)} • Miss ${fmtNumber(session.miss)} • Max Combo ${fmtNumber(session.maxCombo)}`,
+          binsData: buildBins([session], appState.binSizeSec),
+        });
+      }
+
+      const maxTotalGlobal = Math.max(...sessionGroups.map((g) => g.binsData.maxTotal));
+      const labelEvery = Math.max(1, Math.round(15 / appState.binSizeSec));
+
+      ui.heatmapArea.innerHTML = sessionGroups.map((group) => {
+        const cellsHtml = group.binsData.bins.map((bin, idx) => {
+          const densityRatio = Math.max(0.08, bin.total / maxTotalGlobal);
+          const fillHeight = Math.round(56 * densityRatio);
+          const total = bin.total || 1;
+          const parts = [
+            { cls: 'seg', color: 'var(--miss)', value: bin.miss },
+            { cls: 'seg', color: 'var(--good)', value: bin.good },
+            { cls: 'seg', color: 'var(--great)', value: bin.great },
+            { cls: 'seg', color: 'var(--perfect)', value: bin.perfect },
+          ].filter((part) => part.value > 0).map((part) => {
+            const h = Math.max(2, Math.round((part.value / total) * fillHeight));
+            return `<div class="${part.cls}" style="height:${h}px;background:${part.color};"></div>`;
+          }).join('');
+          const label = idx % labelEvery === 0 ? fmtTimeFromMs(bin.startMs).slice(0,5) : '&nbsp;';
+          const cellKey = `${group.key}:${bin.index}`;
+          const selectedClass = appState.selectedCellKey === cellKey ? 'selected' : '';
+          return `
+            <div class="cell-wrap">
+              <button type="button" class="cell ${selectedClass}" data-row-key="${escapeHtml(group.key)}" data-cell-key="${escapeHtml(cellKey)}" data-bin-index="${bin.index}" title="${escapeHtml(makeCellTitle(group.title, bin))}" style="border-color:${cellAccent(bin)};">
+                <div class="stack-fill" style="height:${fillHeight}px;">
+                  ${partsHtmlOrEmpty(parts)}
+                </div>
+              </button>
+              <div class="time-label">${label}</div>
+            </div>`;
+        }).join('');
+
+        return `
+          <div class="heatmap-row">
+            <div class="heatmap-label">
+              <div class="title">${escapeHtml(group.title)}</div>
+              <div class="meta">${escapeHtml(group.meta)}</div>
+            </div>
+            <div class="cell-track" data-row-key="${escapeHtml(group.key)}">${cellsHtml}</div>
+          </div>`;
+      }).join('');
+
+      function partsHtmlOrEmpty(parts) {
+        return parts || '';
+      }
+    }
+
+    function findDisplayedRows() {
+      const filtered = getFilteredSessions();
+      const rows = [];
+      if (!filtered.length) return rows;
+      rows.push({ key: 'aggregate', title: 'Aggregate', binsData: buildBins(filtered, appState.binSizeSec) });
+      for (const session of filtered) {
+        rows.push({ key: session.sessionId, title: session.sourceName, binsData: buildBins([session], appState.binSizeSec) });
+      }
+      return rows;
+    }
+
+    function renderSelectedBinDetails() {
+      if (!appState.selectedCellKey) {
+        ui.detailContent.innerHTML = `<div class="empty-note">Click any heatmap cell to inspect that section.</div>`;
+        return;
+      }
+      const [rowKey, binIndexRaw] = appState.selectedCellKey.split(':');
+      const rows = findDisplayedRows();
+      const row = rows.find((r) => r.key === rowKey);
+      if (!row) {
+        ui.detailContent.innerHTML = `<div class="empty-note">Selected cell is no longer available for the current filters.</div>`;
+        return;
+      }
+      const bin = row.binsData.bins[Number(binIndexRaw)];
+      if (!bin) {
+        ui.detailContent.innerHTML = `<div class="empty-note">Selected cell is no longer available for the current filters.</div>`;
+        return;
+      }
+      ui.detailContent.innerHTML = `
+        <div style="margin-bottom:12px;">
+          <div class="badge">${escapeHtml(row.title)}</div>
+          <div style="font-size:22px;font-weight:800;margin-top:10px;">${fmtTimeFromMs(bin.startMs)} - ${fmtTimeFromMs(bin.endMs)}</div>
+          <div class="muted" style="margin-top:6px;">Miss rate ${fmtPercent(bin.missRate * 100, 2)} • Avg timing ${bin.avgTimingError == null ? '—' : fmtMs(bin.avgTimingError, 1)}</div>
+        </div>
+        <div class="detail-list">
+          ${detailItem('Total Events', fmtNumber(bin.total))}
+          ${detailItem('Perfect', fmtNumber(bin.perfect))}
+          ${detailItem('Great', fmtNumber(bin.great))}
+          ${detailItem('Good', fmtNumber(bin.good))}
+          ${detailItem('Miss', fmtNumber(bin.miss))}
+          ${detailItem('Reverse Notes', fmtNumber(bin.reverseCount))}
+          ${detailItem('SPACE Events', fmtNumber(bin.spaceCount))}
+          ${detailItem('Wrong Input Miss', fmtNumber(bin.wrongInputMiss))}
+          ${detailItem('Automatic Miss', fmtNumber(bin.automaticMiss))}
+          ${detailItem('Note Density', fmtPercent((bin.total / Math.max(1, row.binsData.maxTotal)) * 100, 1))}
+        </div>
+      `;
+
+      function detailItem(key, value) {
+        return `<div class="detail-item"><div class="k">${escapeHtml(key)}</div><div class="v">${escapeHtml(value)}</div></div>`;
+      }
+    }
+
+    function renderHotspots() {
+      const filtered = getFilteredSessions();
+      if (!filtered.length) {
+        ui.hotspotTableWrap.innerHTML = `<div class="empty-note">No session loaded yet.</div>`;
+        return;
+      }
+      const songIds = [...new Set(filtered.map((s) => s.songId))];
+      if (songIds.length !== 1) {
+        ui.hotspotTableWrap.innerHTML = `<div class="empty-note">Choose a single song to generate a hotspot list.</div>`;
+        return;
+      }
+      const binsData = buildBins(filtered, appState.binSizeSec);
+      const hotspots = binsData.bins
+        .filter((bin) => bin.total > 0)
+        .map((bin) => ({ ...bin }))
+        .sort((a, b) => {
+          if (b.miss !== a.miss) return b.miss - a.miss;
+          if (b.badness !== a.badness) return b.badness - a.badness;
+          return b.total - a.total;
+        })
+        .slice(0, 12);
+
+      if (!hotspots.length) {
+        ui.hotspotTableWrap.innerHTML = `<div class="empty-note">No hotspot data available.</div>`;
+        return;
+      }
+
+      ui.hotspotTableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Time Window</th>
+              <th>Total</th>
+              <th>Miss</th>
+              <th>Good</th>
+              <th>Great</th>
+              <th>Perfect</th>
+              <th>Miss Rate</th>
+              <th>Avg Timing</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${hotspots.map((bin, index) => `
+              <tr>
+                <td>${index + 1}</td>
+                <td>${fmtTimeFromMs(bin.startMs)} - ${fmtTimeFromMs(bin.endMs)}</td>
+                <td>${fmtNumber(bin.total)}</td>
+                <td class="bad">${fmtNumber(bin.miss)}</td>
+                <td class="info">${fmtNumber(bin.good)}</td>
+                <td class="ok">${fmtNumber(bin.great)}</td>
+                <td style="color:var(--perfect);">${fmtNumber(bin.perfect)}</td>
+                <td>${fmtPercent(bin.missRate * 100, 2)}</td>
+                <td>${bin.avgTimingError == null ? '—' : fmtMs(bin.avgTimingError, 1)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderSongSummary() {
+      if (!appState.sessions.length) {
+        ui.songSummaryWrap.innerHTML = `<div class="empty-note">No session loaded yet.</div>`;
+        return;
+      }
+      const groups = new Map();
+      for (const session of appState.sessions) {
+        const key = `${session.songId}|${session.difficulty}`;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(session);
+      }
+      const rows = [...groups.values()].map((sessions) => {
+        const sample = sessions[0];
+        const totalExpected = sessions.reduce((sum, s) => sum + s.expectedTotal, 0);
+        const totalMiss = sessions.reduce((sum, s) => sum + s.miss, 0);
+        return {
+          title: sample.title,
+          difficulty: sample.difficulty,
+          starRating: sample.starRating,
+          runs: sessions.length,
+          avgAccuracy: mean(sessions.map((s) => s.accuracy)),
+          missRate: totalExpected ? (totalMiss / totalExpected) * 100 : 0,
+        };
+      }).sort((a, b) => a.avgAccuracy - b.avgAccuracy);
+
+      ui.songSummaryWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Song</th>
+              <th>Diff</th>
+              <th>★</th>
+              <th>Runs</th>
+              <th>Avg Acc</th>
+              <th>Miss Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row) => `
+              <tr>
+                <td>${escapeHtml(row.title)}</td>
+                <td>${escapeHtml(row.difficulty)}</td>
+                <td>${fmtNumber(row.starRating)}</td>
+                <td>${fmtNumber(row.runs)}</td>
+                <td>${fmtPercent(row.avgAccuracy, 2)}</td>
+                <td>${fmtPercent(row.missRate, 2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderSessionTable() {
+      if (!appState.sessions.length) {
+        ui.sessionTableWrap.innerHTML = `<div class="empty-note">No session loaded yet.</div>`;
+        return;
+      }
+      const rows = [...appState.sessions].sort((a, b) => a.completedAtUnixMs - b.completedAtUnixMs);
+      ui.sessionTableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Song</th>
+              <th>Diff</th>
+              <th>Status</th>
+              <th>Accuracy</th>
+              <th>Miss</th>
+              <th>Reverse M</th>
+              <th>SPACE M</th>
+              <th>Max Combo</th>
+              <th>Coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((session) => `
+              <tr>
+                <td>${escapeHtml(session.sourceName)}</td>
+                <td>${escapeHtml(session.title)}</td>
+                <td>${escapeHtml(session.difficulty)}</td>
+                <td>${escapeHtml(session.status)}</td>
+                <td>${fmtPercent(session.accuracy, 2)}</td>
+                <td>${fmtNumber(session.miss)}</td>
+                <td>${fmtNumber(session.reverseMisses)}</td>
+                <td>${fmtNumber(session.spaceMisses)}</td>
+                <td>${fmtNumber(session.maxCombo)}</td>
+                <td>${session.completeCoverage ? '<span class="ok">OK</span>' : '<span class="warn">CHECK</span>'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function refreshAll() {
+      refreshFilters();
+      renderSummaryCards();
+      renderHeatmapRows();
+      renderSelectedBinDetails();
+      renderHotspots();
+      renderSongSummary();
+      renderSessionTable();
+    }
+
+    ui.fileInput.addEventListener('change', async (event) => {
+      await loadFiles(event.target.files);
+      ui.fileInput.value = '';
+    });
+
+    ui.folderInput.addEventListener('change', async (event) => {
+      await loadFiles(event.target.files);
+      ui.folderInput.value = '';
+    });
+
+    ui.clearButton.addEventListener('click', () => {
+      appState.sessions = [];
+      appState.selectedSongId = 'ALL';
+      appState.selectedDifficulty = 'ALL';
+      appState.selectedSessionId = 'ALL';
+      appState.selectedCellKey = '';
+      refreshAll();
+    });
+
+    ui.songFilter.addEventListener('change', () => {
+      appState.selectedSongId = ui.songFilter.value;
+      appState.selectedDifficulty = 'ALL';
+      appState.selectedSessionId = 'ALL';
+      appState.selectedCellKey = '';
+      refreshAll();
+    });
+
+    ui.difficultyFilter.addEventListener('change', () => {
+      appState.selectedDifficulty = ui.difficultyFilter.value;
+      appState.selectedSessionId = 'ALL';
+      appState.selectedCellKey = '';
+      refreshAll();
+    });
+
+    ui.sessionFilter.addEventListener('change', () => {
+      appState.selectedSessionId = ui.sessionFilter.value;
+      appState.selectedCellKey = '';
+      refreshAll();
+    });
+
+    ui.binSizeFilter.addEventListener('change', () => {
+      appState.binSizeSec = Number(ui.binSizeFilter.value || 3);
+      appState.selectedCellKey = '';
+      refreshAll();
+    });
+
+    ui.heatmapArea.addEventListener('click', (event) => {
+      const target = event.target.closest('.cell');
+      if (!target) return;
+      const rowKey = target.dataset.rowKey;
+      const binIndex = target.dataset.binIndex;
+      appState.selectedCellKey = `${rowKey}:${binIndex}`;
+      refreshAll();
+    });
+
+    refreshAll();
+  </script>
+</body>
+</html>

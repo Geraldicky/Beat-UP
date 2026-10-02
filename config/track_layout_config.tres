@@ -1,0 +1,33 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://config/track_layout_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+hit_x_ratio = 0.2
+spawn_x_ratio = 0.965
+lane_y_ratio = 0.45
+lane_height_ratio = 0.19
+lane_side_padding_ratio = 0.018
+shadow_offset_ratio = 0.006
+hit_zone_size = 120.0
+hit_feedback_size = 176.0
+hit_feedback_duration = 0.14
+hit_burst_duration = 0.1
+hit_receptor_return_duration = 0.13
+hit_pulse_start_alpha = 0.74
+hit_burst_start_alpha = 0.52
+hit_pulse_start_scale = 0.72
+hit_pulse_end_scale = 1.24
+hit_burst_start_scale = 0.7
+hit_burst_end_scale = 1.02
+hit_receptor_hit_scale = 1.035
+hit_receptor_miss_scale = 0.98
+space_prompt_canvas_size = 168.0
+space_badge_height = 30.0
+space_badge_active_scale = 1.05
+space_approach_max_size = 202.0
+space_approach_target_size = 96.0
+space_prompt_base_alpha = 0.82
+space_prompt_pulse_alpha = 0.18
+space_prompt_pulse_cycles = 4.0

@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/note.gd" id="1_script"]
+
+[node name="RhythmNote" type="Control"]
+custom_minimum_size = Vector2(96, 80)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 96.0
+offset_bottom = 80.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="JudgementAnchor" type="Marker2D" parent="."]
+position = Vector2(48, 40)
+

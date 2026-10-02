@@ -1,0 +1,1044 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/song_select.gd" id="1_script"]
+[ext_resource type="Resource" path="res://config/theme_config.tres" id="2_theme_config"]
+[ext_resource type="Resource" path="res://config/ui_layout_config.tres" id="3_layout_config"]
+[ext_resource type="Script" path="res://scripts/ui/song_select_visual.gd" id="4_visual"]
+[ext_resource type="Script" path="res://scripts/ui/song_preview_controller.gd" id="5_preview"]
+[ext_resource type="Script" path="res://scripts/ui/beat_dropdown.gd" id="6_dropdown"]
+[ext_resource type="Script" path="res://scripts/ui/transport_icon_button.gd" id="7_transport_icon"]
+[ext_resource type="Script" path="res://scripts/ui/beat_file_picker.gd" id="8_file_picker"]
+
+[node name="SongSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+theme_config = ExtResource("2_theme_config")
+layout_config = ExtResource("3_layout_config")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0431373, 0.0509804, 0.0666667, 1)
+
+[node name="BackdropVisual" type="Control" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.90)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_visual")
+
+[node name="BackdropShade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0196078, 0.0235294, 0.0313725, 0)
+
+[node name="TopAccent" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 3.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.662745, 0.721569, 1, 0.72)
+
+
+[node name="NowPlayingCard" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+mouse_filter = 2
+clip_contents = true
+
+[node name="CardMargin" type="MarginContainer" parent="NowPlayingCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 3
+
+[node name="CardContent" type="HBoxContainer" parent="NowPlayingCard/CardMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="TrackCopy" type="HBoxContainer" parent="NowPlayingCard/CardMargin/CardContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/separation = 10
+alignment = 0
+
+[node name="NowPlayingKicker" type="Label" parent="NowPlayingCard/CardMargin/CardContent/TrackCopy"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "CURRENT PLAYING"
+
+[node name="NowPlayingTitle" type="Label" parent="NowPlayingCard/CardMargin/CardContent/TrackCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+text = "NO TRACK"
+
+[node name="NowPlayingArtist" type="Label" parent="NowPlayingCard/CardMargin/CardContent/TrackCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+text = ""
+
+[node name="TrackProgressBar" type="ProgressBar" parent="NowPlayingCard/CardMargin/CardContent/TrackCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+step = 0.01
+max_value = 1.0
+value = 0.0
+show_percentage = false
+
+[node name="NowPlayingDurationValue" type="Label" parent="NowPlayingCard/CardMargin/CardContent/TrackCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+text = "0:00 / 0:00"
+
+[node name="TrackControls" type="HBoxContainer" parent="NowPlayingCard/CardMargin/CardContent"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 2
+size_flags_horizontal = 4
+
+[node name="PrevTrackButton" type="Button" parent="NowPlayingCard/CardMargin/CardContent/TrackControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("7_transport_icon")
+icon_mode = "previous"
+text = ""
+
+[node name="PlayPauseTrackButton" type="Button" parent="NowPlayingCard/CardMargin/CardContent/TrackControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("7_transport_icon")
+icon_mode = "pause"
+text = ""
+
+[node name="NextTrackButton" type="Button" parent="NowPlayingCard/CardMargin/CardContent/TrackControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("7_transport_icon")
+icon_mode = "next"
+text = ""
+
+[node name="MainMargin" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RootVBox" type="VBoxContainer" parent="MainMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HeaderRow" type="HBoxContainer" parent="MainMargin/RootVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="TitleBlock" type="VBoxContainer" parent="MainMargin/RootVBox/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="TitleLabel" type="Label" parent="MainMargin/RootVBox/HeaderRow/TitleBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SONG LIBRARY"
+
+[node name="CountLabel" type="Label" parent="MainMargin/RootVBox/HeaderRow/TitleBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "LIBRARY  0 SONGS"
+
+[node name="Body" type="HBoxContainer" parent="MainMargin/RootVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InfoPanel" type="PanelContainer" parent="MainMargin/RootVBox/Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.60
+size_flags_vertical = 3
+
+[node name="InfoVBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="InfoHeader" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+visible = false
+layout_mode = 2
+
+[node name="InfoCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/InfoHeader"]
+layout_mode = 2
+text = "NOW SELECTED"
+
+[node name="InfoHeaderSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/InfoHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SelectionIndex" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/InfoHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "01 / 01"
+horizontal_alignment = 2
+
+[node name="HeroPanel" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+
+[node name="HeroContent" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel"]
+custom_minimum_size = Vector2(0, 176)
+layout_mode = 2
+
+[node name="SongVisual" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_visual")
+
+[node name="HeroOverlay" type="MarginContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="HeroVBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay"]
+layout_mode = 2
+
+[node name="HeroTop" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay/HeroVBox"]
+layout_mode = 2
+
+[node name="HeroTopSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay/HeroVBox/HeroTop"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DetailFlavor" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay/HeroVBox/HeroTop"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "AUTHORED"
+horizontal_alignment = 2
+
+[node name="HeroSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay/HeroVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HeroBottom" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay/HeroVBox"]
+layout_mode = 2
+
+[node name="HeroBottomSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay/HeroVBox/HeroBottom"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ModeStatus" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel/HeroContent/HeroOverlay/HeroVBox/HeroBottom"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "READY"
+horizontal_alignment = 2
+
+[node name="DetailTitle" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SONG TITLE"
+text_overrun_behavior = 3
+
+[node name="DetailMeta" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ARTIST"
+text_overrun_behavior = 3
+
+[node name="DetailDescription" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "NORMAL CHART  •  3★  •  READY"
+text_overrun_behavior = 3
+
+[node name="QuickStats" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 6
+
+[node name="BpmCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats"]
+custom_minimum_size = Vector2(126, 42)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/BpmCard"]
+layout_mode = 2
+
+[node name="BpmCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/BpmCard/VBox"]
+layout_mode = 2
+text = "BPM"
+horizontal_alignment = 1
+
+[node name="BpmValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/BpmCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "130"
+horizontal_alignment = 1
+
+[node name="DurationCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats"]
+custom_minimum_size = Vector2(126, 42)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/DurationCard"]
+layout_mode = 2
+
+[node name="DurationCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/DurationCard/VBox"]
+layout_mode = 2
+text = "LENGTH"
+horizontal_alignment = 1
+
+[node name="DurationValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/DurationCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "3:46"
+horizontal_alignment = 1
+
+[node name="NotesCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats"]
+custom_minimum_size = Vector2(126, 42)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/NotesCard"]
+layout_mode = 2
+
+[node name="NotesCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/NotesCard/VBox"]
+layout_mode = 2
+text = "NOTES"
+horizontal_alignment = 1
+
+[node name="NotesValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/QuickStats/NotesCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "577"
+horizontal_alignment = 1
+
+[node name="ProgressStatus" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+text = ""
+text_overrun_behavior = 3
+
+[node name="InfoSectionSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="InfoTabs" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 34)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 4
+
+[node name="DetailsTabButton" type="Button" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/InfoTabs"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(108, 32)
+layout_mode = 2
+text = "DETAILS"
+
+[node name="RankingTabButton" type="Button" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/InfoTabs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(116, 32)
+layout_mode = 2
+text = "RANKING"
+
+[node name="InfoTabsSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/InfoTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RankingContext" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/InfoTabs"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "LOCAL  ·  SCORE  ·  8K"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DetailsPanel" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(520, 86)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="DetailsMargin" type="MarginContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="DetailsVBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="DetailsHeader" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox"]
+layout_mode = 2
+
+[node name="DetailsTitle" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/DetailsHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CHART"
+
+[node name="DetailsHeaderSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/DetailsHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DetailsStatus" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/DetailsHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "8K  ·  3★"
+horizontal_alignment = 2
+
+[node name="BreakdownGrid" type="GridContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(488, 58)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/h_separation = 12
+columns = 3
+
+[node name="NormalCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid"]
+custom_minimum_size = Vector2(154, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/NormalCard"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="NormalCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/NormalCard/VBox"]
+layout_mode = 2
+text = "NORMAL NOTES"
+
+[node name="NormalNotesValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/NormalCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "—"
+
+[node name="ReverseCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid"]
+custom_minimum_size = Vector2(154, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/ReverseCard"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="ReverseCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/ReverseCard/VBox"]
+layout_mode = 2
+text = "REVERSE"
+
+[node name="ReverseNotesValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/ReverseCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "—"
+
+[node name="SpaceCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid"]
+custom_minimum_size = Vector2(154, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/SpaceCard"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="SpaceCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/SpaceCard/VBox"]
+layout_mode = 2
+text = "SPACE"
+
+[node name="SpaceNotesValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox/BreakdownGrid/SpaceCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "—"
+
+[node name="DetailsFooter" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/DetailsPanel/DetailsMargin/DetailsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(488, 20)
+layout_mode = 2
+text = ""
+text_overrun_behavior = 3
+
+[node name="PersonalBestCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 236)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="BestCardMargin" type="MarginContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="BestCardVBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="BestHeader" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BestHeaderLeft" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestHeader"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="BestCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestHeader/BestHeaderLeft"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PERSONAL BEST"
+
+[node name="BestSubcaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestHeader/BestHeaderLeft"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BEST RESULT FOR THIS CHART"
+
+[node name="BestHeaderSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BestRankBlock" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestHeader"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="BestRankCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestHeader/BestRankBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BEST RANK"
+horizontal_alignment = 2
+
+[node name="BestRank" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestHeader/BestRankBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "—"
+horizontal_alignment = 2
+
+[node name="BestGrid" type="GridContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(488, 58)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 0
+columns = 3
+
+[node name="BestScoreCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid"]
+custom_minimum_size = Vector2(154, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestScoreCard"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="BestScoreCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestScoreCard/VBox"]
+layout_mode = 2
+text = "SCORE"
+horizontal_alignment = 0
+
+[node name="BestScoreValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestScoreCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "—"
+horizontal_alignment = 0
+text_overrun_behavior = 3
+
+[node name="BestAccuracyCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid"]
+custom_minimum_size = Vector2(154, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestAccuracyCard"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="BestAccuracyCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestAccuracyCard/VBox"]
+layout_mode = 2
+text = "ACCURACY"
+horizontal_alignment = 0
+
+[node name="BestAccuracyValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestAccuracyCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "—"
+horizontal_alignment = 0
+
+[node name="BestComboCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid"]
+custom_minimum_size = Vector2(154, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestComboCard"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="BestComboCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestComboCard/VBox"]
+layout_mode = 2
+text = "MAX COMBO"
+horizontal_alignment = 0
+
+[node name="BestComboValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestComboCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "—"
+horizontal_alignment = 0
+
+[node name="BestPlaysCard" type="PanelContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestPlaysCard"]
+layout_mode = 2
+
+[node name="BestPlaysCaption" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestPlaysCard/VBox"]
+layout_mode = 2
+text = "PLAYS"
+horizontal_alignment = 1
+
+[node name="BestPlaysValue" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox/BestGrid/BestPlaysCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "—"
+horizontal_alignment = 1
+
+[node name="BestStats" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/PersonalBestCard/BestCardMargin/BestCardVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(488, 22)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "NO PERSONAL BEST YET"
+text_overrun_behavior = 3
+
+[node name="ActionSpacer" type="Control" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionRow" type="HBoxContainer" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="BackButton" type="Button" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/ActionRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(92, 34)
+layout_mode = 2
+text = "BACK"
+
+[node name="ModsButton" type="Button" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/ActionRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(154, 34)
+layout_mode = 2
+size_flags_vertical = 4
+text = "MODS · 8K"
+
+[node name="PlayButton" type="Button" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox/ActionRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(330, 44)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "PLAY"
+
+[node name="ImportHint" type="Label" parent="MainMargin/RootVBox/Body/InfoPanel/InfoVBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "↑↓ SONG   ·   ←→ DIFFICULTY   ·   / SEARCH   ·   F1 MODS   ·   ENTER PLAY   ·   ESC BACK"
+horizontal_alignment = 0
+text_overrun_behavior = 3
+
+[node name="WheelColumn" type="VBoxContainer" parent="MainMargin/RootVBox/Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.40
+size_flags_vertical = 3
+
+[node name="LibraryPanel" type="PanelContainer" parent="MainMargin/RootVBox/Body/WheelColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LibraryVBox" type="VBoxContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 3
+
+[node name="WheelHeader" type="HBoxContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox"]
+visible = false
+layout_mode = 2
+
+[node name="WheelCaption" type="Label" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/WheelHeader"]
+layout_mode = 2
+text = ""
+
+[node name="WheelSpacer" type="Control" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/WheelHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WheelModeLabel" type="Label" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/WheelHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "TITLE  ·  A–Z"
+horizontal_alignment = 2
+
+[node name="LibraryToolbar" type="HBoxContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 2
+
+[node name="LibraryToolbarSpacer" type="Control" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/LibraryToolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SearchInput" type="LineEdit" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/LibraryToolbar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+layout_mode = 2
+placeholder_text = "Search songs or artists"
+clear_button_enabled = true
+
+[node name="FiltersPanel" type="PanelContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/LibraryToolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Filters" type="HBoxContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/LibraryToolbar/FiltersPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ArtistFilter" type="Button" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/LibraryToolbar/FiltersPanel/Filters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 32)
+layout_mode = 2
+script = ExtResource("6_dropdown")
+
+[node name="DifficultyFilter" type="Button" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/LibraryToolbar/FiltersPanel/Filters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 32)
+layout_mode = 2
+script = ExtResource("6_dropdown")
+
+[node name="ProgressToolbar" type="HBoxContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
+alignment = 2
+
+[node name="ProgressToolbarSpacer" type="Control" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/ProgressToolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ProgressCaption" type="Label" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/ProgressToolbar"]
+visible = false
+layout_mode = 2
+text = "PROGRESS"
+vertical_alignment = 1
+
+[node name="ProgressFilter" type="Button" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/ProgressToolbar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 30)
+layout_mode = 2
+script = ExtResource("6_dropdown")
+
+[node name="ProgressSpacer" type="Control" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/ProgressToolbar"]
+visible = false
+layout_mode = 2
+
+[node name="SortCaption" type="Label" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/ProgressToolbar"]
+visible = false
+layout_mode = 2
+text = "SORT"
+vertical_alignment = 1
+
+[node name="SortFilter" type="Button" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/ProgressToolbar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 30)
+layout_mode = 2
+script = ExtResource("6_dropdown")
+
+[node name="LibraryHint" type="Label" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "SELECT A TRACK TO INSPECT ITS CHARTS AND RECORD"
+
+[node name="ListSeparator" type="HSeparator" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox"]
+visible = false
+layout_mode = 2
+
+[node name="SongScroll" type="ScrollContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SongList" type="VBoxContainer" parent="MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/SongScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="FooterPanel" type="PanelContainer" parent="MainMargin/RootVBox"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+
+[node name="Footer" type="HBoxContainer" parent="MainMargin/RootVBox/FooterPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="FooterStatus" type="Label" parent="MainMargin/RootVBox/FooterPanel/Footer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = ""
+vertical_alignment = 1
+
+[node name="ImportButton" type="Button" parent="MainMargin/RootVBox/FooterPanel/Footer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(96, 42)
+layout_mode = 2
+text = "IMPORT"
+
+[node name="RefreshButton" type="Button" parent="MainMargin/RootVBox/FooterPanel/Footer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(96, 42)
+layout_mode = 2
+text = "REFRESH"
+
+[node name="EditorButton" type="Button" parent="MainMargin/RootVBox/FooterPanel/Footer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(132, 42)
+layout_mode = 2
+text = "CHART EDITOR"
+
+[node name="PackExportButton" type="Button" parent="MainMargin/RootVBox/FooterPanel/Footer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(116, 42)
+layout_mode = 2
+text = "EXPORT PACK"
+
+
+[node name="ModsOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 70
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="ModsDim" type="ColorRect" parent="ModsOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.0156863, 0.0196078, 0.027451, 0.72)
+
+[node name="ModsPanel" type="PanelContainer" parent="ModsOverlay"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 286)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -143.0
+offset_right = 250.0
+offset_bottom = 143.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModsMargin" type="MarginContainer" parent="ModsOverlay/ModsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 18
+
+[node name="ModsVBox" type="VBoxContainer" parent="ModsOverlay/ModsPanel/ModsMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ModsHeader" type="HBoxContainer" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+layout_mode = 2
+
+[node name="ModsTitle" type="Label" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox/ModsHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MODS"
+
+[node name="ModsCloseButton" type="Button" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox/ModsHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 30)
+layout_mode = 2
+text = "×"
+
+[node name="ModsSubtitle" type="Label" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+text = ""
+
+[node name="ModeSection" type="Label" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "INPUT"
+
+[node name="ModeRow" type="HBoxContainer" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Mode8Button" type="Button" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox/ModeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(218, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "8K  ·  NUMPAD"
+
+[node name="Mode4Button" type="Button" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox/ModeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(218, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "4K  ·  ARROWS"
+
+[node name="ModifierSection" type="Label" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MODIFIERS"
+
+[node name="RandomModButton" type="Button" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+toggle_mode = true
+text = "RANDOM   ·   shuffle directions"
+
+[node name="ModsSeparator" type="HSeparator" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+layout_mode = 2
+
+[node name="ModsSummary" type="Label" parent="ModsOverlay/ModsPanel/ModsMargin/ModsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ACTIVE  ·  8 KEY  ·  NO MODIFIERS"
+
+[node name="PreviewPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5_preview")
+visual_path = NodePath("../BackdropVisual")
+
+[node name="TransitionOverlay" type="ColorRect" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0352941, 0.0431373, 0.0627451, 1)
+
+[node name="ImportDialog" type="Control" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8_file_picker")
+title = "Import Beat UP! charts or level packs"
+initial_position = 2
+file_mode = 1
+access = 2
+filters = PackedStringArray("*.json, *.beatup-pack ; Beat UP! charts and level packs")

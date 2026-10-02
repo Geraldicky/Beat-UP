@@ -1,0 +1,1140 @@
+[gd_scene format=3 uid="uid://5tgmkhjeufs1"]
+
+[ext_resource type="Script" uid="uid://c4cawie6vblhd" path="res://scripts/startup.gd" id="1_script"]
+[ext_resource type="Resource" path="res://config/theme_config.tres" id="2_theme"]
+[ext_resource type="Resource" path="res://config/ui_layout_config.tres" id="3_layout"]
+[ext_resource type="PackedScene" path="res://scenes/calibration_screen.tscn" id="4_calibration"]
+[ext_resource type="Script" uid="uid://dj8wuwi884l3k" path="res://scripts/ui/orbit_visual.gd" id="5_orbit"]
+[ext_resource type="Script" uid="uid://d5m1v2wn04kh" path="res://scripts/ui/minimal_shape.gd" id="6_shape"]
+[ext_resource type="Script" uid="uid://da1rusintt57i" path="res://scripts/ui/main_menu_visual.gd" id="7_menu_visual"]
+[ext_resource type="Script" uid="uid://buoljuv2qmbdu" path="res://scripts/ui/main_menu_logo.gd" id="8_menu_logo"]
+[ext_resource type="Script" uid="uid://d2awn4567qh6m" path="res://scripts/ui/menu_bgm_controller.gd" id="9_menu_bgm"]
+[ext_resource type="AudioStream" uid="uid://bqsc6f4m7dvnl" path="res://music/menu/simple_loop.ogg" id="10_menu_music"]
+[ext_resource type="PackedScene" path="res://scenes/how_to_play_screen.tscn" id="11_help_screen"]
+[ext_resource type="Script" uid="uid://c4fnk1vcl26nd" path="res://scripts/ui/action_icon.gd" id="12_action_icon"]
+[ext_resource type="Script" uid="uid://u72ytkuiasco" path="res://scripts/ui/beat_dropdown.gd" id="13_dropdown"]
+[ext_resource type="Script" uid="uid://c266vwcofv7cs" path="res://scripts/ui/transport_icon_button.gd" id="14_transport_icon"]
+
+[node name="Startup" type="Control" unique_id=2116939991]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+theme_config = ExtResource("2_theme")
+layout_config = ExtResource("3_layout")
+
+[node name="Background" type="ColorRect" parent="." unique_id=729468262]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0431373, 0.0509804, 0.0666667, 1)
+
+[node name="Splash" type="Control" parent="." unique_id=463615502]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SplashBlack" type="ColorRect" parent="Splash" unique_id=1646909984]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="SplashWelcome" type="Label" parent="Splash" unique_id=296546985]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -118.0
+offset_right = 260.0
+offset_bottom = -78.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 18
+text = "WELCOME TO"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SplashGlyphs" type="Label" parent="Splash" unique_id=823310275]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -44.0
+offset_right = 260.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "◇     ◇     ◇     ◇"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SplashHaloOuter" type="Control" parent="Splash" unique_id=10903357]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -285.0
+offset_top = -285.0
+offset_right = 285.0
+offset_bottom = 285.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_shape")
+shape = "diamond"
+fill_color = Color(0, 0, 0, 0)
+stroke_color = Color(0.662745, 0.721569, 1, 0.72)
+stroke_width = 3.0
+
+[node name="SplashHaloInner" type="Control" parent="Splash" unique_id=842403657]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -218.0
+offset_top = -218.0
+offset_right = 218.0
+offset_bottom = 218.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_shape")
+shape = "diamond"
+fill_color = Color(0, 0, 0, 0)
+stroke_color = Color(0.847059, 0.878431, 1, 0.46)
+
+[node name="SplashLogoFrame" type="Control" parent="Splash" unique_id=1562728999]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -420.0
+offset_top = -100.0
+offset_right = 420.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SplashLogoWindow" type="Control" parent="Splash/SplashLogoFrame" unique_id=719505771]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+clip_contents = true
+anchors_preset = 0
+offset_bottom = 200.0
+mouse_filter = 2
+
+[node name="SplashLogo" type="Control" parent="Splash/SplashLogoFrame/SplashLogoWindow" unique_id=1233768361]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 840.0
+offset_bottom = 200.0
+mouse_filter = 2
+script = ExtResource("8_menu_logo")
+
+[node name="SplashWipe" type="ColorRect" parent="Splash/SplashLogoFrame" unique_id=1049448636]
+unique_name_in_owner = true
+layout_mode = 0
+offset_bottom = 200.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="MainMenu" type="Control" parent="." unique_id=1662382691]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuBackground" type="TextureRect" parent="MainMenu" unique_id=1203440952]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MenuDim" type="ColorRect" parent="MainMenu" unique_id=1772149060]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0156863, 0.0196078, 0.027451, 0.34)
+
+[node name="MenuVisual" type="Control" parent="MainMenu" unique_id=1685307215]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("7_menu_visual")
+
+[node name="TopAccent" type="ColorRect" parent="MainMenu" unique_id=2141784916]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 2.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.662745, 0.721569, 1, 0.86)
+
+[node name="NowPlayingCard" type="Panel" parent="MainMenu" unique_id=2004217601]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 0
+mouse_filter = 2
+
+[node name="CardMargin" type="MarginContainer" parent="MainMenu/NowPlayingCard" unique_id=208846602]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 3
+
+[node name="CardContent" type="HBoxContainer" parent="MainMenu/NowPlayingCard/CardMargin" unique_id=1233339327]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="TrackCopy" type="HBoxContainer" parent="MainMenu/NowPlayingCard/CardMargin/CardContent" unique_id=816379783]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+theme_override_constants/separation = 10
+
+[node name="NowPlayingKicker" type="Label" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackCopy" unique_id=797639529]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "CURRENT PLAYING"
+
+[node name="NowPlayingTitle" type="Label" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackCopy" unique_id=2057284507]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BIG DADDY"
+
+[node name="NowPlayingArtist" type="Label" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackCopy" unique_id=240143281]
+unique_name_in_owner = true
+layout_mode = 2
+text = "— USAO"
+
+[node name="TrackProgressBar" type="ProgressBar" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackCopy" unique_id=1209515595]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+value = 0.35
+show_percentage = false
+
+[node name="DurationValue" type="Label" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackCopy" unique_id=2082671929]
+unique_name_in_owner = true
+layout_mode = 2
+text = "01:12 / 02:40"
+
+[node name="TrackControls" type="HBoxContainer" parent="MainMenu/NowPlayingCard/CardMargin/CardContent" unique_id=91614182]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 18
+alignment = 2
+
+[node name="PrevTrackButton" type="Button" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackControls" unique_id=1717973866]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("14_transport_icon")
+icon_mode = "previous"
+
+[node name="PlayPauseTrackButton" type="Button" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackControls" unique_id=205132604]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("14_transport_icon")
+icon_mode = "pause"
+
+[node name="NextTrackButton" type="Button" parent="MainMenu/NowPlayingCard/CardMargin/CardContent/TrackControls" unique_id=573721900]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("14_transport_icon")
+icon_mode = "next"
+
+[node name="OrbCluster" type="Control" parent="MainMenu" unique_id=686772089]
+unique_name_in_owner = true
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="OrbRing" type="Control" parent="MainMenu/OrbCluster" unique_id=900984509]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("5_orbit")
+
+[node name="OrbFill" type="Control" parent="MainMenu/OrbCluster" unique_id=1929937154]
+unique_name_in_owner = true
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("6_shape")
+shape = "diamond"
+fill_color = Color(0.025, 0.031, 0.043, 0.56)
+stroke_color = Color(0.662745, 0.721569, 1, 0.9)
+stroke_width = 3.0
+
+[node name="MainLogo" type="Label" parent="MainMenu/OrbCluster" unique_id=1806808612]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SelectionIndex" type="Label" parent="MainMenu/OrbCluster" unique_id=1502951025]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+horizontal_alignment = 1
+
+[node name="MenuTitle" type="Control" parent="MainMenu" unique_id=887455487]
+unique_name_in_owner = true
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("8_menu_logo")
+show_text = false
+
+[node name="MenuRule" type="ColorRect" parent="MainMenu" unique_id=1455766767]
+unique_name_in_owner = true
+layout_mode = 0
+mouse_filter = 2
+color = Color(0.662745, 0.721569, 1, 0.72)
+
+[node name="MenuStack" type="VBoxContainer" parent="MainMenu" unique_id=1904087216]
+unique_name_in_owner = true
+layout_mode = 0
+theme_override_constants/separation = 6
+
+[node name="PlayButton" type="Button" parent="MainMenu/MenuStack" unique_id=654780110]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PLAY"
+alignment = 0
+
+[node name="ChartStudioButton" type="Button" parent="MainMenu/MenuStack" unique_id=151759145]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CHART STUDIO"
+alignment = 0
+
+[node name="HelpButton" type="Button" parent="MainMenu/MenuStack" unique_id=1139128327]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HOW TO PLAY"
+alignment = 0
+
+[node name="QuickCalibrationButton" type="Button" parent="MainMenu/MenuStack" unique_id=1924520807]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CALIBRATION"
+alignment = 0
+
+[node name="SettingsButton" type="Button" parent="MainMenu/MenuStack" unique_id=1378515214]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SETTINGS"
+alignment = 0
+
+[node name="CreditsButton" type="Button" parent="MainMenu/MenuStack" unique_id=1782228845]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CREDITS"
+alignment = 0
+
+[node name="ExitButton" type="Button" parent="MainMenu/MenuStack" unique_id=1444477805]
+unique_name_in_owner = true
+layout_mode = 2
+text = "EXIT"
+alignment = 0
+
+[node name="SelectionDescription" type="Label" parent="MainMenu" unique_id=1752236422]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="BackgroundInfo" type="VBoxContainer" parent="MainMenu" unique_id=1614677553]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="BackgroundKicker" type="Label" parent="MainMenu/BackgroundInfo" unique_id=408968578]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BackgroundSong" type="Label" parent="MainMenu/BackgroundInfo" unique_id=914541492]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BackgroundArtist" type="Label" parent="MainMenu/BackgroundInfo" unique_id=1128066611]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MenuVersion" type="Label" parent="MainMenu" unique_id=2103299680]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+
+[node name="MainFooter" type="Label" parent="MainMenu" unique_id=643250335]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+text = "ENTER"
+
+[node name="MenuBGM" type="AudioStreamPlayer" parent="." unique_id=91536502]
+unique_name_in_owner = true
+stream = ExtResource("10_menu_music")
+volume_db = -58.0
+script = ExtResource("9_menu_bgm")
+visual_path = NodePath("../MainMenu/MenuVisual")
+
+[node name="SettingsMenu" type="Control" parent="." unique_id=58148753]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SettingsDim" type="ColorRect" parent="SettingsMenu" unique_id=232114117]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0431373, 0.0509804, 0.0666667, 0.94)
+
+[node name="SettingsCenter" type="CenterContainer" parent="SettingsMenu" unique_id=132646485]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SettingsPanel" type="PanelContainer" parent="SettingsMenu/SettingsCenter" unique_id=1600172918]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(1180, 720)
+layout_mode = 2
+
+[node name="SettingsScroll" type="ScrollContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel" unique_id=1065789216]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SettingsVBox" type="VBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll" unique_id=1747461820]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="SettingsEyebrow" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox" unique_id=1633421291]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.662745, 0.721569, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "SYSTEM"
+
+[node name="SettingsTitle" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox" unique_id=1430071239]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Settings"
+
+[node name="SettingsTabs" type="HBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox" unique_id=2145882824]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DisplayTab" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/SettingsTabs" unique_id=2084818241]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 46)
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "01  DISPLAY"
+
+[node name="AudioTab" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/SettingsTabs" unique_id=1872220293]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 46)
+layout_mode = 2
+toggle_mode = true
+text = "02  AUDIO"
+
+[node name="TimingTab" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/SettingsTabs" unique_id=537681835]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 46)
+layout_mode = 2
+toggle_mode = true
+text = "03  GAMEPLAY & TIMING"
+
+[node name="DisplaySettingsGroup" type="VBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox" unique_id=1805601239]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 385)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DisplaySectionLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup" unique_id=491874492]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "DISPLAY / INPUT"
+
+[node name="DisplayGrid" type="GridContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup" unique_id=104657233]
+layout_mode = 2
+columns = 2
+
+[node name="ResolutionLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=203656922]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 56)
+layout_mode = 2
+text = "RESOLUTION"
+vertical_alignment = 1
+
+[node name="ResolutionOption" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=401360085]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("13_dropdown")
+
+[node name="WindowModeLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=2097768522]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 56)
+layout_mode = 2
+text = "WINDOW MODE"
+vertical_alignment = 1
+
+[node name="WindowModeOption" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=140642208]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("13_dropdown")
+
+[node name="VSyncLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=256919665]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 56)
+layout_mode = 2
+text = "VSYNC"
+vertical_alignment = 1
+
+[node name="VSyncOption" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=1180395110]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("13_dropdown")
+
+[node name="InputStyleLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=1740000001]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 56)
+layout_mode = 2
+text = "INPUT STYLE"
+vertical_alignment = 1
+
+[node name="InputStyleOption" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup/DisplayGrid" unique_id=1740000002]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("13_dropdown")
+
+[node name="DisplayHint" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/DisplaySettingsGroup" unique_id=2001938761]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 2
+
+[node name="AudioSettingsGroup" type="VBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox" unique_id=1798851736]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 385)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AudioSectionLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup" unique_id=863048234]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "AUDIO"
+
+[node name="MasterLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup" unique_id=1239589502]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MASTER VOLUME"
+
+[node name="MasterRow" type="HBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup" unique_id=1883965870]
+layout_mode = 2
+
+[node name="MasterSlider" type="HSlider" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup/MasterRow" unique_id=226848065]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 80.0
+
+[node name="MasterValue" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup/MasterRow" unique_id=1999219237]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(86, 38)
+layout_mode = 2
+text = "80%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="MenuSFXToggle" type="CheckButton" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup" unique_id=1912582416]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+button_pressed = true
+text = "MENU SFX"
+
+[node name="MenuSFXRow" type="HBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup" unique_id=1850247881]
+layout_mode = 2
+
+[node name="MenuSFXSlider" type="HSlider" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup/MenuSFXRow" unique_id=2137673465]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 68.0
+
+[node name="MenuSFXValue" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/AudioSettingsGroup/MenuSFXRow" unique_id=1057083044]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(86, 38)
+layout_mode = 2
+text = "68%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TimingSettingsGroup" type="VBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox" unique_id=1085517422]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 385)
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="TimingSectionLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=627713369]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "GAMEPLAY & TIMING"
+
+[node name="BackgroundLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=312997544]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SONG BACKGROUND OPACITY"
+
+[node name="BackgroundRow" type="HBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=562571328]
+layout_mode = 2
+
+[node name="BackgroundOpacitySlider" type="HSlider" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup/BackgroundRow" unique_id=245933256]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 62.0
+
+[node name="BackgroundValue" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup/BackgroundRow" unique_id=1579676043]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(86, 34)
+layout_mode = 2
+text = "62%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="InputOffsetLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=937209127]
+unique_name_in_owner = true
+layout_mode = 2
+text = "INPUT OFFSET"
+
+[node name="InputOffsetRow" type="HBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=194085299]
+layout_mode = 2
+
+[node name="InputOffsetSlider" type="HSlider" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup/InputOffsetRow" unique_id=665829693]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -200.0
+max_value = 200.0
+
+[node name="InputOffsetValue" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup/InputOffsetRow" unique_id=1292211912]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 34)
+layout_mode = 2
+text = "0 ms"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AudioOffsetLabel" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=485428986]
+unique_name_in_owner = true
+layout_mode = 2
+text = "AUDIO OFFSET"
+
+[node name="AudioOffsetRow" type="HBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=841533084]
+layout_mode = 2
+
+[node name="AudioOffsetSlider" type="HSlider" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup/AudioOffsetRow" unique_id=387493088]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -200.0
+max_value = 200.0
+
+[node name="AudioOffsetValue" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup/AudioOffsetRow" unique_id=86522189]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 34)
+layout_mode = 2
+text = "0 ms"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SettingsHint" type="Label" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=1176470569]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Use calibration for a measured starting point, then fine tune by feel."
+autowrap_mode = 2
+
+[node name="CalibrationButton" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/TimingSettingsGroup" unique_id=695419381]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 50)
+layout_mode = 2
+text = "CALIBRATION WIZARD"
+
+[node name="SettingsActions" type="HBoxContainer" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox" unique_id=424668205]
+layout_mode = 2
+
+[node name="ResetDefaultsButton" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/SettingsActions" unique_id=1758404154]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 50)
+layout_mode = 2
+text = "RESET DEFAULTS"
+
+[node name="ActionSpacer" type="Control" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/SettingsActions" unique_id=891098464]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="SettingsMenu/SettingsCenter/SettingsPanel/SettingsScroll/SettingsVBox/SettingsActions" unique_id=107575963]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+text = "← BACK"
+
+[node name="CalibrationScreen" parent="." unique_id=311086776 instance=ExtResource("4_calibration")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="HelpScreen" parent="." unique_id=2146946908 instance=ExtResource("11_help_screen")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="CreditsScreen" type="Control" parent="." unique_id=1245794523]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CreditsMargin" type="MarginContainer" parent="CreditsScreen" unique_id=1028913547]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 62.0
+offset_top = 48.0
+offset_right = -62.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CreditsVBox" type="VBoxContainer" parent="CreditsScreen/CreditsMargin" unique_id=1978970021]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="CreditsHeader" type="HBoxContainer" parent="CreditsScreen/CreditsMargin/CreditsVBox" unique_id=696417169]
+layout_mode = 2
+
+[node name="CreditsHeaderLabel" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsHeader" unique_id=2049442368]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.662745, 0.721569, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "BEAT UP!  /  CREDITS"
+
+[node name="CreditsIndex" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsHeader" unique_id=1353527748]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.847059, 0.878431, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "06 / 06"
+
+[node name="CreditsRule" type="HSeparator" parent="CreditsScreen/CreditsMargin/CreditsVBox" unique_id=1399129474]
+layout_mode = 2
+
+[node name="CreditsBody" type="HBoxContainer" parent="CreditsScreen/CreditsMargin/CreditsVBox" unique_id=803376766]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="CreditsInfoPanel" type="PanelContainer" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody" unique_id=1295861991]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(610, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CreditsInfo" type="VBoxContainer" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel" unique_id=616702126]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CreditsEyebrow" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo" unique_id=1816132164]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.847059, 0.878431, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "INDEPENDENT RHYTHM PROTOTYPE"
+
+[node name="CreditsTitle" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo" unique_id=1738578954]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Made for
+the downbeat."
+
+[node name="CreditsIntro" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo" unique_id=151925950]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.596078, 0.596078, 0.635294, 1)
+theme_override_font_sizes/font_size = 15
+text = "A keyboard-first rhythm game built around precision, readable motion, and one clean visual language."
+autowrap_mode = 2
+
+[node name="CreditsGrid" type="GridContainer" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo" unique_id=330274326]
+layout_mode = 2
+columns = 2
+
+[node name="ProjectKey" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=1322527099]
+custom_minimum_size = Vector2(180, 62)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.662745, 0.721569, 1, 1)
+text = "PROJECT"
+vertical_alignment = 1
+
+[node name="ProjectValue" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=1261699307]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "BEAT UP!
+Game design & development"
+vertical_alignment = 1
+
+[node name="EngineKey" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=741836530]
+custom_minimum_size = Vector2(180, 62)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.847059, 0.878431, 1, 1)
+text = "ENGINE"
+vertical_alignment = 1
+
+[node name="EngineValue" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=128491227]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Godot Engine
+Code-native interface"
+vertical_alignment = 1
+
+[node name="TypeKey" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=207022757]
+custom_minimum_size = Vector2(180, 62)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.960784, 0.788235, 0.415686, 1)
+text = "TYPE"
+vertical_alignment = 1
+
+[node name="TypeValue" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=863960307]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Poppins
+IBM Plex Mono"
+vertical_alignment = 1
+
+[node name="MusicKey" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=68661259]
+custom_minimum_size = Vector2(180, 62)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.847059, 0.470588, 1)
+text = "MENU MUSIC"
+vertical_alignment = 1
+
+[node name="MusicValue" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo/CreditsGrid" unique_id=980186818]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "simple_loop.ogg
+License notes included in project"
+vertical_alignment = 1
+
+[node name="CreditsThanks" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsInfoPanel/CreditsInfo" unique_id=1965753458]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.596078, 0.596078, 0.635294, 1)
+theme_override_font_sizes/font_size = 13
+text = "THANK YOU FOR PLAYING — KEEP THE RHYTHM SHARP."
+
+[node name="CreditsVisualPanel" type="PanelContainer" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody" unique_id=1508471658]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CreditsVisual" type="Control" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsVisualPanel" unique_id=1902201333]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="CreditsOrbit" type="Control" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsVisualPanel/CreditsVisual" unique_id=1860513376]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -230.0
+offset_right = 230.0
+offset_bottom = 230.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_orbit")
+
+[node name="CreditsMark" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsVisualPanel/CreditsVisual" unique_id=687729092]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -42.0
+offset_right = 180.0
+offset_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.662745, 0.721569, 1, 1)
+theme_override_font_sizes/font_size = 42
+text = "BEAT UP!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CreditsMotto" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsBody/CreditsVisualPanel/CreditsVisual" unique_id=99797041]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = 36.0
+offset_right = 180.0
+offset_bottom = 66.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.596078, 0.596078, 0.635294, 1)
+theme_override_font_sizes/font_size = 12
+text = "RHYTHM  /  PRECISION  /  FLOW"
+horizontal_alignment = 1
+
+[node name="CreditsFooter" type="HBoxContainer" parent="CreditsScreen/CreditsMargin/CreditsVBox" unique_id=819709759]
+layout_mode = 2
+
+[node name="CreditsBackButton" type="Button" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsFooter" unique_id=751250816]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 52)
+layout_mode = 2
+text = "← BACK"
+
+[node name="CreditsFooterSpacer" type="Control" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsFooter" unique_id=664815434]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CreditsVersion" type="Label" parent="CreditsScreen/CreditsMargin/CreditsVBox/CreditsFooter" unique_id=2022869984]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.596078, 0.596078, 0.635294, 1)
+theme_override_font_sizes/font_size = 12
+text = "BEAT UP!  /  SYSTEM 18.7.0.1"
+vertical_alignment = 1
+
+[node name="ExitDialog" type="Control" parent="." unique_id=1723134061]
+unique_name_in_owner = true
+visible = false
+z_index = 80
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="ExitDialog" unique_id=1217976752]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0196078, 0.0235294, 0.0313725, 0.9)
+
+[node name="Center" type="CenterContainer" parent="ExitDialog" unique_id=897378244]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="ExitDialog/Center" unique_id=13332569]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 238)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="ExitDialog/Center/Panel" unique_id=2044256371]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="IconArea" type="Control" parent="ExitDialog/Center/Panel/VBox" unique_id=1120195471]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="PowerIcon" type="Control" parent="ExitDialog/Center/Panel/VBox/IconArea" unique_id=1241218184]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -28.0
+offset_top = -28.0
+offset_right = 28.0
+offset_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("12_action_icon")
+icon_type = "power"
+frame_shape = "none"
+icon_color = Color(1, 0.439216, 0.301961, 1)
+accent_color = Color(1, 0.439216, 0.301961, 1)
+
+[node name="Title" type="Label" parent="ExitDialog/Center/Panel/VBox" unique_id=1713353519]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Exit Beat UP?"
+horizontal_alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="ExitDialog/Center/Panel/VBox" unique_id=777396387]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ExitCancelButton" type="Button" parent="ExitDialog/Center/Panel/VBox/Actions" unique_id=1002748678]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+text = "CANCEL"
+
+[node name="ExitConfirmButton" type="Button" parent="ExitDialog/Center/Panel/VBox/Actions" unique_id=1099224994]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+text = "EXIT"
+
+[node name="TransitionOverlay" type="ColorRect" parent="." unique_id=1078367074]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0431373, 0.0509804, 0.0666667, 1)

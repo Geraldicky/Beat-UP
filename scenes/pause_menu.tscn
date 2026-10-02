@@ -1,0 +1,286 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/pause_menu.gd" id="1_script"]
+[ext_resource type="Resource" path="res://config/theme_config.tres" id="2_theme"]
+[ext_resource type="Resource" path="res://config/ui_layout_config.tres" id="3_layout"]
+[ext_resource type="Script" path="res://scripts/ui/action_icon.gd" id="4_icon"]
+
+[node name="PauseMenu" type="Control"]
+visible = false
+z_index = 90
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_script")
+theme_config = ExtResource("2_theme")
+layout_config = ExtResource("3_layout")
+
+[node name="BlurSurface" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0431373, 0.054902, 0.0784314, 0.68)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainPanel" type="PanelContainer" parent="Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(850, 360)
+layout_mode = 2
+
+[node name="MainVBox" type="VBoxContainer" parent="Center/MainPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+
+[node name="Eyebrow" type="Label" parent="Center/MainPanel/MainVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.956863, 0.964706, 0.984314, 1)
+theme_override_font_sizes/font_size = 30
+text = "PAUSED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Divider" type="HSeparator" parent="Center/MainPanel/MainVBox"]
+layout_mode = 2
+
+[node name="PauseButtons" type="HBoxContainer" parent="Center/MainPanel/MainVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+alignment = 1
+
+[node name="SongListButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 184)
+layout_mode = 2
+
+[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/SongListButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_icon")
+icon_type = "song_list"
+frame_shape = "none"
+icon_color = Color(0.956863, 0.964706, 0.984314, 1)
+accent_color = Color(0.717647, 0.423529, 0.458824, 1)
+badge_fill_color = Color(1, 0.439216, 0.301961, 0.11)
+badge_hover_fill_color = Color(1, 0.439216, 0.301961, 0.23)
+
+[node name="RetryButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 184)
+layout_mode = 2
+
+[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/RetryButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_icon")
+icon_type = "retry"
+frame_shape = "none"
+icon_color = Color(0.956863, 0.964706, 0.984314, 1)
+accent_color = Color(0.960784, 0.788235, 0.415686, 1)
+badge_fill_color = Color(0.960784, 0.788235, 0.415686, 0.11)
+badge_hover_fill_color = Color(0.960784, 0.788235, 0.415686, 0.23)
+
+[node name="SettingsButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 184)
+layout_mode = 2
+
+[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/SettingsButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_icon")
+icon_type = "settings"
+frame_shape = "none"
+icon_color = Color(0.956863, 0.964706, 0.984314, 1)
+accent_color = Color(0.662745, 0.721569, 1, 1)
+badge_fill_color = Color(0.662745, 0.721569, 1, 0.11)
+badge_hover_fill_color = Color(0.662745, 0.721569, 1, 0.23)
+
+[node name="ResumeButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 184)
+layout_mode = 2
+
+[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/ResumeButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_icon")
+icon_type = "resume"
+frame_shape = "none"
+icon_color = Color(0.956863, 0.964706, 0.984314, 1)
+accent_color = Color(0.490196, 0.807843, 0.619608, 1)
+badge_fill_color = Color(0.603922, 0.847059, 0.470588, 0.11)
+badge_hover_fill_color = Color(0.603922, 0.847059, 0.470588, 0.23)
+
+[node name="SettingsPanel" type="PanelContainer" parent="Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(680, 730)
+layout_mode = 2
+
+[node name="SettingsVBox" type="VBoxContainer" parent="Center/SettingsPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SettingsTitle" type="Label" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "QUICK SETTINGS"
+
+[node name="MasterLabel" type="Label" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MASTER VOLUME"
+
+[node name="MasterSlider" type="HSlider" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 80.0
+
+[node name="MenuSFXToggle" type="CheckButton" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "MENU SFX"
+
+[node name="MenuSFXRow" type="HBoxContainer" parent="Center/SettingsPanel/SettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MenuSFXSlider" type="HSlider" parent="Center/SettingsPanel/SettingsVBox/MenuSFXRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 68.0
+
+[node name="MenuSFXValue" type="Label" parent="Center/SettingsPanel/SettingsVBox/MenuSFXRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(82, 0)
+layout_mode = 2
+text = "68%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BackgroundLabel" type="Label" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SONG BACKGROUND OPACITY"
+
+[node name="BackgroundSlider" type="HSlider" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 62.0
+
+[node name="InputOffsetLabel" type="Label" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "INPUT OFFSET"
+
+[node name="InputOffsetRow" type="HBoxContainer" parent="Center/SettingsPanel/SettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputOffsetSlider" type="HSlider" parent="Center/SettingsPanel/SettingsVBox/InputOffsetRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -200.0
+max_value = 200.0
+step = 1.0
+
+[node name="InputOffsetValue" type="Label" parent="Center/SettingsPanel/SettingsVBox/InputOffsetRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(82, 0)
+layout_mode = 2
+text = "0 ms"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AudioOffsetLabel" type="Label" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "AUDIO OFFSET"
+
+[node name="AudioOffsetRow" type="HBoxContainer" parent="Center/SettingsPanel/SettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="AudioOffsetSlider" type="HSlider" parent="Center/SettingsPanel/SettingsVBox/AudioOffsetRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -200.0
+max_value = 200.0
+step = 1.0
+
+[node name="AudioOffsetValue" type="Label" parent="Center/SettingsPanel/SettingsVBox/AudioOffsetRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(82, 0)
+layout_mode = 2
+text = "0 ms"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="Center/SettingsPanel/SettingsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "← Back"

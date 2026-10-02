@@ -1,0 +1,326 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/track.tscn" id="2_track"]
+[ext_resource type="Script" path="res://scripts/chart_timeline.gd" id="3_timeline"]
+[ext_resource type="AudioStream" path="res://audio/Beat.wav" id="4_hit"]
+[ext_resource type="AudioStream" path="res://audio/fail.wav" id="5_miss"]
+[ext_resource type="Script" path="res://scripts/level_catalog.gd" id="6_catalog"]
+[ext_resource type="Script" path="res://scripts/combo_digits.gd" id="7_combo"]
+[ext_resource type="Script" path="res://scripts/score_digits.gd" id="8_score"]
+[ext_resource type="Script" path="res://scripts/ui/battle_background.gd" id="9_background"]
+[ext_resource type="Resource" path="res://config/gameplay_config.tres" id="10_gameplay"]
+[ext_resource type="PackedScene" path="res://scenes/song_select.tscn" id="11_song_select"]
+[ext_resource type="PackedScene" path="res://scenes/result_screen.tscn" id="12_result"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="13_pause"]
+[ext_resource type="Resource" path="res://config/theme_config.tres" id="14_theme"]
+[ext_resource type="Resource" path="res://config/result_config.tres" id="15_result_config"]
+[ext_resource type="Resource" path="res://config/ui_layout_config.tres" id="16_layout"]
+[ext_resource type="Script" path="res://scripts/ui/gameplay_countdown_visual.gd" id="17_countdown"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_main")
+gameplay_config = ExtResource("10_gameplay")
+theme_config = ExtResource("14_theme")
+result_config = ExtResource("15_result_config")
+ui_layout_config = ExtResource("16_layout")
+
+[node name="LevelCatalog" type="Node" parent="."]
+script = ExtResource("6_catalog")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0431373, 0.0509804, 0.0666667, 1)
+
+[node name="BattleBackground" type="TextureRect" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("9_background")
+
+[node name="Battle" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ChartTimeline" type="Node" parent="Battle"]
+script = ExtResource("3_timeline")
+
+[node name="Track" parent="Battle" instance=ExtResource("2_track")]
+
+[node name="HUD" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BattleStatsPanel" type="Panel" parent="HUD"]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="ScoreCaption" type="Label" parent="HUD"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.596078, 0.596078, 0.635294, 1)
+theme_override_font_sizes/font_size = 12
+text = "SCORE"
+
+[node name="ScoreDigits" type="Label" parent="HUD"]
+layout_mode = 0
+mouse_filter = 2
+script = ExtResource("8_score")
+horizontal_alignment = 0
+vertical_alignment = 1
+
+[node name="AccuracyCaption" type="Label" parent="HUD"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.596078, 0.596078, 0.635294, 1)
+theme_override_font_sizes/font_size = 11
+text = "ACCURACY"
+horizontal_alignment = 2
+
+[node name="AccuracyLabel" type="Label" parent="HUD"]
+layout_mode = 0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 20
+text = "100.00%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ComboDigits" type="Label" parent="HUD"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+script = ExtResource("7_combo")
+
+[node name="ComboLabel" type="Label" parent="HUD"]
+visible = false
+layout_mode = 0
+theme_override_colors/font_color = Color(0.933333, 0.341176, 0.584314, 1)
+theme_override_font_sizes/font_size = 12
+text = "COMBO"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SongInfoPanel" type="Panel" parent="HUD"]
+layout_mode = 0
+mouse_filter = 2
+
+[node name="SongTitleLabel" type="Label" parent="HUD/SongInfoPanel"]
+layout_mode = 0
+theme_override_font_sizes/font_size = 17
+text = "SONG TITLE"
+clip_text = true
+text_overrun_behavior = 3
+horizontal_alignment = 2
+
+[node name="BPMLabel" type="Label" parent="HUD/SongInfoPanel"]
+layout_mode = 0
+theme_override_font_sizes/font_size = 12
+text = "150 BPM"
+
+[node name="DifficultyLabel" type="Label" parent="HUD/SongInfoPanel"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0.933333, 0.341176, 0.584314, 1)
+theme_override_font_sizes/font_size = 12
+text = "NORMAL"
+
+[node name="DurationLabel" type="Label" parent="HUD/SongInfoPanel"]
+layout_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "00:00 / 00:00"
+
+[node name="DurationBar" type="ProgressBar" parent="HUD/SongInfoPanel"]
+layout_mode = 0
+mouse_filter = 2
+show_percentage = false
+
+[node name="PauseButton" type="Button" parent="HUD"]
+visible = false
+layout_mode = 1
+text = "Ⅱ"
+
+[node name="SkipIntroButton" type="Button" parent="HUD"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+focus_mode = 0
+text = "SKIP INTRO  >"
+
+[node name="TimingDebug" type="Label" parent="HUD"]
+visible = false
+layout_mode = 0
+offset_left = 28.0
+offset_top = 700.0
+offset_right = 430.0
+offset_bottom = 850.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.968627, 0.780392, 0.368627, 1)
+theme_override_font_sizes/font_size = 13
+text = "TIMING DEBUG [F3]"
+
+[node name="Audio" type="Node" parent="."]
+
+[node name="Music" type="AudioStreamPlayer" parent="Audio"]
+volume_db = -7.0
+
+[node name="HitSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("4_hit")
+volume_db = -4.0
+max_polyphony = 8
+
+[node name="MissSFX" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("5_miss")
+volume_db = -5.0
+max_polyphony = 4
+
+[node name="Feedback" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Main" type="Label" parent="Feedback"]
+layout_mode = 0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="Sub" type="Label" parent="Feedback"]
+visible = false
+layout_mode = 0
+theme_override_font_sizes/font_size = 13
+
+[node name="JudgmentSprite" type="Label" parent="Feedback"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 32
+text = "PERFECT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CountdownOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="CountdownOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0196078, 0.0235294, 0.0313725, 0.13)
+
+[node name="Center" type="CenterContainer" parent="CountdownOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Stack" type="Control" parent="CountdownOverlay/Center"]
+custom_minimum_size = Vector2(520, 300)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Visual" type="Control" parent="CountdownOverlay/Center/Stack"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 520.0
+offset_bottom = 300.0
+mouse_filter = 2
+script = ExtResource("17_countdown")
+
+[node name="Status" type="Label" parent="CountdownOverlay/Center/Stack"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 80.0
+offset_top = 22.0
+offset_right = 440.0
+offset_bottom = 54.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.94902, 0.945098, 0.933333, 0.9)
+theme_override_font_sizes/font_size = 16
+text = "READY"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Number" type="Label" parent="CountdownOverlay/Center/Stack"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 130.0
+offset_top = 72.0
+offset_right = 390.0
+offset_bottom = 208.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 112
+text = "3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Mode" type="Label" parent="CountdownOverlay/Center/Stack"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 80.0
+offset_top = 222.0
+offset_right = 440.0
+offset_bottom = 248.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.94902, 0.945098, 0.933333, 0.48)
+theme_override_font_sizes/font_size = 12
+text = "8 KEY · NUMPAD"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LevelSelect" parent="." instance=ExtResource("11_song_select")]
+
+[node name="ResultOverlay" parent="." instance=ExtResource("12_result")]
+visible = false
+
+[node name="PauseOverlay" parent="." instance=ExtResource("13_pause")]
+visible = false

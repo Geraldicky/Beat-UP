@@ -1,0 +1,1689 @@
+{
+	"id": "sonic_blaster_normal",
+	"song_id": "sonic_blaster",
+	"title": "Sonic Blaster",
+	"artist": "F-777",
+	"difficulty": "NORMAL",
+	"chart_difficulty": "normal",
+	"star_rating": 4,
+	"audio": "res://music/imported/sonic_blaster.ogg",
+	"analysis_source": "",
+	"background": "res://assets/song_backgrounds/sonic_blaster.png",
+	"bpm": 145.0,
+	"beat_offset": 0.188859,
+	"duration": 182.09093,
+	"seed": 1744305.0,
+	"recommended": "NORMAL • 4★ • 287 notes • 6 SPACE • Song choreography v17.4.44",
+	"events": [
+		{
+			"time": 2.671618,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 3.085411,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 3.499204,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 4.32679,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 4.533687,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 5.154376,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 5.981962,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 6.809549,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 7.223342,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 7.637135,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 8.050928,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 8.464721,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 8.878514,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 9.499204,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 9.7061,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 10.119893,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 10.533687,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 11.154376,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 11.775066,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 12.188859,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 12.395756,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 13.016445,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 13.223342,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 13.430238,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 13.844031,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 14.257825,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 14.464721,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 15.085411,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 15.499204,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 16.32679,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 16.740583,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 17.568169,
+			"type": "reverse",
+			"direction": 8
+		},
+		{
+			"time": 18.395756,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 18.809549,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 19.223342,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 19.637135,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 20.050928,
+			"type": "reverse",
+			"direction": 1
+		},
+		{
+			"time": 20.464721,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 20.878514,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 21.085411,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 21.7061,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 22.119893,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 22.533687,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 22.94748,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 23.361273,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 24.188859,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 24.395756,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 25.016445,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 25.430238,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 26.257825,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 26.671618,
+			"type": "reverse",
+			"direction": 7
+		},
+		{
+			"time": 27.085411,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 27.499204,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 27.7061,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 28.32679,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 29.154376,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 29.568169,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 29.981962,
+			"type": "reverse",
+			"direction": 4
+		},
+		{
+			"time": 30.395756,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 30.809549,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 31.016445,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 31.637135,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 32.050928,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 32.464721,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 33.292307,
+			"type": "reverse",
+			"direction": 2
+		},
+		{
+			"time": 34.119893,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 34.32679,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 34.94748,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 35.361273,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 36.188859,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 36.602652,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 37.016445,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 37.637135,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 38.257825,
+			"type": "reverse",
+			"direction": 6
+		},
+		{
+			"time": 39.085411,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 39.499204,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 39.912997,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 40.740583,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 41.154376,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 41.568169,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 43.223342,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 44.050928,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 44.464721,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 44.878514,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 45.292307,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 46.94748,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 47.361273,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 47.775066,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 48.188859,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 48.602652,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 49.844031,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 50.671618,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 51.085411,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 51.499204,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 53.154376,
+			"type": "reverse",
+			"direction": 7
+		},
+		{
+			"time": 53.568169,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 53.981962,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 54.809549,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 55.223342,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 55.637135,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 56.464721,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 56.671618,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 57.292307,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 57.499204,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 58.119893,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 58.533687,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 58.94748,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 59.775066,
+			"type": "reverse",
+			"direction": 4
+		},
+		{
+			"time": 60.188859,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 60.602652,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 61.430238,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 62.257825,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 63.085411,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 63.499204,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 63.912997,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 64.119893,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 64.740583,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 64.94748,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 65.568169,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 66.395756,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 66.809549,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 68.050928,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 68.464721,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 70.119893,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 70.94748,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 72.395756,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 72.809549,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 73.016445,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 74.257825,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 75.085411,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 75.7061,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 76.740583,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 77.981962,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 79.016445,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 79.637135,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 80.050928,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 80.464721,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 80.878514,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 81.292307,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 81.7061,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 82.94748,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 84.602652,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 85.844031,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 86.257825,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 87.085411,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 87.499204,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 87.912997,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 88.32679,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 88.533687,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 89.568169,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 91.223342,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 92.464721,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 92.878514,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 94.119893,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 94.32679,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 94.533687,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 94.94748,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 96.188859,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 97.016445,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 97.844031,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 98.257825,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 99.499204,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 100.94748,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 101.154376,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 101.568169,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 102.188859,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 102.809549,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 104.464721,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 104.878514,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 106.119893,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 107.361273,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 107.775066,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 108.602652,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 109.430238,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 109.844031,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 111.085411,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 111.912997,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 112.740583,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 113.568169,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 114.395756,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 114.809549,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 115.223342,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 116.050928,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 116.464721,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 117.7061,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 118.533687,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 118.94748,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 119.361273,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 119.775066,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 120.809549,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 121.844031,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 122.257825,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 122.671618,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 123.085411,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 124.740583,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 125.154376,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 125.568169,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 125.981962,
+			"type": "reverse",
+			"direction": 7
+		},
+		{
+			"time": 126.395756,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 126.809549,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 127.637135,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 128.464721,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 128.878514,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 129.292307,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 130.32679,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 131.361273,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 131.775066,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 132.602652,
+			"type": "reverse",
+			"direction": 2
+		},
+		{
+			"time": 133.016445,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 133.637135,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 134.050928,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 134.257825,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 135.085411,
+			"type": "reverse",
+			"direction": 1
+		},
+		{
+			"time": 135.912997,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 136.119893,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 136.32679,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 136.740583,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 137.154376,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 137.568169,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 137.775066,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 138.395756,
+			"type": "reverse",
+			"direction": 8
+		},
+		{
+			"time": 139.223342,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 139.430238,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 140.050928,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 140.878514,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 141.292307,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 141.7061,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 141.912997,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 142.119893,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 142.533687,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 142.740583,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 143.775066,
+			"type": "reverse",
+			"direction": 9
+		},
+		{
+			"time": 144.395756,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 144.602652,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 145.223342,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 145.844031,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 146.671618,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 147.085411,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 147.499204,
+			"type": "reverse",
+			"direction": 6
+		},
+		{
+			"time": 147.912997,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 148.32679,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 148.533687,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 149.154376,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 149.568169,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 149.981962,
+			"type": "reverse",
+			"direction": 4
+		},
+		{
+			"time": 150.395756,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 150.809549,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 151.016445,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 151.223342,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 151.637135,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 152.464721,
+			"type": "reverse",
+			"direction": 3
+		},
+		{
+			"time": 153.292307,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 153.7061,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 154.119893,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 154.533687,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 154.94748,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 155.154376,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 155.775066,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 156.602652,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 157.016445,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 157.430238,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 157.844031,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 158.464721,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 159.085411,
+			"type": "reverse",
+			"direction": 6
+		},
+		{
+			"time": 160.119893,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 160.32679,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 160.740583,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 161.154376,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 161.775066,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 162.395756,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 162.809549,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 163.223342,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 163.637135,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 164.464721,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 164.878514,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 165.7061,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 166.119893,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 166.94748,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 167.361273,
+			"type": "normal",
+			"direction": 7
+		},
+		{
+			"time": 168.188859,
+			"type": "normal",
+			"direction": 8
+		},
+		{
+			"time": 169.016445,
+			"type": "normal",
+			"direction": 6
+		},
+		{
+			"time": 169.430238,
+			"type": "normal",
+			"direction": 9
+		},
+		{
+			"time": 170.671618,
+			"type": "normal",
+			"direction": 3
+		},
+		{
+			"time": 171.499204,
+			"type": "normal",
+			"direction": 4
+		},
+		{
+			"time": 172.32679,
+			"type": "normal",
+			"direction": 1
+		},
+		{
+			"time": 173.154376,
+			"type": "normal",
+			"direction": 2
+		},
+		{
+			"time": 173.981962,
+			"type": "normal",
+			"direction": 8
+		}
+	],
+	"space_events": [
+		18.395756,
+		58.119893,
+		87.912997,
+		109.430238,
+		139.223342,
+		160.740583
+	],
+	"import_meta": {
+		"source_name": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.ogg",
+		"state": "generated",
+		"generated_at": "2026-09-13T18:15:00+07:00",
+		"analysis_master_name": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.flac",
+		"analysis_master_format": "flac",
+		"integration_version": "17.4.43"
+	},
+	"sections": [
+		{
+			"index": 0,
+			"start": 0.188859,
+			"end": 6.809549,
+			"role": "intro",
+			"energy": 0.9834
+		},
+		{
+			"index": 1,
+			"start": 6.809549,
+			"end": 39.912997,
+			"role": "chorus",
+			"energy": 0.9205
+		},
+		{
+			"index": 2,
+			"start": 39.912997,
+			"end": 46.533687,
+			"role": "verse",
+			"energy": 0.5857
+		},
+		{
+			"index": 3,
+			"start": 46.533687,
+			"end": 53.154376,
+			"role": "pre_chorus",
+			"energy": 0.5479
+		},
+		{
+			"index": 4,
+			"start": 53.154376,
+			"end": 66.395756,
+			"role": "chorus",
+			"energy": 0.7468
+		},
+		{
+			"index": 5,
+			"start": 66.395756,
+			"end": 79.637135,
+			"role": "interlude",
+			"energy": 0.1493
+		},
+		{
+			"index": 6,
+			"start": 79.637135,
+			"end": 125.981962,
+			"role": "verse",
+			"energy": 0.5265
+		},
+		{
+			"index": 7,
+			"start": 125.981962,
+			"end": 132.602652,
+			"role": "pre_chorus",
+			"energy": 0.6771
+		},
+		{
+			"index": 8,
+			"start": 132.602652,
+			"end": 152.464721,
+			"role": "climax",
+			"energy": 0.913
+		},
+		{
+			"index": 9,
+			"start": 152.464721,
+			"end": 165.7061,
+			"role": "chorus",
+			"energy": 0.8133
+		},
+		{
+			"index": 10,
+			"start": 165.7061,
+			"end": 172.32679,
+			"role": "verse",
+			"energy": 0.5977
+		},
+		{
+			"index": 11,
+			"start": 172.32679,
+			"end": 182.09093,
+			"role": "outro",
+			"energy": 0.0724
+		}
+	],
+	"generator_meta": {
+		"generated_by": "Beat UP! FLAC musicality generator",
+		"code": "BUP-FLAC-1743",
+		"revision": 1743,
+		"version": "17.4.3",
+		"pipeline": "lossless_flac_phrase_onset_grid_v1743",
+		"analysis_source_name": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.flac",
+		"analysis_source_format": "flac",
+		"tempo_mode": "verified_bpm_phase_refined",
+		"tempo_multiplier": 1.0,
+		"batch_version": "17.4.43",
+		"analysis_master": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.flac",
+		"analysis_master_bundled": false,
+		"postprocess_version": "17.4.5.4",
+		"postprocess_code": "BUP-BURST-17454",
+		"postprocess_policy": "short_window_readability_budget_reverse_safe_placement",
+		"integration_version": "17.4.43",
+		"source_youtube_id": "IvYD-HLAl8E",
+		"choreography_version": "17.4.44",
+		"choreography_code": "BUP-CHOREO-17444",
+		"choreography_pipeline": "song_specific_rhythm_fingerprint_transition_grammar_v17444"
+	},
+	"timing_grid": {
+		"mode": "verified_bpm_phase_refined",
+		"bpm": 145.0,
+		"beat_offset": 0.188859,
+		"grid_division": 2,
+		"minimum_gap_beats": 0.5,
+		"phase_refinement_ms": -6.0,
+		"phase_score": 0.97202,
+		"timestamp_policy": "grid_locked_flac_onset_evidence"
+	},
+	"special_note_counts": {
+		"reverse": 17
+	},
+	"generator_diagnostics": {
+		"version": "17.4.5.4",
+		"note_count": 287,
+		"average_nps": 1.576,
+		"peak_1s_notes": 4,
+		"p10_gap_ms": 206.9,
+		"density_intensity_correlation": 0.839,
+		"peak_phrase_density": 0.844,
+		"calm_phrase_density": 0.313,
+		"peak_to_calm_density_ratio": 2.7,
+		"phase_refinement_ms": -6.0,
+		"source": "lossless FLAC master",
+		"notes_per_second_cap": 5.2,
+		"space_count": 6,
+		"reverse_count": 17,
+		"active_start": 0.1358,
+		"active_end": 174.7341,
+		"playable_start": 2.2578,
+		"audio_onset_count": 264,
+		"target_note_count": 258,
+		"peak_0_5s_notes": 3,
+		"readability_removed_notes": 0,
+		"readability_removed_half_second_budget": 0,
+		"readability_removed_one_second_budget": 0,
+		"readability_policy": "burst_budget_v17454"
+	},
+	"difficulty_profile": {
+		"note_count": 287,
+		"reverse_count": 17,
+		"space_count": 6,
+		"analysis_driven": true,
+		"song_form_aware": true,
+		"local_intensity_priority": true,
+		"section_escalation": true,
+		"lead_in_bars": 1,
+		"balance_version": "v17.4.5.4",
+		"max_notes_per_second": 5.2,
+		"minimum_gap_beats": 0.5,
+		"grid_locked_timing": true,
+		"reverse_target_ratio": 0.06,
+		"special_note_policy": "reverse_core_v174",
+		"breathing_room_guard": true,
+		"burst_readability_guard": true,
+		"short_window_budget_seconds": 0.5,
+		"reverse_dense_burst_guard": true,
+		"choreography_version": "17.4.44",
+		"song_specific_direction_identity": true
+	},
+	"direction_profile": {
+		"version": "song_specific_choreography_v17444",
+		"deterministic": true,
+		"song_specific": true,
+		"shared_song_dna_across_difficulties": true,
+		"rhythm_and_section_fingerprint": "3905eb5b0f5730f6991d93a5",
+		"authoring": "song_seeded_transition_grammar_plus_section_accent_anchors",
+		"template_motif_bank": false,
+		"difficulty_aware": true,
+		"section_aware": true,
+		"beat_subdivision_aware": true,
+		"anti_repetition": [
+			"same_direction",
+			"adjacent_repeated_blocks_2_to_12",
+			"clockwise_perimeter_run_4plus",
+			"counterclockwise_perimeter_run_4plus",
+			"same_transition_vector_run_3plus"
+		],
+		"notes": "All note directions were re-authored from a per-song movement grammar. FLAC-derived timing, note types, Reverse placement, SPACE timing, and note counts are unchanged.",
+		"readability_pass": "v17.4.5.4",
+		"readability_note": "Directions of retained notes are unchanged; only overloaded note slots were removed."
+	},
+	"difficulty_rating_meta": {
+		"version": "17.4.5.4",
+		"model": "flac_phrase_density",
+		"estimated_stars": 4,
+		"average_nps": 1.576,
+		"peak_1s_notes": 4,
+		"p10_gap_ms": 206.9,
+		"raw_score": 4.0,
+		"peak_0_5s_notes": 3
+	},
+	"chart_design": {
+		"version": "17.4.5.4 burst readability & difficulty budget pass",
+		"principle": "Lossless-source onset evidence selects subdivisions; phrase energy controls density; calm sections keep breathing room and payoff sections escalate.",
+		"timing_rule": "Verified BPM grid with FLAC-driven phase refinement; no free-running timestamp drift.",
+		"difficulty_rule": "Difficulty is constrained by short-window information density, not only average NPS; HARD high-BPM microbursts favor readable half-beat streams.",
+		"reverse_rule": "Reverse remains difficulty-scaled (~6% / ~12% / ~18%) but is relocated away from the fastest local clusters whenever safe slots exist.",
+		"special_note_policy": "reverse_only_v174",
+		"readability_rule": "0.5 s and 1.0 s role-aware budgets remove weak subdivisions first; retained timestamps and directions are never moved.",
+		"direction_rule": "Each song owns a deterministic movement grammar derived from its FLAC-timing rhythm fingerprint and section form. No global fixed direction motif bank or cyclic motif index is used.",
+		"direction_guardrails": "No same-direction spam, no immediate repeated 2–12-note blocks, no 4+ clockwise/counter-clockwise perimeter walks, and no three-step repeated translation vector."
+	},
+	"source_provenance": {
+		"youtube_id": "IvYD-HLAl8E",
+		"runtime_audio_original_name": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.ogg",
+		"analysis_master_original_name": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.flac",
+		"analysis_master_format": "flac",
+		"analysis_master_bundled": false
+	}
+}

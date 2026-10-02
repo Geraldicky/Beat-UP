@@ -1,0 +1,28 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://config/result_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+perfect_accuracy_weight = 1.0
+great_accuracy_weight = 0.8
+good_accuracy_weight = 0.5
+miss_accuracy_weight = 0.0
+ss_accuracy = 98.5
+s_accuracy = 95.0
+a_accuracy = 88.0
+b_accuracy = 78.0
+c_accuracy = 65.0
+full_combo_label = "FULL COMBO"
+excellent_label = "EXCELLENT"
+great_clear_label = "GREAT CLEAR"
+clear_label = "CLEAR"
+excellent_accuracy = 95.0
+great_clear_accuracy = 88.0
+header_reveal_duration = 0.14
+rank_reveal_duration = 0.24
+stats_reveal_duration = 0.16
+score_count_duration = 0.85
+actions_reveal_duration = 0.12
+action_unlock_delay = 0.08
+rank_pop_start_scale = 0.82

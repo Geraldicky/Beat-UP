@@ -1,0 +1,140 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/scene_transition.gd" id="1_manager"]
+[ext_resource type="Script" path="res://scripts/ui/song_launch_transition_visual.gd" id="3_song"]
+
+[node name="SceneTransition" type="CanvasLayer"]
+script = ExtResource("1_manager")
+
+[node name="TransitionRoot" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="SongLaunchVisual" type="Control" parent="TransitionRoot"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("3_song")
+
+[node name="Fallback" type="ColorRect" parent="TransitionRoot/SongLaunchVisual"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0588235, 0.0745098, 0.101961, 1)
+
+[node name="SongLaunchArtwork" type="TextureRect" parent="TransitionRoot/SongLaunchVisual"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SongLaunchDim" type="ColorRect" parent="TransitionRoot/SongLaunchVisual"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0156863, 0.0196078, 0.0313726, 0)
+
+[node name="SongLaunchTopAccent" type="ColorRect" parent="TransitionRoot/SongLaunchVisual"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 2.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.662745, 0.721569, 1, 0)
+
+[node name="SongLaunchSweep" type="ColorRect" parent="TransitionRoot/SongLaunchVisual"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 3.0
+offset_bottom = 4.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.662745, 0.721569, 1, 0)
+
+[node name="SongLaunchInfoRail" type="Control" parent="TransitionRoot/SongLaunchVisual"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.065
+anchor_top = 0.63
+anchor_right = 0.57
+anchor_bottom = 0.86
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SongLaunchInfoAccent" type="ColorRect" parent="TransitionRoot/SongLaunchVisual/SongLaunchInfoRail"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -46.0
+offset_right = 3.0
+offset_bottom = 46.0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.827451, 0.643137, 1, 0.72)
+
+[node name="Copy" type="VBoxContainer" parent="TransitionRoot/SongLaunchVisual/SongLaunchInfoRail"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="SongLaunchArtist" type="Label" parent="TransitionRoot/SongLaunchVisual/SongLaunchInfoRail/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "ARTIST"
+
+[node name="SongLaunchTitle" type="Label" parent="TransitionRoot/SongLaunchVisual/SongLaunchInfoRail/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "SONG TITLE"
+text_overrun_behavior = 3
+
+[node name="SongLaunchDetail" type="Label" parent="TransitionRoot/SongLaunchVisual/SongLaunchInfoRail/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "MASTER  ·  190 BPM  ·  12★"

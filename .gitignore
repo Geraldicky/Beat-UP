@@ -1,0 +1,35 @@
+# Godot generated data
+.godot/
+/android/
+
+# Python / tooling caches
+__pycache__/
+*.py[cod]
+.tmp-uv-cache/
+.tmp-uv-python/
+.venv/
+venv/
+
+# Temporary / local QA output
+.test_tmp/
+*.tmp
+*.bak
+*.log
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+
+# Local AI agent and project-memory state
+.claude/
+.codex/
+.ngodingpakeai/
+.ngodingpakeaiignore
+AGENTS.md
+continue-codex.cmd
+
+# Local builds / exports
+Beat UP!.zip
+Beat UP! Build/
+build/
+dist/

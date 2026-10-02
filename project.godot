@@ -1,0 +1,54 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Beat UP!"
+config/version="18.7.0.1"
+run/main_scene="res://scenes/app_shell.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+AppSessionState="*res://scripts/app_session_state.gd"
+SceneTransition="*res://scenes/scene_transition_layer.tscn"
+MenuSFX="*res://scripts/ui/menu_sfx_manager.gd"
+MusicSession="*res://scripts/music_session.gd"
+SongSelectionState="*res://scripts/song_selection_state.gd"
+BackgroundSession="*res://scripts/background_session.gd"
+NavigationController="*res://scripts/navigation_controller.gd"
+RuntimeGuard="*res://scripts/runtime_guard.gd"
+PerformanceMonitor="*res://scripts/v18/performance_monitor.gd"
+ReplayManager="*res://scripts/v18/replay_manager.gd"
+UIAccessibility="*res://scripts/v18/ui_accessibility.gd"
+
+[beat_up]
+
+creator_tools_enabled=false
+player_creator_enabled=true
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.012, 0.014, 0.02, 1)

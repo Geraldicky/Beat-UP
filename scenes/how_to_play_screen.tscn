@@ -1,0 +1,246 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/how_to_play_visual.gd" id="1_visual"]
+
+[node name="HelpScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HelpBackground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0431373, 0.0509804, 0.0666667, 1)
+
+[node name="HelpAccent" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 3.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.662745, 0.721569, 1, 0.82)
+
+[node name="HelpMargin" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 38.0
+offset_top = 28.0
+offset_right = -38.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HelpVBox" type="VBoxContainer" parent="HelpMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HelpHeader" type="HBoxContainer" parent="HelpMargin/HelpVBox"]
+layout_mode = 2
+
+[node name="HeaderCopy" type="VBoxContainer" parent="HelpMargin/HelpVBox/HelpHeader"]
+layout_mode = 2
+
+[node name="Eyebrow" type="Label" parent="HelpMargin/HelpVBox/HelpHeader/HeaderCopy"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.662745, 0.721569, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "TRAINING"
+
+[node name="HelpTitle" type="Label" parent="HelpMargin/HelpVBox/HelpHeader/HeaderCopy"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "LEARN BEAT UP!"
+
+[node name="HeaderSpacer" type="Control" parent="HelpMargin/HelpVBox/HelpHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TutorialTabs" type="HBoxContainer" parent="HelpMargin/HelpVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TutorialControlsTab" type="Button" parent="HelpMargin/HelpVBox/TutorialTabs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "INPUT"
+
+[node name="TutorialTimingTab" type="Button" parent="HelpMargin/HelpVBox/TutorialTabs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "TIMING"
+
+[node name="TutorialNotesTab" type="Button" parent="HelpMargin/HelpVBox/TutorialTabs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "SPECIALS"
+
+[node name="TutorialPracticeTab" type="Button" parent="HelpMargin/HelpVBox/TutorialTabs"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "PRACTICE"
+
+[node name="HelpBody" type="HBoxContainer" parent="HelpMargin/HelpVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="TutorialCopyPanel" type="PanelContainer" parent="HelpMargin/HelpVBox/HelpBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(310, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TutorialCopy" type="VBoxContainer" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="TutorialKicker" type="Label" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.662745, 0.721569, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "STEP 01 · CONTROLS"
+
+[node name="TutorialHeading" type="Label" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Own the eight directions."
+autowrap_mode = 2
+
+[node name="TutorialDescription" type="Label" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.596078, 0.596078, 0.635294, 1)
+theme_override_font_sizes/font_size = 15
+text = "Use 8-Direction Numpad or switch to 4-Direction Arrow Keys in Settings. Match the white arrow shown inside each note."
+autowrap_mode = 2
+
+[node name="InputStyleBlock" type="PanelContainer" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="InputStyleVBox" type="VBoxContainer" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/InputStyleBlock"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="InputStyleLabel" type="Label" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/InputStyleBlock/InputStyleVBox"]
+layout_mode = 2
+text = "CHOOSE INPUT MODE"
+
+[node name="InputStyleButtons" type="HBoxContainer" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/InputStyleBlock/InputStyleVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TutorialNumpadButton" type="Button" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/InputStyleBlock/InputStyleVBox/InputStyleButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "8-DIR NUMPAD"
+
+[node name="TutorialArrowButton" type="Button" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/InputStyleBlock/InputStyleVBox/InputStyleButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "4-DIR ARROWS"
+
+[node name="InputStyleStatus" type="Label" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/InputStyleBlock/InputStyleVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CURRENT · 8-DIRECTION NUMPAD · RECOMMENDED"
+autowrap_mode = 2
+
+[node name="CopySpacer" type="Control" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TutorialTipPanel" type="PanelContainer" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy"]
+layout_mode = 2
+
+[node name="TutorialTip" type="Label" parent="HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/TutorialTipPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.490196, 0.705882, 0.807843, 1)
+theme_override_font_sizes/font_size = 13
+text = "TRY IT · Press a direction key."
+autowrap_mode = 2
+
+[node name="TutorialVisualPanel" type="PanelContainer" parent="HelpMargin/HelpVBox/HelpBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TutorialVisual" type="Control" parent="HelpMargin/HelpVBox/HelpBody/TutorialVisualPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 280)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("1_visual")
+
+[node name="HelpActions" type="HBoxContainer" parent="HelpMargin/HelpVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HelpBackButton" type="Button" parent="HelpMargin/HelpVBox/HelpActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 44)
+layout_mode = 2
+text = "← Back"
+
+[node name="TutorialPreviousButton" type="Button" parent="HelpMargin/HelpVBox/HelpActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 44)
+layout_mode = 2
+text = "← Previous"
+
+[node name="HelpSpacer" type="Control" parent="HelpMargin/HelpVBox/HelpActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TutorialStepDots" type="Label" parent="HelpMargin/HelpVBox/HelpActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "●  ○  ○  ○"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TutorialButton" type="Button" parent="HelpMargin/HelpVBox/HelpActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(186, 44)
+layout_mode = 2
+text = "Next →"

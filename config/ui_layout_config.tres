@@ -1,0 +1,48 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://config/ui_layout_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+screen_margin = 24
+section_gap = 14
+item_gap = 8
+compact_gap = 6
+result_left_ratio = 1.65
+result_rank_ratio = 0.9
+result_button_min_width = 208
+result_button_min_height = 56
+result_rank_min_width = 304
+result_score_panel_min_height = 124
+result_card_min_height = 88
+result_breakdown_min_height = 132
+result_special_panel_min_height = 96
+filter_min_width = 180
+import_dialog_width = 900
+import_dialog_height = 560
+v12_song_info_width = 540
+v12_song_wheel_min_width = 620
+v12_song_row_height = 48
+v12_song_selected_row_height = 56
+v12_song_screen_margin = 16
+v12_song_gap = 8
+v12_song_left_ratio = 0.42
+v12_song_wheel_ratio = 0.58
+battle_stats_width_ratio = 0.18
+battle_stats_min_height = 96
+battle_panel_inner_margin = 10
+battle_song_info_width_ratio = 0.42
+battle_song_info_height = 68
+battle_judgment_width = 236
+battle_judgment_height = 58
+battle_judgment_scale = 1.0
+battle_feedback_gap = 12
+menu_panel_min_width = 460
+settings_panel_min_width = 540
+pause_icon_button_size = 96
+settings_title_height = 70
+settings_label_height = 42
+slider_height = 38
+back_button_height = 58
+hud_edge_margin = 22
+pause_button_size = 50
