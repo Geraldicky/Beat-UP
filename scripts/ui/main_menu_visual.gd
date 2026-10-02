@@ -47,20 +47,20 @@ func _apply_album_flow_structure() -> void:
 	var main_menu := get_parent()
 	if main_menu == null:
 		return
-	for node_name in ["MenuBackground", "MenuDim", "MenuTitle", "MenuRule", "NowPlayingCard", "MenuVersion", "UtilityRow"]:
+	for node_name in ["MenuBackground", "MenuTitle", "MenuRule", "NowPlayingCard", "MenuVersion", "UtilityRow"]:
 		var node := main_menu.get_node_or_null(node_name) as CanvasItem
 		if node != null:
 			node.show()
-	for node_name in ["OrbCluster", "BackgroundInfo", "SelectionIndex", "SelectionDescription", "MainFooter", "TopAccent"]:
+	for node_name in ["MenuDim", "OrbCluster", "BackgroundInfo", "SelectionIndex", "SelectionDescription", "MainFooter", "TopAccent"]:
 		var node := main_menu.get_node_or_null(node_name) as CanvasItem
 		if node != null:
 			node.hide()
-	var dim := main_menu.get_node_or_null("MenuDim") as ColorRect
-	if dim != null:
-		dim.color = Color(0.010, 0.016, 0.028, 0.64)
+	# Show the current-song artwork at its authored brightness. The previous
+	# full-screen black scrim and tinted alpha modulation made every background
+	# look muddy and much darker than the source art.
 	var background := main_menu.get_node_or_null("MenuBackground") as TextureRect
 	if background != null:
-		background.modulate = Color(0.58, 0.64, 0.74, 0.48)
+		background.modulate = Color.WHITE
 
 func _selection_accent() -> Color:
 	if selection_index == 3:
