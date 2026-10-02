@@ -49,6 +49,7 @@ func run() -> void:
 	check(selector.practice_button.is_visible_in_tree() and selector.practice_button.pressed.get_connections().size() > 0, "Practice action is missing or disconnected.")
 	check(selector.album_flow_artwork.size.x >= 400.0 and selector.album_flow_artwork.size.y >= 400.0, "Selected jacket is not a large focal point at 1920×1080.")
 	check(selector.album_flow_record_panel != null and selector.album_flow_record_panel.get_parent() == selector.album_flow_center_column, "Best Record is not in the center inspection column.")
+	check(selector.album_flow_record_panel.get_theme_stylebox("panel") is StyleBoxEmpty, "Best Record still renders an opaque/dark panel background.")
 	check(not selector.album_flow_record_panel.get_global_rect().intersects(selector.album_flow_artwork.get_global_rect()), "Best Record overlaps the selected artwork.")
 	check(selector.album_flow_record_breakdown_row != null and selector.album_flow_record_breakdown_row.get_child_count() == 4, "Judgement breakdown is incomplete.")
 	check(selector.album_flow_score_cluster != null and selector.album_flow_score_cluster.get_global_rect().position.y >= selector.album_flow_artwork.get_global_rect().end.y, "Best-score hierarchy is not positioned beneath the jacket.")
