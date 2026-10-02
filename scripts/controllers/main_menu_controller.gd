@@ -86,7 +86,7 @@ func update_selection(button: Button) -> void:
 	main_logo.text = ""
 	selection_description.text = ""
 	var accent: Color = MinimalThemeScript.ACCENT_LIGHT if index == 0 else MinimalThemeScript.ACCENT
-	if index == menu_buttons.size() - 1:
+	if str((menu_items[index] as Dictionary).get("title", "")) == "EXIT":
 		accent = MinimalThemeScript.DANGER
 	selection_index.add_theme_color_override("font_color", accent)
 	orb_ring.set("accent", accent)

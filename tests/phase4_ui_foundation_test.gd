@@ -103,9 +103,32 @@ func _check_main_menu(startup: Control, resolution: Vector2i) -> void:
 	var settings := startup.get("settings_button") as Button
 	var title := startup.get("menu_title") as Control
 	var now_playing := startup.get("now_playing_card") as Control
+	var menu_stack := startup.get("menu_stack") as VBoxContainer
+	var utility_row := startup.get("utility_row") as HBoxContainer
+	var menu_visual := startup.get("menu_visual") as Control
+	var menu_background := startup.get("menu_background") as TextureRect
+	var now_playing_kicker := startup.get("now_playing_kicker") as Label
+	var background_controller := startup.get("main_menu_background_controller") as RefCounted
+	var brand_bounds: Rect2 = menu_visual.call("get_brand_panel_bounds") as Rect2
 	_check(_inside_viewport(play, resolution), "Main Menu Play is clipped at %s." % resolution)
 	_check(_inside_viewport(now_playing, resolution), "Main Menu Now Playing is clipped at %s." % resolution)
+	_check(_inside_viewport(menu_stack, resolution), "Main Menu action column is clipped at %s." % resolution)
+	_check(_inside_viewport(utility_row, resolution), "Main Menu utility links are clipped at %s." % resolution)
+	_check(_rect_inside_viewport(brand_bounds, resolution), "Beat UP! brand diamond is clipped at %s." % resolution)
 	_check(not title.get_global_rect().intersects(now_playing.get_global_rect()), "Main Menu wordmark overlaps Now Playing at %s." % resolution)
+	_check(now_playing.get_global_rect().end.y < brand_bounds.position.y, "Now Playing is not a top rail at %s." % resolution)
+	_check(menu_stack.get_global_rect().position.x > brand_bounds.end.x, "Main Menu actions are not right of the brand diamond at %s." % resolution)
+	_check(not menu_stack.get_global_rect().intersects(brand_bounds), "Main Menu actions overlap the brand diamond at %s." % resolution)
+	_check(utility_row.get_global_rect().position.y > menu_stack.get_global_rect().position.y, "Utility links do not sit below primary actions at %s." % resolution)
+	_check(menu_stack.get_child_count() == 4, "Main Menu primary column must contain PLAY, CHART STUDIO, SETTINGS, and QUIT only.")
+	_check(utility_row.get_child_count() == 3, "Main Menu utility row did not preserve Help, Calibration, and Credits.")
+	_check(not bool(menu_visual.call("has_foreground_artwork_card")), "Main Menu restored a foreground cover-art card.")
+	_check(menu_background.texture != null, "Main Menu current-song background is missing at %s." % resolution)
+	var current_background_path := str(background_controller.call("get_current_background_path"))
+	_check(not current_background_path.is_empty(), "Main Menu current-song background path is empty.")
+	if not current_background_path.is_empty() and ResourceLoader.exists(current_background_path):
+		_check(ResourceLoader.load(current_background_path) == menu_background.texture, "Main Menu full-screen background does not use the current song artwork.")
+	_check(now_playing_kicker.visible and now_playing_kicker.text == "NOW PLAYING", "Now Playing rail lost its hierarchy label.")
 	_check(play.size.y > settings.size.y, "Main Menu Play is not more prominent than secondary actions at %s." % resolution)
 	_check(play.focus_mode == Control.FOCUS_ALL, "Main Menu Play lost keyboard focus support.")
 	for property_name in ["prev_track_button", "play_pause_track_button", "next_track_button"]:
@@ -187,6 +210,10 @@ func _inside_viewport(control: Control, resolution: Vector2i) -> bool:
 	if control == null or not control.is_visible_in_tree():
 		return false
 	var rect := control.get_global_rect()
+	var bounds := Rect2(Vector2.ZERO, Vector2(resolution))
+	return rect.size.x > 0.0 and rect.size.y > 0.0 and bounds.encloses(rect.grow(-0.5))
+
+func _rect_inside_viewport(rect: Rect2, resolution: Vector2i) -> bool:
 	var bounds := Rect2(Vector2.ZERO, Vector2(resolution))
 	return rect.size.x > 0.0 and rect.size.y > 0.0 and bounds.encloses(rect.grow(-0.5))
 
