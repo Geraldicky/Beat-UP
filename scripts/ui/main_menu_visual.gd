@@ -117,7 +117,7 @@ func _draw_audio_diamond(center: Vector2, radius: float, accent: Color) -> void:
 		var outward := Vector2(tangent.y, -tangent.x)
 		if outward.dot((a + b) * 0.5 - center) < 0.0:
 			outward = -outward
-		var segments := AUDIO_BAR_COUNT / 4
+		var segments: int = int(AUDIO_BAR_COUNT / 4)
 		for i in range(segments):
 			var t := (float(i) + 0.5) / float(segments)
 			var base := a.lerp(b, t)
