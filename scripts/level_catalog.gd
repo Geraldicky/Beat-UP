@@ -27,11 +27,13 @@ const SOURCE_PRIORITY := {
 ])
 
 var _cache: Array = []
+var _authoritative_claims: Dictionary = {}
 
 func load_all(force_refresh: bool = false) -> Array:
 	if not force_refresh and not _cache.is_empty():
 		return _cache
 	_cache.clear()
+	_authoritative_claims.clear()
 	var discovered_paths: Array[String] = []
 	for path in level_files:
 		if not discovered_paths.has(path):
@@ -42,14 +44,36 @@ func load_all(force_refresh: bool = false) -> Array:
 
 	var canonical_by_identity: Dictionary = {}
 	for path in discovered_paths:
-		var level: Dictionary = load_level_file(path)
-		if level.is_empty():
+		var source_kind: String = _source_kind(path)
+		var path_identity: String = _managed_path_identity(path, source_kind)
+		var load_result: Dictionary = _load_level_file_result(path)
+		if not bool(load_result.get("ok", false)):
+			# A malformed file may claim authority only through a canonical managed
+			# user path. Arbitrary files never receive guessed identities.
+			if not path_identity.is_empty() and FileAccess.file_exists(path):
+				_register_authoritative_claim(path_identity, {
+					"_catalog_path": path,
+					"_catalog_source": source_kind,
+					"_catalog_identity": path_identity,
+					"_catalog_error": str(load_result.get("error", "Chart could not be read.")),
+				})
 			continue
+		var level: Dictionary = load_result.get("chart", {}) as Dictionary
 		level["_catalog_path"] = path
-		level["_catalog_source"] = _source_kind(path)
+		level["_catalog_source"] = source_kind
 		var identity: String = _logical_identity(level)
+		if not path_identity.is_empty() and identity != path_identity:
+			_register_authoritative_claim(path_identity, {
+				"_catalog_path": path,
+				"_catalog_source": source_kind,
+				"_catalog_identity": path_identity,
+				"_catalog_error": "Chart identity does not match its managed user path.",
+			})
+			continue
 		if identity.is_empty():
 			continue
+		level["_catalog_identity"] = identity
+		_register_authoritative_claim(identity, level)
 		if not canonical_by_identity.has(identity) or _candidate_precedes(level, canonical_by_identity[identity] as Dictionary):
 			canonical_by_identity[identity] = level
 
@@ -79,31 +103,25 @@ func resolve_playable(song_id: String, difficulty_id: String, force_refresh: boo
 		}
 
 	var target_identity := "%s::%s" % [safe_song_id, safe_difficulty_id]
-	for raw_level: Variant in load_all(force_refresh):
-		if not (raw_level is Dictionary):
-			continue
-		var level: Dictionary = raw_level as Dictionary
-		if _logical_identity(level) != target_identity:
-			continue
+	load_all(force_refresh)
+	var claim_value: Variant = _authoritative_claims.get(target_identity, {})
+	if claim_value is Dictionary and not (claim_value as Dictionary).is_empty():
+		var level: Dictionary = claim_value as Dictionary
+		var source_path: String = str(level.get("_catalog_path", ""))
+		var source_kind: String = str(level.get("_catalog_source", "other"))
+		var catalog_error: String = str(level.get("_catalog_error", ""))
+		if not catalog_error.is_empty():
+			return _resolution_failure(catalog_error, safe_song_id, safe_difficulty_id, source_path, source_kind)
 
 		var validation: Dictionary = ChartIntegrityScript.validate_structure(level)
 		if not bool(validation.get("ok", false)):
-			return {
-				"ok": false,
-				"error": "; ".join(validation.get("errors", [])),
-				"song_id": safe_song_id,
-				"difficulty_id": safe_difficulty_id,
-				"source_path": str(level.get("_catalog_path", "")),
-			}
+			return _resolution_failure("; ".join(validation.get("errors", [])), safe_song_id, safe_difficulty_id, source_path, source_kind)
 		var audio_path: String = str(level.get("audio", ""))
 		if audio_path.is_empty() or not RuntimeResourceAccessScript.audio_exists(audio_path):
-			return {
-				"ok": false,
-				"error": "Audio missing. Install or re-import the matching audio file.",
-				"song_id": safe_song_id,
-				"difficulty_id": safe_difficulty_id,
-				"source_path": str(level.get("_catalog_path", "")),
-			}
+			return _resolution_failure("Audio missing. Install or re-import the matching audio file.", safe_song_id, safe_difficulty_id, source_path, source_kind)
+		var audio_stream: AudioStream = _load_audio_stream(audio_path)
+		if audio_stream == null:
+			return _resolution_failure("Audio exists but could not be loaded.", safe_song_id, safe_difficulty_id, source_path, source_kind)
 
 		var chart: Dictionary = level.duplicate(true)
 		var source_hash: String = str(chart.get("_source_chart_hash", ""))
@@ -118,6 +136,7 @@ func resolve_playable(song_id: String, difficulty_id: String, force_refresh: boo
 			"source_path": str(chart.get("_catalog_path", "")),
 			"source_kind": str(chart.get("_catalog_source", "other")),
 			"source_hash": source_hash,
+			"audio_stream": audio_stream,
 		}
 
 	return {
@@ -128,17 +147,28 @@ func resolve_playable(song_id: String, difficulty_id: String, force_refresh: boo
 	}
 
 func load_level_file(path: String) -> Dictionary:
+	var result: Dictionary = _load_level_file_result(path)
+	return result.get("chart", {}) as Dictionary if bool(result.get("ok", false)) else {}
+
+func _load_level_file_result(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
-		return {}
-	var text: String = FileAccess.get_file_as_string(path)
-	var parsed: Variant = JSON.parse_string(text)
-	if parsed == null or not (parsed is Dictionary):
-		return {}
+		return {"ok": false, "error": "Chart file does not exist."}
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {"ok": false, "error": "Chart file could not be read."}
+	var text: String = file.get_as_text()
+	file.close()
+	var parser := JSON.new()
+	if parser.parse(text) != OK:
+		return {"ok": false, "error": "Malformed chart JSON: %s" % parser.get_error_message()}
+	var parsed: Variant = parser.data
+	if not (parsed is Dictionary):
+		return {"ok": false, "error": "Chart JSON root must be an object."}
 	var data: Dictionary = parsed
 	if not data.has("events"):
-		return {}
+		return {"ok": false, "error": "Chart JSON does not contain events."}
 	data["_source_chart_hash"] = ScoreIdentity.chart_hash(data)
-	return ChartIntegrityScript.decorate_chart(data)
+	return {"ok": true, "chart": ChartIntegrityScript.decorate_chart(data)}
 
 func import_chart_files(source_paths: PackedStringArray) -> Dictionary:
 	var imported: int = 0
@@ -283,6 +313,66 @@ func _logical_identity(chart: Dictionary) -> String:
 	if song_id.is_empty() or not ALLOWED_DIFFICULTIES.has(difficulty_id):
 		return ""
 	return "%s::%s" % [song_id, difficulty_id]
+
+func _managed_path_identity(path: String, source_kind: String) -> String:
+	if source_kind == "user_songs":
+		var relative: String = path.trim_prefix("user://songs/")
+		var parts: PackedStringArray = relative.split("/", false)
+		if parts.size() != 2 or parts[1].get_extension().to_lower() != "json":
+			return ""
+		var raw_song_id: String = parts[0]
+		var raw_difficulty_id: String = parts[1].get_basename()
+		var song_id: String = _sanitize_id(raw_song_id)
+		var difficulty_id: String = _sanitize_id(raw_difficulty_id).to_lower()
+		if song_id != raw_song_id.to_lower() or difficulty_id != raw_difficulty_id.to_lower():
+			return ""
+		if song_id.is_empty() or not ALLOWED_DIFFICULTIES.has(difficulty_id):
+			return ""
+		return "%s::%s" % [song_id, difficulty_id]
+	if source_kind == "user_exports":
+		var relative: String = path.trim_prefix("user://chart_exports/")
+		if relative.contains("/") or relative.get_extension().to_lower() != "json":
+			return ""
+		var basename: String = relative.get_basename()
+		for difficulty_id: String in ALLOWED_DIFFICULTIES:
+			var suffix := "_%s" % difficulty_id
+			if not basename.to_lower().ends_with(suffix):
+				continue
+			var raw_song_id: String = basename.left(basename.length() - suffix.length())
+			var song_id: String = _sanitize_id(raw_song_id)
+			if not song_id.is_empty() and song_id == raw_song_id.to_lower():
+				return "%s::%s" % [song_id, difficulty_id]
+	return ""
+
+func _register_authoritative_claim(identity: String, candidate: Dictionary) -> void:
+	if identity.is_empty():
+		return
+	if not _authoritative_claims.has(identity) or _candidate_precedes(candidate, _authoritative_claims[identity] as Dictionary):
+		_authoritative_claims[identity] = candidate
+
+func _resolution_failure(error: String, song_id: String, difficulty_id: String, source_path: String, source_kind: String) -> Dictionary:
+	return {
+		"ok": false,
+		"error": error,
+		"song_id": song_id,
+		"difficulty_id": difficulty_id,
+		"source_path": source_path,
+		"source_kind": source_kind,
+	}
+
+func _load_audio_stream(path: String) -> AudioStream:
+	if path.is_empty():
+		return null
+	if path.begins_with("res://"):
+		var imported_stream: AudioStream = load(path) as AudioStream
+		if imported_stream != null:
+			return imported_stream
+	var filesystem_path: String = ProjectSettings.globalize_path(path) if path.begins_with("user://") or path.begins_with("res://") else path
+	match filesystem_path.get_extension().to_lower():
+		"ogg": return AudioStreamOggVorbis.load_from_file(filesystem_path)
+		"mp3": return AudioStreamMP3.load_from_file(filesystem_path)
+		"wav": return AudioStreamWAV.load_from_file(filesystem_path)
+	return null
 
 func _source_kind(path: String) -> String:
 	if path.begins_with("user://songs/"):

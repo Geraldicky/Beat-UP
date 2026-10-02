@@ -305,7 +305,7 @@ func prepare_launch_request(request: Dictionary, force_refresh: bool = true) -> 
 			"difficulty_id": difficulty_id,
 		}
 	var chart: Dictionary = (chart_value as Dictionary).duplicate(true)
-	var loaded_stream: AudioStream = load_audio_stream(str(chart.get("audio", "")))
+	var loaded_stream: AudioStream = resolution.get("audio_stream") as AudioStream
 	if loaded_stream == null:
 		return {
 			"ok": false,

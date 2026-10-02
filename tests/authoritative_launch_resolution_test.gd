@@ -1,212 +1,251 @@
 extends SceneTree
 
 const LevelCatalogScript = preload("res://scripts/level_catalog.gd")
-const ReliableJsonStoreScript = preload("res://scripts/reliable_json_store.gd")
-const AppShellScript = preload("res://scripts/app_shell.gd")
 
-const SONG_ID := "bad_apple"
+const BUNDLED_SONG_ID := "bad_apple"
 const BUNDLED_NORMAL := "res://charts/bad_apple/normal.json"
-const USER_SONG_DIR := "user://songs/bad_apple"
-const USER_OVERRIDE := "user://songs/bad_apple/normal.json"
-const EXPORT_DIR := "user://chart_exports"
-const STUDIO_EXPORT := "user://chart_exports/bad_apple_normal.json"
+const BUNDLED_HARD := "res://charts/bad_apple/hard.json"
+const BUNDLED_MASTER := "res://charts/bad_apple/master.json"
+const REAL_USER_SONG_PATH := "user://songs/bad_apple/normal.json"
+const REAL_EXPORT_PATH := "user://chart_exports/bad_apple_normal.json"
 
 var failures := 0
+var qa_song_id := ""
+var qa_lexical_song_id := ""
+var qa_run_root := ""
+var qa_bundled_dir := ""
+var qa_bundled_chart := ""
+var qa_user_song_dir := ""
+var qa_user_chart := ""
+var qa_export_chart := ""
+var qa_unloadable_audio := ""
+var owned_files: Dictionary = {}
+var created_directories: Array[String] = []
 
-class RejectGameplayStub:
-	extends Control
-	signal best_stats_changed(store: Dictionary)
+class QaLevelCatalog:
+	extends LevelCatalog
+	var qa_bundled_prefix := ""
 
-	func prepare_launch_request(_request: Dictionary, _force_refresh: bool = true) -> Dictionary:
-		return {"ok": false, "error": "Audio missing. Install or re-import the matching audio file."}
-
-class LibraryStub:
-	extends Control
-	var action_locked := true
-
-	func receive_best_stats(_store: Dictionary) -> void:
-		pass
-
-	func handle_gameplay_launch_failure(_context: Dictionary) -> void:
-		action_locked = false
+	func _source_kind(path: String) -> String:
+		if not qa_bundled_prefix.is_empty() and path.begins_with(qa_bundled_prefix):
+			return "bundled"
+		return super(path)
 
 func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
-	_cleanup_fixtures()
-	var bundled_chart: Dictionary = _read_chart(BUNDLED_NORMAL)
-	_check(not bundled_chart.is_empty(), "Bundled NORMAL fixture could not be read.")
-	if bundled_chart.is_empty():
+	_configure_unique_qa_paths()
+	_check(qa_user_chart != REAL_USER_SONG_PATH and qa_export_chart != REAL_EXPORT_PATH, "QA paths overlap real Bad Apple user content.")
+	var bundled_template: Dictionary = _read_chart(BUNDLED_NORMAL)
+	_check(not bundled_template.is_empty(), "Bundled NORMAL fixture could not be read.")
+	if bundled_template.is_empty():
 		_finish()
 		return
 
-	var catalog: LevelCatalog = LevelCatalogScript.new()
+	# Real bundled content is read-only. Every writable fixture has a unique QA
+	# identity and is registered before cleanup is allowed to remove it.
+	var real_catalog: LevelCatalog = LevelCatalogScript.new()
+	real_catalog.scan_roots = PackedStringArray()
+	real_catalog.level_files = PackedStringArray([BUNDLED_NORMAL, BUNDLED_HARD, BUNDLED_MASTER])
+	root.add_child(real_catalog)
+	var real_bundled: Dictionary = real_catalog.resolve_playable(BUNDLED_SONG_ID, "normal", true)
+	_check(bool(real_bundled.get("ok", false)), "Read-only bundled chart did not resolve.")
+	_check(str(real_bundled.get("source_path", "")) == BUNDLED_NORMAL, "Read-only bundled fixture resolved from an unexpected source.")
+
+	var base_chart: Dictionary = _qa_chart_from_template(bundled_template, qa_song_id, "QA BUNDLED BASE")
+	_check(_write_owned_chart(qa_bundled_chart, base_chart), "Could not create QA bundled-source fixture.")
+	var catalog := QaLevelCatalog.new()
+	catalog.qa_bundled_prefix = qa_bundled_dir + "/"
+	catalog.scan_roots = PackedStringArray()
+	catalog.level_files = PackedStringArray([qa_bundled_chart, qa_export_chart, qa_user_chart])
 	root.add_child(catalog)
-	var bundled: Dictionary = catalog.resolve_playable(SONG_ID, "normal", true)
-	_check(bool(bundled.get("ok", false)), "Bundled chart did not resolve.")
-	_check(str(bundled.get("source_kind", "")) == "bundled", "Bundled chart reported the wrong source kind.")
-	_check(str(bundled.get("source_path", "")) == BUNDLED_NORMAL, "Bundled chart reported the wrong source path.")
+	_assert_resolution(catalog.resolve_playable(qa_song_id, "normal", true), true, qa_bundled_chart, "bundled", "Synthetic bundled baseline")
 
-	# This is Chart Studio's packaged-build fallback path. A forced Play refresh
-	# must observe edits made after the gameplay catalog was already cached.
-	var studio_v1: Dictionary = bundled_chart.duplicate(true)
-	studio_v1["title"] = "STUDIO REVISION ONE"
-	studio_v1["chart_offset_ms"] = 11.0
-	_check(_write_chart(STUDIO_EXPORT, studio_v1), "Could not write the first Chart Studio export fixture.")
-	var first_export: Dictionary = catalog.resolve_playable(SONG_ID, "normal", true)
-	_check(str(first_export.get("source_kind", "")) == "user_exports", "Chart Studio export did not override the bundled chart.")
-	_check(str((first_export.get("chart", {}) as Dictionary).get("title", "")) == "STUDIO REVISION ONE", "First Chart Studio export was not resolved.")
+	var export_chart: Dictionary = base_chart.duplicate(true)
+	export_chart["title"] = "QA EXPORT OVERRIDE"
+	export_chart["chart_offset_ms"] = 11.0
+	_check(_write_owned_chart(qa_export_chart, export_chart), "Could not create QA Chart Studio export.")
+	_assert_resolution(catalog.resolve_playable(qa_song_id, "normal", true), true, qa_export_chart, "user_exports", "Valid user export precedence")
 
-	var studio_v2: Dictionary = bundled_chart.duplicate(true)
-	studio_v2["title"] = "STUDIO REVISION TWO"
-	studio_v2["chart_offset_ms"] = 22.0
-	_check(_write_chart(STUDIO_EXPORT, studio_v2), "Could not write the second Chart Studio export fixture.")
-	var stale_export: Dictionary = catalog.resolve_playable(SONG_ID, "normal", false)
-	_check(str((stale_export.get("chart", {}) as Dictionary).get("title", "")) == "STUDIO REVISION ONE", "The test did not establish a cached pre-save catalog.")
-	var latest_export: Dictionary = catalog.resolve_playable(SONG_ID, "normal", true)
-	_check(str((latest_export.get("chart", {}) as Dictionary).get("title", "")) == "STUDIO REVISION TWO", "Forced Play refresh did not resolve the latest Chart Studio save.")
+	var user_chart: Dictionary = base_chart.duplicate(true)
+	user_chart["title"] = "QA USER SONG OVERRIDE"
+	user_chart["chart_offset_ms"] = 22.0
+	_check(_write_owned_chart(qa_user_chart, user_chart), "Could not create QA user-song override.")
+	_assert_resolution(catalog.resolve_playable(qa_song_id, "normal", true), true, qa_user_chart, "user_songs", "Valid user-song precedence")
 
-	var user_override: Dictionary = bundled_chart.duplicate(true)
-	user_override["title"] = "USER SONG OVERRIDE"
-	user_override["chart_offset_ms"] = 33.0
-	_check(_write_chart(USER_OVERRIDE, user_override), "Could not write the user-song override fixture.")
-	var override_result: Dictionary = catalog.resolve_playable(SONG_ID, "normal", true)
-	_check(str(override_result.get("source_kind", "")) == "user_songs", "user://songs did not win duplicate identity precedence.")
-	_check(str((override_result.get("chart", {}) as Dictionary).get("title", "")) == "USER SONG OVERRIDE", "Resolved chart was not the user-song override.")
+	# Managed paths establish identity even when their contents cannot. Each
+	# authoritative failure must name that source and never fall through.
+	_check(_write_owned_text(qa_user_chart, "{ malformed json"), "Could not write malformed user-song fixture.")
+	_assert_rejected_source(catalog.resolve_playable(qa_song_id, "normal", true), qa_user_chart, "user_songs", "Malformed authoritative user song")
+	_delete_owned_file(qa_user_chart)
+	_assert_resolution(catalog.resolve_playable(qa_song_id, "normal", true), true, qa_export_chart, "user_exports", "Removing broken user song reveals export")
 
-	# A winning but invalid override must fail atomically; silently falling back to
-	# a different source would make the visible selection lie about what launched.
-	var invalid_override: Dictionary = user_override.duplicate(true)
-	invalid_override["audio"] = "user://missing/authoritative_launch_audio.ogg"
-	_check(_write_chart(USER_OVERRIDE, invalid_override), "Could not write the invalid override fixture.")
-	var invalid_result: Dictionary = catalog.resolve_playable(SONG_ID, "normal", true)
-	_check(not bool(invalid_result.get("ok", false)), "Missing audio was accepted for gameplay.")
-	_check(str(invalid_result.get("source_path", "")) == USER_OVERRIDE, "Invalid winning source unexpectedly fell back to another chart.")
+	_check(_write_owned_text(qa_export_chart, "{ malformed json"), "Could not write malformed export fixture.")
+	_assert_rejected_source(catalog.resolve_playable(qa_song_id, "normal", true), qa_export_chart, "user_exports", "Malformed authoritative export")
+	_delete_owned_file(qa_export_chart)
+	_assert_resolution(catalog.resolve_playable(qa_song_id, "normal", true), true, qa_bundled_chart, "bundled", "Removing broken export restores bundled")
 
-	var shell: Control = _make_rejecting_shell()
-	root.add_child(shell)
-	await process_frame
-	shell.set("active_screen", "song_library")
-	var library: Control = shell.get_node("ScreenHost/SongLibraryScreen") as Control
-	var accepted: bool = bool(shell.call("launch_gameplay", {
-		"song_id": SONG_ID,
-		"difficulty_id": "normal",
-		"random_mode": false,
-	}, {"title": "STALE LIBRARY TITLE"}))
-	_check(not accepted, "AppShell accepted a chart whose audio is missing.")
-	_check(str(shell.call("get_active_route")) == "song_library", "Failed launch changed the resident route.")
-	_check(not bool(library.get("action_locked")), "Failed launch left Song Library action-locked.")
-	_check(not (shell.get_node("ScreenHost/GameplayScreen") as Control).visible, "Failed launch exposed gameplay.")
+	var missing_events: Dictionary = user_chart.duplicate(true)
+	missing_events.erase("events")
+	_check(_write_owned_chart(qa_user_chart, missing_events), "Could not write missing-events fixture.")
+	_assert_rejected_source(catalog.resolve_playable(qa_song_id, "normal", true), qa_user_chart, "user_songs", "Missing events")
 
-	_remove_file(USER_OVERRIDE)
+	var invalid_structure: Dictionary = user_chart.duplicate(true)
+	invalid_structure["events"] = [{"time": "not-a-number", "type": "normal", "direction": 8}]
+	_check(_write_owned_chart(qa_user_chart, invalid_structure), "Could not write structurally invalid fixture.")
+	_assert_rejected_source(catalog.resolve_playable(qa_song_id, "normal", true), qa_user_chart, "user_songs", "Structural validation")
+
+	var missing_audio: Dictionary = user_chart.duplicate(true)
+	missing_audio["audio"] = "%s/missing_audio.ogg" % qa_run_root
+	_check(_write_owned_chart(qa_user_chart, missing_audio), "Could not write missing-audio fixture.")
+	_assert_rejected_source(catalog.resolve_playable(qa_song_id, "normal", true), qa_user_chart, "user_songs", "Missing audio")
+
+	_check(_write_owned_text(qa_unloadable_audio, "this exists but is not a supported audio stream"), "Could not create unloadable-audio fixture.")
+	var unloadable_audio: Dictionary = user_chart.duplicate(true)
+	unloadable_audio["audio"] = qa_unloadable_audio
+	_check(_write_owned_chart(qa_user_chart, unloadable_audio), "Could not write unloadable-audio chart fixture.")
+	var unloadable_result: Dictionary = catalog.resolve_playable(qa_song_id, "normal", true)
+	_assert_rejected_source(unloadable_result, qa_user_chart, "user_songs", "Unloadable audio")
+	_check(str(unloadable_result.get("error", "")).contains("could not be loaded"), "Unloadable audio did not report a load failure.")
+
+	# A malformed user file without a canonical managed-path identity is ignored.
+	var unclaimed_path := "user://chart_exports/%s_unknown.json" % qa_song_id
+	_check(_write_owned_text(unclaimed_path, "{ malformed json"), "Could not create unclaimed malformed fixture.")
+	catalog.level_files.append(unclaimed_path)
+	_delete_owned_file(qa_user_chart)
+	_assert_resolution(catalog.resolve_playable(qa_song_id, "normal", true), true, qa_bundled_chart, "bundled", "Unclaimed malformed file remains ignored")
+
+	# Same-priority arbitrary files use parsed identities; lexical path ordering
+	# remains deterministic without inventing identities for malformed files.
+	var lexical_a := "%s/other/a.json" % qa_run_root
+	var lexical_z := "%s/other/z.json" % qa_run_root
+	_check(_write_owned_chart(lexical_z, _qa_chart_from_template(bundled_template, qa_lexical_song_id, "LEXICAL Z")), "Could not create lexical Z fixture.")
+	_check(_write_owned_chart(lexical_a, _qa_chart_from_template(bundled_template, qa_lexical_song_id, "LEXICAL A")), "Could not create lexical A fixture.")
+	var lexical_catalog: LevelCatalog = LevelCatalogScript.new()
+	lexical_catalog.scan_roots = PackedStringArray()
+	lexical_catalog.level_files = PackedStringArray([lexical_z, lexical_a])
+	root.add_child(lexical_catalog)
+	_assert_resolution(lexical_catalog.resolve_playable(qa_lexical_song_id, "normal", true), true, lexical_a, "other", "Same-priority lexical ordering")
+
+	# Retain launch identity and immutable-runtime regressions using only read-only
+	# bundled charts.
 	var gameplay_script := load("res://scripts/main.gd") as Script
 	var main: Control = gameplay_script.new()
-	main.set("level_catalog", catalog)
-
-	var hard_preparation: Dictionary = main.call("prepare_launch_request", {
-		"song_id": SONG_ID, "difficulty_id": "hard", "random_mode": false,
-	}, true)
-	var master_preparation: Dictionary = main.call("prepare_launch_request", {
-		"song_id": SONG_ID, "difficulty_id": "master", "random_mode": false,
-	}, true)
-	_check(bool(hard_preparation.get("ok", false)) and bool(master_preparation.get("ok", false)), "Rapid difficulty preparations failed.")
+	main.set("level_catalog", real_catalog)
+	var hard_preparation: Dictionary = main.call("prepare_launch_request", {"song_id": BUNDLED_SONG_ID, "difficulty_id": "hard"}, true)
+	var master_preparation: Dictionary = main.call("prepare_launch_request", {"song_id": BUNDLED_SONG_ID, "difficulty_id": "master"}, true)
+	_check(bool(hard_preparation.get("ok", false)) and bool(master_preparation.get("ok", false)), "Rapid bundled difficulty preparations failed.")
 	var master_request: Dictionary = master_preparation.get("request", {}) as Dictionary
-	var visible_chart: Dictionary = master_request.get("_resolved_chart", {}) as Dictionary
-	_check(str(visible_chart.get("chart_difficulty", "")) == "master", "Rapid selection prepared a stale difficulty instead of visible MASTER.")
-	_check(str(visible_chart.get("_source_chart_hash", "")) == str(master_preparation.get("source_hash", "")), "Launch preparation did not preserve the resolved source hash.")
-	var exact_visual: Dictionary = shell.call("_gameplay_visual_payload", visible_chart, master_request, {"title": "STALE"})
-	_check(str(exact_visual.get("title", "")) == str(visible_chart.get("title", "")), "Transition metadata did not use the resolved chart.")
-	_check(str(exact_visual.get("source_hash", "")) == str(master_preparation.get("source_hash", "")), "Transition metadata lost the resolved source hash.")
-
-	# Retry identity comes from the active chart, never from a stale/reordered index.
-	main.set("level_data", visible_chart.duplicate(true))
-	main.set("current_level_index", int(main.call("find_level_index", SONG_ID, "hard")))
-	var retry: Dictionary = main.call("prepare_retry_request", true)
-	_check(bool(retry.get("ok", false)), "Retry chart could not be resolved.")
-	var retry_chart: Dictionary = retry.get("chart", {}) as Dictionary
-	_check(str(retry_chart.get("chart_difficulty", "")) == "master", "Retry followed the stale catalog index instead of active chart identity.")
-	_check(str(retry.get("source_hash", "")) == str(master_preparation.get("source_hash", "")), "Retry changed the intended source identity.")
-
-	# Exercise complete runtime preparation in 8K, 4K, then 8K again. The exact
-	# resolved chart passed into gameplay must remain authored source data.
 	var source_chart: Dictionary = master_request.get("_resolved_chart", {}) as Dictionary
+	_check(str(source_chart.get("chart_difficulty", "")) == "master", "Rapid selection prepared a stale difficulty.")
+	main.set("level_data", source_chart.duplicate(true))
+	main.set("current_level_index", int(main.call("find_level_index", BUNDLED_SONG_ID, "hard")))
+	var retry: Dictionary = main.call("prepare_retry_request", true)
+	_check(str((retry.get("chart", {}) as Dictionary).get("chart_difficulty", "")) == "master", "Retry followed a stale index.")
 	var authored_snapshot := JSON.stringify(source_chart)
 	for style: String in ["8_direction", "4_arrow", "8_direction"]:
-		main.set("input_style", style)
 		var runtime_chart: Dictionary = source_chart.duplicate(true)
 		var author: RefCounted = main.get("legacy_direction_author") as RefCounted
 		runtime_chart = author.call("author_legacy_directions", runtime_chart) as Dictionary
 		main.set("level_data", runtime_chart)
+		main.set("input_style", style)
 		main.call("_prepare_runtime_direction_layouts", runtime_chart.get("events", []) as Array)
 		main.set("random_mode_enabled", true)
 		for _sample in range(8):
 			main.call("pick_runtime_direction")
 		main.set("random_mode_enabled", false)
-		_check(JSON.stringify(source_chart) == authored_snapshot, "%s runtime preparation mutated authored chart data." % style)
-		_check(str(runtime_chart.get("_source_chart_hash", "")) == str(master_preparation.get("source_hash", "")), "%s runtime lost source identity." % style)
+		_check(JSON.stringify(source_chart) == authored_snapshot, "%s runtime preparation mutated source data." % style)
 
 	main.free()
-	root.remove_child(shell)
-	shell.free()
+	root.remove_child(lexical_catalog)
+	lexical_catalog.free()
 	root.remove_child(catalog)
 	catalog.free()
+	root.remove_child(real_catalog)
+	real_catalog.free()
+	_cleanup_owned_content()
 	for _frame in range(3):
 		await process_frame
-	_cleanup_fixtures()
 	_finish()
+
+func _configure_unique_qa_paths() -> void:
+	var run_id := "%d_%d" % [OS.get_process_id(), Time.get_ticks_usec()]
+	qa_song_id = "qa_authoritative_launch_%s" % run_id
+	qa_lexical_song_id = "%s_lexical" % qa_song_id
+	qa_run_root = "user://qa_authoritative_launch_runs/%s" % run_id
+	qa_bundled_dir = "%s/bundled" % qa_run_root
+	qa_bundled_chart = "%s/normal.json" % qa_bundled_dir
+	qa_user_song_dir = "user://songs/%s" % qa_song_id
+	qa_user_chart = "%s/normal.json" % qa_user_song_dir
+	qa_export_chart = "user://chart_exports/%s_normal.json" % qa_song_id
+	qa_unloadable_audio = "%s/unloadable.qa" % qa_run_root
+
+func _qa_chart_from_template(template: Dictionary, song_id: String, title: String) -> Dictionary:
+	var chart: Dictionary = template.duplicate(true)
+	chart["id"] = "%s_normal" % song_id
+	chart["song_id"] = song_id
+	chart["chart_difficulty"] = "normal"
+	chart["difficulty"] = "NORMAL"
+	chart["title"] = title
+	return chart
+
+func _assert_resolution(result: Dictionary, expected_ok: bool, expected_path: String, expected_kind: String, label: String) -> void:
+	_check(bool(result.get("ok", false)) == expected_ok, "%s returned an unexpected status: %s" % [label, str(result.get("error", ""))])
+	_check(str(result.get("source_path", "")) == expected_path, "%s selected the wrong source path." % label)
+	_check(str(result.get("source_kind", "")) == expected_kind, "%s selected the wrong source kind." % label)
+
+func _assert_rejected_source(result: Dictionary, expected_path: String, expected_kind: String, label: String) -> void:
+	_assert_resolution(result, false, expected_path, expected_kind, label)
+	_check(not str(result.get("error", "")).is_empty(), "%s did not report a failure reason." % label)
 
 func _read_chart(path: String) -> Dictionary:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	return parsed as Dictionary if parsed is Dictionary else {}
 
-func _write_chart(path: String, chart: Dictionary) -> bool:
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))
-	return ReliableJsonStoreScript.save_dictionary_atomic(path, chart)
+func _write_owned_chart(path: String, chart: Dictionary) -> bool:
+	return _write_owned_text(path, JSON.stringify(chart, "\t", false))
 
-func _make_rejecting_shell() -> Control:
-	var shell: Control = AppShellScript.new()
-	var host := Control.new()
-	host.name = "ScreenHost"
-	shell.add_child(host)
-	var startup := Control.new()
-	startup.name = "StartupScreen"
-	host.add_child(startup)
-	var library := LibraryStub.new()
-	library.name = "SongLibraryScreen"
-	host.add_child(library)
-	var gameplay := RejectGameplayStub.new()
-	gameplay.name = "GameplayScreen"
-	gameplay.visible = false
-	host.add_child(gameplay)
-	var studio := Control.new()
-	studio.name = "ChartStudioScreen"
-	host.add_child(studio)
-	return shell
+func _write_owned_text(path: String, content: String) -> bool:
+	if not owned_files.has(path) and FileAccess.file_exists(path):
+		_check(false, "Refusing to overwrite pre-existing file: %s" % path)
+		return false
+	_ensure_owned_directory(path.get_base_dir())
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(content)
+	file.close()
+	owned_files[path] = true
+	return true
 
-func _remove_file(path: String) -> void:
-	if FileAccess.file_exists(path):
+func _delete_owned_file(path: String) -> void:
+	if owned_files.has(path) and FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
-	for suffix: String in [".tmp", ".bak"]:
-		var sidecar := path + suffix
-		if FileAccess.file_exists(sidecar):
-			DirAccess.remove_absolute(ProjectSettings.globalize_path(sidecar))
 
-func _cleanup_fixtures() -> void:
-	_remove_file(USER_OVERRIDE)
-	_remove_file(STUDIO_EXPORT)
-	_remove_empty_directory(USER_SONG_DIR)
-	_remove_empty_directory(EXPORT_DIR)
-
-func _remove_empty_directory(path: String) -> void:
-	var directory := DirAccess.open(path)
-	if directory == null:
+func _ensure_owned_directory(path: String) -> void:
+	if path == "user://" or DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(path)):
 		return
-	directory.list_dir_begin()
-	var entry := directory.get_next()
-	directory.list_dir_end()
-	if entry.is_empty():
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	_ensure_owned_directory(path.get_base_dir())
+	if DirAccess.make_dir_absolute(ProjectSettings.globalize_path(path)) == OK:
+		created_directories.append(path)
+
+func _cleanup_owned_content() -> void:
+	for path_value: Variant in owned_files.keys():
+		var path := str(path_value)
+		if FileAccess.file_exists(path):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	created_directories.reverse()
+	for path: String in created_directories:
+		var directory := DirAccess.open(path)
+		if directory == null:
+			continue
+		directory.list_dir_begin()
+		var entry := directory.get_next()
+		directory.list_dir_end()
+		if entry.is_empty():
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	created_directories.clear()
 
 func _check(condition: bool, message: String) -> void:
 	if condition:
@@ -215,6 +254,7 @@ func _check(condition: bool, message: String) -> void:
 	push_error(message)
 
 func _finish() -> void:
+	_cleanup_owned_content()
 	if failures == 0:
 		print("AUTHORITATIVE_LAUNCH_RESOLUTION_TEST: PASS")
 	else:
