@@ -47,12 +47,12 @@ func _draw() -> void:
 
 func _draw_banner(rect: Rect2) -> void:
 	if card_variant == "compact_song":
-		var surface := Color("142334") if button_pressed else (Color("111b28") if is_hovered() else Color("0d141e"))
-		draw_rect(rect, surface)
 		if button_pressed:
-			draw_rect(Rect2(Vector2(4.0, 1.0), Vector2(maxf(0.0, rect.size.x - 5.0), maxf(0.0, rect.size.y - 2.0))), Color(accent_color, 0.075))
+			draw_rect(rect, Color("142334", 0.78))
+			draw_rect(Rect2(Vector2(4.0, 1.0), Vector2(maxf(0.0, rect.size.x - 5.0), maxf(0.0, rect.size.y - 2.0))), Color(accent_color, 0.065))
 		elif is_hovered():
-			draw_rect(rect, Color(accent_color, 0.025))
+			draw_rect(rect, Color(accent_color, 0.035))
+		draw_line(Vector2(0.0, rect.size.y - 1.0), Vector2(rect.size.x, rect.size.y - 1.0), Color(1, 1, 1, 0.055), 1.0)
 		return
 	if banner_texture == null:
 		draw_rect(rect, FALLBACK_BG)
