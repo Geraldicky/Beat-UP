@@ -1,6 +1,8 @@
 extends SceneTree
 
 const UserSettingsScript = preload("res://scripts/user_settings.gd")
+const QA_ENVIRONMENT_VARIABLE := "BEAT_UP_QA_SETTINGS_FIXTURE"
+const QA_ENVIRONMENT_VALUE := "gameplay-input-binding-snapshot"
 const SETTINGS_FILES := [
 	"user://settings.cfg",
 	"user://settings.backup.cfg",
@@ -12,9 +14,14 @@ var failures := 0
 var original_settings: Dictionary = {}
 
 func _initialize() -> void:
+	if OS.get_environment(QA_ENVIRONMENT_VARIABLE) != QA_ENVIRONMENT_VALUE:
+		push_error("Refusing to modify user:// settings without the isolated gameplay-input QA environment.")
+		quit(2)
+		return
 	call_deferred("_run")
 
 func _run() -> void:
+	var baseline_orphan_ids: Array[int] = Node.get_orphan_node_ids()
 	_backup_settings_files()
 	_clear_settings_files()
 	_check(UserSettingsScript.initialize_storage(), "Default settings could not be initialized.")
@@ -118,14 +125,21 @@ func _run() -> void:
 	_check(not match_lookup_block.contains("UserSettingsScript"), "Snapshot event matching still reaches live settings.")
 
 	main.call("prepare_for_shell_exit", "binding_snapshot_test")
-	main.queue_free()
+	root.remove_child(main)
+	main.free()
 	await process_frame
+	_cleanup_new_orphan_nodes(baseline_orphan_ids)
 	_restore_settings_files()
 	if failures == 0:
 		print("GAMEPLAY_INPUT_BINDING_SNAPSHOT_TEST: PASS")
 	else:
 		print("GAMEPLAY_INPUT_BINDING_SNAPSHOT_TEST: FAIL (%d)" % failures)
-	quit(1 if failures > 0 else 0)
+	# Quit after this coroutine returns so its scene/resource references are
+	# released before Godot performs shutdown leak checks.
+	call_deferred("_finish", 1 if failures > 0 else 0)
+
+func _finish(exit_code: int) -> void:
+	quit(exit_code)
 
 func _start_prepared(main: Control, preparation: Dictionary) -> bool:
 	if not bool(preparation.get("ok", false)):
@@ -203,6 +217,14 @@ func _write_text(path: String, value: String) -> void:
 	if file != null:
 		file.store_string(value)
 		file.close()
+
+func _cleanup_new_orphan_nodes(baseline_ids: Array[int]) -> void:
+	for instance_id: int in Node.get_orphan_node_ids():
+		if baseline_ids.has(instance_id):
+			continue
+		var orphan: Object = instance_from_id(instance_id)
+		if orphan is Node and is_instance_valid(orphan):
+			(orphan as Node).free()
 
 func _check(condition: bool, message: String) -> void:
 	if condition:

@@ -31,10 +31,20 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
     if imported.returncode or 'SCRIPT ERROR:' in import_output or 'ERROR:' in import_output or 'GDScript::reload:' in import_output or 'WARNING:' in import_output:
         print(imported.stdout, imported.stderr)
         raise SystemExit('Import/parser/warning check failed')
-    for name in ['records_foundation_test.gd', 'live_records_foundation_test.gd', 'library_layout_foundation_test.gd', 'v1870_level_pack_test.gd', 'authoritative_launch_resolution_test.gd']:
+    runtime_tests = [
+        'records_foundation_test.gd',
+        'gameplay_input_binding_snapshot_test.gd',
+        'live_records_foundation_test.gd',
+        'library_layout_foundation_test.gd',
+        'v1870_level_pack_test.gd',
+        'authoritative_launch_resolution_test.gd',
+    ]
+    for name in runtime_tests:
         isolated = base/name
         isolated.mkdir()
         env = dict(os.environ, XDG_DATA_HOME=str(isolated), APPDATA=str(isolated))
+        if name == 'gameplay_input_binding_snapshot_test.gd':
+            env['BEAT_UP_QA_SETTINGS_FIXTURE'] = 'gameplay-input-binding-snapshot'
         r = subprocess.run([a.godot, '--headless', '--path', str(root), '--script', 'res://tests/'+name], env=env, text=True, capture_output=True, timeout=120)
         print(r.stdout, r.stderr)
         # Existing scene teardown can emit a resource retention diagnostic.
