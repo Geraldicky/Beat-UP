@@ -15,8 +15,8 @@ const SongLibraryAmbientScript = preload("res://scripts/ui/song_library_ambient.
 const LevelPackScript = preload("res://scripts/level_pack.gd")
 const SONG_BACKGROUND_ROOT := "res://assets/song_backgrounds"
 const SONG_THUMBNAIL_ROOT := "res://assets/song_thumbnails"
-const LIBRARY_ACCENT := Color("8ea8ff")
-const LIBRARY_ACCENT_HOVER := Color("a6b9ff")
+const LIBRARY_ACCENT := Color("58c9ff")
+const LIBRARY_ACCENT_HOVER := Color("8bdcff")
 
 signal play_requested(song_id: String, difficulty_id: String, random_mode: bool)
 signal practice_requested(song_id: String, difficulty_id: String, random_mode: bool, section_index: int)
@@ -195,6 +195,7 @@ var album_flow_center_column: VBoxContainer
 var album_flow_sidebar: VBoxContainer
 var album_flow_artwork_slot: HBoxContainer
 var album_flow_artwork: TextureRect
+var album_flow_artwork_frame: Panel
 var album_flow_detail_backdrop: TextureRect
 var album_flow_detail_veil: ColorRect
 var album_flow_ambient: Control
@@ -294,6 +295,10 @@ func _ready() -> void:
 	transition_overlay.modulate.a = 0.0
 	if not resized.is_connected(_apply_layout_config):
 		resized.connect(_apply_layout_config)
+	# Containers do not have their final widths during the first synchronous
+	# layout pass. Re-apply once so the artwork uses the approved viewport-based
+	# dimensions instead of the scene's pre-layout InfoPanel width.
+	call_deferred("_apply_layout_config")
 	call_deferred("_animate_enter")
 
 func _music_session() -> Node:
@@ -534,7 +539,7 @@ func _install_album_flow_song_library_layout() -> void:
 	# atmosphere. The actual browsing/configuration surfaces stay crisp above it.
 	now_playing_card.visible = false
 	backdrop_visual.visible = true
-	backdrop_visual.modulate = Color(1.0, 1.0, 1.0, 0.18)
+	backdrop_visual.modulate = Color(0.82, 0.90, 1.0, 0.34)
 	header_row.visible = true
 	title_label.text = "S O N G   L I B R A R Y"
 	count_label.text = "BEAT UP!"
@@ -591,7 +596,7 @@ func _install_album_flow_song_library_layout() -> void:
 	album_flow_detail_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	album_flow_detail_backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	album_flow_detail_backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	album_flow_detail_backdrop.modulate = Color(1.0, 1.0, 1.0, 0.045)
+	album_flow_detail_backdrop.modulate = Color(0.80, 0.90, 1.0, 0.075)
 	info_panel.add_child(album_flow_detail_backdrop)
 	info_panel.move_child(album_flow_detail_backdrop, 0)
 
@@ -693,6 +698,20 @@ void fragment() {
 	album_flow_artwork.material = artwork_material
 	hero_content.add_child(album_flow_artwork)
 	hero_content.move_child(album_flow_artwork, 0)
+
+	# Thin luminous framing and cropped corner brackets reproduce the authored
+	# mockup without introducing a separate effects pipeline.
+	album_flow_artwork_frame = Panel.new()
+	album_flow_artwork_frame.name = "AlbumArtworkFrame"
+	album_flow_artwork_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	album_flow_artwork_frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var frame_style := MinimalThemeScript.panel_style(Color.TRANSPARENT, 2, Color(LIBRARY_ACCENT, 0.42), 1, 0.0)
+	frame_style.shadow_color = Color(LIBRARY_ACCENT, 0.18)
+	frame_style.shadow_size = 12
+	album_flow_artwork_frame.add_theme_stylebox_override("panel", frame_style)
+	hero_content.add_child(album_flow_artwork_frame)
+	for corner in [Vector2.ZERO, Vector2(1.0, 0.0), Vector2(0.0, 1.0), Vector2.ONE]:
+		_add_album_flow_artwork_corner(album_flow_artwork_frame, corner)
 
 	# Center-column Best Record block: section header, accuracy/score/rank,
 	# then judgement breakdown, matching the approved reference hierarchy.
@@ -1089,7 +1108,7 @@ func _apply_album_flow_song_library_layout() -> void:
 		return
 	now_playing_card.visible = false
 	backdrop_visual.visible = true
-	backdrop_visual.modulate = Color(1.0, 1.0, 1.0, 0.27)
+	backdrop_visual.modulate = Color(0.82, 0.90, 1.0, 0.34)
 	header_row.visible = true
 	for legacy_control: Control in [info_tabs, details_panel, best_card, action_row, footer_panel]:
 		legacy_control.visible = false
@@ -1097,34 +1116,34 @@ func _apply_album_flow_song_library_layout() -> void:
 	var compact: bool = size.x < 1550.0 or size.y < 840.0
 	var layout_scale: float = clampf(minf(size.x / 1920.0, size.y / 1080.0), 0.66, 1.0)
 	info_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(0, 0, 0, 0), 0, Color(0, 0, 0, 0), 0, 6.0 if compact else 12.0))
-	main_margin.add_theme_constant_override("margin_left", 22 if compact else 30)
-	main_margin.add_theme_constant_override("margin_right", 22 if compact else 30)
-	main_margin.add_theme_constant_override("margin_top", 14 if compact else 18)
-	main_margin.add_theme_constant_override("margin_bottom", 14 if compact else 22)
+	main_margin.add_theme_constant_override("margin_left", 18 if compact else 30)
+	main_margin.add_theme_constant_override("margin_right", 18 if compact else 30)
+	main_margin.add_theme_constant_override("margin_top", 12 if compact else 18)
+	main_margin.add_theme_constant_override("margin_bottom", 12 if compact else 22)
 	root_vbox.add_theme_constant_override("separation", 12)
 	header_row.custom_minimum_size.y = 52 if compact else 60
 	header_row.add_theme_constant_override("separation", 12 if compact else 14)
-	back_button.custom_minimum_size = Vector2(104 if compact else 116, 42 if compact else 48)
+	back_button.custom_minimum_size = Vector2(96 if compact else 116, 42 if compact else 48)
 
 	var title_block := title_label.get_parent() as Control
 	if title_block != null:
 		title_block.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		title_block.custom_minimum_size.x = 220 if compact else 300
+		title_block.custom_minimum_size.x = 190 if compact else 300
 		if title_block is BoxContainer:
 			(title_block as BoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
 	if album_flow_header_spacer != null:
-		album_flow_header_spacer.custom_minimum_size.x = 12 if compact else 28
+		album_flow_header_spacer.custom_minimum_size.x = 8 if compact else 28
 	var library_toolbar := search_input.get_parent() as Control
 	if library_toolbar != null:
 		# Match the mockup's centered-right toolbar instead of stretching controls
 		# all the way to the screen edge. Width scales with the viewport.
-		library_toolbar.custom_minimum_size.x = clampf(size.x * 0.58, 820.0, 1120.0)
+		library_toolbar.custom_minimum_size.x = clampf(size.x * 0.58, 740.0 if compact else 820.0, 1120.0)
 		library_toolbar.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 
 	if album_flow_detail_top_spacer != null:
 		album_flow_detail_top_spacer.custom_minimum_size.y = 4 if compact else 8
 
-	body.add_theme_constant_override("separation", 14 if compact else 18)
+	body.add_theme_constant_override("separation", 8 if compact else 18)
 	wheel_column.custom_minimum_size.x = 0
 	wheel_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	wheel_column.size_flags_stretch_ratio = 0.35
@@ -1136,10 +1155,16 @@ func _apply_album_flow_song_library_layout() -> void:
 	album_flow_showcase_row.add_theme_constant_override("separation", 18 if compact else 26)
 	album_flow_center_column.size_flags_stretch_ratio = 0.56
 	album_flow_sidebar.size_flags_stretch_ratio = 0.44
-	album_flow_sidebar.custom_minimum_size.x = 300 if compact else 390
-	album_flow_sidebar.add_theme_constant_override("separation", 8 if compact else 12)
+	album_flow_sidebar.custom_minimum_size.x = 280 if compact else 390
+	album_flow_sidebar.add_theme_constant_override("separation", 7 if compact else 14)
 
-	var artwork_size: float = clampf(minf(info_panel.size.x * 0.54, size.y * 0.54), 270.0, 535.0)
+	# The reference dedicates roughly 31.5% of the viewport width to the jacket.
+	# Deriving this from the viewport also avoids the undersized first-frame art.
+	var artwork_size: float = clampf(
+		minf(size.x * (0.29 if compact else 0.315), size.y * (0.51 if compact else 0.56)),
+		320.0,
+		610.0
+	)
 	album_flow_artwork_slot.custom_minimum_size = Vector2(artwork_size, artwork_size)
 	hero_panel.custom_minimum_size = Vector2(artwork_size, artwork_size)
 	if album_flow_artwork != null and album_flow_artwork.material is ShaderMaterial:
@@ -1151,7 +1176,7 @@ func _apply_album_flow_song_library_layout() -> void:
 	album_flow_showcase_row.custom_minimum_size.y = 0
 
 	if album_flow_record_panel != null:
-		album_flow_record_panel.custom_minimum_size.y = 148 if compact else 206
+		album_flow_record_panel.custom_minimum_size.y = 164 if compact else 220
 	if album_flow_best_card != null:
 		album_flow_best_card.custom_minimum_size = Vector2(62 if compact else 82, 62 if compact else 82)
 	if album_flow_score_cluster != null:
@@ -1164,14 +1189,14 @@ func _apply_album_flow_song_library_layout() -> void:
 			quick_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	for mode_button in [album_flow_mode_4_button, album_flow_mode_8_button]:
-		mode_button.custom_minimum_size = Vector2(90, 48 if compact else 58)
+		mode_button.custom_minimum_size = Vector2(90, 56 if compact else 68)
 		mode_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	album_flow_random_button.custom_minimum_size = Vector2(120, 62 if compact else 74)
+	album_flow_random_button.custom_minimum_size = Vector2(120, 70 if compact else 84)
 	album_flow_random_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	practice_button.custom_minimum_size = Vector2(0, 62 if compact else 74)
+	practice_button.custom_minimum_size = Vector2(0, 70 if compact else 84)
 	practice_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-	play_button.custom_minimum_size = Vector2(0, clampf(96.0 * layout_scale, 74.0, 104.0))
+	play_button.custom_minimum_size = Vector2(0, clampf(116.0 * layout_scale, 86.0, 122.0))
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	play_button.size_flags_vertical = Control.SIZE_SHRINK_END
 
@@ -1222,9 +1247,10 @@ func _apply_album_flow_filter_tab_style() -> void:
 func _apply_album_flow_song_library_theme() -> void:
 	if album_flow_showcase_row == null:
 		return
+	var compact := size.x < 1550.0 or size.y < 840.0
 
 	title_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	title_label.add_theme_font_size_override("font_size", 19)
+	title_label.add_theme_font_size_override("font_size", 22)
 	title_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	back_button.add_theme_font_override("font", MinimalThemeScript.mono_font())
@@ -1236,15 +1262,15 @@ func _apply_album_flow_song_library_theme() -> void:
 	count_label.add_theme_color_override("font_color", Color(LIBRARY_ACCENT, 0.72))
 
 	detail_title.add_theme_font_override("font", MinimalThemeScript.display_font())
-	detail_title.add_theme_font_size_override("font_size", 32)
+	detail_title.add_theme_font_size_override("font_size", 32 if compact else 40)
 	detail_title.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	detail_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail_title.max_lines_visible = 2
 	detail_title.clip_text = false
 	detail_title.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
-	detail_title.custom_minimum_size.y = 84
+	detail_title.custom_minimum_size.y = 76 if compact else 96
 	detail_meta.add_theme_font_override("font", MinimalThemeScript.body_font())
-	detail_meta.add_theme_font_size_override("font_size", 17)
+	detail_meta.add_theme_font_size_override("font_size", 17 if compact else 20)
 	detail_meta.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.74))
 	selection_index.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	selection_index.add_theme_font_size_override("font_size", 10)
@@ -1291,6 +1317,8 @@ func _apply_album_flow_song_library_theme() -> void:
 		album_flow_record_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	if album_flow_best_card != null:
 		var best_style := MinimalThemeScript.panel_style(Color(MinimalThemeScript.SURFACE_RAISED, 0.60), 6, Color(LIBRARY_ACCENT, 0.38), 1, 0.0)
+		best_style.shadow_color = Color(LIBRARY_ACCENT, 0.16)
+		best_style.shadow_size = 10
 		album_flow_best_card.add_theme_stylebox_override("panel", best_style)
 		album_flow_best_rank_value.add_theme_font_override("font", MinimalThemeScript.display_font())
 		album_flow_best_rank_value.add_theme_font_size_override("font_size", 46)
@@ -1342,6 +1370,32 @@ func _clear_album_flow_children(node: Node) -> void:
 	for child in node.get_children():
 		node.remove_child(child)
 		child.queue_free()
+
+func _add_album_flow_artwork_corner(parent: Control, corner: Vector2) -> void:
+	var horizontal := ColorRect.new()
+	horizontal.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	horizontal.color = Color(LIBRARY_ACCENT_HOVER, 0.96)
+	horizontal.anchor_left = corner.x
+	horizontal.anchor_right = corner.x
+	horizontal.anchor_top = corner.y
+	horizontal.anchor_bottom = corner.y
+	horizontal.offset_left = -7.0 if corner.x <= 0.5 else -25.0
+	horizontal.offset_right = 25.0 if corner.x <= 0.5 else 7.0
+	horizontal.offset_top = -7.0 if corner.y <= 0.5 else 5.0
+	horizontal.offset_bottom = -5.0 if corner.y <= 0.5 else 7.0
+	parent.add_child(horizontal)
+	var vertical := ColorRect.new()
+	vertical.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vertical.color = Color(LIBRARY_ACCENT_HOVER, 0.96)
+	vertical.anchor_left = corner.x
+	vertical.anchor_right = corner.x
+	vertical.anchor_top = corner.y
+	vertical.anchor_bottom = corner.y
+	vertical.offset_left = -7.0 if corner.x <= 0.5 else 5.0
+	vertical.offset_right = -5.0 if corner.x <= 0.5 else 7.0
+	vertical.offset_top = -7.0 if corner.y <= 0.5 else -25.0
+	vertical.offset_bottom = 25.0 if corner.y <= 0.5 else 7.0
+	parent.add_child(vertical)
 
 func _refresh_album_flow_difficulty_row() -> void:
 	if album_flow_difficulty_row == null:
@@ -2041,6 +2095,10 @@ func _style_album_segment_button(button: Button, active: bool) -> void:
 		hover = MinimalThemeScript.button_style(Color(accent, 0.14), accent, 2)
 		pressed = hover
 		focus = hover
+		for style_value in [normal, hover]:
+			var active_style := style_value as StyleBoxFlat
+			active_style.shadow_color = Color(accent, 0.22)
+			active_style.shadow_size = 9
 	for style in [normal, hover, pressed, focus]:
 		style.content_margin_left = 12.0
 		style.content_margin_right = 12.0
@@ -2066,6 +2124,8 @@ func _style_album_secondary_chip(button: Button, active: bool, accent: Color) ->
 	var disabled := MinimalThemeScript.button_style(Color(MinimalThemeScript.BG, 0.24), Color(MinimalThemeScript.BORDER, 0.12), 2)
 	if active:
 		normal = MinimalThemeScript.button_style(Color(accent, 0.09), Color(accent, 0.96), 2)
+		normal.shadow_color = Color(accent, 0.20)
+		normal.shadow_size = 9
 	for style in [normal, hover, pressed, disabled]:
 		style.content_margin_left = 10.0
 		style.content_margin_right = 10.0
@@ -2095,6 +2155,9 @@ func _style_album_difficulty_button(button: Button, selected: bool, available: b
 	)
 	var hover := MinimalThemeScript.button_style(Color(accent, 0.08), Color(accent, 0.68), 2)
 	var pressed := MinimalThemeScript.button_style(Color(accent, 0.15), Color(accent, 0.98), 2)
+	if selected and available:
+		normal.shadow_color = Color(accent, 0.23)
+		normal.shadow_size = 9
 	for style in [normal, hover, pressed]:
 		style.content_margin_left = 8.0
 		style.content_margin_right = 8.0
@@ -2143,6 +2206,12 @@ func _style_album_play_button() -> void:
 	var hover := MinimalThemeScript.button_style(Color(MinimalThemeScript.CYAN, 0.08), MinimalThemeScript.CYAN, 2)
 	var pressed := MinimalThemeScript.button_style(Color(MinimalThemeScript.CYAN, 0.16), MinimalThemeScript.CYAN, 2)
 	var disabled := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE, 0.20), Color(MinimalThemeScript.BORDER, 0.12), 2)
+	normal.shadow_color = Color(MinimalThemeScript.CYAN, 0.18)
+	normal.shadow_size = 12
+	hover.shadow_color = Color(MinimalThemeScript.CYAN, 0.30)
+	hover.shadow_size = 16
+	pressed.shadow_color = Color(MinimalThemeScript.CYAN, 0.24)
+	pressed.shadow_size = 10
 	for style in [normal, hover, pressed, disabled]:
 		style.content_margin_left = 22.0
 		style.content_margin_right = 22.0
@@ -2637,23 +2706,31 @@ func _populate_song_header_button(button: Button, index: int, rep: Dictionary, s
 	MinimalThemeScript.apply_mono(index_label, 10, Color(MinimalThemeScript.TEXT, 0.52))
 	row.add_child(index_label)
 
-	var marker := Label.new()
-	marker.name = "SongMarker"
-	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	marker.text = ""
-	marker.custom_minimum_size.x = 16
-	marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	MinimalThemeScript.apply_mono(marker, 9, Color(LIBRARY_ACCENT, 0.70))
-	row.add_child(marker)
-
 	var thumb := TextureRect.new()
 	thumb.name = "SongJacket"
 	thumb.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	thumb.custom_minimum_size = Vector2(44, 44)
+	thumb.custom_minimum_size = Vector2(58, 58)
 	thumb.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	thumb.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	thumb.texture = _song_banner_texture(song_id, str(rep.get("background", "")))
 	row.add_child(thumb)
+
+	var marker := Label.new()
+	marker.name = "SongMarker"
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marker.text = ""
+	marker.custom_minimum_size.x = 12
+	marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	MinimalThemeScript.apply_mono(marker, 9, Color(LIBRARY_ACCENT, 0.70))
+	row.add_child(marker)
+
+	var identity_stack := VBoxContainer.new()
+	identity_stack.name = "SongIdentity"
+	identity_stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	identity_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	identity_stack.alignment = BoxContainer.ALIGNMENT_CENTER
+	identity_stack.add_theme_constant_override("separation", 0)
+	row.add_child(identity_stack)
 
 	var title := Label.new()
 	title.name = "SongTitle"
@@ -2664,16 +2741,14 @@ func _populate_song_header_button(button: Button, index: int, rep: Dictionary, s
 	title.add_theme_color_override("font_color", Color(1, 1, 1, 0.96))
 	title.set_meta("base_alpha", 0.96)
 	title.set_meta("label_role", "song_title")
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.clip_text = true
 	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	row.add_child(title)
+	identity_stack.add_child(title)
 
 	var artist := Label.new()
 	artist.name = "SongArtist"
 	artist.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	artist.text = _display_artist(rep)
-	artist.custom_minimum_size.x = 118
 	artist.add_theme_font_override("font", MinimalThemeScript.body_font())
 	artist.add_theme_font_size_override("font_size", 10)
 	artist.add_theme_color_override("font_color", Color(1, 1, 1, 0.58))
@@ -2681,7 +2756,7 @@ func _populate_song_header_button(button: Button, index: int, rep: Dictionary, s
 	artist.set_meta("label_role", "song_subtitle")
 	artist.clip_text = true
 	artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	row.add_child(artist)
+	identity_stack.add_child(artist)
 
 	var bpm_label := Label.new()
 	bpm_label.name = "SongBpm"
@@ -2901,12 +2976,13 @@ func _refresh_song_rows(animated: bool) -> void:
 		selection_tween.set_parallel(true)
 
 	var selected_index := filtered_song_ids.find(selected_song_id)
+	var compact := size.x < 1550.0 or size.y < 840.0
 	for i in range(song_buttons.size()):
 		var button: Button = song_buttons[i]
 		var is_selected: bool = i < filtered_song_ids.size() and filtered_song_ids[i] == selected_song_id
 		button.set_pressed_no_signal(is_selected)
 		button.queue_redraw()
-		var target_height := 70.0 if is_selected else 58.0
+		var target_height := (74.0 if is_selected else 64.0) if compact else (82.0 if is_selected else 72.0)
 		var distance: int = absi(i - selected_index) if selected_index >= 0 else 4
 		var art_emphasis := 1.0 if is_selected else clampf(0.88 - float(distance) * 0.065, 0.54, 0.82)
 		button.modulate.a = 1.0
@@ -2922,17 +2998,18 @@ func _refresh_song_rows(animated: bool) -> void:
 			index_label.add_theme_color_override("font_color", Color(LIBRARY_ACCENT, 0.92) if is_selected else Color(MinimalThemeScript.TEXT, 0.46))
 		var jacket := button.find_child("SongJacket", true, false) as TextureRect
 		if jacket != null:
-			jacket.custom_minimum_size = Vector2(52, 52) if is_selected else Vector2(44, 44)
+			var jacket_size := (56.0 if is_selected else 50.0) if compact else (64.0 if is_selected else 58.0)
+			jacket.custom_minimum_size = Vector2(jacket_size, jacket_size)
 		var row_title := button.find_child("SongTitle", true, false) as Label
 		if row_title != null:
-			row_title.add_theme_font_size_override("font_size", 15 if is_selected else 13)
-			row_title.custom_minimum_size.y = 22 if is_selected else 18
+			row_title.add_theme_font_size_override("font_size", (14 if is_selected else 13) if compact else (16 if is_selected else 14))
+			row_title.custom_minimum_size.y = (21 if is_selected else 19) if compact else (24 if is_selected else 21)
 			row_title.max_lines_visible = 1
 			row_title.autowrap_mode = TextServer.AUTOWRAP_OFF
 		var row_artist := button.find_child("SongArtist", true, false) as Label
 		if row_artist != null:
-			row_artist.add_theme_font_size_override("font_size", 11 if is_selected else 10)
-			row_artist.custom_minimum_size.y = 18 if is_selected else 14
+			row_artist.add_theme_font_size_override("font_size", (10 if is_selected else 9) if compact else (12 if is_selected else 11))
+			row_artist.custom_minimum_size.y = (16 if is_selected else 14) if compact else (19 if is_selected else 17)
 		for indicator_node in button.find_children("*Indicator", "Label", true, false):
 			var indicator := indicator_node as Label
 			var diff_id := str(indicator.get_meta("difficulty_id", ""))

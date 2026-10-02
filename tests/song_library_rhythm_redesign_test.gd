@@ -59,6 +59,8 @@ func run() -> void:
 	check(selector.play_button.find_child("PlayIcon", true, false) != null and selector.play_button.find_child("PlayDivider", true, false) != null and selector.play_button.find_child("PlayArrow", true, false) != null, "Play button is missing the mockup-style icon/divider/arrow composition.")
 	check(selector.practice_button.is_visible_in_tree() and selector.practice_button.pressed.get_connections().size() > 0, "Practice action is missing or disconnected.")
 	check(selector.album_flow_artwork.size.x >= 400.0 and selector.album_flow_artwork.size.y >= 400.0, "Selected jacket is not a large focal point at 1920×1080.")
+	check(selector.album_flow_artwork.size.x >= 570.0 and selector.album_flow_artwork.size.y >= 570.0, "Selected jacket does not match the mockup's dominant 1920×1080 scale.")
+	check(selector.album_flow_artwork_frame != null and selector.album_flow_artwork_frame.get_child_count() == 8, "Selected jacket is missing its luminous corner framing.")
 	check(selector.album_flow_record_panel != null and selector.album_flow_record_panel.get_parent() == selector.album_flow_center_column, "Best Record is not in the center inspection column.")
 	check(selector.album_flow_record_panel.get_theme_stylebox("panel") is StyleBoxEmpty, "Best Record still renders an opaque/dark panel background.")
 	check(not selector.album_flow_record_panel.get_global_rect().intersects(selector.album_flow_artwork.get_global_rect()), "Best Record overlaps the selected artwork.")
@@ -69,7 +71,7 @@ func run() -> void:
 	check(selector.play_button.get_parent() == selector.album_flow_sidebar and selector.play_button.size.y >= 70.0, "Play is not the dominant bottom-right call to action.")
 	check(selector.album_flow_bottom_panel != null and not selector.album_flow_bottom_panel.visible, "Legacy detached Difficulty/Play dock is still visible.")
 	check(selector.album_flow_list_header != null and selector.album_flow_list_header.is_visible_in_tree(), "Dense song-list column header is missing.")
-	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a <= 0.30, "Selected-song background atmosphere is missing or too strong.")
+	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a >= 0.30 and selector.backdrop_visual.modulate.a <= 0.38, "Selected-song background atmosphere is missing or too strong.")
 	check(selector.album_flow_ambient != null and not selector.album_flow_ambient.visible, "Abstract ambient geometry should be suppressed in the mockup-matched composition.")
 	check(selector.album_flow_meta_line != null and selector.album_flow_meta_line.text.contains("BPM"), "Inline song metadata is missing.")
 	check(selector.album_flow_prev_song_button != null and selector.album_flow_next_song_button != null, "Track previous/next controls are missing.")
@@ -78,9 +80,16 @@ func run() -> void:
 	check(selected_index >= 0, "No initial song was selected.")
 	if selected_index >= 0:
 		var selected_button := selector.song_buttons[selected_index] as Button
-		check(selected_button.custom_minimum_size.y >= 64.0 and selected_button.custom_minimum_size.y <= 76.0, "Selected song row is not dense enough for fast scanning.")
+		check(selected_button.custom_minimum_size.y >= 78.0 and selected_button.custom_minimum_size.y <= 86.0, "Selected song row does not match the mockup's scanning rhythm.")
 		var jacket := selected_button.find_child("SongJacket", true, false) as TextureRect
-		check(jacket != null and jacket.custom_minimum_size.x >= 48.0 and jacket.custom_minimum_size.x <= 58.0, "Selected row jacket size does not match the dense-browser hierarchy.")
+		check(jacket != null and jacket.custom_minimum_size.x >= 60.0 and jacket.custom_minimum_size.x <= 68.0, "Selected row jacket size does not match the mockup hierarchy.")
+		var title := selected_button.find_child("SongTitle", true, false) as Label
+		var artist := selected_button.find_child("SongArtist", true, false) as Label
+		check(title != null and artist != null and title.get_parent() == artist.get_parent() and title.get_parent() is VBoxContainer, "Song title and artist are not stacked like the mockup.")
+	check(selector.detail_title.get_theme_font_size("font_size") >= 38, "Selected-song title hierarchy is too small.")
+	check(selector.play_button.custom_minimum_size.y >= 110.0, "Play button is not dominant enough at 1920×1080.")
+	var play_style := selector.play_button.get_theme_stylebox("normal") as StyleBoxFlat
+	check(play_style != null and play_style.shadow_size >= 10, "Play button is missing the restrained cyan glow treatment.")
 
 	selector.search_input.text = "blue zenith"
 	selector._on_search_changed(selector.search_input.text)

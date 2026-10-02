@@ -31,7 +31,8 @@ func run() -> void:
  ghost.audio = "res://music/missing_test.ogg"
  selection._update_detail(false)
  await create_timer(0.3).timeout
- check(selection.play_button.disabled and selection.play_button.text == "AUDIO MISSING", "Missing audio visible and disabled")
+ var play_title := selection.play_button.find_child("PlayTitle", true, false) as Label
+ check(selection.play_button.disabled and play_title != null and play_title.text == "AUDIO MISSING", "Missing audio visible and disabled")
  ghost.audio = original_audio
  selection.search_input.text = "nothing_matches_175"
  selection.search_input.text_changed.emit(selection.search_input.text)
