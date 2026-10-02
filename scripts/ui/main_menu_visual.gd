@@ -74,29 +74,14 @@ func _draw() -> void:
 		return
 	var accent := _selection_accent()
 
-	# Current-song artwork stays full screen and is controlled by scrims only.
-	# No second copy of that artwork is drawn as a foreground content card.
-	_draw_edge_vignette()
+	# Current-song artwork stays full screen behind the interface. Keep this
+	# visual layer transparent so the background is not banded or corner-darkened.
 
 	var geometry := _brand_geometry()
 	var hero_center: Vector2 = geometry["center"] as Vector2
 	var hero_radius: float = float(geometry["radius"])
 	_draw_brand_panel(hero_center, hero_radius, accent)
 	_draw_rhythm_connector(hero_center, hero_radius, accent)
-
-func _draw_edge_vignette() -> void:
-	for i in range(20):
-		var t := float(i) / 20.0
-		var h := size.y * 0.017
-		draw_rect(Rect2(0, i * h, size.x, h + 1.0), Color(0.005, 0.009, 0.017, lerpf(0.30, 0.0, t)))
-		draw_rect(Rect2(0, size.y - (i + 1) * h, size.x, h + 1.0), Color(0.005, 0.009, 0.017, lerpf(0.26, 0.0, t)))
-	# Right-side action scrim improves text stability across bright artwork while
-	# remaining borderless and subordinate to the brand panel.
-	for i in range(18):
-		var t := float(i) / 17.0
-		var x := size.x * 0.58 + size.x * 0.025 * float(i)
-		var w := size.x * 0.028
-		draw_rect(Rect2(x, size.y * 0.13, w, size.y * 0.76), Color(0.004, 0.008, 0.015, lerpf(0.0, 0.25, t)))
 
 func _brand_geometry() -> Dictionary:
 	return {
