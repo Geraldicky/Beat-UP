@@ -29,8 +29,12 @@ func run() -> void:
 	var detail_rect: Rect2 = selector.info_panel.get_global_rect()
 	check(list_rect.position.x < detail_rect.position.x, "Song list is not on the left.")
 	var usable_width: float = list_rect.size.x + detail_rect.size.x
-	check(list_rect.size.x / usable_width >= 0.39 and list_rect.size.x / usable_width <= 0.44, "Song list is not approximately 40–42% wide.")
+	check(list_rect.size.x / usable_width >= 0.33 and list_rect.size.x / usable_width <= 0.39, "Song list is not approximately 36% wide.")
 	check(not list_rect.intersects(detail_rect), "Song list and detail panel overlap.")
+	var center_rect: Rect2 = selector.album_flow_center_column.get_global_rect()
+	var config_rect: Rect2 = selector.album_flow_sidebar.get_global_rect()
+	check(center_rect.position.x >= detail_rect.position.x and config_rect.position.x > center_rect.position.x, "Inspect/configure columns are not ordered left-to-right.")
+	check(not center_rect.intersects(config_rect), "Inspect and configuration columns overlap.")
 	check(selector.search_input.is_visible_in_tree(), "Search is not visible.")
 	check(selector.back_button.is_visible_in_tree(), "Back control is not visible.")
 	check(selector.sort_filter.is_visible_in_tree() and selector.sort_filter.text == "BPM Asc", "Custom sort control or default BPM ascending mode is missing.")
@@ -46,21 +50,25 @@ func run() -> void:
 	check(selector.album_flow_random_button.is_visible_in_tree(), "Inline Random mod is missing.")
 	check(selector.practice_button.is_visible_in_tree() and selector.practice_button.pressed.get_connections().size() > 0, "Practice action is missing or disconnected.")
 	check(selector.album_flow_artwork.size.x >= 400.0 and selector.album_flow_artwork.size.y >= 400.0, "Selected jacket is not a large focal point at 1920×1080.")
-	check(selector.album_flow_best_card.get_parent().name == "HeroContent", "Best record does not overlap the jacket composition.")
-	check(selector.album_flow_best_card.size.x >= 120.0 and selector.album_flow_best_card.size.y >= 120.0, "Rank overlay collapsed or clipped.")
-	check(selector.album_flow_best_card.get_global_rect().intersects(selector.album_flow_artwork.get_global_rect()), "Best-record overlay no longer intersects the jacket.")
+	check(selector.album_flow_record_panel != null and selector.album_flow_record_panel.get_parent() == selector.album_flow_center_column, "Best Record is not in the center inspection column.")
+	check(not selector.album_flow_record_panel.get_global_rect().intersects(selector.album_flow_artwork.get_global_rect()), "Best Record overlaps the selected artwork.")
+	check(selector.album_flow_record_breakdown_row != null and selector.album_flow_record_breakdown_row.get_child_count() == 4, "Judgement breakdown is incomplete.")
 	check(selector.album_flow_score_cluster != null and selector.album_flow_score_cluster.get_global_rect().position.y >= selector.album_flow_artwork.get_global_rect().end.y, "Best-score hierarchy is not positioned beneath the jacket.")
-	check(selector.album_flow_bottom_panel != null and selector.album_flow_bottom_panel.size.y >= 150.0, "Difficulty/Play panel is not visually substantial.")
-	check(selector.play_button.size.x >= 230.0 and selector.play_button.size.y >= 96.0, "Play is not the dominant call to action.")
+	check(selector.album_flow_difficulty_row.get_parent() == selector.album_flow_sidebar, "Difficulty selector is not in the configuration column.")
+	check(selector.album_flow_mode_row.get_parent() == selector.album_flow_sidebar and selector.album_flow_modifier_row.get_parent() == selector.album_flow_sidebar, "Mode/mod controls are not in the configuration column.")
+	check(selector.play_button.get_parent() == selector.album_flow_sidebar and selector.play_button.size.y >= 70.0, "Play is not the dominant bottom-right call to action.")
+	check(selector.album_flow_bottom_panel != null and not selector.album_flow_bottom_panel.visible, "Legacy detached Difficulty/Play dock is still visible.")
+	check(selector.album_flow_list_header != null and selector.album_flow_list_header.is_visible_in_tree(), "Dense song-list column header is missing.")
+	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a <= 0.25, "Selected-song background atmosphere is missing or too strong.")
 	check(selector.album_flow_ambient != null and selector.album_flow_ambient.is_visible_in_tree(), "Right-side ambient geometry is missing.")
 
 	var selected_index: int = selector.filtered_song_ids.find(selector.selected_song_id)
 	check(selected_index >= 0, "No initial song was selected.")
 	if selected_index >= 0:
 		var selected_button := selector.song_buttons[selected_index] as Button
-		check(selected_button.custom_minimum_size.y >= 100.0, "Selected song row did not expand.")
+		check(selected_button.custom_minimum_size.y >= 64.0 and selected_button.custom_minimum_size.y <= 76.0, "Selected song row is not dense enough for fast scanning.")
 		var jacket := selected_button.find_child("SongJacket", true, false) as TextureRect
-		check(jacket != null and jacket.custom_minimum_size.x >= 80.0, "Selected row jacket did not enlarge.")
+		check(jacket != null and jacket.custom_minimum_size.x >= 48.0 and jacket.custom_minimum_size.x <= 58.0, "Selected row jacket size does not match the dense-browser hierarchy.")
 
 	selector.search_input.text = "blue zenith"
 	selector._on_search_changed(selector.search_input.text)
