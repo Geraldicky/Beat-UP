@@ -559,7 +559,7 @@ func _apply_layout_config() -> void:
 	var rail_width: float = clampf(viewport_size.x * 0.19, 276.0, 348.0)
 	var item_height: float = clampf(47.0 * reference_scale, float(MinimalThemeScript.MIN_ACTION_HEIGHT), 52.0)
 	var play_height: float = clampf(64.0 * reference_scale, 58.0, 70.0)
-	var item_gap: int = roundi(clampf(6.0 * reference_scale, 5.0, 8.0))
+	var item_gap: int = roundi(clampf(9.0 * reference_scale, 7.0, 11.0))
 	var rail_x: float = clampf(viewport_size.x * 0.70, hero_center.x + hero_radius + 72.0, viewport_size.x - margin - rail_width)
 	var rail_y: float = clampf(viewport_size.y * 0.35, 238.0, 378.0)
 	var primary_buttons: Array[Button] = [play_button, chart_studio_button, settings_button, exit_button]
@@ -573,8 +573,8 @@ func _apply_layout_config() -> void:
 		button.custom_minimum_size = Vector2(rail_width, play_height if index == 0 else item_height)
 		_set_button_pivot(button)
 
-	var utility_height := clampf(30.0 * reference_scale, 28.0, 32.0)
-	utility_row.position = Vector2(rail_x, rail_y + rail_height + 18.0)
+	var utility_height := clampf(32.0 * reference_scale, 30.0, 34.0)
+	utility_row.position = Vector2(rail_x, rail_y + rail_height + 24.0)
 	utility_row.size = Vector2(rail_width, utility_height)
 	utility_row.add_theme_constant_override("separation", 6)
 	for button in [help_button, quick_calibration_button, credits_button]:
@@ -814,50 +814,84 @@ func _style_tutorial_tabs() -> void:
 			tab.add_theme_color_override(color_name, MinimalThemeScript.TEXT)
 
 func _style_main_menu_button(button: Button, _index: int) -> void:
-	var accent: Color = MinimalThemeScript.ACCENT
 	var is_primary := button == play_button
 	var is_exit := button == exit_button
 	var is_utility := button == help_button or button == quick_calibration_button or button == credits_button
-	if is_primary:
-		accent = MinimalThemeScript.ACCENT_LIGHT
-		button.text = "PLAY  ◆"
-	elif is_exit:
+	var accent: Color = MinimalThemeScript.ACCENT_LIGHT if is_primary else MinimalThemeScript.ACCENT
+	if is_exit:
 		accent = MinimalThemeScript.DANGER
 
 	button.add_theme_font_override("font", MinimalThemeScript.mono_font() if is_utility else MinimalThemeScript.medium_font())
-	button.add_theme_font_size_override("font_size", 10 if is_utility else theme_config.button_size + (6 if is_primary else 0))
+	button.add_theme_font_size_override("font_size", 11 if is_utility else theme_config.button_size + (6 if is_primary else 1))
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT if not is_utility else HORIZONTAL_ALIGNMENT_CENTER
 
-	# At rest, navigation is typography on the composition (S0). A restrained
-	# surface appears only as interaction feedback; the moving rule carries the
-	# persistent selection identity.
+	# Three-level action hierarchy:
+	# 1) PLAY is a contained glass action with a crisp accent frame.
+	# 2) Core secondary actions use a quiet dark rail with an accent underline.
+	# 3) Utility links stay lightweight and borderless.
 	var normal_style := StyleBoxFlat.new()
-	normal_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
-	normal_style.set_border_width_all(0)
-	normal_style.corner_radius_top_right = 7
-	normal_style.corner_radius_bottom_right = 7
-	normal_style.content_margin_left = 18.0
-	normal_style.content_margin_right = 14.0
+	var hover_style := StyleBoxFlat.new()
+	var pressed_style := StyleBoxFlat.new()
+	var focus_style := StyleBoxFlat.new()
 
-	var hover_style: StyleBoxFlat = normal_style.duplicate() as StyleBoxFlat
-	hover_style.bg_color = Color(accent, 0.032)
-	var pressed_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	pressed_style.bg_color = Color(accent, 0.060)
-	var focus_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	focus_style.bg_color = Color(accent, 0.026)
+	if is_primary:
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.set_corner_radius_all(12)
+			style.content_margin_left = 22.0
+			style.content_margin_right = 20.0
+			style.set_border_width_all(1)
+		normal_style.bg_color = Color(MinimalThemeScript.BG, 0.74)
+		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.52)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.84)
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.82)
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.90)
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.96)
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.82)
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.92)
+		button.text = "PLAY"
+	elif is_utility:
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+			style.set_border_width_all(0)
+			style.content_margin_left = 8.0
+			style.content_margin_right = 8.0
+		hover_style.border_width_bottom = 1
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.50)
+		pressed_style.border_width_bottom = 1
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.72)
+		focus_style.border_width_bottom = 1
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.72)
+	else:
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.set_corner_radius_all(8)
+			style.content_margin_left = 18.0
+			style.content_margin_right = 16.0
+			style.border_width_bottom = 1
+		normal_style.bg_color = Color(MinimalThemeScript.BG, 0.34)
+		normal_style.border_color = Color(MinimalThemeScript.TEXT, 0.18)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.52)
+		hover_style.border_color = Color(accent, 0.60)
+		hover_style.border_width_bottom = 2
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.62)
+		pressed_style.border_color = Color(accent, 0.78)
+		pressed_style.border_width_bottom = 2
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.50)
+		focus_style.border_color = Color(accent, 0.78)
+		focus_style.border_width_bottom = 2
 
 	button.add_theme_stylebox_override("normal", normal_style)
 	button.add_theme_stylebox_override("hover", hover_style)
 	button.add_theme_stylebox_override("pressed", pressed_style)
 	button.add_theme_stylebox_override("focus", focus_style)
 
-	var base_color := Color(MinimalThemeScript.TEXT, 0.92 if is_primary else (0.50 if is_utility else 0.74))
+	var normal_color := Color(MinimalThemeScript.TEXT, 0.96 if is_primary else (0.68 if is_utility else 0.86))
 	if is_exit:
-		base_color = Color(MinimalThemeScript.DANGER, 0.96)
-	button.add_theme_color_override("font_color", base_color)
-	button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT if not is_exit else MinimalThemeScript.DANGER)
-	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
-	button.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT if not is_exit else MinimalThemeScript.DANGER)
-	button.add_theme_color_override("font_hover_pressed_color", MinimalThemeScript.TEXT)
+		normal_color = Color(MinimalThemeScript.TEXT, 0.80)
+	button.add_theme_color_override("font_color", normal_color)
+	button.add_theme_color_override("font_hover_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_focus_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_hover_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
 
 func _setup_display_controls() -> void:
 	resolution_values.clear()
