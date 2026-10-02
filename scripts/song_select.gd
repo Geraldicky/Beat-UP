@@ -599,7 +599,10 @@ func _install_album_flow_song_library_layout() -> void:
 	album_flow_detail_veil.name = "SelectedSongBackdropVeil"
 	album_flow_detail_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	album_flow_detail_veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	album_flow_detail_veil.color = Color(0.015, 0.022, 0.034, 0.52)
+	# Keep the compatibility node but remove the rectangular dark veil entirely.
+	# The full-screen selected-song atmosphere already provides sufficient contrast.
+	album_flow_detail_veil.color = Color(0.0, 0.0, 0.0, 0.0)
+	album_flow_detail_veil.visible = false
 	info_panel.add_child(album_flow_detail_veil)
 	info_panel.move_child(album_flow_detail_veil, 1)
 
