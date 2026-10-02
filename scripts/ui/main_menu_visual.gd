@@ -3,17 +3,10 @@ class_name MainMenuVisual
 
 const MinimalThemeScript = preload("res://scripts/ui/minimal_theme.gd")
 
-const AUDIO_BAR_COUNT := 48
-
 var selection_index: int = 0
-var target_audio_levels := PackedFloat32Array()
-var current_audio_levels := PackedFloat32Array()
-var phase := 0.0
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	target_audio_levels.resize(AUDIO_BAR_COUNT)
-	current_audio_levels.resize(AUDIO_BAR_COUNT)
 	resized.connect(queue_redraw)
 	_apply_album_flow_structure()
 	modulate.a = 0.0
@@ -21,27 +14,17 @@ func _ready() -> void:
 	tween.tween_property(self, "modulate:a", 1.0, 0.42).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	queue_redraw()
 
-func _process(delta: float) -> void:
-	if not is_visible_in_tree():
-		return
-	phase = fmod(phase + delta * 0.42, TAU)
-	for index in range(AUDIO_BAR_COUNT):
-		var target: float = target_audio_levels[index]
-		var response_speed: float = 16.0 if target > current_audio_levels[index] else 5.5
-		var weight: float = 1.0 - exp(-response_speed * delta)
-		current_audio_levels[index] = lerpf(current_audio_levels[index], target, weight)
-	queue_redraw()
-
 func set_selection(index: int) -> void:
 	selection_index = clampi(index, 0, 6)
 	queue_redraw()
 
-func set_audio_levels(levels: PackedFloat32Array) -> void:
-	for index in range(AUDIO_BAR_COUNT):
-		target_audio_levels[index] = clampf(levels[index] if index < levels.size() else 0.0, 0.0, 1.0)
+func set_audio_levels(_levels: PackedFloat32Array) -> void:
+	# Main Menu waveforms were intentionally removed. Keep this method as a
+	# compatibility no-op for the existing controller contract.
+	pass
 
 func get_audio_levels() -> PackedFloat32Array:
-	return current_audio_levels.duplicate()
+	return PackedFloat32Array()
 
 func _apply_album_flow_structure() -> void:
 	var main_menu := get_parent()
@@ -133,16 +116,8 @@ func _draw_brand_panel(center: Vector2, radius: float, accent: Color) -> void:
 	var core_points := _rounded_diamond_points(center, core, core * 0.055, 4)
 	draw_polyline(_closed(core_points), Color(accent, 0.17), 1.0, true)
 
-	# Restrained timing ticks and a low-amplitude waveform make the emblem feel
-	# musical without turning it into an animated button.
-	for step in range(-3, 4):
-		if step == 0:
-			continue
-		var x := center.x + float(step) * radius * 0.13
-		var tick := 8.0 if absi(step) % 2 == 0 else 5.0
-		draw_line(Vector2(x, center.y - tick), Vector2(x, center.y + tick), Color(accent, 0.17), 1.0, true)
-	_draw_center_waveform(center, radius * 0.58, accent)
-	_draw_audio_diamond(center, radius * 1.035, accent)
+	# Keep the emblem deliberately static. Waveform and audio-reactive perimeter
+	# treatments were removed from the Main Menu.
 
 func _rounded_diamond_points(center: Vector2, radius: float, corner: float, segments: int) -> PackedVector2Array:
 	var vertices := PackedVector2Array([
@@ -173,21 +148,6 @@ func _closed(points: PackedVector2Array) -> PackedVector2Array:
 		result.append(result[0])
 	return result
 
-func _draw_center_waveform(center: Vector2, half_width: float, accent: Color) -> void:
-	var energy_sum := 0.0
-	for level in current_audio_levels:
-		energy_sum += level
-	var average := energy_sum / maxf(1.0, float(current_audio_levels.size()))
-	var points := PackedVector2Array()
-	for index in range(25):
-		var t := float(index) / 24.0
-		var sample_index := clampi(roundi(t * float(AUDIO_BAR_COUNT - 1)), 0, AUDIO_BAR_COUNT - 1)
-		var level := current_audio_levels[sample_index]
-		var x := center.x - half_width + half_width * 2.0 * t
-		var y := center.y + sin(phase * 1.6 + t * 12.0) * (1.0 + average * 2.0) + (level - 0.5) * 7.0
-		points.append(Vector2(x, y))
-	draw_polyline(points, Color(accent, 0.16 + average * 0.16), 1.0, true)
-
 func _draw_rhythm_connector(hero_center: Vector2, hero_radius: float, accent: Color) -> void:
 	var y := hero_center.y
 	var start_x := hero_center.x + hero_radius * 1.05
@@ -211,36 +171,6 @@ func _draw_small_diamond(center: Vector2, radius: float, color: Color) -> void:
 		center + Vector2(0.0, radius),
 		center + Vector2(-radius, 0.0),
 	]), color)
-
-func _draw_audio_diamond(center: Vector2, radius: float, accent: Color) -> void:
-	var energy_sum := 0.0
-	for level in current_audio_levels:
-		energy_sum += level
-	var average := energy_sum / maxf(1.0, float(current_audio_levels.size()))
-	var points := PackedVector2Array([
-		center + Vector2(0.0, -radius),
-		center + Vector2(radius, 0.0),
-		center + Vector2(0.0, radius),
-		center + Vector2(-radius, 0.0),
-		center + Vector2(0.0, -radius),
-	])
-	var sample_index := 0
-	for edge in range(4):
-		var a := points[edge]
-		var b := points[edge + 1]
-		var tangent := (b - a).normalized()
-		var outward := Vector2(tangent.y, -tangent.x)
-		if outward.dot((a + b) * 0.5 - center) < 0.0:
-			outward = -outward
-		var segments: int = int(AUDIO_BAR_COUNT / 4)
-		for i in range(segments):
-			var t := (float(i) + 0.5) / float(segments)
-			var base := a.lerp(b, t)
-			var level := current_audio_levels[sample_index] if sample_index < current_audio_levels.size() else 0.0
-			var idle := 1.0 + sin(phase * 2.0 + float(sample_index) * 0.48) * 0.7
-			var length := idle + level * (9.0 + average * 6.0)
-			draw_line(base, base + outward * length, Color(accent, 0.10 + level * 0.42), 1.0, true)
-			sample_index += 1
 
 func _draw_diamond(center: Vector2, radius: float, color: Color, width: float) -> void:
 	var points := PackedVector2Array([
