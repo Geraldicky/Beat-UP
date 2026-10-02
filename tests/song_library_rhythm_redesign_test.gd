@@ -47,6 +47,9 @@ func run() -> void:
 	check(selector.practice_button.is_visible_in_tree() and selector.practice_button.pressed.get_connections().size() > 0, "Practice action is missing or disconnected.")
 	check(selector.album_flow_artwork.size.x >= 400.0 and selector.album_flow_artwork.size.y >= 400.0, "Selected jacket is not a large focal point at 1920×1080.")
 	check(selector.album_flow_best_card.get_parent().name == "HeroContent", "Best record does not overlap the jacket composition.")
+	check(not selector.best_card.visible, "Legacy PersonalBestCard leaked into Album Flow.")
+	var best_overlay_style := selector.album_flow_best_card.get_theme_stylebox("panel")
+	check(not (best_overlay_style is StyleBoxFlat) or (best_overlay_style as StyleBoxFlat).bg_color.a <= 0.001, "Best-rank overlay still paints a dark background.")
 	check(selector.album_flow_best_card.size.x >= 120.0 and selector.album_flow_best_card.size.y >= 120.0, "Rank overlay collapsed or clipped.")
 	check(selector.album_flow_best_card.get_global_rect().intersects(selector.album_flow_artwork.get_global_rect()), "Best-record overlay no longer intersects the jacket.")
 	check(selector.album_flow_score_cluster != null and selector.album_flow_score_cluster.get_global_rect().position.y >= selector.album_flow_artwork.get_global_rect().end.y, "Best-score hierarchy is not positioned beneath the jacket.")
@@ -131,11 +134,13 @@ func run() -> void:
 	var score_key: String = ScoreIdentity.key(chart, UserSettings.get_input_style(), false)
 	selector.set_best_stats_store({score_key: {"score": 10680000, "best_accuracy": 98.42, "best_rank": "S", "best_max_combo": 512, "cleared": true}})
 	await process_frame
+	check(selector.album_flow_best_card.visible, "Best-rank badge did not appear for an existing record.")
 	check(selector.album_flow_best_rank_value.text == "S", "Best rank did not refresh.")
 	check(selector.album_flow_best_score_value.text == "10,680,000", "Best score did not refresh or format correctly.")
 	check(selector.album_flow_best_accuracy_value.text == "98.42%  ACCURACY", "Best accuracy did not refresh.")
 	selector.set_best_stats_store({})
 	await process_frame
+	check(not selector.album_flow_best_card.visible, "No-record state still renders the Best Record overlay surface.")
 	check(selector.album_flow_best_score_value.text == "NO RECORD" and selector.album_flow_best_rank_value.text.is_empty(), "No-record state still shows meaningless placeholders.")
 	selector.set_best_stats_store({score_key: {"score": 10680000, "best_accuracy": 98.42, "best_rank": "S", "best_max_combo": 512, "cleared": true}})
 
