@@ -50,6 +50,13 @@ func run() -> void:
 	check(selector.play_button.is_visible_in_tree() and not selector.play_button.disabled, "Play is not visibly available for the selected chart.")
 	check(selector.album_flow_mode_4_button.is_visible_in_tree() and selector.album_flow_mode_8_button.is_visible_in_tree(), "Inline 4K/8K mode controls are missing.")
 	check(selector.album_flow_random_button.is_visible_in_tree(), "Inline Random mod is missing.")
+	var selected_difficulty_button := selector.album_flow_difficulty_row.get_node_or_null("%sDifficultyButton" % selector.selected_difficulty.capitalize()) as Button
+	check(selected_difficulty_button != null and selected_difficulty_button.get_node_or_null("SelectionMarker") != null and selected_difficulty_button.get_node("SelectionMarker").visible, "Selected difficulty does not show the mockup-style top diamond marker.")
+	var active_mode_button: Button = selector.album_flow_mode_4_button if UserSettings.get_input_style() == "4_arrow" else selector.album_flow_mode_8_button
+	check(active_mode_button.get_node_or_null("SelectionMarker") != null and active_mode_button.get_node("SelectionMarker").visible, "Active input mode does not show the mockup-style top diamond marker.")
+	check(selector.album_flow_random_button.find_child("StateLabel", true, false) != null, "Random button is missing its mockup-style state label.")
+	check(selector.practice_button.find_child("StateLabel", true, false) != null, "Practice button is missing its mockup-style state label.")
+	check(selector.play_button.find_child("PlayIcon", true, false) != null and selector.play_button.find_child("PlayDivider", true, false) != null and selector.play_button.find_child("PlayArrow", true, false) != null, "Play button is missing the mockup-style icon/divider/arrow composition.")
 	check(selector.practice_button.is_visible_in_tree() and selector.practice_button.pressed.get_connections().size() > 0, "Practice action is missing or disconnected.")
 	check(selector.album_flow_artwork.size.x >= 400.0 and selector.album_flow_artwork.size.y >= 400.0, "Selected jacket is not a large focal point at 1920×1080.")
 	check(selector.album_flow_record_panel != null and selector.album_flow_record_panel.get_parent() == selector.album_flow_center_column, "Best Record is not in the center inspection column.")
