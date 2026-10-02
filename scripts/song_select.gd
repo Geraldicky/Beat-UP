@@ -541,7 +541,7 @@ func _install_album_flow_song_library_layout() -> void:
 	count_label.visible = false
 	back_button.reparent(header_row)
 	header_row.move_child(back_button, 0)
-	back_button.text = "‹  BACK"
+	back_button.text = "‹    BACK"
 	back_button.visible = true
 	var header_divider := ColorRect.new()
 	header_divider.name = "LibraryHeaderDivider"
@@ -949,12 +949,15 @@ func _install_album_flow_filter_tabs() -> void:
 	if toolbar != null:
 		toolbar.visible = true
 		toolbar.reparent(header_row)
-		header_row.move_child(toolbar, 2)
-		toolbar.size_flags_horizontal = Control.SIZE_FILL
+		# Mockup order: Back → divider → Song Library title → search / filters.
+		# Keeping the title ahead of the toolbar prevents it from being pushed to
+		# the far-right edge on wide screens.
+		header_row.move_child(toolbar, header_row.get_child_count() - 1)
+		toolbar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var toolbar_spacer := toolbar.get_node_or_null("LibraryToolbarSpacer") as Control
 		if toolbar_spacer != null:
 			toolbar_spacer.visible = false
-		search_input.placeholder_text = "Search songs, artists, or tags..."
+		search_input.placeholder_text = "⌕   Search songs, artists, or tags..."
 		search_input.visible = true
 
 	filters_panel.visible = false
@@ -994,7 +997,9 @@ func _install_album_flow_filter_tabs() -> void:
 	# primary header now exposes the two filters shown in the approved mockup.
 	album_flow_filter_button = _album_flow_filter_button("⋯")
 	album_flow_filter_button.name = "LibraryFilterButton"
-	album_flow_filter_button.visible = true
+	# The approved mockup has no overflow/ellipsis control in the primary bar.
+	# Keep the compatibility button alive but out of the release-facing header.
+	album_flow_filter_button.visible = false
 	album_flow_filter_button.tooltip_text = "More filters"
 	album_flow_filter_button.custom_minimum_size = Vector2(40, 40)
 	album_flow_filter_button.set_meta("filter_kind", "filters")
@@ -1017,8 +1022,11 @@ func _install_album_flow_filter_tabs() -> void:
 
 	album_flow_header_spacer = Control.new()
 	album_flow_header_spacer.name = "AlbumFlowHeaderSpacer"
-	album_flow_header_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	album_flow_header_spacer.custom_minimum_size.x = 18
+	album_flow_header_spacer.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	header_row.add_child(album_flow_header_spacer)
+	# Place a small fixed breathing space between the title and search field.
+	header_row.move_child(album_flow_header_spacer, 3)
 	album_flow_list_spacer = Control.new()
 	album_flow_list_spacer.name = "AlbumFlowListTopSpacer"
 	album_flow_list_spacer.custom_minimum_size.y = 4
@@ -1091,16 +1099,22 @@ func _apply_album_flow_song_library_layout() -> void:
 	main_margin.add_theme_constant_override("margin_top", 14 if compact else 18)
 	main_margin.add_theme_constant_override("margin_bottom", 14 if compact else 22)
 	root_vbox.add_theme_constant_override("separation", 12)
-	header_row.custom_minimum_size.y = 46 if compact else 54
-	back_button.custom_minimum_size = Vector2(92, 34)
+	header_row.custom_minimum_size.y = 52 if compact else 60
+	header_row.add_theme_constant_override("separation", 12 if compact else 14)
+	back_button.custom_minimum_size = Vector2(104 if compact else 116, 42 if compact else 48)
 
 	var title_block := title_label.get_parent() as Control
 	if title_block != null:
 		title_block.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		title_block.custom_minimum_size.x = 190 if compact else 235
+		title_block.custom_minimum_size.x = 220 if compact else 300
+		if title_block is BoxContainer:
+			(title_block as BoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
+	if album_flow_header_spacer != null:
+		album_flow_header_spacer.custom_minimum_size.x = 12 if compact else 28
 	var library_toolbar := search_input.get_parent() as Control
 	if library_toolbar != null:
-		library_toolbar.custom_minimum_size.x = 520 if compact else 760
+		library_toolbar.custom_minimum_size.x = 0
+		library_toolbar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	if album_flow_detail_top_spacer != null:
 		album_flow_detail_top_spacer.custom_minimum_size.y = 4 if compact else 8
@@ -1156,8 +1170,11 @@ func _apply_album_flow_song_library_layout() -> void:
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	play_button.size_flags_vertical = Control.SIZE_SHRINK_END
 
-	search_input.custom_minimum_size = Vector2(360 if compact else 500, 40)
+	search_input.custom_minimum_size = Vector2(300 if compact else 430, 42 if compact else 46)
 	search_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	artist_filter.custom_minimum_size = Vector2(132 if compact else 154, 42 if compact else 46)
+	difficulty_filter.custom_minimum_size = Vector2(144 if compact else 170, 42 if compact else 46)
+	sort_filter.custom_minimum_size = Vector2(108 if compact else 126, 42 if compact else 46)
 	if album_flow_list_header != null:
 		album_flow_list_header.custom_minimum_size.y = 28
 	_apply_album_flow_filter_tab_style()
@@ -1202,8 +1219,13 @@ func _apply_album_flow_song_library_theme() -> void:
 		return
 
 	title_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	title_label.add_theme_font_size_override("font_size", 16)
+	title_label.add_theme_font_size_override("font_size", 19)
 	title_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
+	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	back_button.add_theme_font_override("font", MinimalThemeScript.mono_font())
+	back_button.add_theme_font_size_override("font_size", 11)
+	back_button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.82))
+	back_button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 	count_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	count_label.add_theme_font_size_override("font_size", 9)
 	count_label.add_theme_color_override("font_color", Color(LIBRARY_ACCENT, 0.72))
