@@ -40,7 +40,7 @@ func run() -> void:
 	check(selector.title_label.text == "S O N G   L I B R A R Y", "Tracked Song Library header title is missing.")
 	check(selector.sort_filter.is_visible_in_tree() and selector.sort_filter.text == "BPM ASC", "Custom sort control or default BPM ascending mode is missing.")
 	check(selector.artist_filter.is_visible_in_tree() and selector.difficulty_filter.is_visible_in_tree(), "Primary Artist/Difficulty header filters are missing.")
-	check(selector.album_flow_filter_button != null and not selector.album_flow_filter_button.visible, "Legacy aggregate filter should not occupy the primary header.")
+	check(selector.album_flow_filter_button != null and selector.album_flow_filter_button.visible and selector.album_flow_filter_button.text == "⋯", "Compact overflow filter control is missing.")
 	check(selector.album_flow_difficulty_row.is_visible_in_tree(), "Difficulty selector is not permanently visible.")
 	check(selector.album_flow_difficulty_row.get_child_count() == 3, "Normal, Hard, and Master selectors are not all represented.")
 	check(selector.play_button.is_visible_in_tree() and not selector.play_button.disabled, "Play is not visibly available for the selected chart.")
