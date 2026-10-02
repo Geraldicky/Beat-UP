@@ -3210,6 +3210,8 @@ func _update_detail(animated: bool = true) -> void:
 	if practice_button != null:
 		var sections_value_v18: Variant = chart.get("sections", [])
 		practice_button.disabled = (not chart_playable) or not (sections_value_v18 is Array) or (sections_value_v18 as Array).is_empty()
+		_set_album_flow_mod_button_state(practice_button, "SELECT" if not practice_button.disabled else "UNAVAILABLE", LIBRARY_ACCENT, not practice_button.disabled)
+		_style_album_secondary_chip(practice_button, not practice_button.disabled, LIBRARY_ACCENT)
 	if replay_button != null:
 		var replay_manager_v18: Node = get_node_or_null("/root/ReplayManager")
 		replay_button.disabled = not chart_playable or replay_manager_v18 == null or not bool(replay_manager_v18.call("has_latest", chart, UserSettingsScript.get_input_style(), random_mode_enabled))
