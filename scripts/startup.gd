@@ -1753,15 +1753,25 @@ func _transition_to_scene(path: String, _loading_label: String = "LOADING SONG L
 	if path == "res://scenes/song_library.tscn":
 		var navigation: Node = get_node_or_null("/root/NavigationController")
 		if navigation != null and navigation.has_method("request_song_library"):
-			navigation.call("request_song_library")
+			var result: Variant = await navigation.call("request_song_library")
+			_release_navigation_lock_after_result(result)
 			return
 	if path == "res://scenes/chart_editor.tscn":
 		var chart_navigation: Node = get_node_or_null("/root/NavigationController")
 		if chart_navigation != null and chart_navigation.has_method("request_chart_studio"):
-			chart_navigation.call("request_chart_studio")
+			var result: Variant = await chart_navigation.call("request_chart_studio")
+			_release_navigation_lock_after_result(result)
 			return
 	menu_bgm.fade_out(0.12)
 	SceneTransition.change_scene_quick(path)
+
+func _release_navigation_lock_after_result(result: Variant) -> void:
+	if result is Dictionary and str((result as Dictionary).get("outcome", "failure")) == "success":
+		return
+	in_transition = false
+	for button in menu_buttons:
+		button.disabled = false
+	call_deferred("_focus_default_menu_button")
 
 func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}) -> void:
 	_set_main_menu_focus_index(clampi(focus_index, 0, maxi(0, menu_buttons.size() - 1)))

@@ -82,6 +82,7 @@ var _studio_initializing: bool = false
 var _studio_suspended: bool = false
 var _waveform_preview_busy: bool = false
 var _last_autosave_ms: int = 0
+var _shell_return_route: String = "main_menu"
 
 func _developer_generator_enabled() -> bool:
 	# Automatic chart generation is a developer tool. Player exports keep Chart
@@ -110,11 +111,21 @@ func _is_resident_chart_studio() -> bool:
 func shell_prepare_resume(_context: Dictionary) -> void:
 	visible = true
 
-func shell_will_resume(_context: Dictionary) -> void:
+func shell_will_resume(context: Dictionary) -> void:
 	_studio_suspended = false
+	var origin := str(context.get("from_route", ""))
+	if origin == "main_menu" or origin == "song_library":
+		_shell_return_route = origin
 
 func shell_did_resume(_context: Dictionary) -> void:
 	call_deferred("_initialize_studio_async")
+	call_deferred("_focus_studio_default")
+
+func _focus_studio_default() -> void:
+	if is_instance_valid(song_select) and song_select.visible:
+		song_select.grab_focus()
+	elif is_instance_valid(back_button):
+		back_button.grab_focus()
 
 func shell_will_suspend(_context: Dictionary) -> void:
 	_studio_suspended = true
@@ -2253,12 +2264,16 @@ func _set_status(message: String, color: Color) -> void:
 	status.add_theme_color_override("font_color", color)
 
 func return_to_game() -> void:
+	var navigation: Node = get_node_or_null("/root/NavigationController")
+	if navigation != null and navigation.has_method("has_registered_shell") and bool(navigation.call("has_registered_shell")):
+		if _shell_return_route == "song_library" and navigation.has_method("request_song_library"):
+			navigation.call("request_song_library", "", true)
+			return
+		if navigation.has_method("request_main_menu"):
+			navigation.call("request_main_menu", 1)
+			return
 	if music != null:
 		music.stop()
-	var navigation: Node = get_node_or_null("/root/NavigationController")
-	if navigation != null and navigation.has_method("request_main_menu"):
-		navigation.call("request_main_menu", 1)
-		return
 	get_tree().set_meta("beat_up_return_to_main_menu", true)
 	get_tree().set_meta("beat_up_return_main_menu_focus", 1)
 	SceneTransition.change_scene_quick("res://scenes/app_shell.tscn")

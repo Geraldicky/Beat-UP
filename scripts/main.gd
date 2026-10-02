@@ -580,6 +580,11 @@ func _connect_screen_signal(screen: Object, signal_name: StringName, callback: C
 		screen.connect(signal_name, callback)
 
 func open_chart_editor() -> void:
+	var navigation: Node = get_node_or_null("/root/NavigationController")
+	if navigation != null and navigation.has_method("has_registered_shell") and bool(navigation.call("has_registered_shell")):
+		navigation.call("request_chart_studio")
+		return
+	# Compatibility fallback for standalone gameplay scenes.
 	playtest_telemetry.abort_session("chart_editor")
 	music.stop()
 	SceneTransition.change_scene_quick("res://scenes/chart_editor.tscn")

@@ -34,6 +34,7 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
     runtime_tests = [
         'records_foundation_test.gd',
         'gameplay_input_binding_snapshot_test.gd',
+        'app_shell_navigation_lifecycle_test.gd',
         'live_records_foundation_test.gd',
         'library_layout_foundation_test.gd',
         'v1870_level_pack_test.gd',
@@ -45,6 +46,8 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
         env = dict(os.environ, XDG_DATA_HOME=str(isolated), APPDATA=str(isolated))
         if name == 'gameplay_input_binding_snapshot_test.gd':
             env['BEAT_UP_QA_SETTINGS_FIXTURE'] = 'gameplay-input-binding-snapshot'
+        elif name == 'app_shell_navigation_lifecycle_test.gd':
+            env['BEAT_UP_QA_NAVIGATION_LIFECYCLE'] = 'isolated'
         r = subprocess.run([a.godot, '--headless', '--path', str(root), '--script', 'res://tests/'+name], env=env, text=True, capture_output=True, timeout=120)
         print(r.stdout, r.stderr)
         # Existing scene teardown can emit a resource retention diagnostic.

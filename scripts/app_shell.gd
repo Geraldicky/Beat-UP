@@ -20,6 +20,8 @@ var chart_studio_instance: Control = null
 var chart_studio_loading: bool = false
 var chart_studio_load_failed: bool = false
 var chart_studio_music_paused_by_shell: bool = false
+var navigation_test_failures: Dictionary = {}
+var gameplay_activation_result: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("beat_up_app_shell")
@@ -55,9 +57,10 @@ func get_active_route() -> String:
 func is_switching() -> bool:
 	return switching
 
-func show_song_library(selected_song_id: String = "", refresh_data: bool = false) -> void:
+func show_song_library(selected_song_id: String = "", refresh_data: bool = false, transaction_id: int = 0) -> Dictionary:
+	var previous_route := active_screen
 	if _navigation_blocked():
-		return
+		return _navigation_result("cancelled", previous_route, previous_route, "Navigation is currently blocked.", transaction_id)
 	if active_screen == ROUTE_CHART_STUDIO:
 		# Chart creation may have published or discarded drafts while the resident
 		# library was hidden; force a fresh catalog before rebuilding its cards.
@@ -71,60 +74,83 @@ func show_song_library(selected_song_id: String = "", refresh_data: bool = false
 		"refresh_data": refresh_data,
 		"from_route": active_screen,
 		"to_route": ROUTE_SONG_LIBRARY,
+		"transaction_id": transaction_id,
 	}
 	if active_screen == ROUTE_SONG_LIBRARY:
 		_notify_screen(song_library_screen, "shell_will_resume", context)
 		_notify_screen(song_library_screen, "shell_did_resume", context)
-		return
+		return _navigation_result("success", previous_route, active_screen, "", transaction_id)
+	var outgoing := _active_control()
+	_notify_screen(outgoing, "shell_will_suspend", context)
 	if active_screen == ROUTE_GAMEPLAY:
 		_prepare_gameplay_exit("song_library")
-	await _switch_route(song_library_screen, ROUTE_SONG_LIBRARY, 1.0 if active_screen == ROUTE_MAIN_MENU else -1.0, context)
+	await _commit_route(outgoing, song_library_screen, ROUTE_SONG_LIBRARY, 1.0 if active_screen == ROUTE_MAIN_MENU else -1.0, context)
 	if str(context.get("from_route", "")) == ROUTE_CHART_STUDIO:
 		_restore_music_after_chart_studio()
 	if context.get("from_route", "") == ROUTE_GAMEPLAY:
 		call_deferred("_cleanup_hidden_gameplay_after_return")
+	return _navigation_result("success", previous_route, active_screen, "", transaction_id)
 
-func show_main_menu(focus_index: int = 0) -> void:
+func show_main_menu(focus_index: int = 0, transaction_id: int = 0) -> Dictionary:
+	var previous_route := active_screen
 	if _navigation_blocked():
-		return
+		return _navigation_result("cancelled", previous_route, previous_route, "Navigation is currently blocked.", transaction_id)
 	var context: Dictionary = {
 		"focus_index": focus_index,
 		"from_route": active_screen,
 		"to_route": ROUTE_MAIN_MENU,
+		"transaction_id": transaction_id,
 	}
 	if active_screen == ROUTE_MAIN_MENU:
 		_notify_screen(startup_screen, "shell_will_resume", context)
 		_notify_screen(startup_screen, "shell_did_resume", context)
-		return
+		return _navigation_result("success", previous_route, active_screen, "", transaction_id)
+	var outgoing := _active_control()
+	_notify_screen(outgoing, "shell_will_suspend", context)
 	if active_screen == ROUTE_GAMEPLAY:
 		_prepare_gameplay_exit("main_menu")
-	await _switch_route(startup_screen, ROUTE_MAIN_MENU, -1.0, context)
+	await _commit_route(outgoing, startup_screen, ROUTE_MAIN_MENU, -1.0, context)
 	if str(context.get("from_route", "")) == ROUTE_CHART_STUDIO:
 		_restore_music_after_chart_studio()
 	if context.get("from_route", "") == ROUTE_GAMEPLAY:
 		call_deferred("_cleanup_hidden_gameplay_after_return")
+	return _navigation_result("success", previous_route, active_screen, "", transaction_id)
 
-func show_chart_studio() -> void:
+func show_chart_studio(transaction_id: int = 0) -> Dictionary:
+	var previous_route := active_screen
 	if _navigation_blocked():
-		return
+		return _navigation_result("cancelled", previous_route, previous_route, "Navigation is currently blocked.", transaction_id)
 	var context: Dictionary = {
 		"from_route": active_screen,
 		"to_route": ROUTE_CHART_STUDIO,
+		"transaction_id": transaction_id,
 	}
 	if active_screen == ROUTE_CHART_STUDIO:
-		if chart_studio_instance != null:
+		if is_instance_valid(chart_studio_instance):
 			_notify_screen(chart_studio_screen, "shell_will_resume", context)
 			_notify_screen(chart_studio_screen, "shell_did_resume", context)
-		elif not chart_studio_loading:
-			call_deferred("_load_chart_studio_after_route", context)
-		return
-	_pause_music_for_chart_studio()
+			return _navigation_result("success", previous_route, active_screen, "", transaction_id)
+		return _navigation_result("failure", previous_route, previous_route, "Chart Studio is not usable.", transaction_id)
 
-	# Enter the lightweight resident shell first. The editor scene is requested only
-	# after the route tween has finished so scene/resource construction never blocks
-	# the Main Menu frame that starts navigation.
-	await _switch_route(chart_studio_screen, ROUTE_CHART_STUDIO, 1.0, context)
-	call_deferred("_load_chart_studio_after_route", context)
+	var outgoing := _active_control()
+	_notify_screen(outgoing, "shell_will_suspend", context)
+	_pause_music_for_chart_studio()
+	var editor := await _ensure_chart_studio_loaded()
+	if editor == null:
+		_restore_music_after_chart_studio()
+		_rollback_to_origin(outgoing, chart_studio_screen, previous_route, context)
+		_notify_screen(outgoing, "handle_navigation_failure", {
+			"route": ROUTE_CHART_STUDIO,
+			"error": "Chart Studio could not be loaded.",
+		})
+		return _navigation_result("failure", previous_route, previous_route, "Chart Studio could not be loaded.", transaction_id)
+
+	if previous_route == ROUTE_GAMEPLAY:
+		_prepare_gameplay_exit("chart_studio")
+	await _commit_route(outgoing, chart_studio_screen, ROUTE_CHART_STUDIO, 1.0, context)
+	if previous_route == ROUTE_GAMEPLAY:
+		call_deferred("_cleanup_hidden_gameplay_after_return")
+	return _navigation_result("success", previous_route, active_screen, "", transaction_id)
 
 func _pause_music_for_chart_studio() -> void:
 	var session: Node = get_node_or_null("/root/MusicSession")
@@ -146,18 +172,12 @@ func _restore_music_after_chart_studio() -> void:
 	if session != null and session.has_method("set_paused"):
 		session.call("set_paused", false)
 
-func _load_chart_studio_after_route(context: Dictionary) -> void:
-	if active_screen != ROUTE_CHART_STUDIO:
-		return
-	var editor: Control = await _ensure_chart_studio_loaded()
-	if editor == null or active_screen != ROUTE_CHART_STUDIO:
-		return
-	_notify_screen(chart_studio_screen, "shell_will_resume", context)
-	_notify_screen(chart_studio_screen, "shell_did_resume", context)
-
 func _ensure_chart_studio_loaded() -> Control:
 	if is_instance_valid(chart_studio_instance):
 		return chart_studio_instance
+	if bool(navigation_test_failures.get(ROUTE_CHART_STUDIO, false)):
+		_report_runtime("chart_studio", "Injected Chart Studio load failure")
+		return null
 	if chart_studio_load_failed:
 		_update_chart_studio_loading_label("CHART STUDIO\nCOULD NOT LOAD")
 		return null
@@ -233,20 +253,22 @@ func _report_runtime(category: String, message: String, context: Dictionary = {}
 	if guard != null and guard.has_method("report"):
 		guard.call("report", category, message, context)
 
-func launch_gameplay(request: Dictionary, visual_payload: Dictionary) -> bool:
+func launch_gameplay(request: Dictionary, visual_payload: Dictionary, transaction_id: int = 0) -> Dictionary:
+	var previous_route := active_screen
 	if _navigation_blocked():
-		return false
+		return _navigation_result("cancelled", previous_route, previous_route, "Navigation is currently blocked.", transaction_id)
 	var transition: Node = get_node_or_null("/root/SceneTransition")
 	if transition == null or not transition.has_method("transition_action_to_gameplay"):
-		return false
+		return _navigation_result("failure", previous_route, previous_route, "Gameplay transition is unavailable.", transaction_id)
 	if not gameplay_screen.has_method("prepare_launch_request"):
 		_notify_gameplay_launch_failure("Gameplay could not prepare this chart.")
-		return false
+		return _navigation_result("failure", previous_route, previous_route, "Gameplay could not prepare this chart.", transaction_id)
 	var preparation_value: Variant = gameplay_screen.call("prepare_launch_request", request, true)
 	var preparation: Dictionary = preparation_value as Dictionary if preparation_value is Dictionary else {}
 	if not bool(preparation.get("ok", false)):
-		_notify_gameplay_launch_failure(str(preparation.get("error", "Chart could not be loaded.")))
-		return false
+		var preparation_error := str(preparation.get("error", "Chart could not be loaded."))
+		_notify_gameplay_launch_failure(preparation_error)
+		return _navigation_result("failure", previous_route, previous_route, preparation_error, transaction_id)
 	var prepared_request: Dictionary = preparation.get("request", {}) as Dictionary
 	# Build the handoff from the exact chart object gameplay will consume, not a
 	# second catalog lookup or the Song Library's pre-click snapshot.
@@ -256,14 +278,23 @@ func launch_gameplay(request: Dictionary, visual_payload: Dictionary) -> bool:
 		"request": prepared_request.duplicate(true),
 		"from_route": active_screen,
 		"to_route": ROUTE_GAMEPLAY,
+		"transaction_id": transaction_id,
 	}
-	_notify_screen(_active_control(), "shell_will_suspend", context)
+	var outgoing := _active_control()
+	_notify_screen(outgoing, "shell_will_suspend", context)
+	gameplay_activation_result = {}
+	var finished_signal := Signal(transition, "transition_finished")
 	transition.call(
 		"transition_action_to_gameplay",
 		Callable(self, "_activate_gameplay_request").bind(prepared_request, context),
 		resolved_visual_payload
 	)
-	return true
+	await finished_signal
+	if str(gameplay_activation_result.get("outcome", "failure")) != "success":
+		var activation_error := str(gameplay_activation_result.get("reason", "Gameplay activation failed."))
+		_rollback_to_origin(outgoing, gameplay_screen, previous_route, context)
+		return _navigation_result("failure", previous_route, previous_route, activation_error, transaction_id)
+	return _navigation_result("success", previous_route, active_screen, "", transaction_id)
 
 func _gameplay_visual_payload(chart: Dictionary, request: Dictionary, fallback: Dictionary) -> Dictionary:
 	var payload: Dictionary = fallback.duplicate(true)
@@ -288,8 +319,14 @@ func _notify_gameplay_launch_failure(message: String) -> void:
 	_notify_screen(_active_control(), "handle_gameplay_launch_failure", {"error": message})
 
 func _activate_gameplay_request(request: Dictionary, context: Dictionary) -> void:
+	if bool(navigation_test_failures.get(ROUTE_GAMEPLAY, false)):
+		gameplay_activation_result = {"outcome": "failure", "reason": "Injected gameplay activation failure."}
+		_notify_gameplay_launch_failure(str(gameplay_activation_result.get("reason", "")))
+		return
 	if not gameplay_screen.has_method("launch_from_app_shell") or not bool(gameplay_screen.call("launch_from_app_shell", request)):
-		_notify_gameplay_launch_failure("Gameplay rejected the prepared chart.")
+		var activation_error := "Gameplay rejected the prepared chart."
+		gameplay_activation_result = {"outcome": "failure", "reason": activation_error}
+		_notify_gameplay_launch_failure(activation_error)
 		return
 	var outgoing: Control = _active_control()
 	_set_screen_state(outgoing, false)
@@ -298,8 +335,11 @@ func _activate_gameplay_request(request: Dictionary, context: Dictionary) -> voi
 	_notify_screen(outgoing, "shell_did_suspend", context)
 	_notify_screen(gameplay_screen, "shell_will_resume", context)
 	_notify_screen(gameplay_screen, "shell_did_resume", context)
+	gameplay_activation_result = {"outcome": "success"}
 
 func is_gameplay_transition_ready() -> bool:
+	if str(gameplay_activation_result.get("outcome", "")) == "failure":
+		return true
 	if active_screen != ROUTE_GAMEPLAY:
 		return false
 	if gameplay_screen.has_method("is_gameplay_transition_ready"):
@@ -314,30 +354,46 @@ func show_song_library_from_gameplay(selected_song_id: String = "") -> void:
 func show_main_menu_from_gameplay(focus_index: int = 0) -> void:
 	await show_main_menu(focus_index)
 
-func _switch_route(incoming: Control, route: String, direction: float, context: Dictionary) -> void:
-	var outgoing: Control = _active_control()
+func _commit_route(outgoing: Control, incoming: Control, route: String, direction: float, context: Dictionary) -> void:
 	if outgoing == incoming:
 		_set_screen_state(incoming, true)
 		active_screen = route
 		return
-	_notify_screen(outgoing, "shell_will_suspend", context)
 
 	# v17.4.49: Song Library is a resident screen. Do not run selection, record
 	# refresh, artwork loading, or preview work before its route tween has had a
 	# chance to render. This mirrors osu!'s separation between immediate screen
 	# navigation and deferred beatmap/media work.
-	var defer_library_resume: bool = route == ROUTE_SONG_LIBRARY
-	if defer_library_resume:
-		_notify_screen(incoming, "shell_prepare_resume", context)
-	else:
-		_notify_screen(incoming, "shell_will_resume", context)
+	_notify_screen(incoming, "shell_prepare_resume", context)
 
 	await _animate_switch(outgoing, incoming, direction)
 	active_screen = route
 	_notify_screen(outgoing, "shell_did_suspend", context)
-	if defer_library_resume:
-		_notify_screen(incoming, "shell_will_resume", context)
+	_notify_screen(incoming, "shell_will_resume", context)
 	_notify_screen(incoming, "shell_did_resume", context)
+
+func _rollback_to_origin(origin: Control, attempted: Control, previous_route: String, context: Dictionary) -> void:
+	_set_screen_state(attempted, false)
+	_set_screen_state(origin, true)
+	active_screen = previous_route
+	_notify_screen(origin, "shell_will_resume", context)
+	_notify_screen(origin, "shell_did_resume", context)
+
+func _navigation_result(outcome: String, previous_route: String, resulting_route: String, reason: String, transaction_id: int) -> Dictionary:
+	return {
+		"outcome": outcome,
+		"success": outcome == "success",
+		"previous_route": previous_route,
+		"resulting_route": resulting_route,
+		"reason": reason,
+		"transaction_id": transaction_id,
+	}
+
+func set_navigation_test_failure(route: String, enabled: bool) -> void:
+	if enabled:
+		navigation_test_failures[route] = true
+	else:
+		navigation_test_failures.erase(route)
 
 func _prepare_gameplay_exit(reason: String) -> void:
 	if gameplay_screen.has_method("prepare_for_shell_exit"):

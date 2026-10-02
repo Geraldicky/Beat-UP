@@ -10,8 +10,11 @@ music = (ROOT / "scripts/music_session.gd").read_text(encoding="utf-8")
 preview = (ROOT / "scripts/ui/song_preview_controller.gd").read_text(encoding="utf-8")
 project = (ROOT / "project.godot").read_text(encoding="utf-8")
 
-assert 'defer_library_resume: bool = route == ROUTE_SONG_LIBRARY' in app_shell
-assert 'shell_prepare_resume' in app_shell and 'shell_prepare_resume' in song_library
+commit_route = app_shell.split('func _commit_route(', 1)[1].split('\nfunc ', 1)[0]
+assert '_notify_screen(incoming, "shell_prepare_resume", context)' in commit_route
+assert commit_route.index('shell_prepare_resume') < commit_route.index('await _animate_switch')
+assert commit_route.index('active_screen = route') < commit_route.index('shell_will_resume')
+assert 'shell_prepare_resume' in song_library
 
 setter = song_select.split('func set_selected_song(song_id: String) -> void:', 1)[1].split('\nfunc ', 1)[0]
 assert '_apply_filters(false)' in setter  # fallback only

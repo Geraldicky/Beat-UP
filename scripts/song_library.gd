@@ -63,6 +63,12 @@ func handle_gameplay_launch_failure(context: Dictionary) -> void:
 	if song_select.has_method("show_playback_error"):
 		song_select.call("show_playback_error", message)
 
+func handle_navigation_failure(context: Dictionary) -> void:
+	action_locked = false
+	var message := str(context.get("error", "NAVIGATION COULD NOT BE COMPLETED"))
+	if song_select.has_method("show_creator_status"):
+		song_select.call("show_creator_status", message, true)
+
 func _apply_pending_best_stats() -> void:
 	if not _best_stats_dirty:
 		return
@@ -106,7 +112,8 @@ func _on_play_requested(song_id: String, difficulty_id: String, random_mode: boo
 	var navigation: Node = get_node_or_null("/root/NavigationController")
 	if navigation != null and navigation.has_method("request_gameplay"):
 		_report_runtime("song_library", "Launching gameplay", launch_request)
-		navigation.call("request_gameplay", launch_request, visual_payload)
+		var result: Variant = await navigation.call("request_gameplay", launch_request, visual_payload)
+		_release_action_lock_after_failed_navigation(result)
 		return
 	# Compatibility fallback for running SongLibrary as a standalone scene.
 	get_tree().set_meta(PENDING_LIBRARY_LAUNCH_META, launch_request)
@@ -146,7 +153,8 @@ func _launch_v18_request(song_id: String, difficulty_id: String, random_mode: bo
 	var navigation: Node = get_node_or_null("/root/NavigationController")
 	if navigation != null and navigation.has_method("request_gameplay"):
 		_report_runtime("song_library", "Launching v18 gameplay mode", launch_request)
-		navigation.call("request_gameplay", launch_request, visual_payload)
+		var result: Variant = await navigation.call("request_gameplay", launch_request, visual_payload)
+		_release_action_lock_after_failed_navigation(result)
 		return
 	get_tree().set_meta(PENDING_LIBRARY_LAUNCH_META, launch_request)
 	SceneTransition.change_scene_to_gameplay("res://main.tscn", visual_payload)
@@ -175,11 +183,21 @@ func _on_back_requested() -> void:
 	get_tree().set_meta(RETURN_TO_MENU_FOCUS_META, 0)
 	var navigation: Node = get_node_or_null("/root/NavigationController")
 	if navigation != null and navigation.has_method("request_main_menu"):
-		navigation.call("request_main_menu", 0)
+		var result: Variant = await navigation.call("request_main_menu", 0)
+		_release_action_lock_after_failed_navigation(result)
 		return
 	SceneTransition.change_scene_quick("res://scenes/app_shell.tscn")
 
 func _on_chart_editor_requested() -> void:
+	if action_locked or _navigation_busy():
+		return
+	var navigation: Node = get_node_or_null("/root/NavigationController")
+	if navigation != null and navigation.has_method("has_registered_shell") and bool(navigation.call("has_registered_shell")):
+		action_locked = true
+		var result: Variant = await navigation.call("request_chart_studio")
+		_release_action_lock_after_failed_navigation(result)
+		return
+	# Compatibility fallback for running SongLibrary as a standalone scene.
 	SceneTransition.change_scene_quick("res://scenes/chart_editor.tscn")
 
 func _on_refresh_requested() -> void:
@@ -266,11 +284,15 @@ func shell_will_suspend(context: Dictionary) -> void:
 		song_select.call("remember_current_selection")
 
 func shell_did_suspend(_context: Dictionary) -> void:
-	pass
+	action_locked = false
 
 func _navigation_busy() -> bool:
 	var navigation: Node = get_node_or_null("/root/NavigationController")
 	return navigation != null and navigation.has_method("is_navigating") and bool(navigation.call("is_navigating"))
+
+func _release_action_lock_after_failed_navigation(result: Variant) -> void:
+	if not (result is Dictionary) or str((result as Dictionary).get("outcome", "failure")) != "success":
+		action_locked = false
 
 func _report_runtime(category: String, message: String, context: Dictionary = {}) -> void:
 	var guard: Node = get_node_or_null("/root/RuntimeGuard")
