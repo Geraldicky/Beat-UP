@@ -534,9 +534,8 @@ func _apply_layout_config() -> void:
 	var reference_scale: float = minf(viewport_size.x / 1600.0, viewport_size.y / 900.0)
 	var margin: float = clampf(viewport_size.x * 0.055, 42.0, 92.0)
 
-	# Album Flow composition: song artwork owns the canvas. Identity and navigation
-	# sit on a quiet left editorial rail while Now Playing remains a slim persistent
-	# music surface along the bottom edge.
+	# Song artwork owns the canvas. Identity and navigation sit on a quiet left
+	# editorial rail while Now Playing remains integrated into the top chrome.
 	orb_cluster.visible = false
 	orb_cluster.size = Vector2.ZERO
 	orb_cluster.position = Vector2.ZERO
@@ -544,7 +543,7 @@ func _apply_layout_config() -> void:
 	# Keep the wordmark strong, but give the artwork enough room to become the
 	# second focal point. The previous 31% width made the logo compete with the
 	# entire composition at 1080p.
-	var title_width: float = clampf(viewport_size.x * 0.275, 300.0, 460.0)
+	var title_width: float = clampf(viewport_size.x * 0.25, 280.0, 460.0)
 	var title_height: float = clampf(98.0 * reference_scale, 78.0, 112.0)
 	menu_title.position = Vector2(margin, clampf(viewport_size.y * 0.105, 70.0, 112.0))
 	menu_title.size = Vector2(title_width, title_height)
@@ -553,37 +552,38 @@ func _apply_layout_config() -> void:
 	# Text-first editorial rail. Keep the hit target generous while avoiding the
 	# long full-width selection slab from the first Album Flow pass.
 	var rail_width: float = clampf(viewport_size.x * 0.205, 286.0, 360.0)
-	var item_height: float = clampf(49.0 * reference_scale, 44.0, 54.0)
+	var item_height: float = clampf(48.0 * reference_scale, float(MinimalThemeScript.MIN_ACTION_HEIGHT), 52.0)
+	var play_height: float = clampf(62.0 * reference_scale, 56.0, 68.0)
 	var item_gap: int = roundi(clampf(7.0 * reference_scale, 5.0, 9.0))
 	var rail_x: float = margin
 	var rail_y: float = clampf(viewport_size.y * 0.315, 220.0, 340.0)
-	var rail_height: float = item_height * float(menu_buttons.size()) + float(item_gap) * float(menu_buttons.size() - 1)
+	var rail_height: float = play_height + item_height * float(menu_buttons.size() - 1) + float(item_gap) * float(menu_buttons.size() - 1)
 	menu_stack.custom_minimum_size = Vector2(rail_width, 0.0)
 	menu_stack.size = Vector2(rail_width, rail_height)
 	menu_stack.position = Vector2(rail_x, rail_y)
 	menu_stack.add_theme_constant_override("separation", item_gap)
-	for button in menu_buttons:
-		button.custom_minimum_size = Vector2(rail_width, item_height)
+	for index in range(menu_buttons.size()):
+		var button := menu_buttons[index]
+		button.custom_minimum_size = Vector2(rail_width, play_height if index == 0 else item_height)
 		_set_button_pivot(button)
 
 	# The rule is a moving selection marker rather than a permanent sidebar.
-	menu_rule.position = Vector2(rail_x - 14.0, rail_y + (item_height - 28.0) * 0.5)
-	menu_rule.size = Vector2(3.0, 28.0)
+	menu_rule.position = Vector2(rail_x - 14.0, rail_y + (play_height - 32.0) * 0.5)
+	menu_rule.size = Vector2(3.0, 32.0)
 
-	# Now Playing is a music surface, not an OS-style status bar. Give it more
-	# breathing room and keep it narrower than the viewport.
+	# Now Playing shares the top chrome with the wordmark. This keeps transport
+	# controls persistent without consuming the menu's lower composition.
 	var now_playing_height: float = clampf(64.0 * reference_scale, 58.0, 70.0)
-	var now_playing_width: float = clampf(viewport_size.x * 0.84, 760.0, 1540.0)
-	var now_playing_bottom_gap: float = clampf(viewport_size.y * 0.045, 30.0, 48.0)
-	now_playing_card.position = Vector2((viewport_size.x - now_playing_width) * 0.5, viewport_size.y - now_playing_height - now_playing_bottom_gap)
+	var now_playing_width: float = clampf(viewport_size.x * 0.48, 800.0, 860.0)
+	now_playing_card.position = Vector2(viewport_size.x - margin - now_playing_width, clampf(margin * 0.62, 30.0, 56.0))
 	now_playing_card.size = Vector2(now_playing_width, now_playing_height)
 	now_playing_card.pivot_offset = now_playing_card.size * 0.5
 	if track_progress_bar != null:
-		track_progress_bar.custom_minimum_size = Vector2(clampf(now_playing_width * 0.31, 280.0, 470.0), 3.0)
+		track_progress_bar.custom_minimum_size = Vector2(clampf(now_playing_width * 0.25, 148.0, 220.0), 3.0)
 	if duration_value != null:
 		duration_value.custom_minimum_size = Vector2(102.0, 0.0)
 
-	menu_version.position = Vector2(viewport_size.x - margin - 130.0, margin * 0.72)
+	menu_version.position = Vector2(viewport_size.x - margin - 130.0, viewport_size.y - margin * 0.72 - 24.0)
 	menu_version.size = Vector2(130.0, 24.0)
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	selection_description.position = Vector2.ZERO
@@ -675,19 +675,25 @@ func _apply_theme() -> void:
 	now_playing_kicker.add_theme_font_size_override("font_size", 9)
 	MinimalThemeScript.apply_heading(now_playing_title, 16, MinimalThemeScript.TEXT)
 	now_playing_title.add_theme_font_size_override("font_size", 16)
+	now_playing_title.clip_text = true
+	now_playing_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	now_playing_title.custom_minimum_size.x = 132.0
 	MinimalThemeScript.apply_body(now_playing_artist, 11, Color(1.0, 1.0, 1.0, 0.72))
 	now_playing_artist.add_theme_font_override("font", MinimalThemeScript.medium_font())
+	now_playing_artist.clip_text = true
+	now_playing_artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	now_playing_artist.custom_minimum_size.x = 92.0
 	MinimalThemeScript.apply_mono(duration_value, 10, Color(1.0, 1.0, 1.0, 0.74))
 	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.10), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
 	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.86), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
 	for transport_button in [prev_track_button, play_pause_track_button, next_track_button]:
-		transport_button.focus_mode = Control.FOCUS_NONE
+		transport_button.focus_mode = Control.FOCUS_ALL
 		transport_button.flat = true
 		transport_button.custom_minimum_size = Vector2(36.0, 36.0)
 		transport_button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 		transport_button.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
 		transport_button.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
-		transport_button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+		transport_button.add_theme_stylebox_override("focus", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.10), 8, Color(MinimalThemeScript.ACCENT_LIGHT, 0.76), 1, 0.0))
 		transport_button.add_theme_font_override("font", MinimalThemeScript.medium_font())
 		transport_button.add_theme_font_size_override("font_size", 14)
 		transport_button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.78))
@@ -793,19 +799,23 @@ func _style_main_menu_button(button: Button, index: int) -> void:
 	var accent: Color = MinimalThemeScript.ACCENT
 	if index == 0:
 		accent = MinimalThemeScript.ACCENT_LIGHT
+		button.text = "PLAY  ◆"
 	elif index == menu_buttons.size() - 1:
 		accent = MinimalThemeScript.DANGER
 
 	button.add_theme_font_override("font", MinimalThemeScript.medium_font())
-	var size_boost := 4 if index == 0 else (1 if index <= 2 else 0)
+	var size_boost := 6 if index == 0 else (1 if index <= 2 else 0)
 	button.add_theme_font_size_override("font_size", theme_config.button_size + size_boost)
 
 	# At rest, navigation is typography on the composition (S0). A restrained
 	# surface appears only as interaction feedback; the moving rule carries the
 	# persistent selection identity.
 	var normal_style := StyleBoxFlat.new()
-	normal_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+	normal_style.bg_color = Color(MinimalThemeScript.ACCENT, 0.075) if index == 0 else Color(0.0, 0.0, 0.0, 0.0)
 	normal_style.set_border_width_all(0)
+	if index == 0:
+		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.44)
+		normal_style.border_width_left = 2
 	normal_style.corner_radius_top_right = 7
 	normal_style.corner_radius_bottom_right = 7
 	normal_style.content_margin_left = 18.0

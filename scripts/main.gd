@@ -432,7 +432,7 @@ func _apply_theme_config() -> void:
 	judgment_sprite.add_theme_color_override("font_outline_color", Color(0.02, 0.025, 0.04, 0.82))
 	judgment_sprite.add_theme_constant_override("outline_size", 4)
 	MinimalThemeScript.apply_mono(score_caption, 10, Color(MinimalThemeScript.MUTED, 0.84))
-	MinimalThemeScript.apply_mono(score_digits, 36, MinimalThemeScript.TEXT)
+	MinimalThemeScript.apply_hud_value(score_digits)
 	score_digits.refresh_style()
 	MinimalThemeScript.apply_mono(accuracy_label, 16, Color(MinimalThemeScript.TEXT, 0.90))
 	MinimalThemeScript.apply_numeric(combo_digits, 64, MinimalThemeScript.TEXT)
@@ -2339,10 +2339,10 @@ func reset_judgment_popup() -> void:
 
 func _judgment_color(rating: String) -> Color:
 	match rating:
-		"PERFECT": return MinimalThemeScript.PINK
-		"GREAT": return MinimalThemeScript.SUCCESS
-		"GOOD": return MinimalThemeScript.CYAN
-		"MISS": return MinimalThemeScript.DANGER
+		"PERFECT": return MinimalThemeScript.PERFECT_PINK
+		"GREAT": return MinimalThemeScript.GREAT_GREEN
+		"GOOD": return MinimalThemeScript.GOOD_CYAN
+		"MISS": return MinimalThemeScript.MISS_RED
 		_: return MinimalThemeScript.TEXT
 
 func format_time_label(seconds: float) -> String:
@@ -2359,7 +2359,9 @@ func update_hud() -> void:
 
 	combo_digits.set_value(combo)
 	score_digits.set_value(score)
-	combo_label.visible = combo > 0
+	# The numeric combo feedback remains, but the retired persistent combo label
+	# must not return and compete with the timing lane.
+	combo_label.visible = false
 	var judged: int = perfect_hits + great_hits + get_good_hits() + total_misses
 	var live_accuracy: float = 100.0 if judged <= 0 else calculate_accuracy_from_counts(perfect_hits, great_hits, get_good_hits(), total_misses)
 	accuracy_label.text = "%.2f%%" % live_accuracy

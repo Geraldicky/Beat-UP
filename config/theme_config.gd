@@ -20,14 +20,14 @@ extends Resource
 @export var miss_color: Color = Color("b76c75")
 
 @export_group("Gameplay Palette")
-@export var normal_note_color: Color = Color("d8e0ff")
+@export var normal_note_color: Color = Color("5697ff")
 @export var note_fill_color: Color = Color("101722")
-@export var diagonal_note_outline: Color = Color("c7d4ff")
+@export var diagonal_note_outline: Color = Color("ffa65c")
 @export var reverse_note_outline: Color = Color("ff5a64")
-@export var hit_zone_fill: Color = Color(0.66, 0.72, 1.0, 0.055)
-@export var hit_zone_border: Color = Color(0.85, 0.88, 1.0, 0.72)
-@export var hit_zone_inner_fill: Color = Color(0.85, 0.88, 1.0, 0.022)
-@export var hit_zone_inner_border: Color = Color(0.85, 0.88, 1.0, 0.30)
+@export var hit_zone_fill: Color = Color(1.0, 1.0, 1.0, 0.055)
+@export var hit_zone_border: Color = Color(1.0, 1.0, 1.0, 0.82)
+@export var hit_zone_inner_fill: Color = Color(1.0, 1.0, 1.0, 0.022)
+@export var hit_zone_inner_border: Color = Color(1.0, 1.0, 1.0, 0.34)
 
 @export_group("Typography")
 @export_range(8, 96, 1) var caption_size: int = 11

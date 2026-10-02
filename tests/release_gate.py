@@ -36,6 +36,7 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
         'gameplay_input_binding_snapshot_test.gd',
         'app_shell_navigation_lifecycle_test.gd',
         'main_menu_standalone_fallback_test.gd',
+        'phase4_ui_foundation_test.gd',
         'live_records_foundation_test.gd',
         'library_layout_foundation_test.gd',
         'v1870_level_pack_test.gd',
@@ -51,6 +52,8 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
             env['BEAT_UP_QA_NAVIGATION_LIFECYCLE'] = 'isolated'
         elif name == 'main_menu_standalone_fallback_test.gd':
             env['BEAT_UP_QA_STANDALONE_NAVIGATION'] = 'isolated'
+        elif name == 'phase4_ui_foundation_test.gd':
+            env['BEAT_UP_QA_PHASE4_UI'] = 'isolated'
         r = subprocess.run([a.godot, '--headless', '--path', str(root), '--script', 'res://tests/'+name], env=env, text=True, capture_output=True, timeout=120)
         print(r.stdout, r.stderr)
         # Existing scene teardown can emit a resource retention diagnostic.

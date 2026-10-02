@@ -907,12 +907,13 @@ func _apply_album_flow_song_library_layout() -> void:
 	header_row.visible = true
 	for legacy_control: Control in [info_tabs, details_panel, best_card, action_row, footer_panel]:
 		legacy_control.visible = false
-	var compact: bool = size.x < 1500.0 or size.y < 820.0
+	var compact: bool = size.x < 1700.0 or size.y < 960.0
+	var layout_scale: float = clampf(minf(size.x / 1920.0, size.y / 1080.0), 0.66, 1.0)
 	info_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(0, 0, 0, 0), 0, Color(0, 0, 0, 0), 0, 4.0 if compact else 20.0))
 	main_margin.add_theme_constant_override("margin_left", 32 if compact else 52)
 	main_margin.add_theme_constant_override("margin_right", 32 if compact else 52)
 	main_margin.add_theme_constant_override("margin_top", 16 if compact else 28)
-	main_margin.add_theme_constant_override("margin_bottom", 24 if compact else 52)
+	main_margin.add_theme_constant_override("margin_bottom", 16 if compact else 52)
 	root_vbox.add_theme_constant_override("separation", 14)
 	header_row.custom_minimum_size.y = 38 if compact else 42
 	back_button.custom_minimum_size = Vector2(84, 30)
@@ -937,7 +938,7 @@ func _apply_album_flow_song_library_layout() -> void:
 	album_flow_center_column.size_flags_stretch_ratio = 0.90
 	album_flow_sidebar.size_flags_stretch_ratio = 1.10
 	album_flow_sidebar.custom_minimum_size.x = 226 if compact else 366
-	var artwork_size: float = clampf(minf(info_panel.size.x * 0.44, size.y * 0.43), 250.0, 430.0)
+	var artwork_size: float = clampf(minf(info_panel.size.x * 0.43, size.y * 0.39), 210.0, 410.0)
 	album_flow_artwork_slot.custom_minimum_size = Vector2(artwork_size, artwork_size)
 	hero_panel.custom_minimum_size = Vector2(artwork_size, artwork_size)
 	if album_flow_artwork != null and album_flow_artwork.material is ShaderMaterial:
@@ -945,7 +946,7 @@ func _apply_album_flow_song_library_layout() -> void:
 	hero_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	hero_panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	album_flow_showcase_row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	album_flow_showcase_row.custom_minimum_size.y = 448 if compact else 709
+	album_flow_showcase_row.custom_minimum_size.y = clampf(size.y - (260.0 if compact else 252.0), 360.0, 676.0)
 	if album_flow_best_card != null:
 		album_flow_best_card.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 		album_flow_best_card.offset_left = -22.0
@@ -953,11 +954,11 @@ func _apply_album_flow_song_library_layout() -> void:
 		album_flow_best_card.offset_right = 110.0
 		album_flow_best_card.offset_bottom = 70.0
 	if album_flow_score_cluster != null:
-		album_flow_score_cluster.custom_minimum_size.y = 86 if compact else 110
+		album_flow_score_cluster.custom_minimum_size.y = 82 if compact else 102
 	if album_flow_bottom_panel != null:
-		album_flow_bottom_panel.custom_minimum_size.y = 122 if compact else 178
-	album_flow_play_row.custom_minimum_size.y = 84 if compact else 124
-	play_button.custom_minimum_size = Vector2(202 if compact else 250, 72 if compact else 106)
+		album_flow_bottom_panel.custom_minimum_size.y = 108 if compact else 160
+	album_flow_play_row.custom_minimum_size.y = 72 if compact else 108
+	play_button.custom_minimum_size = Vector2(clampf(250.0 * layout_scale, 188.0, 250.0), clampf(92.0 * layout_scale, 60.0, 92.0))
 	play_button.size_flags_vertical = Control.SIZE_SHRINK_END
 	quick_stats.custom_minimum_size.y = 48
 	for card_name in ["BpmCard", "DurationCard", "NotesCard"]:
@@ -2454,7 +2455,7 @@ func _refresh_song_rows(animated: bool) -> void:
 		var is_selected: bool = i < filtered_song_ids.size() and filtered_song_ids[i] == selected_song_id
 		button.set_pressed_no_signal(is_selected)
 		button.queue_redraw()
-		var target_height := 116.0 if is_selected else 72.0
+		var target_height := 94.0 if is_selected else 60.0
 		var distance: int = absi(i - selected_index) if selected_index >= 0 else 4
 		var art_emphasis := 1.0 if is_selected else clampf(0.88 - float(distance) * 0.065, 0.54, 0.82)
 		button.modulate.a = 1.0
@@ -2463,11 +2464,11 @@ func _refresh_song_rows(animated: bool) -> void:
 		_apply_song_header_text_emphasis(button, is_selected, distance)
 		var jacket := button.find_child("SongJacket", true, false) as TextureRect
 		if jacket != null:
-			jacket.custom_minimum_size = Vector2(92, 92) if is_selected else Vector2(56, 56)
+			jacket.custom_minimum_size = Vector2(72, 72) if is_selected else Vector2(44, 44)
 		var row_title := button.find_child("SongTitle", true, false) as Label
 		if row_title != null:
-			row_title.add_theme_font_size_override("font_size", 22 if is_selected else 14)
-			row_title.custom_minimum_size.y = 46 if is_selected else 18
+			row_title.add_theme_font_size_override("font_size", 19 if is_selected else 13)
+			row_title.custom_minimum_size.y = 38 if is_selected else 18
 			row_title.max_lines_visible = 2 if is_selected else 1
 			row_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if is_selected else TextServer.AUTOWRAP_OFF
 		var row_artist := button.find_child("SongArtist", true, false) as Label

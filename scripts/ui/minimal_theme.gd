@@ -24,6 +24,18 @@ const GOLD := Color("f5c96a")
 const DANGER := Color("b76c75")
 const SUCCESS := Color("7dce9e")
 
+# Semantic rhythm colors. Keeping these named beside the shared UI palette makes
+# presentation tests and gameplay drawing agree without moving ownership of any
+# gameplay rule into the theme layer.
+const NORMAL_BLUE := Color("5697ff")
+const DIAGONAL_ORANGE := Color("ffa65c")
+const REVERSE_RED := Color("ff5a64")
+const SPACE_GOLD := GOLD
+const PERFECT_PINK := PINK
+const GREAT_GREEN := SUCCESS
+const GOOD_CYAN := CYAN
+const MISS_RED := DANGER
+
 # Global design tokens.
 const SPACE_XS := 4
 const SPACE_SM := 8
@@ -43,6 +55,23 @@ const RADIUS_XL := 20
 const MOTION_FAST := 0.12
 const MOTION_NORMAL := 0.18
 const MOTION_SLOW := 0.24
+
+# Type roles are intentionally compact at the 1080p target. Screens may scale
+# these down at 720p, but should preserve this hierarchy.
+const TYPE_DISPLAY := 52
+const TYPE_SCREEN_HEADING := 28
+const TYPE_PRIMARY_ACTION := 20
+const TYPE_SONG_TITLE := 24
+const TYPE_METADATA := 14
+const TYPE_SUPPORTING := 12
+const TYPE_HUD_VALUE := 36
+const TYPE_COMPACT_LABEL := 10
+
+const OPACITY_PRIMARY := 1.0
+const OPACITY_SECONDARY := 0.76
+const OPACITY_MUTED := 0.52
+const OPACITY_DISABLED := 0.42
+const MIN_ACTION_HEIGHT := 44
 
 const PANEL_FILL := Color(0.075, 0.102, 0.145, 0.76)
 const PANEL_FILL_SOFT := Color(0.075, 0.102, 0.145, 0.46)
@@ -170,6 +199,26 @@ static func apply_body(label: Label, size: int = -1, color: Color = TEXT) -> voi
 	label.add_theme_color_override("font_color", color)
 	if size > 0:
 		label.add_theme_font_size_override("font_size", size)
+
+static func apply_screen_heading(label: Label) -> void:
+	apply_heading(label, TYPE_SCREEN_HEADING, TEXT)
+
+static func apply_song_title(label: Label) -> void:
+	label.add_theme_font_override("font", semibold_font())
+	label.add_theme_font_size_override("font_size", TYPE_SONG_TITLE)
+	label.add_theme_color_override("font_color", TEXT)
+
+static func apply_metadata(label: Label) -> void:
+	apply_body(label, TYPE_METADATA, Color(TEXT, OPACITY_SECONDARY))
+
+static func apply_supporting(label: Label) -> void:
+	apply_body(label, TYPE_SUPPORTING, Color(TEXT, OPACITY_MUTED))
+
+static func apply_hud_value(label: Label) -> void:
+	apply_numeric(label, TYPE_HUD_VALUE, TEXT)
+
+static func apply_compact_label(label: Label, color: Color = MUTED) -> void:
+	apply_mono(label, TYPE_COMPACT_LABEL, color)
 
 # Primary actions are intentionally not solid neon buttons. They read as a
 # stronger S1 rail with a persistent accent edge and high-contrast type.
