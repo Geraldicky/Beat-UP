@@ -672,6 +672,9 @@ void fragment() {
 	album_flow_best_card = PanelContainer.new()
 	album_flow_best_card.name = "AlbumFlowBestCard"
 	album_flow_best_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# The rank badge is data, not a permanent dark surface. Keep it absent in
+	# the no-record state so it cannot read as a black overlay over the artwork.
+	album_flow_best_card.visible = false
 	hero_content.add_child(album_flow_best_card)
 	var best_margin := MarginContainer.new()
 	best_margin.add_theme_constant_override("margin_left", 12)
@@ -1062,8 +1065,15 @@ func _apply_album_flow_song_library_theme() -> void:
 		value_label.add_theme_font_override("font", MinimalThemeScript.medium_font())
 		value_label.add_theme_font_size_override("font_size", 13)
 		value_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
+	# The legacy PersonalBestCard is intentionally not part of Album Flow. Strip
+	# its surface as a second line of defense in case another refresh toggles it.
+	if best_card != null:
+		best_card.visible = false
+		best_card.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	if album_flow_best_card != null:
-		var best_overlay_style := MinimalThemeScript.panel_style(Color("090b10", 0.98), 10, Color(LIBRARY_ACCENT, 0.96), 2, 0.0)
+		# Keep the best-rank badge integrated with the artwork instead of drawing a
+		# near-black card behind it. The accent outline is enough separation.
+		var best_overlay_style := MinimalThemeScript.panel_style(Color(0, 0, 0, 0), 10, Color(LIBRARY_ACCENT, 0.72), 1, 0.0)
 		album_flow_best_card.add_theme_stylebox_override("panel", best_overlay_style)
 		for node in album_flow_best_card.find_children("*", "Label", true, false):
 			var label := node as Label
@@ -1177,6 +1187,9 @@ func _refresh_album_flow_best_card(chart: Dictionary) -> void:
 		if raw is Dictionary:
 			entry = raw as Dictionary
 	var has_record := not entry.is_empty() and int(entry.get("score", 0)) > 0
+	# Do not render an empty rank panel. This was the source of the visible black
+	# rectangle beneath/over the Best Record area when no score existed.
+	album_flow_best_card.visible = has_record
 	album_flow_best_caption_value.text = "YOUR BEST" if has_record else ""
 	album_flow_best_rank_value.text = str(entry.get("best_rank", entry.get("rank", ""))) if has_record else ""
 	var score_value := int(entry.get("score", 0))
