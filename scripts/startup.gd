@@ -18,11 +18,11 @@ const BOOT_SPLASH_META := "beat_up_boot_splash_completed"
 const MENU_ITEMS := [
 	{"label": "PLAY", "title": "PLAY", "description": "Pick a song. Hit the beat."},
 	{"label": "CHART STUDIO", "title": "CHART STUDIO", "description": "Import OGG + FLAC, generate charts, and edit the timeline."},
-	{"label": "HOW TO PLAY", "title": "HOW TO PLAY", "description": "Controls, timing, note rules, and practice."},
-	{"label": "CALIBRATION", "title": "CALIBRATION", "description": "Sync input and audio timing."},
 	{"label": "SETTINGS", "title": "SETTINGS", "description": "Display, input, audio, and timing."},
+	{"label": "QUIT", "title": "EXIT", "description": "Close Beat UP!."},
+	{"label": "HOW TO PLAY", "title": "HOW TO PLAY", "description": "Controls, timing, note rules, and practice."},
+	{"label": "CALIBRATE", "title": "CALIBRATION", "description": "Sync input and audio timing."},
 	{"label": "CREDITS", "title": "CREDITS", "description": "Project credits and acknowledgements."},
-	{"label": "EXIT", "title": "EXIT", "description": "Close Beat UP!."},
 ]
 
 const MENU_BACKGROUND_CANDIDATES := [
@@ -112,6 +112,7 @@ const TUTORIAL_STEPS := [
 @onready var orb_fill: Control = %OrbFill
 @onready var main_logo: Label = %MainLogo
 @onready var menu_stack: VBoxContainer = %MenuStack
+@onready var utility_row: HBoxContainer = %UtilityRow
 @onready var menu_title: Control = %MenuTitle
 @onready var menu_rule: ColorRect = %MenuRule
 @onready var main_footer: Label = %MainFooter
@@ -261,7 +262,7 @@ func _ready() -> void:
 	var display_applied: bool = UserSettingsScript.apply_display_preferences()
 	_setup_display_controls()
 	_build_v18_settings_controls()
-	menu_buttons = [play_button, chart_studio_button, help_button, quick_calibration_button, settings_button, credits_button, exit_button]
+	menu_buttons = [play_button, chart_studio_button, settings_button, exit_button, help_button, quick_calibration_button, credits_button]
 	tutorial_tabs = [tutorial_controls_tab, tutorial_timing_tab, tutorial_notes_tab, tutorial_practice_tab]
 	settings_tabs = [display_tab, audio_tab, timing_tab]
 	_setup_main_menu_controllers()
@@ -534,56 +535,71 @@ func _apply_layout_config() -> void:
 	var reference_scale: float = minf(viewport_size.x / 1600.0, viewport_size.y / 900.0)
 	var margin: float = clampf(viewport_size.x * 0.055, 42.0, 92.0)
 
-	# Song artwork owns the canvas. Identity and navigation sit on a quiet left
-	# editorial rail while Now Playing remains integrated into the top chrome.
+	# Current-song artwork remains full-bleed atmosphere. The foreground anchor is
+	# now exclusively Beat UP! branding, positioned left of the primary actions.
+	var hero_radius: float = clampf(minf(viewport_size.x * 0.145, viewport_size.y * 0.25), 164.0, 270.0)
+	var hero_center := Vector2(viewport_size.x * 0.36, viewport_size.y * 0.55)
 	orb_cluster.visible = false
-	orb_cluster.size = Vector2.ZERO
 	orb_cluster.position = Vector2.ZERO
+	orb_cluster.size = Vector2.ZERO
+	orb_ring.visible = false
+	orb_fill.visible = false
+	main_logo.visible = false
+	selection_index.visible = false
 
-	# Keep the wordmark strong, but give the artwork enough room to become the
-	# second focal point. The previous 31% width made the logo compete with the
-	# entire composition at 1080p.
-	var title_width: float = clampf(viewport_size.x * 0.25, 280.0, 460.0)
-	var title_height: float = clampf(98.0 * reference_scale, 78.0, 112.0)
-	menu_title.position = Vector2(margin, clampf(viewport_size.y * 0.105, 70.0, 112.0))
+	# Wordmark is integrated into the rounded diamond panel drawn by MenuVisual.
+	var title_width: float = hero_radius * 1.12
+	var title_height: float = clampf(hero_radius * 0.34, 58.0, 92.0)
+	menu_title.position = hero_center - Vector2(title_width * 0.5, title_height * 0.5)
 	menu_title.size = Vector2(title_width, title_height)
 	menu_title.pivot_offset = menu_title.size * 0.5
 
-	# Text-first editorial rail. Keep the hit target generous while avoiding the
-	# long full-width selection slab from the first Album Flow pass.
-	var rail_width: float = clampf(viewport_size.x * 0.205, 286.0, 360.0)
-	var item_height: float = clampf(48.0 * reference_scale, float(MinimalThemeScript.MIN_ACTION_HEIGHT), 52.0)
-	var play_height: float = clampf(62.0 * reference_scale, 56.0, 68.0)
-	var item_gap: int = roundi(clampf(7.0 * reference_scale, 5.0, 9.0))
-	var rail_x: float = margin
-	var rail_y: float = clampf(viewport_size.y * 0.315, 220.0, 340.0)
-	var rail_height: float = play_height + item_height * float(menu_buttons.size() - 1) + float(item_gap) * float(menu_buttons.size() - 1)
+	# Four primary actions form a tight right-side column. Legacy utility actions
+	# remain reachable as low-emphasis footer links below it.
+	var rail_width: float = clampf(viewport_size.x * 0.19, 276.0, 348.0)
+	var item_height: float = clampf(47.0 * reference_scale, float(MinimalThemeScript.MIN_ACTION_HEIGHT), 52.0)
+	var play_height: float = clampf(64.0 * reference_scale, 58.0, 70.0)
+	var item_gap: int = roundi(clampf(9.0 * reference_scale, 7.0, 11.0))
+	var rail_x: float = clampf(viewport_size.x * 0.70, hero_center.x + hero_radius + 72.0, viewport_size.x - margin - rail_width)
+	var rail_y: float = clampf(viewport_size.y * 0.35, 238.0, 378.0)
+	var primary_buttons: Array[Button] = [play_button, chart_studio_button, settings_button, exit_button]
+	var rail_height: float = play_height + item_height * 3.0 + float(item_gap) * 3.0
 	menu_stack.custom_minimum_size = Vector2(rail_width, 0.0)
 	menu_stack.size = Vector2(rail_width, rail_height)
 	menu_stack.position = Vector2(rail_x, rail_y)
 	menu_stack.add_theme_constant_override("separation", item_gap)
-	for index in range(menu_buttons.size()):
-		var button := menu_buttons[index]
+	for index in range(primary_buttons.size()):
+		var button := primary_buttons[index]
 		button.custom_minimum_size = Vector2(rail_width, play_height if index == 0 else item_height)
 		_set_button_pivot(button)
 
-	# The rule is a moving selection marker rather than a permanent sidebar.
-	menu_rule.position = Vector2(rail_x - 14.0, rail_y + (play_height - 32.0) * 0.5)
-	menu_rule.size = Vector2(3.0, 32.0)
+	var utility_height := clampf(32.0 * reference_scale, 30.0, 34.0)
+	utility_row.position = Vector2(rail_x, rail_y + rail_height + 24.0)
+	utility_row.size = Vector2(rail_width, utility_height)
+	utility_row.add_theme_constant_override("separation", 6)
+	for button in [help_button, quick_calibration_button, credits_button]:
+		button.custom_minimum_size = Vector2(0.0, utility_height)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_set_button_pivot(button)
 
-	# Now Playing shares the top chrome with the wordmark. This keeps transport
-	# controls persistent without consuming the menu's lower composition.
-	var now_playing_height: float = clampf(64.0 * reference_scale, 58.0, 70.0)
-	var now_playing_width: float = clampf(viewport_size.x * 0.48, 800.0, 860.0)
-	now_playing_card.position = Vector2(viewport_size.x - margin - now_playing_width, clampf(margin * 0.62, 30.0, 56.0))
+	# A compact rotated marker carries focus without turning actions into cards.
+	menu_rule.position = Vector2(rail_x - 17.0, rail_y + (play_height - 8.0) * 0.5)
+	menu_rule.size = Vector2(8.0, 8.0)
+	menu_rule.pivot_offset = menu_rule.size * 0.5
+	menu_rule.rotation = PI * 0.25
+
+	# Persistent MusicSession controls remain a top horizontal rail.
+	var now_playing_height: float = clampf(68.0 * reference_scale, 62.0, 74.0)
+	var now_playing_width: float = viewport_size.x - margin * 2.0
+	now_playing_card.position = Vector2(margin, clampf(viewport_size.y * 0.038, 26.0, 42.0))
 	now_playing_card.size = Vector2(now_playing_width, now_playing_height)
 	now_playing_card.pivot_offset = now_playing_card.size * 0.5
 	if track_progress_bar != null:
-		track_progress_bar.custom_minimum_size = Vector2(clampf(now_playing_width * 0.25, 148.0, 220.0), 3.0)
+		track_progress_bar.custom_minimum_size = Vector2(clampf(now_playing_width * 0.31, 220.0, 520.0), 3.0)
 	if duration_value != null:
-		duration_value.custom_minimum_size = Vector2(102.0, 0.0)
+		duration_value.custom_minimum_size = Vector2(112.0, 0.0)
 
-	menu_version.position = Vector2(viewport_size.x - margin - 130.0, viewport_size.y - margin * 0.72 - 24.0)
+	menu_version.position = Vector2(viewport_size.x - margin - 130.0, viewport_size.y - clampf(margin * 0.62, 30.0, 54.0))
 	menu_version.size = Vector2(130.0, 24.0)
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	selection_description.position = Vector2.ZERO
@@ -670,19 +686,21 @@ func _apply_theme() -> void:
 	menu_version.add_theme_font_size_override("font_size", 11)
 	menu_version.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.54))
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.SURFACE, 0.66), 14, Color(MinimalThemeScript.ACCENT, 0.20), 1, 0.0))
+	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.62), 12, Color(MinimalThemeScript.ACCENT_LIGHT, 0.20), 1, 0.0))
 	MinimalThemeScript.apply_mono(now_playing_kicker, 9, Color(MinimalThemeScript.ACCENT, 0.92))
 	now_playing_kicker.add_theme_font_size_override("font_size", 9)
+	now_playing_kicker.visible = true
+	now_playing_kicker.text = "NOW PLAYING"
 	MinimalThemeScript.apply_heading(now_playing_title, 16, MinimalThemeScript.TEXT)
 	now_playing_title.add_theme_font_size_override("font_size", 16)
 	now_playing_title.clip_text = true
 	now_playing_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_title.custom_minimum_size.x = 132.0
+	now_playing_title.custom_minimum_size.x = 310.0
 	MinimalThemeScript.apply_body(now_playing_artist, 11, Color(1.0, 1.0, 1.0, 0.72))
 	now_playing_artist.add_theme_font_override("font", MinimalThemeScript.medium_font())
 	now_playing_artist.clip_text = true
 	now_playing_artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_artist.custom_minimum_size.x = 92.0
+	now_playing_artist.custom_minimum_size.x = 132.0
 	MinimalThemeScript.apply_mono(duration_value, 10, Color(1.0, 1.0, 1.0, 0.74))
 	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.10), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
 	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.86), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
@@ -795,54 +813,140 @@ func _style_tutorial_tabs() -> void:
 		for color_name in ["font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
 			tab.add_theme_color_override(color_name, MinimalThemeScript.TEXT)
 
-func _style_main_menu_button(button: Button, index: int) -> void:
-	var accent: Color = MinimalThemeScript.ACCENT
-	if index == 0:
-		accent = MinimalThemeScript.ACCENT_LIGHT
-		button.text = "PLAY  ◆"
-	elif index == menu_buttons.size() - 1:
+func _style_main_menu_button(button: Button, _index: int) -> void:
+	var is_primary := button == play_button
+	var is_exit := button == exit_button
+	var is_utility := button == help_button or button == quick_calibration_button or button == credits_button
+	var accent: Color = MinimalThemeScript.ACCENT_LIGHT if is_primary else MinimalThemeScript.ACCENT
+	if is_exit:
 		accent = MinimalThemeScript.DANGER
 
-	button.add_theme_font_override("font", MinimalThemeScript.medium_font())
-	var size_boost := 6 if index == 0 else (1 if index <= 2 else 0)
-	button.add_theme_font_size_override("font_size", theme_config.button_size + size_boost)
+	button.add_theme_font_override("font", MinimalThemeScript.mono_font() if is_utility else MinimalThemeScript.medium_font())
+	button.add_theme_font_size_override("font_size", 11 if is_utility else theme_config.button_size + (6 if is_primary else 1))
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT if not is_utility else HORIZONTAL_ALIGNMENT_CENTER
 
-	# At rest, navigation is typography on the composition (S0). A restrained
-	# surface appears only as interaction feedback; the moving rule carries the
-	# persistent selection identity.
 	var normal_style := StyleBoxFlat.new()
-	normal_style.bg_color = Color(MinimalThemeScript.ACCENT, 0.075) if index == 0 else Color(0.0, 0.0, 0.0, 0.0)
-	normal_style.set_border_width_all(0)
-	if index == 0:
-		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.44)
-		normal_style.border_width_left = 2
-	normal_style.corner_radius_top_right = 7
-	normal_style.corner_radius_bottom_right = 7
-	normal_style.content_margin_left = 18.0
-	normal_style.content_margin_right = 14.0
+	var hover_style := StyleBoxFlat.new()
+	var pressed_style := StyleBoxFlat.new()
+	var focus_style := StyleBoxFlat.new()
 
-	var hover_style: StyleBoxFlat = normal_style.duplicate() as StyleBoxFlat
-	hover_style.bg_color = Color(MinimalThemeScript.SURFACE, 0.32 if index == 0 else 0.24)
-	var pressed_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	pressed_style.bg_color = Color(accent, 0.10)
-	var focus_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	focus_style.bg_color = Color(MinimalThemeScript.SURFACE, 0.38 if index == 0 else 0.28)
+	if is_primary:
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.set_corner_radius_all(12)
+			style.content_margin_left = 54.0
+			style.content_margin_right = 46.0
+			style.set_border_width_all(1)
+		normal_style.bg_color = Color(MinimalThemeScript.BG, 0.78)
+		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.72)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.88)
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.96)
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.94)
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 1.0)
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.88)
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 1.0)
+		button.text = "PLAY"
+	elif is_utility:
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+			style.set_border_width_all(0)
+			style.content_margin_left = 8.0
+			style.content_margin_right = 8.0
+		hover_style.border_width_bottom = 1
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.52)
+		pressed_style.border_width_bottom = 1
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.78)
+		focus_style.border_width_bottom = 1
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.78)
+	else:
+		# Secondary actions are text-first rails, not stacked cards.
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.set_corner_radius_all(4)
+			style.content_margin_left = 10.0
+			style.content_margin_right = 42.0
+			style.border_width_bottom = 1
+		normal_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+		normal_style.border_color = Color(MinimalThemeScript.TEXT, 0.26)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.14)
+		hover_style.border_color = Color(accent, 0.64)
+		hover_style.border_width_bottom = 2
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.22)
+		pressed_style.border_color = Color(accent, 0.84)
+		pressed_style.border_width_bottom = 2
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.18)
+		focus_style.border_color = Color(accent, 0.84)
+		focus_style.border_width_bottom = 2
 
 	button.add_theme_stylebox_override("normal", normal_style)
 	button.add_theme_stylebox_override("hover", hover_style)
 	button.add_theme_stylebox_override("pressed", pressed_style)
 	button.add_theme_stylebox_override("focus", focus_style)
 
-	var base_color := Color(MinimalThemeScript.TEXT, 0.92)
-	if index >= 3 and index < menu_buttons.size() - 1:
-		base_color = Color(MinimalThemeScript.TEXT, 0.72)
-	if index == menu_buttons.size() - 1:
-		base_color = Color(MinimalThemeScript.DANGER, 0.96)
-	button.add_theme_color_override("font_color", base_color)
-	button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT if index != menu_buttons.size() - 1 else MinimalThemeScript.DANGER)
-	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
-	button.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT if index != menu_buttons.size() - 1 else MinimalThemeScript.DANGER)
-	button.add_theme_color_override("font_hover_pressed_color", MinimalThemeScript.TEXT)
+	var normal_color := Color(MinimalThemeScript.TEXT, 0.98 if is_primary else (0.78 if is_utility else 0.92))
+	if is_exit:
+		normal_color = Color(MinimalThemeScript.TEXT, 0.86)
+	button.add_theme_color_override("font_color", normal_color)
+	button.add_theme_color_override("font_hover_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_focus_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_hover_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+
+	_ensure_main_menu_action_decorations(button, is_primary, is_utility)
+
+func _ensure_main_menu_action_decorations(button: Button, is_primary: bool, is_utility: bool) -> void:
+	var glyph := button.get_node_or_null("ActionGlyph") as Label
+	var chevron := button.get_node_or_null("ActionChevron") as Label
+
+	if is_utility:
+		if glyph != null:
+			glyph.visible = false
+		if chevron != null:
+			chevron.visible = false
+		return
+
+	if chevron == null:
+		chevron = Label.new()
+		chevron.name = "ActionChevron"
+		chevron.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(chevron)
+	chevron.visible = true
+	chevron.text = "›"
+	chevron.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	chevron.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	chevron.anchor_left = 1.0
+	chevron.anchor_right = 1.0
+	chevron.anchor_top = 0.5
+	chevron.anchor_bottom = 0.5
+	chevron.offset_left = -34.0
+	chevron.offset_right = -12.0
+	chevron.offset_top = -14.0
+	chevron.offset_bottom = 14.0
+	chevron.add_theme_font_override("font", MinimalThemeScript.medium_font())
+	chevron.add_theme_font_size_override("font_size", 22 if is_primary else 18)
+	chevron.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.88 if is_primary else 0.70))
+
+	if is_primary:
+		if glyph == null:
+			glyph = Label.new()
+			glyph.name = "ActionGlyph"
+			glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			button.add_child(glyph)
+		glyph.visible = true
+		glyph.text = "◆"
+		glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		glyph.anchor_left = 0.0
+		glyph.anchor_right = 0.0
+		glyph.anchor_top = 0.5
+		glyph.anchor_bottom = 0.5
+		glyph.offset_left = 18.0
+		glyph.offset_right = 38.0
+		glyph.offset_top = -12.0
+		glyph.offset_bottom = 12.0
+		glyph.add_theme_font_override("font", MinimalThemeScript.medium_font())
+		glyph.add_theme_font_size_override("font_size", 13)
+		glyph.add_theme_color_override("font_color", Color(MinimalThemeScript.ACCENT_LIGHT, 0.98))
+	elif glyph != null:
+		glyph.visible = false
 
 func _setup_display_controls() -> void:
 	resolution_values.clear()

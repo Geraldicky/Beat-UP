@@ -204,6 +204,7 @@ stretch_mode = 6
 
 [node name="MenuDim" type="ColorRect" parent="MainMenu" unique_id=1772149060]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -386,35 +387,40 @@ layout_mode = 2
 text = "CHART STUDIO"
 alignment = 0
 
-[node name="HelpButton" type="Button" parent="MainMenu/MenuStack" unique_id=1139128327]
-unique_name_in_owner = true
-layout_mode = 2
-text = "HOW TO PLAY"
-alignment = 0
-
-[node name="QuickCalibrationButton" type="Button" parent="MainMenu/MenuStack" unique_id=1924520807]
-unique_name_in_owner = true
-layout_mode = 2
-text = "CALIBRATION"
-alignment = 0
-
 [node name="SettingsButton" type="Button" parent="MainMenu/MenuStack" unique_id=1378515214]
 unique_name_in_owner = true
 layout_mode = 2
 text = "SETTINGS"
 alignment = 0
 
-[node name="CreditsButton" type="Button" parent="MainMenu/MenuStack" unique_id=1782228845]
-unique_name_in_owner = true
-layout_mode = 2
-text = "CREDITS"
-alignment = 0
-
 [node name="ExitButton" type="Button" parent="MainMenu/MenuStack" unique_id=1444477805]
 unique_name_in_owner = true
 layout_mode = 2
-text = "EXIT"
+text = "QUIT"
 alignment = 0
+
+[node name="UtilityRow" type="HBoxContainer" parent="MainMenu" unique_id=1042798221]
+unique_name_in_owner = true
+layout_mode = 0
+theme_override_constants/separation = 6
+
+[node name="HelpButton" type="Button" parent="MainMenu/UtilityRow" unique_id=1139128327]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "HOW TO PLAY"
+
+[node name="QuickCalibrationButton" type="Button" parent="MainMenu/UtilityRow" unique_id=1924520807]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CALIBRATE"
+
+[node name="CreditsButton" type="Button" parent="MainMenu/UtilityRow" unique_id=1782228845]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CREDITS"
 
 [node name="SelectionDescription" type="Label" parent="MainMenu" unique_id=1752236422]
 unique_name_in_owner = true
