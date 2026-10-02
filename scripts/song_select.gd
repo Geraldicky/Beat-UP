@@ -1259,7 +1259,9 @@ func _apply_album_flow_song_library_theme() -> void:
 			MinimalThemeScript.apply_mono(section_label, 11, Color(MinimalThemeScript.TEXT, 0.72))
 
 	if album_flow_record_panel != null:
-		album_flow_record_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.34), 0, Color(MinimalThemeScript.BORDER, 0.22), 0, 0.0))
+		# Best Record should sit directly on the library composition. The previous
+		# semi-opaque panel read as a large black overlay beneath the artwork.
+		album_flow_record_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	if album_flow_best_card != null:
 		var best_style := MinimalThemeScript.panel_style(Color(MinimalThemeScript.SURFACE_RAISED, 0.60), 6, Color(LIBRARY_ACCENT, 0.38), 1, 0.0)
 		album_flow_best_card.add_theme_stylebox_override("panel", best_style)
