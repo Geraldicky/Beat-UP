@@ -8,6 +8,7 @@ const ROUTE_SONG_LIBRARY := "song_library"
 const ROUTE_GAMEPLAY := "gameplay"
 const ROUTE_CHART_STUDIO := "chart_studio"
 const CHART_STUDIO_SCENE_PATH := "res://scenes/chart_editor.tscn"
+const CHART_STUDIO_LOAD_TIMEOUT_SECONDS := 8.0
 
 @onready var startup_screen: Control = $ScreenHost/StartupScreen
 @onready var song_library_screen: Control = $ScreenHost/SongLibraryScreen
@@ -19,6 +20,10 @@ var switching: bool = false
 var chart_studio_instance: Control = null
 var chart_studio_loading: bool = false
 var chart_studio_load_failed: bool = false
+var chart_studio_load_timed_out: bool = false
+var chart_studio_load_generation: int = 0
+var chart_studio_last_load_error: String = ""
+var chart_studio_test_timeout_seconds: float = -1.0
 var chart_studio_music_paused_by_shell: bool = false
 var navigation_test_failures: Dictionary = {}
 var gameplay_activation_result: Dictionary = {}
@@ -137,13 +142,14 @@ func show_chart_studio(transaction_id: int = 0) -> Dictionary:
 	_pause_music_for_chart_studio()
 	var editor := await _ensure_chart_studio_loaded()
 	if editor == null:
+		var load_failure_reason := chart_studio_last_load_error if not chart_studio_last_load_error.is_empty() else "Chart Studio could not be loaded."
 		_restore_music_after_chart_studio()
 		_rollback_to_origin(outgoing, chart_studio_screen, previous_route, context)
 		_notify_screen(outgoing, "handle_navigation_failure", {
 			"route": ROUTE_CHART_STUDIO,
-			"error": "Chart Studio could not be loaded.",
+			"error": load_failure_reason,
 		})
-		return _navigation_result("failure", previous_route, previous_route, "Chart Studio could not be loaded.", transaction_id)
+		return _navigation_result("failure", previous_route, previous_route, load_failure_reason, transaction_id)
 
 	if previous_route == ROUTE_GAMEPLAY:
 		_prepare_gameplay_exit("chart_studio")
@@ -176,44 +182,68 @@ func _ensure_chart_studio_loaded() -> Control:
 	if is_instance_valid(chart_studio_instance):
 		return chart_studio_instance
 	if bool(navigation_test_failures.get(ROUTE_CHART_STUDIO, false)):
+		chart_studio_last_load_error = "Chart Studio could not be loaded."
 		_report_runtime("chart_studio", "Injected Chart Studio load failure")
 		return null
-	if chart_studio_load_failed:
+	if chart_studio_load_failed and not chart_studio_load_timed_out:
 		_update_chart_studio_loading_label("CHART STUDIO\nCOULD NOT LOAD")
 		return null
+	if chart_studio_load_timed_out:
+		# A timed-out ResourceLoader request may still finish in the background.
+		# A later transaction may adopt that resource, but the stale generation
+		# that timed out can never instantiate or commit it.
+		chart_studio_load_failed = false
+		chart_studio_load_timed_out = false
 	if chart_studio_loading:
-		while chart_studio_loading:
+		var observed_generation := chart_studio_load_generation
+		var wait_deadline := _chart_studio_load_deadline()
+		while chart_studio_loading and observed_generation == chart_studio_load_generation:
+			if _monotonic_seconds() >= wait_deadline:
+				_fail_chart_studio_load(observed_generation, "Chart Studio loading timed out.", true)
+				return null
 			await get_tree().process_frame
 		return chart_studio_instance
 
+	chart_studio_load_generation += 1
+	var load_generation := chart_studio_load_generation
 	chart_studio_loading = true
+	chart_studio_last_load_error = ""
 	_update_chart_studio_loading_label("CHART STUDIO")
-	var load_error: Error = ResourceLoader.load_threaded_request(CHART_STUDIO_SCENE_PATH, "PackedScene", false)
-	if load_error != OK:
-		chart_studio_loading = false
-		chart_studio_load_failed = true
-		_update_chart_studio_loading_label("CHART STUDIO\nCOULD NOT LOAD")
-		_report_runtime("chart_studio", "Threaded scene request failed", {"error": int(load_error)})
-		return null
+	var injected_stall := bool(navigation_test_failures.get("chart_studio_stall", false))
+	var initial_status: int = ResourceLoader.load_threaded_get_status(CHART_STUDIO_SCENE_PATH)
+	if not injected_stall and initial_status != ResourceLoader.THREAD_LOAD_IN_PROGRESS and initial_status != ResourceLoader.THREAD_LOAD_LOADED:
+		var load_error: Error = ResourceLoader.load_threaded_request(CHART_STUDIO_SCENE_PATH, "PackedScene", false)
+		if load_error != OK:
+			_fail_chart_studio_load(load_generation, "Chart Studio resource request failed.", false)
+			_report_runtime("chart_studio", "Threaded scene request failed", {"error": int(load_error)})
+			return null
 
+	var load_deadline := _chart_studio_load_deadline()
 	while true:
+		if load_generation != chart_studio_load_generation:
+			return null
+		if _monotonic_seconds() >= load_deadline:
+			_fail_chart_studio_load(load_generation, "Chart Studio loading timed out.", true)
+			_report_runtime("chart_studio", "Threaded scene load timed out", {"deadline_seconds": _chart_studio_load_timeout_seconds()})
+			return null
+		if injected_stall:
+			await get_tree().process_frame
+			continue
 		var load_status: int = ResourceLoader.load_threaded_get_status(CHART_STUDIO_SCENE_PATH)
 		if load_status == ResourceLoader.THREAD_LOAD_LOADED:
 			break
 		if load_status == ResourceLoader.THREAD_LOAD_FAILED or load_status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
-			chart_studio_loading = false
-			chart_studio_load_failed = true
-			_update_chart_studio_loading_label("CHART STUDIO\nCOULD NOT LOAD")
+			_fail_chart_studio_load(load_generation, "Chart Studio could not be loaded.", false)
 			_report_runtime("chart_studio", "Threaded scene load failed", {"status": load_status})
 			return null
 		await get_tree().process_frame
 
+	if load_generation != chart_studio_load_generation:
+		return null
 	var loaded_resource: Resource = ResourceLoader.load_threaded_get(CHART_STUDIO_SCENE_PATH)
 	var packed_scene: PackedScene = loaded_resource as PackedScene
 	if packed_scene == null:
-		chart_studio_loading = false
-		chart_studio_load_failed = true
-		_update_chart_studio_loading_label("CHART STUDIO\nCOULD NOT LOAD")
+		_fail_chart_studio_load(load_generation, "Chart Studio resource was invalid.", false)
 		_report_runtime("chart_studio", "Loaded resource was not a PackedScene")
 		return null
 
@@ -221,13 +251,13 @@ func _ensure_chart_studio_loaded() -> Control:
 	# dependencies are loaded and the route is already visible. Yield once before
 	# instantiation to protect the transition completion frame.
 	await get_tree().process_frame
+	if load_generation != chart_studio_load_generation:
+		return null
 	var instance_node: Node = packed_scene.instantiate()
 	if not (instance_node is Control):
 		if instance_node != null:
 			instance_node.queue_free()
-		chart_studio_loading = false
-		chart_studio_load_failed = true
-		_update_chart_studio_loading_label("CHART STUDIO\nCOULD NOT LOAD")
+		_fail_chart_studio_load(load_generation, "Chart Studio root was invalid.", false)
 		_report_runtime("chart_studio", "Chart Studio root is not a Control")
 		return null
 
@@ -240,7 +270,31 @@ func _ensure_chart_studio_loaded() -> Control:
 	if loading_label != null:
 		loading_label.visible = false
 	chart_studio_loading = false
+	chart_studio_load_failed = false
+	chart_studio_load_timed_out = false
+	chart_studio_last_load_error = ""
 	return chart_studio_instance
+
+func _fail_chart_studio_load(load_generation: int, reason: String, timed_out: bool) -> void:
+	if load_generation != chart_studio_load_generation:
+		return
+	# Invalidate every continuation belonging to this attempt before releasing
+	# its waiter. ResourceLoader itself may continue, but this generation cannot.
+	chart_studio_load_generation += 1
+	chart_studio_loading = false
+	chart_studio_load_failed = true
+	chart_studio_load_timed_out = timed_out
+	chart_studio_last_load_error = reason
+	_update_chart_studio_loading_label("CHART STUDIO\nCOULD NOT LOAD")
+
+func _chart_studio_load_timeout_seconds() -> float:
+	return chart_studio_test_timeout_seconds if chart_studio_test_timeout_seconds > 0.0 else CHART_STUDIO_LOAD_TIMEOUT_SECONDS
+
+func _chart_studio_load_deadline() -> float:
+	return _monotonic_seconds() + _chart_studio_load_timeout_seconds()
+
+func _monotonic_seconds() -> float:
+	return float(Time.get_ticks_usec()) / 1000000.0
 
 func _update_chart_studio_loading_label(value: String) -> void:
 	var loading_label: Label = chart_studio_screen.get_node_or_null("LoadingLabel") as Label
@@ -394,6 +448,9 @@ func set_navigation_test_failure(route: String, enabled: bool) -> void:
 		navigation_test_failures[route] = true
 	else:
 		navigation_test_failures.erase(route)
+
+func set_chart_studio_load_timeout_for_test(seconds: float) -> void:
+	chart_studio_test_timeout_seconds = seconds
 
 func _prepare_gameplay_exit(reason: String) -> void:
 	if gameplay_screen.has_method("prepare_for_shell_exit"):

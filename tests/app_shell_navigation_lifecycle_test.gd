@@ -39,19 +39,36 @@ func _run() -> void:
 	var song_select: Control = library.get("song_select") as Control
 	var play_connection_count := song_select.get_signal_connection_list("play_requested").size()
 
-	# Failure from Main Menu restores its local lock, controls, focus, and music.
+	# A stalled lazy load is bounded locally and restores every Main Menu owner.
 	_configure_music(false)
-	shell.call("set_navigation_test_failure", "chart_studio", true)
+	shell.call("set_chart_studio_load_timeout_for_test", 0.05)
+	shell.call("set_navigation_test_failure", "chart_studio_stall", true)
+	var states_before := navigation_states.size()
 	var route_count_before := route_changes.size()
+	var completions_before := completions.size()
 	startup.call("_on_chart_studio_pressed")
 	await _wait_for_navigation()
-	_check(str(shell.call("get_active_route")) == "main_menu", "Chart Studio load failure did not restore Main Menu.")
-	_check(not bool(startup.get("in_transition")), "Main Menu remained locally locked after Chart Studio failure.")
-	_check(_all_menu_buttons_enabled(startup), "Main Menu controls remained disabled after Chart Studio failure.")
-	_check(route_changes.size() == route_count_before, "Failed Chart Studio entry emitted a false route change.")
-	_check(not bool(root.get_node("MusicSession").call("is_paused")), "Shell did not restore music that it paused for failed Chart Studio entry.")
+	_check(str(shell.call("get_active_route")) == "main_menu", "Chart Studio timeout did not restore Main Menu.")
+	_check(startup.visible and startup.process_mode == Node.PROCESS_MODE_INHERIT, "Chart Studio timeout did not restore Main Menu visibility/process state.")
+	_check(not chart_host.visible and chart_host.process_mode == Node.PROCESS_MODE_DISABLED, "Chart Studio timeout left the attempted route active.")
+	_check(not bool(startup.get("in_transition")), "Main Menu remained locally locked after Chart Studio timeout.")
+	_check(_all_menu_buttons_enabled(startup), "Main Menu controls remained disabled after Chart Studio timeout.")
+	_check(navigation_states.slice(states_before) == [true, false], "Chart Studio timeout broke navigation-state signal pairing.")
+	_check(completions.size() == completions_before + 1, "Chart Studio timeout did not complete exactly once.")
+	var main_timeout_result: Dictionary = completions.back()
+	_check(str(main_timeout_result.get("outcome", "")) == "failure", "Chart Studio timeout did not report failure.")
+	_check(str(main_timeout_result.get("reason", "")).contains("timed out"), "Chart Studio timeout did not report its bounded-load reason.")
+	_check(route_changes.size() == route_count_before, "Timed-out Chart Studio entry emitted a false route change.")
+	_check(not bool(root.get_node("MusicSession").call("is_paused")), "Shell did not restore music that it paused for timed-out Chart Studio entry.")
+	_check(not bool(navigation.call("is_navigating")), "Chart Studio timeout left NavigationController locked.")
 	await process_frame
 	_check(_focus_is_within(startup), "Main Menu focus was not restored after Chart Studio failure.")
+	# Releasing the injected stall cannot let the expired generation commit later.
+	shell.call("set_navigation_test_failure", "chart_studio_stall", false)
+	for _frame in range(6):
+		await process_frame
+	_check(str(shell.call("get_active_route")) == "main_menu", "A stale Chart Studio completion committed after timeout.")
+	_check(route_changes.size() == route_count_before, "A stale Chart Studio completion emitted a route change.")
 
 	# Main Menu <-> Song Library is repeatable and each transaction completes once.
 	for _cycle in range(2):
@@ -59,19 +76,29 @@ func _run() -> void:
 		await _expect_success("request_main_menu", [0], "main_menu")
 
 	await _expect_success("request_song_library", [], "song_library")
-	# A user-paused MusicSession must remain paused after failed Chart Studio entry.
+	# A user-paused MusicSession must remain paused after a timed-out entry, and
+	# Song Library's caller-local action lock must be released.
 	_configure_music(true)
+	shell.call("set_navigation_test_failure", "chart_studio_stall", true)
+	states_before = navigation_states.size()
 	route_count_before = route_changes.size()
+	completions_before = completions.size()
 	library.call("_on_chart_editor_requested")
 	await _wait_for_navigation()
-	_check(str(shell.call("get_active_route")) == "song_library", "Chart Studio failure did not restore Song Library.")
-	_check(not bool(library.get("action_locked")), "Song Library action lock survived failed Chart Studio entry.")
-	_check(bool(root.get_node("MusicSession").call("is_paused")), "Chart Studio failure resumed music that was already user-paused.")
+	_check(str(shell.call("get_active_route")) == "song_library", "Chart Studio timeout did not restore Song Library.")
+	_check(library.visible and library.process_mode == Node.PROCESS_MODE_INHERIT, "Chart Studio timeout did not restore Song Library visibility/process state.")
+	_check(not bool(library.get("action_locked")), "Song Library action lock survived timed-out Chart Studio entry.")
+	_check(bool(root.get_node("MusicSession").call("is_paused")), "Chart Studio timeout resumed music that was already user-paused.")
 	_check(not bool(shell.get("chart_studio_music_paused_by_shell")), "Shell retained temporary Chart Studio music ownership after rollback.")
-	_check(route_changes.size() == route_count_before, "Failed Chart Studio entry committed a route.")
+	_check(navigation_states.slice(states_before) == [true, false], "Song Library Chart Studio timeout broke navigation-state signal pairing.")
+	_check(completions.size() == completions_before + 1, "Song Library Chart Studio timeout did not complete exactly once.")
+	var library_timeout_result: Dictionary = completions.back()
+	_check(str(library_timeout_result.get("outcome", "")) == "failure", "Song Library Chart Studio timeout did not report failure.")
+	_check(route_changes.size() == route_count_before, "Timed-out Chart Studio entry committed a route.")
 	await process_frame
 	_check(_focus_matches_route("song_library"), "Song Library focus policy was not restored after Chart Studio failure.")
-	shell.call("set_navigation_test_failure", "chart_studio", false)
+	shell.call("set_navigation_test_failure", "chart_studio_stall", false)
+	shell.call("set_chart_studio_load_timeout_for_test", -1.0)
 	root.get_node("MusicSession").call("set_paused", false)
 
 	# Song Library <-> lazily-instantiated Chart Studio is repeatable.
@@ -117,9 +144,9 @@ func _run() -> void:
 
 	# A concurrent request is cancelled explicitly and cannot duplicate a commit.
 	await _expect_success("request_main_menu", [0], "main_menu")
-	var states_before := navigation_states.size()
+	states_before = navigation_states.size()
 	var routes_before := route_changes.size()
-	var completions_before := completions.size()
+	completions_before = completions.size()
 	navigation.call("request_song_library")
 	var duplicate_value: Variant = await navigation.call("request_chart_studio")
 	var duplicate: Dictionary = duplicate_value as Dictionary if duplicate_value is Dictionary else {}
