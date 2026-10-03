@@ -72,7 +72,7 @@ func run() -> void:
 	check(selector.artist_filter.is_visible_in_tree() and selector.difficulty_filter.is_visible_in_tree(), "Primary Artist/Difficulty header filters are missing.")
 	var search_icon := selector.search_input.get_node_or_null("SearchIcon") as TextureRect
 	check(search_icon != null and search_icon.texture != null, "Canonical SVG search icon is missing from the search field.")
-	check(selector.album_flow_filter_button != null and not selector.album_flow_filter_button.visible, "Legacy overflow/ellipsis control leaked into the mockup-matched top bar.")
+	check(selector.find_child("LibraryFilterButton", true, false) == null, "Legacy overflow/ellipsis control leaked into the mockup-matched top bar.")
 	check(selector.album_flow_difficulty_row.is_visible_in_tree(), "Difficulty selector is not permanently visible.")
 	check(selector.album_flow_difficulty_row.get_child_count() == 3, "Normal, Hard, and Master selectors are not all represented.")
 	check(selector.play_button.is_visible_in_tree() and not selector.play_button.disabled, "Play is not visibly available for the selected chart.")
@@ -97,10 +97,10 @@ func run() -> void:
 	check(selector.album_flow_difficulty_row.get_parent() == selector.album_flow_sidebar, "Difficulty selector is not in the configuration column.")
 	check(selector.album_flow_mode_row.get_parent() == selector.album_flow_sidebar and selector.album_flow_modifier_row.get_parent() == selector.album_flow_sidebar, "Mode/mod controls are not in the configuration column.")
 	check(selector.play_button.get_parent() == selector.album_flow_sidebar and selector.play_button.size.y >= 70.0, "Play is not the dominant bottom-right call to action.")
-	check(selector.album_flow_bottom_panel != null and not selector.album_flow_bottom_panel.visible, "Legacy detached Difficulty/Play dock is still visible.")
+	check(selector.find_child("AlbumFlowBottomPanel", true, false) == null, "Legacy detached Difficulty/Play dock still exists.")
 	check(selector.album_flow_list_header != null and selector.album_flow_list_header.is_visible_in_tree(), "Dense song-list column header is missing.")
 	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a > 0.0 and selector.backdrop_visual.modulate.a <= 0.08, "Selected-song background atmosphere is missing or too strong.")
-	check(selector.album_flow_ambient != null and not selector.album_flow_ambient.visible, "Abstract ambient geometry should be suppressed in the mockup-matched composition.")
+	check(selector.find_child("SongLibraryAmbient", true, false) == null, "Dead abstract ambient geometry still exists in the release composition.")
 	check(selector.album_flow_meta_line != null and selector.album_flow_meta_line.text.contains("BPM"), "Inline song metadata is missing.")
 	check(selector.album_flow_prev_song_button != null and selector.album_flow_next_song_button != null, "Track previous/next controls are missing.")
 
@@ -206,10 +206,13 @@ func run() -> void:
 
 	var state_song_before_modes: String = selector.selected_song_id
 	var state_diff_before_modes: String = selector.selected_difficulty
+	var resident_row_before_modes: Button = selector.song_buttons[0] as Button
+	var resident_row_id_before_modes := resident_row_before_modes.get_instance_id()
 	selector._on_mode_4_selected()
 	await process_frame
 	check(UserSettings.get_input_style() == "4_arrow" and selector.notes_value.text == "4 KEY", "4K mode did not refresh metadata.")
 	check(selector.selected_song_id == state_song_before_modes and selector.selected_difficulty == state_diff_before_modes, "4K switch changed logical song/difficulty selection.")
+	check((selector.song_buttons[0] as Button).get_instance_id() == resident_row_id_before_modes, "4K switch rebuilt the entire resident song list unnecessarily.")
 	var chart_after_4k: Dictionary = selector._find_level(selector.selected_song_id, selector.selected_difficulty)
 	selector._on_mode_8_selected()
 	await process_frame
@@ -223,6 +226,7 @@ func run() -> void:
 	selector._on_random_mod_toggled(true)
 	await process_frame
 	check(selector.random_mode_enabled and selector.album_flow_random_button.button_pressed, "Random active state did not refresh.")
+	check((selector.song_buttons[0] as Button).get_instance_id() == resident_row_id_before_modes, "Random toggle rebuilt the entire resident song list unnecessarily.")
 	check(selector.selected_song_id == state_song_before_modes and selector.selected_difficulty == state_diff_before_modes, "Random toggle changed logical song/difficulty selection.")
 	check(selector.album_flow_random_button.find_child("StateLabel", true, false).text == "ON", "Random text does not reflect actual state.")
 	selector.album_flow_random_button.grab_focus()

@@ -1,98 +1,114 @@
-# Song Library fidelity pass
+# Song Library — locked fidelity and behavior contract
 
-Branch: `ui/song-library-redesign`. Baseline: `05f3980`.
+Branch: `ui/song-library-redesign`  
+Lock date: 2026-10-03  
 Application version remains `18.7.0.1`.
 
-## Presentation scope
+## Locked presentation
 
-- `scripts/song_select.gd`: existing dynamic three-column composition, toolbar,
-  local matte outline states, density, typography, record hierarchy and semantic
-  theme roles. No catalog, launch, scoring, timing or persistence changes.
-- `scripts/ui/song_banner_button.gd`: only the compact Song Library row variant
-  loses its layered bloom/heavy selection fill.
-- `scripts/ui/library_vector_icon.gd` (and Godot UID): static vector shuffle,
-  target, information, diamond, arrow and polygon rank rendering.
-- `tests/song_library_rhythm_redesign_test.gd`: updated visual contracts and
-  expanded behavioral/resolution checks.
+The player-facing Song Library uses a three-part Album Flow composition:
 
-At 1080p rows are 72 px with 58 px jackets; selection no longer changes row
-height. Difficulty/mode/mod/Play heights are 76/60/78/104 px. Toolbar radius is
-2 px, with explicit keyboard focus borders. The whole-screen artwork contribution
-is 7%, the detail wash 2%. Most glow is removed rather than replaced with another
-effect pipeline. Global theme tokens and other screens are unchanged.
+- left: dense song browser with official jacket thumbnails;
+- center: selected artwork and Best Record;
+- right: song identity, NORMAL/HARD/MASTER, 4K/8K, Random, Practice and Play.
 
-Selected title is semibold and displayed uppercase without rewriting song data.
-Very long titles use two lines with ellipsis and the existing full-title tooltip.
-Score/accuracy are 32–36 px at 1080p (smaller at the compact breakpoint). SS is
-scaled to fit the diamond. Stored `completed_at` is displayed only when present;
-legacy entries do not get invented dates. MAX COMBO remains visible below the
-judgements. PERFECT pink, GREAT green, GOOD cyan and MISS red retain Beat UP!'s
-existing semantic palette through generic theme reapplication.
+The top bar exposes Back, Song Library title, Search, Artist, Difficulty and only
+two sort modes: `BPM Asc` and `BPM Desc`. Historical release-facing Title,
+Star Rating, Best Rank and Unplayed First sort modes are intentionally removed.
 
-Practice still opens the section selector and reads SELECT, never a fictitious
-ON state. Artist filtering remains ALL ARTISTS; no genre data is fabricated.
+Static UI identity uses the canonical 12 SVG assets in `assets/ui/icons/`.
+Selection color is state-driven; dynamic song metadata, record values and rank
+letters remain data-driven text. Rank and Play use dedicated diamond frames.
 
-## QA
+Reusable release components live under:
 
-Godot 4.7.1; Python 3.14 for the focused release gate. All runtime launches use
-separate temporary APPDATA and XDG_DATA_HOME directories.
+```text
+scenes/ui/song_library/
+├── song_row.tscn
+├── difficulty_card.tscn
+├── mode_button.tscn
+├── mod_button.tscn
+├── record_panel.tscn
+└── play_button.tscn
+```
 
-- Song Library fidelity suite: PASS headless and rendered OpenGL compatibility.
-  Behavioral checks include search, artist/difficulty filters, both BPM sorts,
-  rapid selection/preview, previous/next, difficulty rebuild, 4K/8K, Random,
-  keyboard focus, Practice popup, records/date/empty state, missing audio and
-  recovery. Theme reapplication preserves semantic colors and vector markers.
-- Actual viewport layout assertions and screenshots: 1280×720, 1600×900,
-  1920×1080; nine-digit score, SS rank, selected-row visibility, toolbar ordering,
-  record/artwork separation and available primary actions.
-- Import/parser/warning validation: PASS, including the release gate's strict
-  import stage. No new parser/runtime errors in the fidelity suite.
-- Library layout foundation, Phase 4 UI foundation, gameplay binding snapshot,
-  AppShell navigation lifecycle and standalone menu fallback: PASS.
-- Authoritative launch-resolution assertions: PASS; existing shutdown scene
-  resource errors also reproduce on the untouched baseline.
-- Focused release gate: BLOCKED at `live_records_foundation_test.gd` with its
-  existing two assertions (visible PB and selected historical run metrics).
-  Both failures reproduced on the detached untouched baseline.
-- Older `song_library_redesign_test.gd`, `song_library_polish_test.gd` and
-  `song_library_compact_v1711_test.gd` remain incompatible with the pre-existing
-  Album Flow hierarchy (missing legacy options/nodes); they error and time out
-  on the baseline as well. They were not rewritten or weakened.
-- Existing TextServer/CanvasItem/ObjectDB teardown diagnostics reproduce on the
-  baseline fidelity test. They are not reported as a clean all-tests-green gate.
+`song_select.gd` owns orchestration/state binding rather than rebuilding those
+static hierarchies imperatively.
 
-The fidelity test refuses fixture setup without
-`BEAT_UP_QA_SONG_LIBRARY=isolated`. Use that marker **only together with fresh
-temporary APPDATA/XDG_DATA_HOME**; it is not an alternative to data isolation.
-Run `--script res://tests/song_library_rhythm_redesign_test.gd` headless for
-assertions, or without `--headless` and with `-- capture` for screenshots.
-Captures go to the isolated `user://`, not the repository.
+## Locked behavior
 
-## osu-reference research trace
+- Local browsing updates `selected_song_id` / `selected_difficulty`.
+- `SongSelectionState` receives committed visible metadata.
+- Play emits logical identity, not a trusted cached chart dictionary.
+- AppShell/gameplay force-resolves the authoritative chart through
+  `LevelCatalog.resolve_playable(..., true)` at the launch boundary.
+- Runtime gameplay deep-copies the resolved chart. 4K projection, Random state
+  and runtime caches do not mutate source chart data.
+- 4K/8K and Random update record/detail identity without rebuilding the resident
+  song-row tree unless an active progress filter actually depends on record state.
+- Preview switching remains debounced/preloaded through SongPreviewController
+  and MusicSession.
+- Missing/invalid audio disables Play/Practice and displays the unavailable state.
+- Practice remains an action (`SELECT`), not a fictitious ON/OFF modifier.
 
-Inspected reference at `ppy/osu@b267e64503973cf8c1183e72c9b870240bb57883`:
+## Motion contract
 
-- [BeatmapCarousel](https://github.com/ppy/osu/blob/b267e64503973cf8c1183e72c9b870240bb57883/osu.Game/Screens/Select/BeatmapCarousel.cs)
-- [TestSceneSongSelectCurrentSelectionInvalidated](https://github.com/ppy/osu/blob/b267e64503973cf8c1183e72c9b870240bb57883/osu.Game.Tests/Visual/SongSelect/TestSceneSongSelectCurrentSelectionInvalidated.cs)
+Micro-interactions use the global `MOTION_FAST/NORMAL/SLOW` tokens. Button
+hover/focus/press motion cancels the previous tween before starting another, so
+rapid pointer/keyboard changes converge rather than stack. Song-row navigation
+continues to use its existing spring-based margin motion; route-level transitions
+remain owned by AppShell/SceneTransition.
 
-Flow/ownership: the carousel requests selection; authoritative beatmap state is
-not owned by individual drawn panels. Filtering and model invalidation rebuild
-the visible representations. Lifecycle: panels are materialized/pooled, and
-selection must still correspond to the surviving model after filtering/deletion
-or ruleset changes. The tests assert both selected model and visible selection.
-This solves stale visual selection after a view rebuild.
+## Responsive contract
 
-Reusable principle: test state agreement after rebuilding/restyling, not only a
-static screenshot. Beat UP!'s equivalents are SongSelect's existing callbacks,
-LevelCatalog, SongSelectionState and resident AppShell/MusicSession. Those
-owners/lifecycles are unchanged; this pass scopes presentation roles and tests
-to their existing controls. Do NOT copy osu!'s Bindables, Realm, pooling graph,
-ScreenStack, rulesets or visual identity. No osu! code/assets were copied.
+The canonical runtime suite checks 1280×720, 1600×900, 1920×1080 and 2560×1440.
+The selected song must remain visible, header controls must not overlap, Best
+Record must not overlap artwork, and the center inspection column must not
+overlap the right configuration column.
 
-## Remaining visual limitations
+## osu-reference engineering contract
 
-The repository supplies mostly abstract background/thumbnail artwork, not the
-illustrated album covers in the mockup. No external or invented covers were
-added. Missing artwork uses the neutral surface rather than large procedural
-geometry. Final artistic approval should use the rendered game at 1080p with
-the user's own real song artwork and normal display scaling.
+Reference snapshot: `ppy/osu@b267e64503973cf8c1183e72c9b870240bb57883`.
+
+The copied principle is not osu!'s class graph or visual identity. Beat UP! keeps
+fast provisional selection and performs authoritative revalidation at the action
+boundary:
+
+```text
+SongSelect logical identity
+→ SongLibrary
+→ NavigationController
+→ AppShell
+→ Gameplay.prepare_launch_request(..., true)
+→ LevelCatalog.resolve_playable(..., true)
+→ validation + authoritative source
+→ deep runtime snapshot
+→ Gameplay
+```
+
+The regression suite explicitly covers rapid selection → immediate Play and stale
+resident Library metadata → edited chart on disk → Play resolving the new chart.
+Do not introduce osu! Realm/Bindable/ScreenStack/ruleset architecture merely to
+look more similar to osu!.
+
+## Release QA
+
+Authoritative Song Library tests:
+
+- `tests/song_library_release_static_test.py`
+- `tests/song_library_rhythm_redesign_test.gd`
+- `tests/song_library_osu_reference_contract_test.gd`
+- `tests/authoritative_launch_resolution_test.gd`
+
+These are included in `tests/release_gate.py`. The release gate also performs a
+strict Godot import/parser/warning pass.
+
+Run:
+
+```powershell
+python tests/release_gate.py --godot "C:\\path\\to\\Godot_v4.7-stable_win64.exe"
+```
+
+A full PASS is only claimable after that command is run against the canonical
+project including `music/imported`. This document records the locked code/test
+contract; it does not claim that this chat environment executed Godot itself.

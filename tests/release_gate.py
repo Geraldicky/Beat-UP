@@ -20,6 +20,7 @@ checks = [
     'library_async_pipeline_v17449_test.py',
     'music_session_variant_type_v174491_test.py',
     'typography_system_v17451_test.py',
+    'song_library_release_static_test.py',
 ]
 for name in checks:
     subprocess.run([sys.executable, str(root/'tests'/name)], check=True)
@@ -41,6 +42,8 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
         'library_layout_foundation_test.gd',
         'v1870_level_pack_test.gd',
         'authoritative_launch_resolution_test.gd',
+        'song_library_rhythm_redesign_test.gd',
+        'song_library_osu_reference_contract_test.gd',
     ]
     for name in runtime_tests:
         isolated = base/name
@@ -54,6 +57,8 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
             env['BEAT_UP_QA_STANDALONE_NAVIGATION'] = 'isolated'
         elif name == 'phase4_ui_foundation_test.gd':
             env['BEAT_UP_QA_PHASE4_UI'] = 'isolated'
+        elif name in {'song_library_rhythm_redesign_test.gd', 'song_library_osu_reference_contract_test.gd'}:
+            env['BEAT_UP_QA_SONG_LIBRARY'] = 'isolated'
         r = subprocess.run([a.godot, '--headless', '--path', str(root), '--script', 'res://tests/'+name], env=env, text=True, capture_output=True, timeout=120)
         print(r.stdout, r.stderr)
         # Existing scene teardown can emit a resource retention diagnostic.

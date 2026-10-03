@@ -9,7 +9,6 @@ const InteractionPolishScript = preload("res://scripts/ui/interaction_polish.gd"
 const UserSettingsScript = preload("res://scripts/user_settings.gd")
 const ProgressInsightsScript = preload("res://scripts/v18/progress_insights.gd")
 const ProgressGraphScript = preload("res://scripts/v18/progress_graph.gd")
-const SongLibraryAmbientScript = preload("res://scripts/ui/song_library_ambient.gd")
 const SongRowScene = preload("res://scenes/ui/song_library/song_row.tscn")
 const DifficultyCardScene = preload("res://scenes/ui/song_library/difficulty_card.tscn")
 const ModeButtonScene = preload("res://scenes/ui/song_library/mode_button.tscn")
@@ -210,11 +209,7 @@ var album_flow_artwork_slot: HBoxContainer
 var album_flow_artwork: TextureRect
 var album_flow_artwork_frame: Panel
 var album_flow_detail_backdrop: TextureRect
-var album_flow_detail_veil: ColorRect
-var album_flow_ambient: Control
 var album_flow_divider: ColorRect
-var album_flow_bottom_panel: PanelContainer
-var album_flow_play_row: HBoxContainer
 var album_flow_difficulty_row: HBoxContainer
 var album_flow_difficulty_caption: Label
 var album_flow_best_card: PanelContainer
@@ -234,7 +229,6 @@ var album_flow_detail_top_spacer: Control
 var album_flow_header_spacer: Control
 var album_flow_list_spacer: Control
 var album_flow_filter_tabs: HBoxContainer
-var album_flow_filter_button: Button
 var album_flow_bpm_button: Button
 var album_flow_record_panel: PanelContainer
 var album_flow_record_breakdown_row: HBoxContainer
@@ -300,7 +294,7 @@ func _ready() -> void:
 	_apply_layout_config()
 	_apply_theme_config()
 	composition.apply(self)
-	InteractionPolishScript.install_buttons([back_button, mods_button, practice_button, replay_button, play_button, details_tab_button, ranking_tab_button, import_button, refresh_button, editor_button, pack_export_button])
+	InteractionPolishScript.install_buttons([back_button, practice_button, play_button, album_flow_mode_4_button, album_flow_mode_8_button, album_flow_random_button, details_tab_button, ranking_tab_button, import_button, refresh_button, editor_button, pack_export_button])
 	_set_info_tab(selected_info_tab, false)
 	_sync_mods_panel(false)
 	_rebuild_filters()
@@ -615,26 +609,6 @@ func _install_album_flow_song_library_layout() -> void:
 	info_panel.add_child(album_flow_detail_backdrop)
 	info_panel.move_child(album_flow_detail_backdrop, 0)
 
-	album_flow_detail_veil = ColorRect.new()
-	album_flow_detail_veil.name = "SelectedSongBackdropVeil"
-	album_flow_detail_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	album_flow_detail_veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	# Keep the compatibility node but remove the rectangular dark veil entirely.
-	# The full-screen selected-song atmosphere already provides sufficient contrast.
-	album_flow_detail_veil.color = Color(0.0, 0.0, 0.0, 0.0)
-	album_flow_detail_veil.visible = false
-	info_panel.add_child(album_flow_detail_veil)
-	info_panel.move_child(album_flow_detail_veil, 1)
-
-	album_flow_ambient = SongLibraryAmbientScript.new()
-	album_flow_ambient.name = "SongLibraryAmbient"
-	album_flow_ambient.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	album_flow_ambient.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	album_flow_ambient.visible = false
-	info_panel.add_child(album_flow_ambient)
-	info_panel.move_child(album_flow_ambient, 2)
-	info_panel.move_child(info_vbox, 3)
-
 	album_flow_detail_top_spacer = Control.new()
 	album_flow_detail_top_spacer.name = "DetailTopSpacer"
 	info_vbox.add_child(album_flow_detail_top_spacer)
@@ -876,16 +850,6 @@ void fragment() {
 	if legacy_play_button != null:
 		legacy_play_button.queue_free()
 
-	# Compatibility shell retained but hidden: the release composition no longer
-	# uses a detached bottom difficulty/action dock.
-	album_flow_bottom_panel = PanelContainer.new()
-	album_flow_bottom_panel.name = "AlbumFlowBottomPanel"
-	album_flow_bottom_panel.visible = false
-	info_vbox.add_child(album_flow_bottom_panel)
-	album_flow_play_row = HBoxContainer.new()
-	album_flow_play_row.name = "AlbumFlowBottomActionBar"
-	album_flow_bottom_panel.add_child(album_flow_play_row)
-
 	_install_album_flow_filter_tabs()
 	_refresh_album_flow_difficulty_row()
 	_update_album_flow_modifier_state()
@@ -941,19 +905,6 @@ func _install_album_flow_filter_tabs() -> void:
 	album_flow_filter_tabs.add_theme_constant_override("separation", 10)
 	toolbar.add_child(album_flow_filter_tabs)
 
-	# Keep the old aggregate filter object alive for compatibility, but the
-	# primary header now exposes the two filters shown in the approved mockup.
-	album_flow_filter_button = _album_flow_filter_button("⋯")
-	album_flow_filter_button.name = "LibraryFilterButton"
-	# The approved mockup has no overflow/ellipsis control in the primary bar.
-	# Keep the compatibility button alive but out of the release-facing header.
-	album_flow_filter_button.visible = false
-	album_flow_filter_button.tooltip_text = "More filters"
-	album_flow_filter_button.custom_minimum_size = Vector2(40, 40)
-	album_flow_filter_button.set_meta("filter_kind", "filters")
-	album_flow_filter_button.pressed.connect(_album_flow_toggle_filters)
-	album_flow_filter_tabs.add_child(album_flow_filter_button)
-
 	artist_filter.reparent(album_flow_filter_tabs)
 	artist_filter.custom_minimum_size = Vector2(150, 40)
 	difficulty_filter.reparent(album_flow_filter_tabs)
@@ -981,47 +932,11 @@ func _install_album_flow_filter_tabs() -> void:
 	library_box.add_child(album_flow_list_spacer)
 	library_box.move_child(album_flow_list_spacer, song_scroll.get_index())
 
-func _album_flow_filter_button(label_text: String) -> Button:
-	var button := Button.new()
-	button.text = label_text
-	button.focus_mode = Control.FOCUS_ALL
-	button.flat = true
-	button.custom_minimum_size = Vector2(0, 28)
-	button.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	button.add_theme_font_size_override("font_size", 11)
-	return button
 
-func _album_flow_reset_filters() -> void:
-	selected_search_query = ""
-	search_input.text = ""
-	selected_artist_filter = "All Artists"
-	selected_difficulty_filter = "All Difficulties"
-	selected_progress_filter = "All Progress"
-	artist_filter.select(0)
-	difficulty_filter.select(0)
-	progress_filter.select(0)
-	if composition.filter_row != null:
-		composition.filter_row.visible = false
-	_apply_filters()
 
-func _album_flow_show_filter(kind: String) -> void:
-	if composition.filter_row == null:
-		return
-	composition.filter_row.visible = true
-	artist_filter.visible = kind == "artist"
-	difficulty_filter.visible = kind == "difficulty"
-	progress_filter.visible = kind == "progress"
 
-func _album_flow_toggle_filters() -> void:
-	if composition.filter_row == null:
-		return
-	composition.filter_row.visible = not composition.filter_row.visible
-	# Artist and difficulty live permanently in the top bar. Keep only the
-	# secondary progress filter in this compact overflow row.
-	artist_filter.visible = true
-	difficulty_filter.visible = true
-	progress_filter.visible = composition.filter_row.visible
-	_apply_album_flow_filter_tab_style()
+
+
 
 
 
@@ -1363,8 +1278,8 @@ func _refresh_album_flow_difficulty_row() -> void:
 			chip.scale = Vector2(0.96, 0.96)
 			chip.pivot_offset = chip.custom_minimum_size * 0.5
 			var select_tween := chip.create_tween().set_parallel(true)
-			select_tween.tween_property(chip, "modulate:a", 1.0, 0.16).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-			select_tween.tween_property(chip, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			select_tween.tween_property(chip, "modulate:a", 1.0, MinimalThemeScript.MOTION_NORMAL).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+			select_tween.tween_property(chip, "scale", Vector2.ONE, MinimalThemeScript.MOTION_NORMAL).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _refresh_album_flow_best_card(chart: Dictionary) -> void:
 	if album_flow_best_card == null:
@@ -1955,13 +1870,7 @@ func _sync_album_flow_selection_marker(button: Button, active: bool, accent: Col
 	marker.visible = active and not button.disabled
 
 
-func _install_album_flow_mod_button_content(button: Button, icon_text: String, title_text: String, state_text: String, accent: Color, active: bool) -> void:
-	# Compatibility entry point for older callers. New Album Flow buttons are
-	# instantiated from mod_button.tscn and already own this hierarchy.
-	if button == null:
-		return
-	if button.has_method("configure"):
-		button.call("configure", icon_text, title_text, state_text, accent, active, size.x < 1550.0)
+
 
 func _set_album_flow_mod_button_state(button: Button, state_text: String, accent: Color, active: bool) -> void:
 	if button == null:
@@ -1981,9 +1890,7 @@ func _set_album_flow_mod_button_state(button: Button, state_text: String, accent
 		state_label.text = state_text
 		MinimalThemeScript.apply_mono(state_label, 10, accent if active else Color(MinimalThemeScript.TEXT, 0.55))
 
-func _install_album_flow_play_button_content() -> void:
-	# PlayButtonScene owns its icon/title/divider hierarchy.
-	return
+
 
 func _library_outline_button(button: Button, active: bool, accent: Color) -> void:
 	# One Song Library-only state vocabulary. Focus stays visible without bloom.
@@ -2189,8 +2096,15 @@ func _sync_mods_panel(refresh_detail: bool = true) -> void:
 	mods_summary_label.text = "%s  ·  RANDOM %s" % [mode_short, "ON" if random_mode_enabled else "OFF"]
 	mods_summary_label.visible = true
 	_update_album_flow_modifier_state()
-	if refresh_detail:
-		_apply_filters()
+	if not refresh_detail:
+		return
+	if selected_progress_filter != "All Progress":
+		_apply_filters(false)
+	else:
+		# Mode and Random do not change the catalog structure. Keep resident row
+		# components alive and only refresh record/detail bindings.
+		_refresh_song_rows(false)
+		_update_detail(false)
 
 func set_random_mode(enabled: bool) -> void:
 	random_mode_enabled = enabled
@@ -2698,15 +2612,15 @@ func _refresh_song_rows(animated: bool) -> void:
 				difficulty_margin_velocity["%d_%d" % [i, difficulty_index]] = 0.0
 			if animated:
 				var delay := 0.055 + float(difficulty_index) * 0.045 if is_selected else 0.0
-				selection_tween.tween_property(diff_button, "modulate:a", 1.0 if is_selected else 0.0, 0.18).set_delay(delay).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+				selection_tween.tween_property(diff_button, "modulate:a", 1.0 if is_selected else 0.0, MinimalThemeScript.MOTION_NORMAL).set_delay(delay).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 			else:
 				diff_wrapper.call("set_margin_immediate", diff_margin)
 				diff_button.modulate.a = 1.0 if is_selected else 0.0
 
 		if animated:
-			selection_tween.tween_property(button, "custom_minimum_size", Vector2(0.0, target_height), 0.24).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-			selection_tween.tween_property(difficulty_clip, "custom_minimum_size:y", 0.0, 0.18).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-			selection_tween.tween_property(difficulty_box, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			selection_tween.tween_property(button, "custom_minimum_size", Vector2(0.0, target_height), MinimalThemeScript.MOTION_SLOW).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+			selection_tween.tween_property(difficulty_clip, "custom_minimum_size:y", 0.0, MinimalThemeScript.MOTION_NORMAL).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+			selection_tween.tween_property(difficulty_box, "modulate:a", 0.0, MinimalThemeScript.MOTION_FAST).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		else:
 			button.custom_minimum_size = Vector2(0.0, target_height)
 			button.modulate.a = 1.0
