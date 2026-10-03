@@ -12,6 +12,6 @@ assert "section_start - phrase_length" in preview
 assert "pending_preview" in preview
 assert "play_generation" in session
 thumbs = list((ROOT / "assets/song_thumbnails").glob("*.png"))
-backgrounds = list((ROOT / "assets/song_backgrounds").glob("*.png"))
+backgrounds = list((ROOT / "assets/backgrounds").glob("background_*.png"))
 assert len(thumbs) == len(backgrounds) == 39, (len(thumbs), len(backgrounds))
 print("v17.4.47 static QA passed: 39 thumbnails, deferred preview, role-aware musical start, stale-crossfade guard")

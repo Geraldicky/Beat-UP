@@ -22,6 +22,6 @@ assert 'main_footer.visible = false' in startup
 assert '[node name="FooterHint" type="Label"' in result_scene and 'visible = false' in result_scene[result_scene.index('[node name="FooterHint"'):result_scene.index('[node name="BackButton"', result_scene.index('[node name="FooterHint"'))]
 assert len(list((ROOT/'charts').rglob('*.json'))) == 117
 assert len(list((ROOT/'music/imported').glob('*.ogg'))) == 39
-assert len(list((ROOT/'assets/song_backgrounds').glob('*.png'))) == 39
+assert len(list((ROOT/'assets/backgrounds').glob('background_*.png'))) == 39
 assert not list(ROOT.rglob('*manifest*.json'))
 print('v18.0.0.1 UI simplification static QA: PASS')

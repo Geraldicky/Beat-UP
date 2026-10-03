@@ -37,6 +37,6 @@ for p in ROOT.rglob('*.json'):
 
 # Full library still exists.
 assert len(list((ROOT / 'charts').glob('*/*.json'))) == 117
-assert len(list((ROOT / 'assets/song_backgrounds').glob('*.png'))) == 39
+assert len(list((ROOT / 'assets/backgrounds').glob('background_*.png'))) == 39
 
 print('v17.4.52 song details/ranking static QA: PASS')

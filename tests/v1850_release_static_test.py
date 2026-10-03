@@ -75,7 +75,9 @@ assert 'visible = false' in details_node
 assert 'name="DetailsPanel"' in select_scene  # hidden, retained rather than deleted
 
 assert len(list(ROOT.glob("charts/*/*.json"))) == 117
-assert len([p for p in (ROOT / "assets/song_backgrounds").iterdir() if p.is_file() and p.suffix != ".import"]) == 39
+# Generic fullscreen ambience is independent of song jackets/thumbnails.
+expected_backgrounds = {"background_{:02d}.png".format(index) for index in range(1, 40)}
+assert {p.name for p in (ROOT / "assets/backgrounds").glob("*.png")} == expected_backgrounds
 assert not list(ROOT.rglob("*manifest*.json"))
 
 print("Beat UP! v18.5.0 static release checks: PASS")
