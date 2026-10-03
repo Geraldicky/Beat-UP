@@ -1100,6 +1100,8 @@ func _launch_logo_stage() -> void:
 	logo_tween.tween_property(splash_logo_frame, "scale", Vector2.ONE, 0.42).set_delay(0.06).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 
 func _begin_main_menu_under_splash() -> void:
+	if splash_finished:
+		return
 	# Reveal the destination behind the launch logo so there is no black cut.
 	settings_menu.visible = false
 	calibration_screen.visible = false
@@ -1171,7 +1173,9 @@ func _animate_main_menu_background_visit() -> void:
 	if main_menu_background_controller != null:
 		main_menu_background_controller.call("animate_visit")
 
-func _show_main_menu_immediate() -> void:
+func _show_main_menu_immediate(preserve_music_state: bool = false) -> void:
+	if not is_visible_in_tree():
+		return
 	splash.visible = false
 	settings_menu.visible = false
 	calibration_screen.visible = false
@@ -1179,7 +1183,8 @@ func _show_main_menu_immediate() -> void:
 	credits_screen.visible = false
 	exit_dialog.visible = false
 	main_menu.visible = true
-	_ensure_main_menu_music_ready(0.18)
+	if not preserve_music_state:
+		_ensure_main_menu_music_ready(0.18)
 	_update_now_playing_card()
 	_refresh_pivots()
 	var restored_button: Button = _main_menu_button_for_index(_get_main_menu_focus_index())
@@ -1261,6 +1266,8 @@ func _show_main_menu() -> void:
 	active_tween.chain().tween_callback(Callable(self, "_after_main_menu_reveal"))
 
 func _after_main_menu_reveal() -> void:
+	if not is_visible_in_tree() or in_transition:
+		return
 	if first_run_tutorial_pending:
 		first_run_tutorial_pending = false
 		_open_tutorial(true)
@@ -1896,13 +1903,15 @@ func _release_navigation_lock_after_result(result: Variant) -> void:
 		button.disabled = false
 	call_deferred("_focus_default_menu_button")
 
-func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}) -> void:
+func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}, preserve_music_state: bool = false) -> void:
+	_cancel_pending_main_menu_reveal()
 	_set_main_menu_focus_index(clampi(focus_index, 0, maxi(0, menu_buttons.size() - 1)))
-	var resumed_library_audio: bool = _sync_main_menu_from_music_session()
-	if not resumed_library_audio:
-		resumed_library_audio = _apply_library_audio_handoff(audio_handoff)
-	if not resumed_library_audio:
-		_randomize_main_menu_background(false)
+	if not preserve_music_state:
+		var resumed_library_audio: bool = _sync_main_menu_from_music_session()
+		if not resumed_library_audio:
+			resumed_library_audio = _apply_library_audio_handoff(audio_handoff)
+		if not resumed_library_audio:
+			_randomize_main_menu_background(false)
 	if get_tree().has_meta(RETURN_TO_MENU_META):
 		get_tree().remove_meta(RETURN_TO_MENU_META)
 	if get_tree().has_meta(RETURN_TO_MENU_FOCUS_META):
@@ -1910,19 +1919,33 @@ func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}) -
 	in_transition = false
 	for button in menu_buttons:
 		button.disabled = false
-	_show_main_menu_immediate()
+	_show_main_menu_immediate(preserve_music_state)
+
+func _cancel_pending_main_menu_reveal() -> void:
+	# Boot/reveal tweens process even while the resident screen is suspended.
+	# Retire their callbacks before they can resume music or steal route focus.
+	if active_tween != null:
+		active_tween.kill()
+		active_tween = null
+	if launch_menu_tween != null:
+		launch_menu_tween.kill()
+		launch_menu_tween = null
+	splash_finished = true
+	_mark_launch_splash_seen()
+	splash.visible = false
 
 
 # AppShell lifecycle hooks. Main Menu activation remains centralized here, while
 # the shell owns route transitions and input locking.
 func shell_will_resume(context: Dictionary) -> void:
 	var focus_index: int = int(context.get("focus_index", _get_main_menu_focus_index()))
-	activate_from_shell(focus_index)
+	activate_from_shell(focus_index, {}, bool(context.get("preserve_music_state", false)))
 
 func shell_did_resume(_context: Dictionary) -> void:
 	call_deferred("_focus_default_menu_button")
 
 func shell_will_suspend(_context: Dictionary) -> void:
+	_cancel_pending_main_menu_reveal()
 	in_transition = true
 
 func shell_did_suspend(_context: Dictionary) -> void:

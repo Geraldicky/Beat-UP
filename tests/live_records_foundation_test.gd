@@ -21,6 +21,7 @@ func control_tree_contains_text(root_control: Node, needle: String) -> bool:
 func _initialize() -> void:
 	call_deferred("run")
 func run() -> void:
+	var baseline_orphans: Array[int] = Node.get_orphan_node_ids()
 	Settings.set_input_style("8_direction")
 	root.get_node("AppSessionState").mark_splash_seen()
 	var shell: Control = load("res://scenes/app_shell.tscn").instantiate()
@@ -106,7 +107,11 @@ func run() -> void:
 	check(selection._progress_entry("big_daddy", "hard").is_empty(), "4K remains separate")
 	selection._on_mode_8_selected()
 	check(selection._progress_entry("big_daddy", "hard").get("score", 0) == 123456, "8K record survives mode switch")
-	print("LIVE_LIBRARY_RECORDS: ", "PASS" if failures == 0 else "FAIL", " (", failures, " failures)")
 	shell.queue_free()
 	await create_timer(0.3).timeout
+	for instance_id: int in Node.get_orphan_node_ids():
+		if instance_id not in baseline_orphans:
+			var orphan := instance_from_id(instance_id) as Node
+			check(false, "Resident records lifecycle leaked node: %s" % orphan.name)
+	print("LIVE_LIBRARY_RECORDS: ", "PASS" if failures == 0 else "FAIL", " (", failures, " failures)")
 	quit(1 if failures else 0)

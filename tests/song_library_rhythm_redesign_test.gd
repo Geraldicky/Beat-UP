@@ -30,6 +30,23 @@ func run() -> void:
 	await process_frame
 	await create_timer(0.35).timeout
 	var selector := library.song_select as Control
+	# First interaction has no prior tween; successive input must retire the
+	# previous animation, not print a missing-metadata error or stack tweens.
+	var motion_probe := Button.new()
+	library.add_child(motion_probe)
+	var polish := preload("res://scripts/ui/interaction_polish.gd")
+	polish.install_buttons([motion_probe])
+	check(not motion_probe.has_meta(polish.TWEEN_META), "Motion probe unexpectedly has a prior tween.")
+	motion_probe.focus_entered.emit()
+	var first_motion := motion_probe.get_meta(polish.TWEEN_META) as Tween
+	check(first_motion != null and first_motion.is_valid(), "First focus did not create a micro-tween.")
+	motion_probe.button_down.emit()
+	var pressed_motion := motion_probe.get_meta(polish.TWEEN_META) as Tween
+	check(not first_motion.is_valid() and pressed_motion != first_motion and pressed_motion.is_valid(), "Press did not supersede the prior focus tween.")
+	motion_probe.button_up.emit()
+	check(not pressed_motion.is_valid(), "Release did not supersede the press tween.")
+	motion_probe.queue_free()
+	await process_frame
 
 	var list_rect: Rect2 = selector.wheel_column.get_global_rect()
 	var detail_rect: Rect2 = selector.info_panel.get_global_rect()
@@ -111,7 +128,7 @@ func run() -> void:
 	check(selector.detail_title.text == str(initial_rep.get("title", "SONG")), "Selected title is not bound to catalog metadata.")
 	check(selector.detail_meta.text == selector._display_artist(initial_rep), "Selected artist is not bound to catalog metadata.")
 	var expected_bpm := int(round(float(initial_rep.get("bpm", 0.0))))
-	var expected_duration := selector._format_duration(float(initial_chart.get("duration", initial_rep.get("duration", 0.0))))
+	var expected_duration: String = selector._format_duration(float(initial_chart.get("duration", initial_rep.get("duration", 0.0))))
 	check(selector.album_flow_meta_line.text.contains("%d BPM" % expected_bpm), "Selected BPM is not bound to catalog metadata.")
 	check(selector.album_flow_meta_line.text.contains(expected_duration), "Selected duration is not bound to chart metadata.")
 	var global_state: Dictionary = root.get_node("SongSelectionState").get_state()

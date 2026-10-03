@@ -40,7 +40,7 @@ static func _animate(button: Button, target: float) -> void:
 		return
 	if button.disabled:
 		target = 1.0
-	var previous: Variant = button.get_meta(TWEEN_META, null)
+	var previous: Variant = button.get_meta(TWEEN_META) if button.has_meta(TWEEN_META) else null
 	if previous is Tween:
 		var previous_tween := previous as Tween
 		if previous_tween.is_valid():

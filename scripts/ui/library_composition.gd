@@ -64,6 +64,9 @@ func install(s) -> void:
 	library_box.add_child(chips)
 	filter_button = Button.new()
 	filter_button.visible = false
+	# Retained legacy presentation still needs the screen's lifetime owner.
+	# Otherwise each resident/standalone library leaves an orphan Button behind.
+	library_box.add_child(filter_button)
 	installed = true
 	# Single structural entry point: the controller supplies the live nodes and
 	# state callbacks, while this composition layer owns installation order.
