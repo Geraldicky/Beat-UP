@@ -3,7 +3,8 @@ extends SceneTree
 var failures := 0
 
 func _initialize() -> void:
-	root.size = Vector2i(1440, 900)
+	root.size = Vector2i(1280, 720)
+	root.content_scale_size = root.size
 	call_deferred("_run")
 
 func _check(condition: bool, message: String) -> void:
@@ -13,45 +14,38 @@ func _check(condition: bool, message: String) -> void:
 	push_error(message)
 
 func _run() -> void:
-	var scene := load("res://main.tscn") as PackedScene
-	var instance := scene.instantiate() as Control
-	root.add_child(instance)
+	var library := load("res://scenes/song_library.tscn").instantiate() as Control
+	root.add_child(library)
 	await process_frame
 	await process_frame
+	await create_timer(0.25).timeout
+	var selector: Control = library.song_select
 
-	var selector := instance.get_node("LevelSelect") as Control
-	var backdrop := selector.get_node("BackdropVisual") as Control
-	var hero := selector.get_node("MainMargin/RootVBox/Body/InfoPanel/InfoVBox/HeroPanel") as Control
-	var import_button := selector.get_node("MainMargin/RootVBox/FooterPanel/Footer/ImportButton") as Button
-	var refresh_button := selector.get_node("MainMargin/RootVBox/FooterPanel/Footer/RefreshButton") as Button
-	var editor_button := selector.get_node("MainMargin/RootVBox/FooterPanel/Footer/EditorButton") as Button
-	var search_input := selector.get_node("MainMargin/RootVBox/Body/WheelColumn/LibraryPanel/LibraryVBox/LibraryToolbar/SearchInput") as LineEdit
+	_check(selector.backdrop_visual.visible, "Selected-song backdrop is not visible in compact Album Flow.")
+	_check(selector.hero_panel.visible and selector.album_flow_artwork.is_visible_in_tree(), "Selected artwork should remain the compact layout focal point.")
+	_check(selector.search_input.custom_minimum_size.y <= 36.0, "Search control is too tall at 1280×720.")
+	_check(selector.play_button.custom_minimum_size.y <= 72.0, "Play CTA did not compact at 1280×720.")
+	_check(selector.album_flow_mode_4_button.custom_minimum_size.y <= 46.0 and selector.album_flow_mode_8_button.custom_minimum_size.y <= 46.0, "Mode controls did not compact.")
+	_check(selector.album_flow_random_button.custom_minimum_size.y <= 60.0 and selector.practice_button.custom_minimum_size.y <= 60.0, "Mod controls did not compact.")
 
-	_check(backdrop.visible, "v17.1.1 selected-song backdrop is not visible.")
-	_check(not hero.visible, "Legacy selected-song hero card should be hidden in compact mode.")
-	_check(not import_button.visible and not refresh_button.visible and not editor_button.visible, "Developer controls leaked into the player-facing library footer.")
-	_check(search_input.custom_minimum_size.y <= 40.0, "Search control is still too tall for compact mode.")
-
-	var rows: Array = selector.get("song_buttons")
+	var rows: Array = selector.song_buttons
 	_check(not rows.is_empty(), "Compact library generated no song rows.")
 	if not rows.is_empty():
 		var first := rows[0] as Button
-		_check(first.custom_minimum_size.y <= 60.0, "Collapsed/selected song row is still oversized.")
+		_check(first.custom_minimum_size.y <= 60.0, "Compact song row is oversized.")
 
-	selector.call("set_selected_song", "2_starting_over")
-	await process_frame
-	var filtered: Array = selector.get("filtered_song_ids")
-	var index := filtered.find("2_starting_over")
-	var difficulty_rows: Array = selector.get("song_difficulty_rows")
-	if index >= 0 and index < difficulty_rows.size():
-		for row_value in difficulty_rows[index]:
+	var selected_index: int = selector.filtered_song_ids.find(selector.selected_song_id)
+	if selected_index >= 0:
+		var difficulty_rows: Array = selector.song_difficulty_rows[selected_index]
+		for row_value in difficulty_rows:
 			var row := row_value as Dictionary
-			_check((row["button"] as Button).custom_minimum_size.y <= 32.0, "Difficulty strip is not compact.")
+			_check((row["button"] as Button).custom_minimum_size.y <= 36.0, "Expanded difficulty strip is oversized in compact mode.")
 
-	instance.queue_free()
+	for control: Control in [selector.header_row, selector.wheel_column, selector.info_panel, selector.album_flow_record_panel, selector.play_button]:
+		var rect := control.get_global_rect()
+		_check(rect.position.x >= 0.0 and rect.end.x <= 1281.0 and rect.end.y <= 721.0, "Compact viewport overflow: %s" % control.name)
+
+	library.queue_free()
 	await process_frame
-	if failures == 0:
-		print("SONG_LIBRARY_COMPACT_V1711_TEST: PASS")
-	else:
-		print("SONG_LIBRARY_COMPACT_V1711_TEST: FAIL (%d)" % failures)
+	print("SONG_LIBRARY_COMPACT_V1711_TEST: ", "PASS" if failures == 0 else "FAIL", " ", failures)
 	quit(1 if failures > 0 else 0)

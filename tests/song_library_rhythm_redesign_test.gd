@@ -68,7 +68,10 @@ func run() -> void:
 	check(is_equal_approx(filter_text_alpha, 0.84) or filter_text_alpha > 0.84, "Filter text is too transparent against the artwork.")
 	check(selector.back_button.get_theme_color("font_color").a >= 0.85, "Back text is too transparent against the artwork.")
 	check(selector.sort_filter.is_visible_in_tree() and selector.sort_filter.text == "BPM ASC", "Custom sort control or default BPM ascending mode is missing.")
+	check(selector.sort_filter.get_item_count() == 2 and selector.sort_filter.get_item_text(0) == "BPM Asc" and selector.sort_filter.get_item_text(1) == "BPM Desc", "Release-facing sort options drifted beyond BPM ascending/descending.")
 	check(selector.artist_filter.is_visible_in_tree() and selector.difficulty_filter.is_visible_in_tree(), "Primary Artist/Difficulty header filters are missing.")
+	var search_icon := selector.search_input.get_node_or_null("SearchIcon") as TextureRect
+	check(search_icon != null and search_icon.texture != null, "Canonical SVG search icon is missing from the search field.")
 	check(selector.album_flow_filter_button != null and not selector.album_flow_filter_button.visible, "Legacy overflow/ellipsis control leaked into the mockup-matched top bar.")
 	check(selector.album_flow_difficulty_row.is_visible_in_tree(), "Difficulty selector is not permanently visible.")
 	check(selector.album_flow_difficulty_row.get_child_count() == 3, "Normal, Hard, and Master selectors are not all represented.")
@@ -101,6 +104,19 @@ func run() -> void:
 	check(selector.album_flow_meta_line != null and selector.album_flow_meta_line.text.contains("BPM"), "Inline song metadata is missing.")
 	check(selector.album_flow_prev_song_button != null and selector.album_flow_next_song_button != null, "Track previous/next controls are missing.")
 
+	# #19 data-binding contract: release-facing metadata must come from the selected catalog entry,
+	# never from the design mockup or song-specific hardcoded presentation data.
+	var initial_rep: Dictionary = selector._representative(selector.selected_song_id)
+	var initial_chart: Dictionary = selector._find_level(selector.selected_song_id, selector.selected_difficulty)
+	check(selector.detail_title.text == str(initial_rep.get("title", "SONG")), "Selected title is not bound to catalog metadata.")
+	check(selector.detail_meta.text == selector._display_artist(initial_rep), "Selected artist is not bound to catalog metadata.")
+	var expected_bpm := int(round(float(initial_rep.get("bpm", 0.0))))
+	var expected_duration := selector._format_duration(float(initial_chart.get("duration", initial_rep.get("duration", 0.0))))
+	check(selector.album_flow_meta_line.text.contains("%d BPM" % expected_bpm), "Selected BPM is not bound to catalog metadata.")
+	check(selector.album_flow_meta_line.text.contains(expected_duration), "Selected duration is not bound to chart metadata.")
+	var global_state: Dictionary = root.get_node("SongSelectionState").get_state()
+	check(str(global_state.get("song_id", "")) == selector.selected_song_id and str(global_state.get("difficulty_id", "")) == selector.selected_difficulty, "Canonical SongSelectionState is out of sync with the visible selection.")
+
 	var selected_index: int = selector.filtered_song_ids.find(selector.selected_song_id)
 	check(selected_index >= 0, "No initial song was selected.")
 	if selected_index >= 0:
@@ -132,6 +148,21 @@ func run() -> void:
 	selector.search_input.clear()
 	selector._on_search_changed("")
 	await process_frame
+
+	# #21 keyboard interaction contract: search shortcut and Escape own local focus before Back.
+	var focus_search := InputEventKey.new()
+	focus_search.pressed = true
+	focus_search.keycode = KEY_F
+	focus_search.ctrl_pressed = true
+	selector._unhandled_key_input(focus_search)
+	check(selector.search_input.has_focus(), "Ctrl+F no longer focuses Song Library search.")
+	selector.search_input.text = "temporary"
+	var escape_search := InputEventKey.new()
+	escape_search.pressed = true
+	escape_search.keycode = KEY_ESCAPE
+	selector._unhandled_key_input(escape_search)
+	await process_frame
+	check(selector.search_input.text.is_empty() and not selector.search_input.has_focus(), "Escape did not clear/release search before navigation.")
 
 	selector.selected_sort_mode = "BPM Desc"
 	selector._apply_filters(false)
@@ -173,9 +204,12 @@ func run() -> void:
 		check(selector.selected_difficulty == available.back(), "Difficulty switch did not update the chart ID.")
 		check(selector._selected_v18_chart() == selector._find_level(selector.selected_song_id, selector.selected_difficulty), "Difficulty switch retained a stale chart.")
 
+	var state_song_before_modes: String = selector.selected_song_id
+	var state_diff_before_modes: String = selector.selected_difficulty
 	selector._on_mode_4_selected()
 	await process_frame
 	check(UserSettings.get_input_style() == "4_arrow" and selector.notes_value.text == "4 KEY", "4K mode did not refresh metadata.")
+	check(selector.selected_song_id == state_song_before_modes and selector.selected_difficulty == state_diff_before_modes, "4K switch changed logical song/difficulty selection.")
 	var chart_after_4k: Dictionary = selector._find_level(selector.selected_song_id, selector.selected_difficulty)
 	selector._on_mode_8_selected()
 	await process_frame
@@ -189,6 +223,7 @@ func run() -> void:
 	selector._on_random_mod_toggled(true)
 	await process_frame
 	check(selector.random_mode_enabled and selector.album_flow_random_button.button_pressed, "Random active state did not refresh.")
+	check(selector.selected_song_id == state_song_before_modes and selector.selected_difficulty == state_diff_before_modes, "Random toggle changed logical song/difficulty selection.")
 	check(selector.album_flow_random_button.find_child("StateLabel", true, false).text == "ON", "Random text does not reflect actual state.")
 	selector.album_flow_random_button.grab_focus()
 	check(selector.album_flow_random_button.has_focus(), "Mod controls lost keyboard focus.")
@@ -209,8 +244,8 @@ func run() -> void:
 	check(selector.album_flow_score_cluster.find_child("RecordDate", true, false).text == "2023-11-14 22:13", "Stored record timestamp was not displayed.")
 	_check_presentation(selector)
 	check(selector.album_flow_record_perfect_value.text == "432", "Judgement values were lost on restyling.")
-	var diamond := selector.album_flow_best_card.get_node("RankDiamond") as Control
-	check(diamond.get_script() == VectorIcon and diamond.get("kind") == "rank", "Rank must use vector diamond geometry.")
+	var diamond := selector.album_flow_best_card.get_node("RankDiamond") as TextureRect
+	check(diamond.get_script() == VectorIcon and diamond.get("kind") == "rank" and diamond.texture != null, "Rank must use the canonical SVG-backed diamond asset.")
 	check(selector.album_flow_best_card.get_theme_stylebox("panel") is StyleBoxEmpty, "A rectangle is still drawn behind the rank.")
 	check(selector.practice_button.find_child("StateLabel", true, false).text == "SELECT", "Practice was misrepresented as an ON/OFF modifier.")
 	check(not selector.practice_button.disabled, "Practice unexpectedly disabled for a playable chart.")
@@ -232,7 +267,9 @@ func run() -> void:
 
 	# Nine-digit scores, tall titles and selected state must fit actual containers.
 	selector.set_best_stats_store({score_key: {"score": 999999999, "best_accuracy": 100.0, "best_rank": "SS", "best_max_combo": 9999}})
-	for resolution: Vector2i in [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)]:
+	var responsive_song: String = selector.selected_song_id
+	var responsive_difficulty: String = selector.selected_difficulty
+	for resolution: Vector2i in [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080), Vector2i(2560, 1440)]:
 		root.size = resolution
 		root.content_scale_size = resolution
 		await create_timer(0.4).timeout
@@ -240,6 +277,7 @@ func run() -> void:
 		await process_frame
 		await process_frame
 		_check_layout(selector, resolution)
+		check(selector.selected_song_id == responsive_song and selector.selected_difficulty == responsive_difficulty, "Responsive relayout changed logical selection at %s." % resolution)
 		if OS.get_cmdline_user_args().has("capture"):
 			await RenderingServer.frame_post_draw
 			root.get_texture().get_image().save_png("user://library_%dx%d.png" % [resolution.x, resolution.y])
@@ -284,14 +322,15 @@ func _check_presentation(selector: Control) -> void:
 	for button: Button in [selector.album_flow_mode_8_button, selector.album_flow_random_button, selector.practice_button]:
 		check((button.get_theme_stylebox("normal") as StyleBoxFlat).shadow_size == 0, "Configuration controls regained glow.")
 	for icon_name in ["PlayIcon", "PlayArrow"]:
-		check(selector.play_button.find_child(icon_name, true, false).get_script() == VectorIcon, "Play still relies on a text glyph.")
+		var icon := selector.play_button.find_child(icon_name, true, false) as TextureRect
+		check(icon != null and icon.get_script() == VectorIcon and icon.texture != null, "Play must use the canonical SVG-backed icon library.")
 	for button: Button in selector.album_flow_difficulty_row.get_children():
-		var marker := button.get_node("SelectionMarker") as Control
-		check(marker.get_script() == VectorIcon, "Difficulty selection must use vector geometry.")
+		var marker := button.get_node("SelectionMarker") as TextureRect
+		check(marker.get_script() == VectorIcon and marker.texture != null, "Difficulty selection must use the canonical SVG-backed diamond asset.")
 		check(marker.visible == (button.name == "%sDifficultyButton" % selector.selected_difficulty.capitalize()), "Rebuilt difficulty selection marker is stale.")
 
 func _check_layout(selector: Control, resolution: Vector2i) -> void:
-	for control: Control in [selector.header_row, selector.wheel_column, selector.info_panel, selector.album_flow_record_panel, selector.play_button]:
+	for control: Control in [selector.header_row, selector.wheel_column, selector.info_panel, selector.album_flow_center_column, selector.album_flow_sidebar, selector.album_flow_record_panel, selector.play_button]:
 		var rect := control.get_global_rect()
 		check(rect.position.x >= 0 and rect.end.x <= resolution.x + 1 and rect.end.y <= resolution.y + 1, "Viewport overflow: %s at %s" % [control.name, resolution])
 	var previous_end := 0.0
@@ -303,6 +342,8 @@ func _check_layout(selector: Control, resolution: Vector2i) -> void:
 	check(not accuracy_rect.intersects(score_rect), "Record values overlap.")
 	check(score_rect.end.x <= selector.album_flow_best_card.get_global_rect().position.x, "Score overlaps diamond rank.")
 	check(not selector.album_flow_artwork.get_global_rect().intersects(selector.album_flow_record_panel.get_global_rect()), "Record overlaps jacket.")
+	check(not selector.album_flow_center_column.get_global_rect().intersects(selector.album_flow_sidebar.get_global_rect()), "Center inspection column overlaps right configuration column.")
+	check(selector.play_button.get_global_rect().position.y >= selector.album_flow_modifier_row.get_global_rect().end.y, "Play CTA is not anchored below Mode/Mods controls.")
 	var row: Control = selector.song_buttons[selector.filtered_song_ids.find(selector.selected_song_id)]
 	check(selector.song_scroll.get_global_rect().intersects(row.get_global_rect()), "Selected song is offscreen.")
 	check(selector.album_flow_mode_8_button.button_pressed and not selector.album_flow_mode_4_button.button_pressed, "Layout refresh changed input-mode state.")

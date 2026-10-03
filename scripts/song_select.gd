@@ -1023,11 +1023,7 @@ func _album_flow_toggle_filters() -> void:
 	progress_filter.visible = composition.filter_row.visible
 	_apply_album_flow_filter_tab_style()
 
-func _album_flow_toggle_bpm_sort() -> void:
-	selected_sort_mode = "BPM Desc" if selected_sort_mode == "BPM Asc" else "BPM Asc"
-	if album_flow_bpm_button != null:
-		album_flow_bpm_button.text = "BPM ↓" if selected_sort_mode == "BPM Desc" else "BPM ↑"
-	_apply_filters()
+
 
 func _apply_album_flow_song_library_layout() -> void:
 	if album_flow_showcase_row == null:
@@ -2227,7 +2223,7 @@ func set_best_stats_store(store: Dictionary) -> void:
 	# Most record updates do not change which rows exist. Rebuilding the whole
 	# browser for 39 songs / 117 charts was a major source of route-entry stalls.
 	# Only filters/sorts whose result depends on progress require a reconstruction.
-	var progress_sensitive: bool = selected_progress_filter != "All Progress" or selected_sort_mode in ["Best Rank", "Unplayed First"]
+	var progress_sensitive: bool = selected_progress_filter != "All Progress"
 	if progress_sensitive:
 		_apply_filters(false)
 	else:
@@ -2341,7 +2337,10 @@ func _rebuild_filters() -> void:
 		progress_filter.add_item(filter_label)
 	_select_option_text(progress_filter, selected_progress_filter)
 	sort_filter.clear()
-	for sort_label in ["BPM Asc", "BPM Desc", "Title A–Z", "Star Rating", "Best Rank", "Unplayed First"]:
+	var supported_sort_modes: Array[String] = ["BPM Asc", "BPM Desc"]
+	if not supported_sort_modes.has(selected_sort_mode):
+		selected_sort_mode = "BPM Asc"
+	for sort_label in supported_sort_modes:
 		sort_filter.add_item(sort_label)
 	_select_option_text(sort_filter, selected_sort_mode)
 	_sync_album_flow_header_filter_labels()
@@ -2609,36 +2608,7 @@ func _display_artist(rep: Dictionary) -> String:
 		return ""
 	return artist
 
-func _song_accent(song_id: String) -> Color:
-	match song_id:
-		"2_starting_over": return Color("53c6ff")
-		"3_bow_for_me": return Color("ef67b8")
-		"5_flying_temple": return Color("54dcc7")
-		"aresenes_bazaar": return Color("e5aa62")
-		"ascend": return Color("6daeff")
-		"bad_apple": return Color("dc5b85")
-		"can_can_audition": return Color("f1ac63")
-		"diana_boncheva_feat_banya_beethoven_virus_full_version": return Color("8f83ff")
-		"freedom_dive": return Color("58d4ff")
-		"megalovania": return Color("ef7077")
-		"orpheus_can_can": return Color("f0c470")
-		"the_lab": return Color("66e8bf")
-		"vessel": return Color("7caeff")
-		"death_by_glamour": return Color("f06fc8")
-		"battle_against_a_true_hero": return Color("84a9ff")
-		"moonlight_sonata_3rd_movement_meganeko_remix": return Color("9baef9")
-		"blue_zenith": return Color("5fd7ff")
-		"exit_this_earths_atomosphere": return Color("ff65bf")
-		"septette_for_the_dead_princess": return Color("d35b83")
-		"aleph_0": return Color("ac79ff")
-		"night_of_nights": return Color("e27ada")
-		"spider_dance": return Color("d468c9")
-		"un_owen_was_her": return Color("ff6e78")
-		"necrofantasia": return Color("64c5b5")
-		"oshama_scramble": return Color("ffba6c")
-		"big_daddy": return Color("ff8a5b")
-		_:
-			return MinimalThemeScript.CYAN
+
 
 func _select_song(song_id: String) -> void:
 	if selected_song_id == song_id:
@@ -3506,35 +3476,12 @@ func _song_matches_progress_filter(song_id: String) -> bool:
 	return false
 
 func _sort_filtered_song_ids() -> void:
+	var descending := selected_sort_mode == "BPM Desc"
 	filtered_song_ids.sort_custom(func(a: String, b: String) -> bool:
-		match selected_sort_mode:
-			"BPM Asc":
-				var a_bpm := float(_representative(a).get("bpm", 0.0))
-				var b_bpm := float(_representative(b).get("bpm", 0.0))
-				if not is_equal_approx(a_bpm, b_bpm):
-					return a_bpm < b_bpm
-			"BPM Desc":
-				var a_bpm := float(_representative(a).get("bpm", 0.0))
-				var b_bpm := float(_representative(b).get("bpm", 0.0))
-				if not is_equal_approx(a_bpm, b_bpm):
-					return a_bpm > b_bpm
-			"Star Rating":
-				var a_star := _song_sort_star(a)
-				var b_star := _song_sort_star(b)
-				if a_star != b_star:
-					return a_star < b_star
-			"Best Rank":
-				var a_record := _song_sort_record(a)
-				var b_record := _song_sort_record(b)
-				if float(a_record[0]) != float(b_record[0]):
-					return float(a_record[0]) > float(b_record[0])
-				if float(a_record[1]) != float(b_record[1]):
-					return float(a_record[1]) > float(b_record[1])
-			"Unplayed First":
-				var a_played := _song_played_count(a)
-				var b_played := _song_played_count(b)
-				if a_played != b_played:
-					return a_played < b_played
+		var a_bpm := float(_representative(a).get("bpm", 0.0))
+		var b_bpm := float(_representative(b).get("bpm", 0.0))
+		if not is_equal_approx(a_bpm, b_bpm):
+			return a_bpm > b_bpm if descending else a_bpm < b_bpm
 		var a_title := str(_representative(a).get("title", a))
 		var b_title := str(_representative(b).get("title", b))
 		return a_title.naturalnocasecmp_to(b_title) < 0
@@ -3548,25 +3495,9 @@ func _sort_difficulties_for_song(song_id: String) -> Array[String]:
 			return single
 	return _available_difficulties(song_id)
 
-func _song_sort_star(song_id: String) -> int:
-	var value := 999
-	for diff in _sort_difficulties_for_song(song_id):
-		value = mini(value, int(_find_level(song_id, diff).get("star_rating", 999)))
-	return value
 
-func _song_sort_record(song_id: String) -> Array:
-	var best_rank_value := -1
-	var best_accuracy := -1.0
-	for diff in _sort_difficulties_for_song(song_id):
-		var entry := _progress_entry(song_id, diff)
-		if not bool(entry.get("cleared", false)):
-			continue
-		var rank_value := _rank_sort_value(str(entry.get("best_rank", entry.get("rank", "D"))))
-		var accuracy := float(entry.get("best_accuracy", entry.get("accuracy", 0.0)))
-		if rank_value > best_rank_value or (rank_value == best_rank_value and accuracy > best_accuracy):
-			best_rank_value = rank_value
-			best_accuracy = accuracy
-	return [best_rank_value, best_accuracy]
+
+
 
 func _rank_sort_value(rank: String) -> int:
 	match rank.to_upper():
@@ -3578,12 +3509,7 @@ func _rank_sort_value(rank: String) -> int:
 		"D": return 1
 		_: return 0
 
-func _song_played_count(song_id: String) -> int:
-	var count := 0
-	for diff in _sort_difficulties_for_song(song_id):
-		if bool(_progress_entry(song_id, diff).get("cleared", false)):
-			count += 1
-	return count
+
 
 func _completion_totals() -> Array:
 	var total := 0
