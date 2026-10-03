@@ -8,7 +8,6 @@ const GRID := Color("1b2430")
 const CYAN := Color("7db4ce")
 const GOLD := Color("f5c96a")
 const PINK := Color("d3a4ff")
-const BACKGROUND_ROOT := "res://assets/song_backgrounds"
 
 var difficulty := "normal"
 var current_texture: Texture2D
@@ -53,16 +52,9 @@ func _accent() -> Color:
 		_:
 			return CYAN
 
-func _resolve_background_path(song_id: String, explicit_path: String) -> String:
-	var candidates: Array[String] = []
-	if not explicit_path.is_empty():
-		candidates.append(explicit_path)
-	var safe_id := song_id.to_lower().replace(" ", "_")
-	for extension in ["png", "webp", "jpg", "jpeg"]:
-		candidates.append("%s/%s.%s" % [BACKGROUND_ROOT, safe_id, extension])
-	for path in candidates:
-		if ResourceLoader.exists(path):
-			return path
+func _resolve_background_path(_song_id: String, explicit_path: String) -> String:
+	if not explicit_path.is_empty() and ResourceLoader.exists(explicit_path):
+		return explicit_path
 	return ""
 
 func _request_background_async(path: String) -> void:
