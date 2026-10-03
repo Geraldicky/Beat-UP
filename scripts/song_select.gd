@@ -16,7 +16,6 @@ const ModButtonScene = preload("res://scenes/ui/song_library/mod_button.tscn")
 const RecordPanelScene = preload("res://scenes/ui/song_library/record_panel.tscn")
 const PlayButtonScene = preload("res://scenes/ui/song_library/play_button.tscn")
 const LevelPackScript = preload("res://scripts/level_pack.gd")
-const SONG_BACKGROUND_ROOT := "res://assets/song_backgrounds"
 const SONG_THUMBNAIL_ROOT := "res://assets/song_thumbnails"
 const LIBRARY_ACCENT := Color("58c9ff")
 const LIBRARY_ACCENT_HOVER := Color("8bdcff")
@@ -2191,7 +2190,7 @@ func get_audio_handoff() -> Dictionary:
 	handoff["difficulty_id"] = selected_difficulty
 	handoff["title"] = str(rep.get("title", chart.get("title", selected_song_id.replace("_", " "))))
 	handoff["artist"] = _display_artist(rep)
-	handoff["background"] = str(rep.get("background", chart.get("background", "")))
+	handoff["background"] = _get_global_background_path("")
 	if float(handoff.get("duration", 0.0)) <= 0.0:
 		handoff["duration"] = float(chart.get("duration", rep.get("duration", 0.0)))
 	return handoff
@@ -2832,19 +2831,20 @@ func _update_detail(animated: bool = true) -> void:
 	_update_chart_breakdown(chart, events_value, input_mode_label, stars, recommendation, standard_progress, chart_playable)
 	ranking_context.text = ""
 	ranking_context.visible = false
-	var background_path: String = str(rep.get("background", chart.get("background", "")))
-	_publish_selection_state(rep, chart, artist_text, background_path)
-	background_path = _get_global_background_path(background_path)
+	var artwork_fallback_path: String = str(rep.get("background", chart.get("background", "")))
+	var ambient_background_path := _get_global_background_path("")
+	_publish_selection_state(rep, chart, artist_text, ambient_background_path)
 	if album_flow_artwork != null:
-		var selected_texture := _song_banner_texture(selected_song_id, background_path)
+		var selected_texture := _song_banner_texture(selected_song_id, artwork_fallback_path)
 		album_flow_artwork.texture = selected_texture
 		album_flow_artwork.visible = album_flow_artwork.texture != null
 		song_visual.visible = false # Missing assets use the neutral jacket surface.
 		if album_flow_detail_backdrop != null:
-			album_flow_detail_backdrop.texture = selected_texture
-			album_flow_detail_backdrop.visible = selected_texture != null
-	song_visual.call("set_song", selected_song_id, selected_difficulty, background_path)
-	backdrop_visual.call("set_song", selected_song_id, selected_difficulty, background_path)
+			var ambient_texture := _ambient_background_texture(ambient_background_path)
+			album_flow_detail_backdrop.texture = ambient_texture
+			album_flow_detail_backdrop.visible = ambient_texture != null
+	song_visual.call("set_song", selected_song_id, selected_difficulty, ambient_background_path)
+	backdrop_visual.call("set_song", selected_song_id, selected_difficulty, ambient_background_path)
 	if is_visible_in_tree():
 		if preview_player.has_method("queue_chart_preview"):
 			preview_player.call("queue_chart_preview", chart, 0.14)
@@ -3503,8 +3503,6 @@ func _song_banner_texture(song_id: String, explicit_path: String = "") -> Textur
 		candidates.append("%s/%s.%s" % [SONG_THUMBNAIL_ROOT, safe_id, extension])
 	if not explicit_path.is_empty():
 		candidates.append(explicit_path)
-	for extension in ["png", "webp", "jpg", "jpeg"]:
-		candidates.append("%s/%s.%s" % [SONG_BACKGROUND_ROOT, safe_id, extension])
 	for path in candidates:
 		if ResourceLoader.exists(path):
 			var texture := load(path)
@@ -3611,6 +3609,25 @@ func _get_song_selection_state() -> Node:
 
 func _get_background_session() -> Node:
 	return get_node_or_null("/root/BackgroundSession")
+
+func _ambient_background_texture(path: String) -> Texture2D:
+	if path.is_empty():
+		return null
+	var background_session: Node = _get_background_session()
+	if background_session != null and background_session.has_method("get_texture_for_path"):
+		return background_session.call("get_texture_for_path", path) as Texture2D
+	if ResourceLoader.exists(path):
+		return ResourceLoader.load(path) as Texture2D
+	return null
+
+func refresh_ambient_background() -> void:
+	var path := _get_global_background_path("")
+	var texture := _ambient_background_texture(path)
+	if album_flow_detail_backdrop != null:
+		album_flow_detail_backdrop.texture = texture
+		album_flow_detail_backdrop.visible = texture != null
+	if backdrop_visual != null:
+		backdrop_visual.call("set_song", selected_song_id, selected_difficulty, path)
 
 func _get_global_background_path(fallback: String = "") -> String:
 	var background_session: Node = _get_background_session()
