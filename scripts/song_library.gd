@@ -98,13 +98,14 @@ func _on_play_requested(song_id: String, difficulty_id: String, random_mode: boo
 	var representative: Dictionary = _representative(song_id)
 	var canonical: Dictionary = _get_global_song_state()
 	var canonical_matches: bool = str(canonical.get("song_id", "")) == song_id
+	var launch_background := _randomize_route_background("gameplay")
 	var visual_payload: Dictionary = {
 		"title": str(canonical.get("title", level.get("title", representative.get("title", song_id.replace("_", " "))))) if canonical_matches else str(level.get("title", representative.get("title", song_id.replace("_", " ")))),
 		"artist": str(canonical.get("artist", level.get("artist", representative.get("artist", "Unknown Artist")))) if canonical_matches else str(level.get("artist", representative.get("artist", "Unknown Artist"))),
 		"difficulty": str(level.get("difficulty", difficulty_id)).to_upper(),
 		"bpm": float(canonical.get("bpm", level.get("bpm", representative.get("bpm", 0.0)))) if canonical_matches else float(level.get("bpm", representative.get("bpm", 0.0))),
 		"star_rating": int(level.get("star_rating", 0)),
-		"background": _get_global_background_path(str(level.get("background", representative.get("background", "")))) if canonical_matches else str(level.get("background", representative.get("background", ""))),
+		"background": launch_background,
 		"random_mode": random_mode,
 	}
 	# v17.4.24: gameplay is pre-instantiated inside AppShell. The selected artwork
@@ -147,7 +148,7 @@ func _launch_v18_request(song_id: String, difficulty_id: String, random_mode: bo
 		"difficulty": mode_suffix,
 		"bpm": float(canonical.get("bpm", level.get("bpm", representative.get("bpm", 0.0)))) if canonical_matches else float(level.get("bpm", representative.get("bpm", 0.0))),
 		"star_rating": int(level.get("star_rating", 0)),
-		"background": _get_global_background_path(str(level.get("background", representative.get("background", "")))) if canonical_matches else str(level.get("background", representative.get("background", ""))),
+		"background": launch_background,
 		"random_mode": random_mode,
 	}
 	var navigation: Node = get_node_or_null("/root/NavigationController")
@@ -166,6 +167,15 @@ func _get_global_song_state() -> Dictionary:
 		if value is Dictionary:
 			return (value as Dictionary).duplicate(true)
 	return {}
+
+func _randomize_route_background(source: String) -> String:
+	var background_session: Node = get_node_or_null("/root/BackgroundSession")
+	if background_session == null or not background_session.has_method("randomize_background"):
+		return _get_global_background_path("")
+	var path := str(background_session.call("randomize_background", source, true, {"source": source}))
+	if song_select != null and song_select.has_method("refresh_ambient_background"):
+		song_select.call("refresh_ambient_background")
+	return path
 
 func _get_global_background_path(fallback: String = "") -> String:
 	var background_session: Node = get_node_or_null("/root/BackgroundSession")
@@ -263,6 +273,7 @@ func shell_prepare_resume(_context: Dictionary) -> void:
 
 func shell_will_resume(context: Dictionary) -> void:
 	action_locked = false
+	_randomize_route_background("song_library")
 	var selected_song_id: String = str(context.get("selected_song_id", ""))
 	activate_from_shell(selected_song_id, false)
 	# Progress/record refresh is safe now because AppShell invokes this hook after
