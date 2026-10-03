@@ -2883,7 +2883,12 @@ func _start_selected_preview() -> void:
 # AppShell calls this only after the slide/fade route animation is complete.
 # Starting the preview here keeps synchronous audio/resource work out of the
 # transition frame, which prevents the ~1s hitch seen when entering Library.
-func shell_did_resume(_context: Dictionary) -> void:
+func shell_did_resume(context: Dictionary) -> void:
+	# Rollback from a failed Chart Studio navigation means Song Library never
+	# actually ceded media ownership. Do not queue a fresh preview here: doing so
+	# could replace/unpause a MusicSession the user had already paused manually.
+	if bool(context.get("preserve_music_state", false)):
+		return
 	call_deferred("_start_selected_preview")
 
 func shell_will_suspend(_context: Dictionary) -> void:
