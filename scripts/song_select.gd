@@ -842,17 +842,19 @@ void fragment() {
 
 	album_flow_random_button = ModButtonScene.instantiate() as Button
 	album_flow_random_button.name = "InlineRandomButton"
+	album_flow_modifier_row.add_child(album_flow_random_button)
 	album_flow_random_button.call("configure", "shuffle", "RANDOM", "OFF", MinimalThemeScript.PINK, false, size.x < 1550.0)
 	album_flow_random_button.toggled.connect(_on_random_mod_toggled)
-	album_flow_modifier_row.add_child(album_flow_random_button)
 
 	var legacy_practice_button := practice_button
 	practice_button = ModButtonScene.instantiate() as Button
 	practice_button.name = "PracticeButton"
 	practice_button.tooltip_text = "Loop one authored musical section. Practice results never change normal records."
-	practice_button.call("configure", "target", "PRACTICE", "SELECT", LIBRARY_ACCENT, true, size.x < 1550.0)
-	practice_button.pressed.connect(_open_v18_practice_menu)
+	practice_button.toggle_mode = false
 	album_flow_modifier_row.add_child(practice_button)
+	practice_button.call("configure", "target", "PRACTICE", "SELECT", LIBRARY_ACCENT, true, size.x < 1550.0)
+	practice_button.toggle_mode = false
+	practice_button.pressed.connect(_open_v18_practice_menu)
 	if legacy_practice_button != null:
 		legacy_practice_button.queue_free()
 	replay_button.visible = false
@@ -874,7 +876,7 @@ void fragment() {
 	if legacy_play_button != null:
 		legacy_play_button.queue_free()
 
-	# Compatibility shell retained but hidden	# Compatibility shell retained but hidden: the release composition no longer
+	# Compatibility shell retained but hidden: the release composition no longer
 	# uses a detached bottom difficulty/action dock.
 	album_flow_bottom_panel = PanelContainer.new()
 	album_flow_bottom_panel.name = "AlbumFlowBottomPanel"
@@ -2480,7 +2482,7 @@ func _rebuild_song_list() -> void:
 			var diff: String = available[difficulty_index]
 			var chart := _find_level(song_id, diff)
 			var progress_text := _progress_short_label(_progress_entry(song_id, diff))
-			var row_data: Dictionary = group.call(
+			var row_data := group.call(
 				"add_difficulty",
 				diff,
 				chart,
@@ -2490,7 +2492,7 @@ func _rebuild_song_list() -> void:
 				song_id == selected_song_id and diff == selected_difficulty,
 				song_list.theme,
 				_difficulty_row_base_margin(difficulty_index)
-			)
+			) as Dictionary
 			var diff_wrapper := row_data["wrapper"] as MarginContainer
 			var diff_button := row_data["button"] as Button
 			_style_song_difficulty_button(diff_button, diff)
