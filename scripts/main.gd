@@ -634,12 +634,17 @@ func apply_background_opacity(value: float) -> void:
 	# overlay over the gameplay background.
 	background_visual.modulate.a = clampf(value, 0.0, 100.0) / 100.0
 
-func _apply_song_background_for_level(data: Dictionary) -> void:
+func _apply_song_background_for_level(_data: Dictionary) -> void:
 	if background_visual == null or not background_visual.has_method("set_song_background"):
 		return
-	var background_path: String = str(data.get("background", ""))
-	var song_id: String = str(data.get("song_id", data.get("id", "")))
-	var loaded: bool = bool(background_visual.call("set_song_background", background_path, song_id))
+	var background_path := ""
+	var background_session: Node = get_node_or_null("/root/BackgroundSession")
+	if background_session != null:
+		if background_session.has_method("get_background_path"):
+			background_path = str(background_session.call("get_background_path"))
+		if background_path.is_empty() and background_session.has_method("randomize_background"):
+			background_path = str(background_session.call("randomize_background", "gameplay", true, {"source": "gameplay"}))
+	var loaded: bool = bool(background_visual.call("set_song_background", background_path, ""))
 	if not loaded and not background_path.is_empty():
 		push_warning("Beat UP! gameplay background could not be loaded: %s" % background_path)
 	apply_background_opacity(UserSettingsScript.get_background_opacity())
@@ -2218,7 +2223,7 @@ func _build_result_snapshot(accuracy: float, is_new_best: bool) -> Dictionary:
 		"app_version": ScoreIdentity.app_version(),
 		"score_identity": ScoreIdentity.identity(level_data, input_style, random_mode_enabled),
 		"meta": "%s  •  %s  •  %s  •  %s  •  %d★  •  %d BPM" % [artist, difficulty, input_mode_text, mode_text, stars, bpm],
-		"background": str(level_data.get("background", "")),
+		"background": str(get_node_or_null("/root/BackgroundSession").call("get_background_path")) if get_node_or_null("/root/BackgroundSession") != null else "",
 		"difficulty_id": chart_difficulty_id,
 		"score": maxi(0, score),
 		"score_text": format_result_number(score),
