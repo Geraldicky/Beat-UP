@@ -9,9 +9,13 @@ const InteractionPolishScript = preload("res://scripts/ui/interaction_polish.gd"
 const UserSettingsScript = preload("res://scripts/user_settings.gd")
 const ProgressInsightsScript = preload("res://scripts/v18/progress_insights.gd")
 const ProgressGraphScript = preload("res://scripts/v18/progress_graph.gd")
-const AnimatedMarginScript = preload("res://scripts/ui/animated_margin_container.gd")
-const SongBannerButtonScript = preload("res://scripts/ui/song_banner_button.gd")
 const SongLibraryAmbientScript = preload("res://scripts/ui/song_library_ambient.gd")
+const SongRowScene = preload("res://scenes/ui/song_library/song_row.tscn")
+const DifficultyCardScene = preload("res://scenes/ui/song_library/difficulty_card.tscn")
+const ModeButtonScene = preload("res://scenes/ui/song_library/mode_button.tscn")
+const ModButtonScene = preload("res://scenes/ui/song_library/mod_button.tscn")
+const RecordPanelScene = preload("res://scenes/ui/song_library/record_panel.tscn")
+const PlayButtonScene = preload("res://scenes/ui/song_library/play_button.tscn")
 const LevelPackScript = preload("res://scripts/level_pack.gd")
 const SONG_BACKGROUND_ROOT := "res://assets/song_backgrounds"
 const SONG_THUMBNAIL_ROOT := "res://assets/song_thumbnails"
@@ -722,144 +726,23 @@ void fragment() {
 	for corner in [Vector2.ZERO, Vector2(1.0, 0.0), Vector2(0.0, 1.0), Vector2.ONE]:
 		_add_album_flow_artwork_corner(album_flow_artwork_frame, corner)
 
-	# Center-column Best Record block: section header, accuracy/score/rank,
-	# then judgement breakdown, matching the approved reference hierarchy.
-	album_flow_record_panel = PanelContainer.new()
+	# Center-column Best Record is a reusable scene. SongSelect owns only its live
+	# data binding; hierarchy and static child structure live with the component.
+	album_flow_record_panel = RecordPanelScene.instantiate() as PanelContainer
 	album_flow_record_panel.name = "AlbumFlowRecordPanel"
-	album_flow_record_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	album_flow_center_column.add_child(album_flow_record_panel)
-	var record_margin := MarginContainer.new()
-	record_margin.add_theme_constant_override("margin_left", 4)
-	record_margin.add_theme_constant_override("margin_right", 4)
-	record_margin.add_theme_constant_override("margin_top", 10)
-	record_margin.add_theme_constant_override("margin_bottom", 8)
-	album_flow_record_panel.add_child(record_margin)
-
-	album_flow_score_cluster = VBoxContainer.new()
-	album_flow_score_cluster.name = "AlbumFlowScoreCluster"
-	album_flow_score_cluster.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	album_flow_score_cluster.add_theme_constant_override("separation", 8)
-	record_margin.add_child(album_flow_score_cluster)
-
-	var record_title_row := HBoxContainer.new()
-	record_title_row.add_theme_constant_override("separation", 12)
-	album_flow_score_cluster.add_child(record_title_row)
-	album_flow_best_caption_value = Label.new()
-	album_flow_best_caption_value.text = "BEST RECORD"
-	album_flow_best_caption_value.set_meta("album_role", "caption")
-	record_title_row.add_child(album_flow_best_caption_value)
-	var record_title_rule := HSeparator.new()
-	record_title_rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	record_title_rule.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	record_title_row.add_child(record_title_rule)
-	album_flow_best_combo_value = Label.new()
-	album_flow_best_combo_value.text = ""
-	album_flow_best_combo_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	album_flow_best_combo_value.set_meta("album_role", "combo_value")
-	record_title_row.add_child(album_flow_best_combo_value)
-	var record_date := Label.new()
-	record_date.name = "RecordDate"
-	record_date.set_meta("album_role", "record_date")
-	record_title_row.add_child(record_date)
-
-	var record_metrics := HBoxContainer.new()
-	record_metrics.name = "AlbumFlowRecordMetrics"
-	record_metrics.add_theme_constant_override("separation", 18)
-	album_flow_score_cluster.add_child(record_metrics)
-
-	var accuracy_stack := VBoxContainer.new()
-	accuracy_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	accuracy_stack.add_theme_constant_override("separation", 2)
-	record_metrics.add_child(accuracy_stack)
-	var accuracy_caption := Label.new()
-	accuracy_caption.text = "ACCURACY"
-	accuracy_caption.set_meta("album_role", "metric_caption")
-	accuracy_stack.add_child(accuracy_caption)
-	album_flow_best_accuracy_value = Label.new()
-	album_flow_best_accuracy_value.text = "—"
-	album_flow_best_accuracy_value.set_meta("album_role", "accuracy_value")
-	accuracy_stack.add_child(album_flow_best_accuracy_value)
-
-	var metric_divider := VSeparator.new()
-	metric_divider.custom_minimum_size.x = 1
-	record_metrics.add_child(metric_divider)
-
-	var score_stack := VBoxContainer.new()
-	score_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	score_stack.add_theme_constant_override("separation", 2)
-	record_metrics.add_child(score_stack)
-	var score_caption := Label.new()
-	score_caption.text = "SCORE"
-	score_caption.set_meta("album_role", "metric_caption")
-	score_stack.add_child(score_caption)
-	album_flow_best_score_value = Label.new()
-	album_flow_best_score_value.text = "NO RECORD"
-	album_flow_best_score_value.set_meta("album_role", "score_value")
-	score_stack.add_child(album_flow_best_score_value)
-
-	album_flow_best_card = PanelContainer.new()
-	album_flow_best_card.name = "AlbumFlowBestCard"
-	album_flow_best_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	record_metrics.add_child(album_flow_best_card)
-	var rank_diamond := LibraryVectorIcon.new()
-	rank_diamond.name = "RankDiamond"
-	rank_diamond.kind = "rank"
-	rank_diamond.ink = MinimalThemeScript.GOLD
-	album_flow_best_card.add_child(rank_diamond)
-	var best_margin := MarginContainer.new()
-	best_margin.add_theme_constant_override("margin_left", 10)
-	best_margin.add_theme_constant_override("margin_right", 10)
-	best_margin.add_theme_constant_override("margin_top", 4)
-	best_margin.add_theme_constant_override("margin_bottom", 4)
-	album_flow_best_card.add_child(best_margin)
-	album_flow_best_rank_value = Label.new()
-	album_flow_best_rank_value.text = ""
-	album_flow_best_rank_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	album_flow_best_rank_value.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	album_flow_best_rank_value.set_meta("album_role", "rank")
-	best_margin.add_child(album_flow_best_rank_value)
-
-	var record_breakdown_rule := HSeparator.new()
-	album_flow_score_cluster.add_child(record_breakdown_rule)
-	album_flow_record_breakdown_row = HBoxContainer.new()
-	album_flow_record_breakdown_row.name = "AlbumFlowJudgementBreakdown"
-	album_flow_record_breakdown_row.add_theme_constant_override("separation", 1)
-	album_flow_score_cluster.add_child(album_flow_record_breakdown_row)
-	album_flow_best_combo_value.reparent(album_flow_score_cluster)
-	var judgement_defs: Array = [
-		["PERFECT", MinimalThemeScript.PERFECT_PINK],
-		["GREAT", MinimalThemeScript.SUCCESS],
-		["GOOD", MinimalThemeScript.GOOD_CYAN],
-		["MISS", MinimalThemeScript.DANGER],
-	]
-	for judgement_def: Array in judgement_defs:
-		if album_flow_record_breakdown_row.get_child_count() > 0:
-			album_flow_record_breakdown_row.add_child(VSeparator.new())
-		var cell := VBoxContainer.new()
-		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		cell.alignment = BoxContainer.ALIGNMENT_CENTER
-		cell.add_theme_constant_override("separation", 1)
-		album_flow_record_breakdown_row.add_child(cell)
-		var caption := Label.new()
-		caption.text = str(judgement_def[0])
-		caption.set_meta("album_role", "judgement_caption")
-		caption.set_meta("judgement_color", judgement_def[1])
-		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		MinimalThemeScript.apply_mono(caption, 9, Color(MinimalThemeScript.TEXT, 0.52))
-		cell.add_child(caption)
-		var value := Label.new()
-		value.text = "0"
-		value.set_meta("album_role", "judgement_value")
-		value.set_meta("judgement_color", judgement_def[1])
-		value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		var judgement_color: Color = judgement_def[1]
-		MinimalThemeScript.apply_numeric(value, 20, judgement_color)
-		cell.add_child(value)
-		match str(judgement_def[0]):
-			"PERFECT": album_flow_record_perfect_value = value
-			"GREAT": album_flow_record_great_value = value
-			"GOOD": album_flow_record_good_value = value
-			"MISS": album_flow_record_miss_value = value
+	album_flow_score_cluster = album_flow_record_panel.get_node("RecordMargin/AlbumFlowScoreCluster") as VBoxContainer
+	album_flow_best_caption_value = album_flow_score_cluster.get_node("RecordTitleRow/BestCaption") as Label
+	album_flow_best_combo_value = album_flow_score_cluster.get_node("BestComboValue") as Label
+	album_flow_best_accuracy_value = album_flow_score_cluster.get_node("AlbumFlowRecordMetrics/AccuracyStack/BestAccuracyValue") as Label
+	album_flow_best_score_value = album_flow_score_cluster.get_node("AlbumFlowRecordMetrics/ScoreStack/BestScoreValue") as Label
+	album_flow_best_card = album_flow_score_cluster.get_node("AlbumFlowRecordMetrics/AlbumFlowBestCard") as PanelContainer
+	album_flow_best_rank_value = album_flow_best_card.get_node("BestMargin/BestRankValue") as Label
+	album_flow_record_breakdown_row = album_flow_score_cluster.get_node("AlbumFlowJudgementBreakdown") as HBoxContainer
+	album_flow_record_perfect_value = album_flow_record_breakdown_row.get_node("PerfectCell/Value") as Label
+	album_flow_record_great_value = album_flow_record_breakdown_row.get_node("GreatCell/Value") as Label
+	album_flow_record_good_value = album_flow_record_breakdown_row.get_node("GoodCell/Value") as Label
+	album_flow_record_miss_value = album_flow_record_breakdown_row.get_node("MissCell/Value") as Label
 
 	# Right-side selected-song identity.
 	var track_nav_row := HBoxContainer.new()
@@ -929,18 +812,16 @@ void fragment() {
 	album_flow_mode_row.name = "AlbumFlowModeRow"
 	album_flow_mode_row.add_theme_constant_override("separation", 8)
 	album_flow_sidebar.add_child(album_flow_mode_row)
-	album_flow_mode_4_button = Button.new()
+
+	album_flow_mode_4_button = ModeButtonScene.instantiate() as Button
 	album_flow_mode_4_button.name = "InlineMode4Button"
-	album_flow_mode_4_button.text = "4K"
-	album_flow_mode_4_button.toggle_mode = true
-	album_flow_mode_4_button.focus_mode = Control.FOCUS_ALL
+	album_flow_mode_4_button.call("configure", "4K")
 	album_flow_mode_4_button.pressed.connect(_on_mode_4_selected)
 	album_flow_mode_row.add_child(album_flow_mode_4_button)
-	album_flow_mode_8_button = Button.new()
+
+	album_flow_mode_8_button = ModeButtonScene.instantiate() as Button
 	album_flow_mode_8_button.name = "InlineMode8Button"
-	album_flow_mode_8_button.text = "8K"
-	album_flow_mode_8_button.toggle_mode = true
-	album_flow_mode_8_button.focus_mode = Control.FOCUS_ALL
+	album_flow_mode_8_button.call("configure", "8K")
 	album_flow_mode_8_button.pressed.connect(_on_mode_8_selected)
 	album_flow_mode_row.add_child(album_flow_mode_8_button)
 
@@ -958,18 +839,22 @@ void fragment() {
 	album_flow_modifier_row.add_theme_constant_override("separation", 8)
 	album_flow_sidebar.add_child(album_flow_modifier_row)
 	mods_button.visible = false
-	album_flow_random_button = Button.new()
+
+	album_flow_random_button = ModButtonScene.instantiate() as Button
 	album_flow_random_button.name = "InlineRandomButton"
-	album_flow_random_button.text = ""
-	album_flow_random_button.toggle_mode = true
-	album_flow_random_button.focus_mode = Control.FOCUS_ALL
+	album_flow_random_button.call("configure", "shuffle", "RANDOM", "OFF", MinimalThemeScript.PINK, false, size.x < 1550.0)
 	album_flow_random_button.toggled.connect(_on_random_mod_toggled)
 	album_flow_modifier_row.add_child(album_flow_random_button)
-	_install_album_flow_mod_button_content(album_flow_random_button, "shuffle", "RANDOM", "OFF", MinimalThemeScript.PINK, false)
-	practice_button.reparent(album_flow_modifier_row)
-	practice_button.text = ""
-	practice_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_install_album_flow_mod_button_content(practice_button, "target", "PRACTICE", "SELECT", LIBRARY_ACCENT, true)
+
+	var legacy_practice_button := practice_button
+	practice_button = ModButtonScene.instantiate() as Button
+	practice_button.name = "PracticeButton"
+	practice_button.tooltip_text = "Loop one authored musical section. Practice results never change normal records."
+	practice_button.call("configure", "target", "PRACTICE", "SELECT", LIBRARY_ACCENT, true, size.x < 1550.0)
+	practice_button.pressed.connect(_open_v18_practice_menu)
+	album_flow_modifier_row.add_child(practice_button)
+	if legacy_practice_button != null:
+		legacy_practice_button.queue_free()
 	replay_button.visible = false
 	action_row.visible = false
 
@@ -978,12 +863,18 @@ void fragment() {
 	album_flow_sidebar_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	album_flow_sidebar.add_child(album_flow_sidebar_spacer)
 
-	play_button.reparent(album_flow_sidebar)
+	var legacy_play_button := play_button
+	play_button = PlayButtonScene.instantiate() as Button
+	play_button.name = "PlayButton"
+	play_button.tooltip_text = "Start the selected chart."
+	play_button.pressed.connect(_play_selected_chart)
+	album_flow_sidebar.add_child(play_button)
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	play_button.size_flags_vertical = Control.SIZE_SHRINK_END
-	_install_album_flow_play_button_content()
+	if legacy_play_button != null:
+		legacy_play_button.queue_free()
 
-	# Compatibility shell retained but hidden: the release composition no longer
+	# Compatibility shell retained but hidden	# Compatibility shell retained but hidden: the release composition no longer
 	# uses a detached bottom difficulty/action dock.
 	album_flow_bottom_panel = PanelContainer.new()
 	album_flow_bottom_panel.name = "AlbumFlowBottomPanel"
@@ -1451,48 +1342,24 @@ func _refresh_album_flow_difficulty_row() -> void:
 	_clear_album_flow_children(album_flow_difficulty_row)
 	if selected_song_id.is_empty():
 		return
+
 	var available_difficulties := _available_difficulties(selected_song_id)
+	var compact := size.y < 840.0
 	for diff_value in ["normal", "hard", "master"]:
 		var diff: String = str(diff_value)
 		var chart: Dictionary = _find_level(selected_song_id, diff)
 		var available: bool = available_difficulties.has(diff) and not chart.is_empty()
-		var chip := Button.new()
-		chip.name = "%sDifficultyButton" % diff.capitalize()
-		chip.text = ""
-		chip.focus_mode = Control.FOCUS_ALL
-		chip.disabled = not available
-		chip.custom_minimum_size = Vector2(0, 58 if size.y < 840.0 else 76)
-		chip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		if available:
-			chip.pressed.connect(_select_difficulty.bind(diff))
 		var selected: bool = available and diff == selected_difficulty
 		var accent: Color = _difficulty_color(diff)
-		_style_album_difficulty_button(chip, selected, available, accent)
-		var stack := VBoxContainer.new()
-		stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		stack.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		stack.alignment = BoxContainer.ALIGNMENT_CENTER
-		stack.add_theme_constant_override("separation", -2)
-		chip.add_child(stack)
-		var level_label := Label.new()
-		level_label.name = "DifficultyLevel"
-		level_label.set_meta("library_owned_style", true)
-		level_label.text = str(int(chart.get("star_rating", 1))) if available else "—"
-		level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		MinimalThemeScript.apply_numeric(level_label, 26 if selected else 23, accent if selected else Color(MinimalThemeScript.TEXT, 0.84 if available else 0.22))
-		stack.add_child(level_label)
-		var name_label := Label.new()
-		name_label.name = "DifficultyName"
-		name_label.set_meta("library_owned_style", true)
-		name_label.text = diff.to_upper()
-		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		MinimalThemeScript.apply_mono(name_label, 9, accent if selected else Color(MinimalThemeScript.TEXT, 0.56 if available else 0.18))
-		stack.add_child(name_label)
-		# The mockup uses a small diamond floating above the selected card border.
-		# That marker is owned by _style_album_difficulty_button so the text stack
-		# can stay vertically centered.
+
+		var chip := DifficultyCardScene.instantiate() as Button
 		album_flow_difficulty_row.add_child(chip)
+		chip.call("configure", diff, int(chart.get("star_rating", 1)), selected, available, accent, compact)
+		_style_album_difficulty_button(chip, selected, available, accent)
+		if available:
+			chip.pressed.connect(_select_difficulty.bind(diff))
 		InteractionPolishScript.install_buttons([chip])
+
 		if selected:
 			chip.modulate.a = 0.74
 			chip.scale = Vector2(0.96, 0.96)
@@ -2091,62 +1958,18 @@ func _sync_album_flow_selection_marker(button: Button, active: bool, accent: Col
 
 
 func _install_album_flow_mod_button_content(button: Button, icon_text: String, title_text: String, state_text: String, accent: Color, active: bool) -> void:
+	# Compatibility entry point for older callers. New Album Flow buttons are
+	# instantiated from mod_button.tscn and already own this hierarchy.
 	if button == null:
 		return
-	var content_margin := button.get_node_or_null("MockupContent") as MarginContainer
-	if content_margin == null:
-		button.text = ""
-		content_margin = MarginContainer.new()
-		content_margin.name = "MockupContent"
-		content_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		content_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		content_margin.add_theme_constant_override("margin_left", 16)
-		content_margin.add_theme_constant_override("margin_right", 16)
-		content_margin.add_theme_constant_override("margin_top", 8)
-		content_margin.add_theme_constant_override("margin_bottom", 8)
-		button.add_child(content_margin)
-
-		var row := HBoxContainer.new()
-		row.name = "ContentRow"
-		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		row.add_theme_constant_override("separation", 10)
-		content_margin.add_child(row)
-
-		var icon := LibraryVectorIcon.new()
-		icon.name = "IconLabel"
-		icon.custom_minimum_size = Vector2(30, 30)
-		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(icon)
-
-		var copy := VBoxContainer.new()
-		copy.name = "Copy"
-		copy.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		copy.alignment = BoxContainer.ALIGNMENT_CENTER
-		copy.add_theme_constant_override("separation", 0)
-		row.add_child(copy)
-
-		var title := Label.new()
-		title.name = "TitleLabel"
-		title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		copy.add_child(title)
-
-		var state := Label.new()
-		state.name = "StateLabel"
-		state.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		copy.add_child(state)
-
-	var icon_label := button.find_child("IconLabel", true, false) as Control
-	var title_label := button.find_child("TitleLabel", true, false) as Label
-	if icon_label != null:
-		icon_label.set("kind", icon_text)
-	if title_label != null:
-		title_label.text = title_text
-	_set_album_flow_mod_button_state(button, state_text, accent, active)
-
+	if button.has_method("configure"):
+		button.call("configure", icon_text, title_text, state_text, accent, active, size.x < 1550.0)
 
 func _set_album_flow_mod_button_state(button: Button, state_text: String, accent: Color, active: bool) -> void:
 	if button == null:
+		return
+	if button.has_method("set_state"):
+		button.call("set_state", state_text, accent, active, size.x < 1550.0)
 		return
 	var icon_label := button.find_child("IconLabel", true, false) as Control
 	var title_label := button.find_child("TitleLabel", true, false) as Label
@@ -2160,55 +1983,9 @@ func _set_album_flow_mod_button_state(button: Button, state_text: String, accent
 		state_label.text = state_text
 		MinimalThemeScript.apply_mono(state_label, 10, accent if active else Color(MinimalThemeScript.TEXT, 0.55))
 
-
 func _install_album_flow_play_button_content() -> void:
-	if play_button == null or play_button.get_node_or_null("MockupPlayContent") != null:
-		return
-	play_button.text = ""
-	var margin := MarginContainer.new()
-	margin.name = "MockupPlayContent"
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 22)
-	margin.add_theme_constant_override("margin_right", 22)
-	margin.add_theme_constant_override("margin_top", 12)
-	margin.add_theme_constant_override("margin_bottom", 12)
-	play_button.add_child(margin)
-
-	var row := HBoxContainer.new()
-	row.name = "PlayContentRow"
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", 16)
-	margin.add_child(row)
-
-	var icon := LibraryVectorIcon.new()
-	icon.name = "PlayIcon"
-	icon.kind = "double_diamond"
-	icon.custom_minimum_size = Vector2(44, 44)
-	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(icon)
-
-	var divider := VSeparator.new()
-	divider.name = "PlayDivider"
-	divider.custom_minimum_size.x = 1
-	row.add_child(divider)
-
-	var title := Label.new()
-	title.name = "PlayTitle"
-	title.text = "PLAY"
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	row.add_child(title)
-
-	var arrow := LibraryVectorIcon.new()
-	arrow.name = "PlayArrow"
-	arrow.kind = "arrow"
-	arrow.ink = MinimalThemeScript.TEXT
-	arrow.custom_minimum_size = Vector2(28, 28)
-	arrow.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(arrow)
-
+	# PlayButtonScene owns its icon/title/divider hierarchy.
+	return
 
 func _library_outline_button(button: Button, active: bool, accent: Color) -> void:
 	# One Song Library-only state vocabulary. Focus stays visible without bloom.
@@ -2257,6 +2034,9 @@ func _style_album_difficulty_button(button: Button, selected: bool, available: b
 func _set_album_flow_play_text(label_text: String) -> void:
 	if play_button == null:
 		return
+	if play_button.has_method("set_label"):
+		play_button.call("set_label", label_text)
+		return
 	var title := play_button.find_child("PlayTitle", true, false) as Label
 	var icon := play_button.find_child("PlayIcon", true, false) as Control
 	var arrow := play_button.find_child("PlayArrow", true, false) as Control
@@ -2273,7 +2053,6 @@ func _set_album_flow_play_text(label_text: String) -> void:
 	if divider != null:
 		divider.visible = standard_play
 
-
 func _select_song_relative(delta: int) -> void:
 	if filtered_song_ids.is_empty():
 		return
@@ -2288,7 +2067,9 @@ func _style_album_play_button() -> void:
 	if not play_button.disabled:
 		_set_album_flow_play_text("PLAY")
 	_library_outline_button(play_button, true, LIBRARY_ACCENT)
-	play_button.get_node("SelectionMarker").visible = false
+	var play_marker := play_button.get_node_or_null("SelectionMarker") as Control
+	if play_marker != null:
+		play_marker.visible = false
 	var title := play_button.find_child("PlayTitle", true, false) as Label
 	if title != null:
 		MinimalThemeScript.apply_heading(title, 24 if size.x < 1550 else 34, MinimalThemeScript.TEXT)
@@ -2646,11 +2427,13 @@ func _rebuild_song_list() -> void:
 	song_difficulty_boxes.clear()
 	song_difficulty_rows.clear()
 	_kill_row_tweens()
+
 	if not filtered_song_ids.is_empty():
 		var list_top_space := Control.new()
 		list_top_space.name = "ListTopSpace"
 		list_top_space.custom_minimum_size.y = 8.0
 		song_list.add_child(list_top_space)
+
 	if filtered_song_ids.is_empty():
 		var empty_label := Label.new()
 		empty_label.name = "EmptyLibraryState"
@@ -2661,82 +2444,69 @@ func _rebuild_song_list() -> void:
 		empty_label.add_theme_font_size_override("font_size", 15)
 		empty_label.add_theme_color_override("font_color", MinimalThemeScript.MUTED)
 		song_list.add_child(empty_label)
+
 	for index in range(filtered_song_ids.size()):
 		var song_id: String = filtered_song_ids[index]
 		var rep: Dictionary = _representative(song_id)
 		var background_texture := _song_banner_texture(song_id, str(rep.get("background", "")))
-		var group := VBoxContainer.new()
-		group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		group.add_theme_constant_override("separation", 0)
+
+		var group := SongRowScene.instantiate() as VBoxContainer
 		song_list.add_child(group)
+		group.call(
+			"configure_header",
+			index,
+			str(rep.get("title", "SONG")),
+			_display_artist(rep),
+			int(round(float(rep.get("bpm", 0.0)))),
+			background_texture,
+			LIBRARY_ACCENT,
+			song_id == selected_song_id,
+			song_list.theme,
+			_song_row_base_margin(index)
+		)
 
-		var header_wrapper := AnimatedMarginScript.new() as MarginContainer
-		header_wrapper.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		header_wrapper.call("set_margin_immediate", _song_row_base_margin(index))
-		group.add_child(header_wrapper)
-
-		var button := SongBannerButtonScript.new() as Button
-		button.toggle_mode = true
-		button.focus_mode = Control.FOCUS_NONE
-		button.button_pressed = song_id == selected_song_id
-		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.text = ""
-		# Metadata is already visible inside the card. A native hover tooltip only
-		# duplicates it and obscures neighbouring rows.
-		button.tooltip_text = ""
-		button.theme = song_list.theme
-		button.call("configure", background_texture, LIBRARY_ACCENT, "compact_song")
+		var header_wrapper := group.get_node("HeaderWrapper") as MarginContainer
+		var button := group.get_node("HeaderWrapper/HeaderButton") as Button
+		var difficulty_clip := group.get_node("DifficultyClip") as Control
+		var difficulty_box := group.get_node("DifficultyClip/DifficultyBox") as VBoxContainer
 		_style_song_button(button, LIBRARY_ACCENT)
-		_populate_song_header_button(button, index, rep, song_id)
 		button.pressed.connect(_select_song.bind(song_id))
 		button.mouse_entered.connect(_on_song_row_hover.bind(index, true))
 		button.mouse_exited.connect(_on_song_row_hover.bind(index, false))
-		header_wrapper.add_child(button)
 
-		var difficulty_clip := Control.new()
-		difficulty_clip.clip_contents = true
-		difficulty_clip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		difficulty_clip.custom_minimum_size.y = 0.0
-		group.add_child(difficulty_clip)
-
-		var difficulty_box := VBoxContainer.new()
-		difficulty_box.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-		difficulty_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		difficulty_box.add_theme_constant_override("separation", 2)
-		difficulty_clip.add_child(difficulty_box)
 		var group_difficulty_rows: Array = []
 		var available := _available_difficulties(song_id)
 		for difficulty_index in range(available.size()):
 			var diff: String = available[difficulty_index]
 			var chart := _find_level(song_id, diff)
-			var diff_wrapper := AnimatedMarginScript.new() as MarginContainer
-			diff_wrapper.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			diff_wrapper.call("set_margin_immediate", _difficulty_row_base_margin(difficulty_index))
-			difficulty_box.add_child(diff_wrapper)
-			var diff_button := SongBannerButtonScript.new() as Button
-			diff_button.toggle_mode = true
-			diff_button.focus_mode = Control.FOCUS_NONE
-			diff_button.set_pressed_no_signal(song_id == selected_song_id and diff == selected_difficulty)
-			diff_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-			diff_button.text = ""
-			diff_button.custom_minimum_size.y = 36.0
-			diff_button.theme = song_list.theme
-			diff_button.call("configure", background_texture, _difficulty_color(diff), "difficulty")
+			var progress_text := _progress_short_label(_progress_entry(song_id, diff))
+			var row_data: Dictionary = group.call(
+				"add_difficulty",
+				diff,
+				chart,
+				progress_text,
+				background_texture,
+				_difficulty_color(diff),
+				song_id == selected_song_id and diff == selected_difficulty,
+				song_list.theme,
+				_difficulty_row_base_margin(difficulty_index)
+			)
+			var diff_wrapper := row_data["wrapper"] as MarginContainer
+			var diff_button := row_data["button"] as Button
 			_style_song_difficulty_button(diff_button, diff)
-			_populate_difficulty_button(diff_button, chart, diff)
 			diff_button.pressed.connect(_select_song_difficulty.bind(song_id, diff))
 			diff_button.mouse_entered.connect(_on_difficulty_row_hover.bind(index, difficulty_index, true))
 			diff_button.mouse_exited.connect(_on_difficulty_row_hover.bind(index, difficulty_index, false))
-			diff_wrapper.add_child(diff_button)
 			group_difficulty_rows.append({"wrapper": diff_wrapper, "button": diff_button, "difficulty": diff})
-		difficulty_box.custom_minimum_size.y = _difficulty_stack_height(group_difficulty_rows)
 
+		difficulty_box.custom_minimum_size.y = _difficulty_stack_height(group_difficulty_rows)
 		song_groups.append(group)
 		song_header_wrappers.append(header_wrapper)
 		song_difficulty_clips.append(difficulty_clip)
 		song_difficulty_boxes.append(difficulty_box)
 		song_difficulty_rows.append(group_difficulty_rows)
 		song_buttons.append(button)
+
 	var totals := _completion_totals()
 	count_label.text = "SONG LIBRARY"
 	wheel_mode_label.text = "ARTIST                    BPM" if is_album_flow_library_layout_active() else "%d TRACK%s" % [song_ids.size(), "" if song_ids.size() == 1 else "S"]
@@ -2744,91 +2514,7 @@ func _rebuild_song_list() -> void:
 	_refresh_song_rows(false)
 	call_deferred("_center_selected_row", false)
 
-func _populate_song_header_button(button: Button, index: int, rep: Dictionary, song_id: String) -> void:
-	var content := MarginContainer.new()
-	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	content.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	content.add_theme_constant_override("margin_left", 8)
-	content.add_theme_constant_override("margin_right", 12)
-	content.add_theme_constant_override("margin_top", 6)
-	content.add_theme_constant_override("margin_bottom", 6)
-	button.add_child(content)
 
-	var row := HBoxContainer.new()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", 10)
-	content.add_child(row)
-
-	var index_label := Label.new()
-	index_label.name = "SongIndex"
-	index_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	index_label.text = "%02d" % (index + 1)
-	index_label.custom_minimum_size.x = 30
-	index_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	MinimalThemeScript.apply_mono(index_label, 10, Color(MinimalThemeScript.TEXT, 0.52))
-	row.add_child(index_label)
-
-	var thumb := TextureRect.new()
-	thumb.name = "SongJacket"
-	thumb.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	thumb.custom_minimum_size = Vector2(58, 58)
-	thumb.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	thumb.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	thumb.texture = _song_banner_texture(song_id, str(rep.get("background", "")))
-	row.add_child(thumb)
-
-	var marker := LibraryVectorIcon.new()
-	marker.name = "SongMarker"
-	marker.custom_minimum_size = Vector2(12, 12)
-	marker.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(marker)
-
-	var identity_stack := VBoxContainer.new()
-	identity_stack.name = "SongIdentity"
-	identity_stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	identity_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	identity_stack.alignment = BoxContainer.ALIGNMENT_CENTER
-	identity_stack.add_theme_constant_override("separation", 0)
-	row.add_child(identity_stack)
-
-	var title := Label.new()
-	title.name = "SongTitle"
-	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title.text = str(rep.get("title", "SONG"))
-	title.add_theme_font_override("font", MinimalThemeScript.semibold_font())
-	title.add_theme_font_size_override("font_size", 14)
-	title.add_theme_color_override("font_color", Color(1, 1, 1, 0.96))
-	title.set_meta("base_alpha", 0.96)
-	title.set_meta("label_role", "song_title")
-	title.clip_text = true
-	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	identity_stack.add_child(title)
-
-	var artist := Label.new()
-	artist.name = "SongArtist"
-	artist.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	artist.text = _display_artist(rep)
-	artist.add_theme_font_override("font", MinimalThemeScript.body_font())
-	artist.add_theme_font_size_override("font_size", 10)
-	artist.add_theme_color_override("font_color", Color(1, 1, 1, 0.58))
-	artist.set_meta("base_alpha", 0.58)
-	artist.set_meta("label_role", "song_subtitle")
-	artist.clip_text = true
-	artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	identity_stack.add_child(artist)
-
-	var bpm_label := Label.new()
-	bpm_label.name = "SongBpm"
-	bpm_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bpm_label.text = str(int(round(float(rep.get("bpm", 0.0)))))
-	bpm_label.custom_minimum_size.x = 52
-	bpm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	bpm_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	bpm_label.add_theme_font_size_override("font_size", 10)
-	bpm_label.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.68))
-	bpm_label.set_meta("base_alpha", 0.68)
-	bpm_label.set_meta("label_role", "song_level")
-	row.add_child(bpm_label)
 
 func _album_flow_song_level(song_id: String) -> int:
 	var diffs := _available_difficulties(song_id)
@@ -2859,68 +2545,9 @@ func _apply_song_header_text_emphasis(button: Button, is_selected: bool, distanc
 		var shadow_alpha := 0.78 if is_selected else clampf(0.54 + proximity * 0.08, 0.46, 0.64)
 		label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, shadow_alpha))
 
-func _populate_difficulty_button(button: Button, chart: Dictionary, diff: String) -> void:
-	var content := MarginContainer.new()
-	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	content.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	content.add_theme_constant_override("margin_left", 14)
-	content.add_theme_constant_override("margin_right", 14)
-	content.add_theme_constant_override("margin_top", 4)
-	content.add_theme_constant_override("margin_bottom", 4)
-	button.add_child(content)
 
-	var row := HBoxContainer.new()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.alignment = BoxContainer.ALIGNMENT_BEGIN
-	row.add_theme_constant_override("separation", 14)
-	content.add_child(row)
 
-	var events: Variant = chart.get("events", [])
-	var notes: int = (events as Array).size() if events is Array else 0
-	var label_text: String = str(chart.get("difficulty", diff.to_upper())).to_upper()
-	var stars: int = int(chart.get("star_rating", 1))
-	var song_id: String = str(chart.get("song_id", selected_song_id))
-	var progress: Dictionary = _progress_entry(song_id, diff)
-	var progress_text: String = _progress_short_label(progress)
 
-	var entries: Array = [
-		[label_text, 0.98, 88],
-		["%d★" % stars, 0.94, 48],
-		[("%d NOTES" % notes) if notes > 0 else "— NOTES", 0.88, 96]
-	]
-	# Do not print UNPLAYED/REC on every row. Only surface actual player progress.
-	if progress_text != "UNPLAYED":
-		entries.append([progress_text, 0.90, 0])
-
-	for pair: Variant in entries:
-		var txt: String = str((pair as Array)[0])
-		if txt.is_empty():
-			continue
-		var item := Label.new()
-		item.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		item.text = txt
-		item.add_theme_font_override("font", MinimalThemeScript.mono_font())
-		item.add_theme_font_size_override("font_size", 12)
-		item.custom_minimum_size.x = float((pair as Array)[2])
-		item.add_theme_color_override("font_color", Color(1, 1, 1, float((pair as Array)[1])))
-		item.set_meta("base_alpha", float((pair as Array)[1]))
-		item.set_meta("label_role", "difficulty_item")
-		item.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.72))
-		item.add_theme_constant_override("shadow_offset_x", 1)
-		item.add_theme_constant_override("shadow_offset_y", 1)
-		row.add_child(item)
-
-func _difficulty_row_text(chart: Dictionary, diff: String) -> String:
-	var events: Variant = chart.get("events", [])
-	var notes: int = (events as Array).size() if events is Array else 0
-	var label: String = str(chart.get("difficulty", diff.to_upper())).to_upper()
-	var stars: int = int(chart.get("star_rating", 1))
-	if notes <= 0:
-		return "%s   %d★   —" % [label, stars]
-	var song_id: String = str(chart.get("song_id", selected_song_id))
-	var progress: Dictionary = _progress_entry(song_id, diff)
-	var status: String = _progress_short_label(progress)
-	return "%s   %d★   %d%s" % [label, stars, notes, "   " + status if status != "UNPLAYED" else ""]
 
 func _style_song_difficulty_button(button: Button, _difficulty_id: String) -> void:
 	for color_name in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:

@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/song_library/play_button.gd" id="1_play"]
+[ext_resource type="Script" path="res://scripts/ui/library_vector_icon.gd" id="2_icon"]
+
+[node name="PlayButton" type="Button"]
+text = ""
+script = ExtResource("1_play")
+
+[node name="SelectionMarker" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 9.0
+offset_bottom = 9.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("2_icon")
+
+[node name="MockupPlayContent" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 12
+
+[node name="PlayContentRow" type="HBoxContainer" parent="MockupPlayContent"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="PlayIcon" type="TextureRect" parent="MockupPlayContent/PlayContentRow"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("2_icon")
+
+[node name="PlayDivider" type="VSeparator" parent="MockupPlayContent/PlayContentRow"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="PlayTitle" type="Label" parent="MockupPlayContent/PlayContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PLAY"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayArrow" type="TextureRect" parent="MockupPlayContent/PlayContentRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("2_icon")
