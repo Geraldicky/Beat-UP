@@ -1118,21 +1118,21 @@ func _apply_album_flow_song_library_layout() -> void:
 	info_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(0, 0, 0, 0), 0, Color(0, 0, 0, 0), 0, 6.0 if compact else 12.0))
 	main_margin.add_theme_constant_override("margin_left", 18 if compact else 30)
 	main_margin.add_theme_constant_override("margin_right", 18 if compact else 30)
-	main_margin.add_theme_constant_override("margin_top", 12 if compact else 18)
+	main_margin.add_theme_constant_override("margin_top", 10 if compact else 26)
 	main_margin.add_theme_constant_override("margin_bottom", 12 if compact else 22)
-	root_vbox.add_theme_constant_override("separation", 12)
-	header_row.custom_minimum_size.y = 52 if compact else 60
-	header_row.add_theme_constant_override("separation", 12 if compact else 14)
-	back_button.custom_minimum_size = Vector2(96 if compact else 116, 42 if compact else 48)
+	root_vbox.add_theme_constant_override("separation", 8 if compact else 18)
+	header_row.custom_minimum_size.y = 44 if compact else 42
+	header_row.add_theme_constant_override("separation", 9 if compact else 10)
+	back_button.custom_minimum_size = Vector2(92 if compact else 104, 36 if compact else 40)
 
 	var title_block := title_label.get_parent() as Control
 	if title_block != null:
 		title_block.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		title_block.custom_minimum_size.x = 190 if compact else 300
+		title_block.custom_minimum_size.x = 182 if compact else 260
 		if title_block is BoxContainer:
 			(title_block as BoxContainer).alignment = BoxContainer.ALIGNMENT_CENTER
 	if album_flow_header_spacer != null:
-		album_flow_header_spacer.custom_minimum_size.x = 8 if compact else 28
+		album_flow_header_spacer.custom_minimum_size.x = 6 if compact else 16
 	var library_toolbar := search_input.get_parent() as Control
 	if library_toolbar != null:
 		# Match the mockup's centered-right toolbar instead of stretching controls
@@ -1200,11 +1200,11 @@ func _apply_album_flow_song_library_layout() -> void:
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	play_button.size_flags_vertical = Control.SIZE_SHRINK_END
 
-	search_input.custom_minimum_size = Vector2(300 if compact else 430, 42 if compact else 46)
+	search_input.custom_minimum_size = Vector2(300 if compact else 430, 36 if compact else 40)
 	search_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	artist_filter.custom_minimum_size = Vector2(132 if compact else 154, 42 if compact else 46)
-	difficulty_filter.custom_minimum_size = Vector2(144 if compact else 170, 42 if compact else 46)
-	sort_filter.custom_minimum_size = Vector2(108 if compact else 126, 42 if compact else 46)
+	artist_filter.custom_minimum_size = Vector2(132 if compact else 154, 36 if compact else 40)
+	difficulty_filter.custom_minimum_size = Vector2(144 if compact else 170, 36 if compact else 40)
+	sort_filter.custom_minimum_size = Vector2(108 if compact else 126, 36 if compact else 40)
 	if album_flow_list_header != null:
 		album_flow_list_header.custom_minimum_size.y = 28
 	_apply_album_flow_filter_tab_style()
@@ -1250,12 +1250,12 @@ func _apply_album_flow_song_library_theme() -> void:
 	var compact := size.x < 1550.0 or size.y < 840.0
 
 	title_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	title_label.add_theme_font_size_override("font_size", 22)
+	title_label.add_theme_font_size_override("font_size", 18 if compact else 20)
 	title_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	back_button.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	back_button.add_theme_font_size_override("font_size", 11)
-	back_button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.82))
+	back_button.add_theme_font_size_override("font_size", 10)
+	back_button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.86))
 	back_button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 	count_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	count_label.add_theme_font_size_override("font_size", 9)
@@ -1354,7 +1354,10 @@ func _apply_album_flow_song_library_theme() -> void:
 	for header_filter in [artist_filter, difficulty_filter, sort_filter]:
 		header_filter.add_theme_font_override("font", MinimalThemeScript.mono_font())
 		header_filter.add_theme_font_size_override("font_size", 10)
-		header_filter.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.78))
+		header_filter.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.84))
+		header_filter.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
+		header_filter.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
+		header_filter.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT)
 	_style_album_play_button()
 	_style_album_secondary_chip(album_flow_random_button, random_mode_enabled, MinimalThemeScript.PINK)
 	# Practice is an accented action in the reference. It still opens the authored
@@ -1826,31 +1829,64 @@ func _transparent_row_style(radius: float, left: float, right: float, top: float
 
 func _style_search_input(input: LineEdit) -> void:
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(MinimalThemeScript.SURFACE, 0.22)
-	normal.border_color = Color(MinimalThemeScript.BORDER, 0.14)
+	normal.bg_color = Color(MinimalThemeScript.SURFACE, 0.56)
+	normal.border_color = Color(MinimalThemeScript.BORDER, 0.36)
 	normal.set_corner_radius_all(8)
 	normal.set_border_width_all(1)
 	normal.content_margin_left = 14.0
 	normal.content_margin_right = 14.0
 	normal.content_margin_top = 6.0
 	normal.content_margin_bottom = 6.0
+	normal.shadow_color = Color(0, 0, 0, 0.30)
+	normal.shadow_size = 5
+	normal.shadow_offset = Vector2(0, 2)
+	var hover := normal.duplicate()
+	hover.bg_color = Color(MinimalThemeScript.SURFACE.lerp(MinimalThemeScript.CYAN, 0.10), 0.58)
+	hover.border_color = Color(MinimalThemeScript.CYAN, 0.65)
 	var focus := normal.duplicate()
-	focus.bg_color = Color(MinimalThemeScript.SURFACE, 0.34)
-	focus.border_color = Color(MinimalThemeScript.CYAN, 0.64)
+	focus.bg_color = Color(MinimalThemeScript.SURFACE.lerp(MinimalThemeScript.CYAN, 0.08), 0.62)
+	focus.border_color = Color(MinimalThemeScript.CYAN, 0.96)
+	focus.set_border_width_all(2)
+	focus.shadow_color = Color(MinimalThemeScript.CYAN, 0.22)
+	focus.shadow_size = 9
+	focus.shadow_offset = Vector2.ZERO
 	var read_only := normal.duplicate()
-	read_only.bg_color = Color(MinimalThemeScript.SURFACE, 0.34)
-	read_only.border_color = Color(MinimalThemeScript.BORDER, 0.10)
+	read_only.bg_color = Color(MinimalThemeScript.SURFACE, 0.46)
+	read_only.border_color = Color(MinimalThemeScript.BORDER, 0.30)
 	input.add_theme_stylebox_override("normal", normal)
 	input.add_theme_stylebox_override("focus", focus)
 	input.add_theme_stylebox_override("read_only", read_only)
-	input.add_theme_stylebox_override("hover", focus)
+	input.add_theme_stylebox_override("hover", hover)
 	input.add_theme_font_size_override("font_size", 12)
+	input.add_theme_color_override("font_placeholder_color", Color(MinimalThemeScript.TEXT, 0.82))
+	input.add_theme_color_override("clear_button_color", Color(MinimalThemeScript.TEXT, 0.82))
+	input.add_theme_color_override("clear_button_color_pressed", MinimalThemeScript.CYAN)
+	input.set_meta("song_library_normal_style", normal)
+	input.set_meta("song_library_hover_style", hover)
+	if not input.has_meta("song_library_hover_connected"):
+		input.mouse_entered.connect(_on_search_hover_changed.bind(input, true))
+		input.mouse_exited.connect(_on_search_hover_changed.bind(input, false))
+		input.set_meta("song_library_hover_connected", true)
+
+func _on_search_hover_changed(input: LineEdit, hovered: bool) -> void:
+	var style_key := "song_library_hover_style" if hovered else "song_library_normal_style"
+	var style := input.get_meta(style_key, null) as StyleBoxFlat
+	if style != null:
+		input.add_theme_stylebox_override("normal", style)
 
 func _style_compact_option_button(button: Button) -> void:
-	var normal := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE, 0.22), Color(MinimalThemeScript.BORDER, 0.10), 8)
-	var hover := MinimalThemeScript.button_style(Color(MinimalThemeScript.CYAN, 0.08), Color(MinimalThemeScript.CYAN, 0.48), 8)
-	var pressed := MinimalThemeScript.button_style(Color(MinimalThemeScript.CYAN, 0.12), MinimalThemeScript.CYAN, 8)
-	var focus := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE, 0.36), MinimalThemeScript.PINK, 8)
+	var normal := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE, 0.50), Color(MinimalThemeScript.BORDER, 0.34), 8)
+	var hover := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE.lerp(MinimalThemeScript.CYAN, 0.12), 0.56), Color(MinimalThemeScript.CYAN, 0.65), 8)
+	var pressed := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE.lerp(MinimalThemeScript.CYAN, 0.18), 0.62), Color(MinimalThemeScript.CYAN, 0.86), 8)
+	var focus := MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE.lerp(MinimalThemeScript.CYAN, 0.08), 0.60), Color(MinimalThemeScript.CYAN, 0.96), 8)
+	for style in [normal, hover, pressed]:
+		style.shadow_color = Color(0, 0, 0, 0.30)
+		style.shadow_size = 5
+		style.shadow_offset = Vector2(0, 2)
+	focus.set_border_width_all(2)
+	focus.shadow_color = Color(MinimalThemeScript.CYAN, 0.22)
+	focus.shadow_size = 9
+	focus.shadow_offset = Vector2.ZERO
 	for style in [normal, hover, pressed, focus]:
 		style.content_margin_left = 14.0
 		style.content_margin_right = 38.0
@@ -1861,6 +1897,10 @@ func _style_compact_option_button(button: Button) -> void:
 	button.add_theme_stylebox_override("pressed", pressed)
 	button.add_theme_stylebox_override("focus", focus)
 	button.add_theme_font_size_override("font_size", 12)
+	button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.84))
+	button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT)
 
 
 func _style_action_back(button: Button) -> void:
@@ -1878,7 +1918,7 @@ func _style_action_back(button: Button) -> void:
 	button.add_theme_stylebox_override("pressed", pressed)
 	button.add_theme_stylebox_override("focus", focus)
 	button.add_theme_font_size_override("font_size", 10)
-	button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.90))
+	button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.86))
 	button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 
 func _style_random_toggle(button: Button) -> void:

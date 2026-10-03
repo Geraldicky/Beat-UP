@@ -42,6 +42,24 @@ func run() -> void:
 	var library_toolbar := selector.search_input.get_parent() as Control
 	check(title_block != null and library_toolbar != null and title_block.get_index() < library_toolbar.get_index(), "Song Library title is not placed before the search/filter toolbar.")
 	check(title_block.get_global_rect().end.x <= selector.search_input.get_global_rect().position.x, "Song Library title overlaps or trails the search field.")
+	check(selector.header_row.size.y <= 50.0, "Song Library top rail is taller than the approved mockup.")
+	for top_control: Control in [selector.back_button, selector.search_input, selector.artist_filter, selector.difficulty_filter, selector.sort_filter]:
+		check(top_control.custom_minimum_size.y <= 40.0, "%s is taller than the approved top-bar control scale." % top_control.name)
+	var search_normal := selector.search_input.get_theme_stylebox("normal") as StyleBoxFlat
+	var search_focus := selector.search_input.get_theme_stylebox("focus") as StyleBoxFlat
+	var filter_normal := selector.artist_filter.get_theme_stylebox("normal") as StyleBoxFlat
+	var filter_hover := selector.artist_filter.get_theme_stylebox("hover") as StyleBoxFlat
+	var filter_focus := selector.artist_filter.get_theme_stylebox("focus") as StyleBoxFlat
+	check(search_normal != null and is_equal_approx(search_normal.bg_color.a, 0.56), "Search surface is not dark enough to separate from the artwork.")
+	check(filter_normal != null and is_equal_approx(filter_normal.bg_color.a, 0.50), "Filter surface does not preserve the intended translucent contrast.")
+	check(search_normal.bg_color.a > filter_normal.bg_color.a, "Search must remain slightly darker than the filter controls.")
+	check(filter_normal.border_color.a >= 0.30 and filter_normal.border_color.a <= 0.38, "Filter border contrast is outside the approved range.")
+	check(is_equal_approx(filter_hover.border_color.a, 0.65) or filter_hover.border_color.a > 0.65, "Filter hover does not expose the cyan edge clearly enough.")
+	check(search_focus.border_width_left == 2 and filter_focus.border_width_left == 2, "Top controls do not expose a 2 px focus edge.")
+	check(search_focus.shadow_color.a > 0.0 and filter_focus.shadow_color.a > 0.0, "Top controls are missing the soft focus glow.")
+	var filter_text_alpha: float = selector.artist_filter.get_theme_color("font_color").a
+	check(is_equal_approx(filter_text_alpha, 0.84) or filter_text_alpha > 0.84, "Filter text is too transparent against the artwork.")
+	check(selector.back_button.get_theme_color("font_color").a >= 0.85, "Back text is too transparent against the artwork.")
 	check(selector.sort_filter.is_visible_in_tree() and selector.sort_filter.text == "BPM ASC", "Custom sort control or default BPM ascending mode is missing.")
 	check(selector.artist_filter.is_visible_in_tree() and selector.difficulty_filter.is_visible_in_tree(), "Primary Artist/Difficulty header filters are missing.")
 	check(selector.album_flow_filter_button != null and not selector.album_flow_filter_button.visible, "Legacy overflow/ellipsis control leaked into the mockup-matched top bar.")
