@@ -18,6 +18,7 @@ const SONG_THUMBNAIL_ROOT := "res://assets/song_thumbnails"
 const LIBRARY_ACCENT := Color("58c9ff")
 const LIBRARY_ACCENT_HOVER := Color("8bdcff")
 const LibraryVectorIcon = preload("res://scripts/ui/library_vector_icon.gd")
+const LibraryIconLoader = preload("res://scripts/ui/library_icon_loader.gd")
 const LIBRARY_SURFACE := Color("10151b")
 const LIBRARY_BORDER := Color("38424e")
 const ICON_CHEVRON_LEFT_PATH := "res://assets/ui/icons/chevron_left.svg"
@@ -242,6 +243,7 @@ var album_flow_meta_line: Label
 var album_flow_prev_song_button: Button
 var album_flow_next_song_button: Button
 var album_flow_center_divider: ColorRect
+var library_icon_loader = LibraryIconLoader.new()
 
 
 func _ready() -> void:
@@ -555,7 +557,7 @@ func _install_album_flow_song_library_layout() -> void:
 	back_button.reparent(header_row)
 	header_row.move_child(back_button, 0)
 	back_button.text = "BACK"
-	back_button.icon = LibraryVectorIcon.texture_for(ICON_CHEVRON_LEFT_PATH)
+	back_button.icon = library_icon_loader.texture_for(ICON_CHEVRON_LEFT_PATH)
 	back_button.visible = true
 	var header_divider := ColorRect.new()
 	header_divider.name = "LibraryHeaderDivider"
@@ -869,7 +871,7 @@ void fragment() {
 	album_flow_prev_song_button = Button.new()
 	album_flow_prev_song_button.name = "PreviousSongButton"
 	album_flow_prev_song_button.text = ""
-	album_flow_prev_song_button.icon = LibraryVectorIcon.texture_for(ICON_CHEVRON_LEFT_PATH)
+	album_flow_prev_song_button.icon = library_icon_loader.texture_for(ICON_CHEVRON_LEFT_PATH)
 	album_flow_prev_song_button.flat = true
 	album_flow_prev_song_button.focus_mode = Control.FOCUS_NONE
 	album_flow_prev_song_button.custom_minimum_size = Vector2(30, 30)
@@ -878,7 +880,7 @@ void fragment() {
 	album_flow_next_song_button = Button.new()
 	album_flow_next_song_button.name = "NextSongButton"
 	album_flow_next_song_button.text = ""
-	album_flow_next_song_button.icon = LibraryVectorIcon.texture_for(ICON_CHEVRON_RIGHT_PATH)
+	album_flow_next_song_button.icon = library_icon_loader.texture_for(ICON_CHEVRON_RIGHT_PATH)
 	album_flow_next_song_button.flat = true
 	album_flow_next_song_button.focus_mode = Control.FOCUS_NONE
 	album_flow_next_song_button.custom_minimum_size = Vector2(30, 30)
@@ -1899,7 +1901,7 @@ func _install_album_flow_search_icon() -> void:
 		icon = TextureRect.new()
 		icon.name = "SearchIcon"
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		icon.texture = LibraryVectorIcon.texture_for(ICON_SEARCH_PATH)
+		icon.texture = library_icon_loader.texture_for(ICON_SEARCH_PATH)
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icon.set_anchors_preset(Control.PRESET_CENTER_LEFT)
@@ -1913,11 +1915,11 @@ func _install_album_flow_search_icon() -> void:
 
 func _sync_album_flow_dropdown_icons() -> void:
 	if artist_filter != null:
-		artist_filter.add_theme_icon_override("arrow", LibraryVectorIcon.texture_for(ICON_CHEVRON_DOWN_PATH))
+		artist_filter.add_theme_icon_override("arrow", library_icon_loader.texture_for(ICON_CHEVRON_DOWN_PATH))
 	if difficulty_filter != null:
-		difficulty_filter.add_theme_icon_override("arrow", LibraryVectorIcon.texture_for(ICON_CHEVRON_DOWN_PATH))
+		difficulty_filter.add_theme_icon_override("arrow", library_icon_loader.texture_for(ICON_CHEVRON_DOWN_PATH))
 	if sort_filter != null:
-		var sort_icon: Texture2D = LibraryVectorIcon.texture_for(ICON_CHEVRON_UP_PATH if selected_sort_mode == "BPM Asc" else ICON_CHEVRON_DOWN_PATH)
+		var sort_icon: Texture2D = library_icon_loader.texture_for(ICON_CHEVRON_UP_PATH if selected_sort_mode == "BPM Asc" else ICON_CHEVRON_DOWN_PATH)
 		sort_filter.add_theme_icon_override("arrow", sort_icon)
 
 
