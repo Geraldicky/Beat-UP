@@ -1,4 +1,5 @@
 from pathlib import Path
+import struct
 
 root = Path(__file__).resolve().parents[1]
 song = (root / "scripts" / "song_select.gd").read_text(encoding="utf-8")
@@ -54,6 +55,14 @@ background_paths = [
 ]
 if not all(path.is_file() for path in background_paths):
     raise SystemExit("Randomized 39-image background pool is incomplete.")
+for path in background_paths:
+    with path.open("rb") as image:
+        header = image.read(24)
+    if len(header) != 24 or header[:8] != b"\x89PNG\r\n\x1a\n" or header[12:16] != b"IHDR":
+        raise SystemExit("Invalid background PNG: {}".format(path.name))
+    width, height = struct.unpack(">II", header[16:24])
+    if width <= 0 or height <= 0 or width * 9 != height * 16:
+        raise SystemExit("Fullscreen background must be 16:9, not square cover art: {}".format(path.name))
 if background_session.count('res://assets/backgrounds/background_') != 39:
     raise SystemExit("BackgroundSession does not own the canonical 39-image randomized pool.")
 for production_text in [song, startup, battle_background]:
