@@ -142,6 +142,7 @@ func _launch_v18_request(song_id: String, difficulty_id: String, random_mode: bo
 	var canonical: Dictionary = _get_global_song_state()
 	var canonical_matches: bool = str(canonical.get("song_id", "")) == song_id
 	var mode_suffix: String = "PRACTICE" if extra.has("practice_section_index") else ("REPLAY" if extra.has("replay_data") else str(level.get("difficulty", difficulty_id)).to_upper())
+	var launch_background := _randomize_route_background("gameplay")
 	var visual_payload: Dictionary = {
 		"title": str(canonical.get("title", level.get("title", representative.get("title", song_id.replace("_", " "))))) if canonical_matches else str(level.get("title", representative.get("title", song_id.replace("_", " ")))),
 		"artist": str(canonical.get("artist", level.get("artist", representative.get("artist", "Unknown Artist")))) if canonical_matches else str(level.get("artist", representative.get("artist", "Unknown Artist"))),
