@@ -3620,14 +3620,17 @@ func _ambient_background_texture(path: String) -> Texture2D:
 		return ResourceLoader.load(path) as Texture2D
 	return null
 
-func refresh_ambient_background() -> void:
+func refresh_ambient_background(immediate: bool = false) -> void:
 	var path := _get_global_background_path("")
 	var texture := _ambient_background_texture(path)
 	if album_flow_detail_backdrop != null:
 		album_flow_detail_backdrop.texture = texture
 		album_flow_detail_backdrop.visible = texture != null
 	if backdrop_visual != null:
-		backdrop_visual.call("set_song", selected_song_id, selected_difficulty, path)
+		if immediate:
+			backdrop_visual.call("apply_prepared_background", path, texture)
+		else:
+			backdrop_visual.call("set_song", selected_song_id, selected_difficulty, path)
 
 func _get_global_background_path(fallback: String = "") -> String:
 	var background_session: Node = _get_background_session()

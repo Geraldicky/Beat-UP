@@ -15,6 +15,7 @@ var current_background_path: String = ""
 var current_background_index: int = -1
 var visit_count: int = 0
 var track_override: Dictionary = {}
+var background_randomization_suppressed := false
 
 func configure(
 	owner: Control,
@@ -57,7 +58,7 @@ func randomize(force: bool = false) -> void:
 			chosen_index = rng.randi_range(0, candidates.size() - 1)
 			if force or chosen_index != current_background_index:
 				break
-	set_by_index(chosen_index, main_menu != null and main_menu.visible, true)
+	set_by_index(chosen_index, main_menu != null and main_menu.is_visible_in_tree(), true)
 
 func set_by_index(index: int, force_animation: bool = false, autoplay: bool = true) -> void:
 	if candidates.is_empty():
@@ -72,7 +73,7 @@ func set_by_index(index: int, force_animation: bool = false, autoplay: bool = tr
 	visit_count += 1
 	_apply_background_audio(chosen, autoplay)
 	_refresh_now_playing()
-	if main_menu != null and main_menu.visible and force_animation:
+	if main_menu != null and main_menu.is_visible_in_tree() and force_animation:
 		animate_visit()
 
 func cycle(step: int) -> void:
@@ -136,7 +137,8 @@ func sync_from_music_session() -> bool:
 		track_override[key] = global_song[key]
 	var matched_index: int = _find_candidate_index_by_audio(audio_path)
 	current_background_index = matched_index
-	_randomize_ambient_background(track_override, false)
+	# Synchronising persistent music is not a new background visit.
+	apply_global_state(_global_background_state(), false)
 	var was_paused: bool = bool(state.get("paused", false))
 	if not was_paused and menu_bgm.has_method("start_menu_music"):
 		menu_bgm.call("start_menu_music", 0.18)
@@ -194,6 +196,8 @@ func apply_global_state(state: Dictionary, animate: bool = false) -> bool:
 	return true
 
 func _randomize_ambient_background(metadata: Dictionary = {}, animate: bool = false) -> bool:
+	if background_randomization_suppressed:
+		return apply_global_state(_global_background_state(), false)
 	var background_session: Node = _background_session()
 	if background_session == null or not background_session.has_method("randomize_background"):
 		return false
@@ -203,15 +207,12 @@ func _randomize_ambient_background(metadata: Dictionary = {}, animate: bool = fa
 	return apply_global_state(background_session.call("get_state") as Dictionary, animate)
 
 func animate_visit() -> void:
-	if menu_background == null or host == null:
+	if menu_background == null or host == null or not host.is_visible_in_tree():
 		return
-	menu_background.modulate = Color(1.0, 1.0, 1.0, 0.0)
-	menu_background.scale = Vector2.ONE * 1.025
-	menu_background.pivot_offset = menu_background.size * 0.5
-	var tween: Tween = host.create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(menu_background, "modulate:a", 1.0, 0.28).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(menu_background, "scale", Vector2.ONE, 0.75).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	# The route owns the reveal; transport/background updates must not add a
+	# second fade or repeat-visit zoom (including on hidden resident screens).
+	menu_background.modulate = Color.WHITE
+	menu_background.scale = Vector2.ONE
 
 func get_track_override() -> Dictionary:
 	return track_override.duplicate(true)
@@ -272,7 +273,7 @@ func _on_global_selection_changed(_state: Dictionary) -> void:
 	_refresh_now_playing()
 
 func _on_global_background_changed(state: Dictionary) -> void:
-	apply_global_state(state, main_menu != null and main_menu.visible)
+	apply_global_state(state, main_menu != null and main_menu.is_visible_in_tree())
 
 func _song_selection_state() -> Node:
 	return host.get_node_or_null("/root/SongSelectionState") if host != null else null

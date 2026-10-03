@@ -9,6 +9,10 @@ var route_changes: Array[Dictionary] = []
 var completions: Array[Dictionary] = []
 var navigation: Node
 var shell: Control
+var monitor_continuity := false
+var continuity_frames := 0
+var continuity_background_changes := 0
+var continuity_origin_path := ""
 
 func _initialize() -> void:
 	if OS.get_environment(QA_ENVIRONMENT_VARIABLE) != QA_ENVIRONMENT_VALUE:
@@ -37,6 +41,8 @@ func _run() -> void:
 	var gameplay: Control = shell.get("gameplay_screen") as Control
 	var chart_host: Control = shell.get("chart_studio_screen") as Control
 	var song_select: Control = library.get("song_select") as Control
+	process_frame.connect(_observe_continuity)
+	root.get_node("BackgroundSession").connect("background_changed", _on_background_changed)
 	var play_connection_count := song_select.get_signal_connection_list("play_requested").size()
 
 	# A stalled lazy load is bounded locally and restores every Main Menu owner.
@@ -83,8 +89,36 @@ func _run() -> void:
 
 	# Main Menu <-> Song Library is repeatable and each transaction completes once.
 	for _cycle in range(2):
+		monitor_continuity = true
+		continuity_frames = 0
+		continuity_background_changes = 0
+		continuity_origin_path = str(root.get_node("BackgroundSession").call("get_background_path"))
 		await _expect_success("request_song_library", [], "song_library")
+		_check(continuity_frames > 0, "No continuity tween frames were exercised.")
+		_check(continuity_background_changes == 1, "Library visit did not publish exactly one prepared background.")
+		var visual: Control = song_select.get("backdrop_visual") as Control
+		var session: Node = root.get_node("BackgroundSession")
+		var revealed_path := str(session.call("get_background_path"))
+		_check(str(visual.get("current_background_path")) == revealed_path, "Library revealed before its background was applied.")
+		_check(str(visual.get("pending_background_path")).is_empty() and float(visual.get("background_fade")) == 1.0, "Library revealed a pending/unfinished background swap.")
+		await create_timer(0.5).timeout
+		_check(str(session.call("get_background_path")) == revealed_path and continuity_background_changes == 1, "Library background changed again after reveal.")
+		var background: TextureRect = startup.get("menu_background") as TextureRect
+		var controller: RefCounted = startup.get("main_menu_background_controller") as RefCounted
+		controller.call("animate_visit")
+		_check(background.scale == Vector2.ONE and background.modulate == Color.WHITE, "Hidden Main Menu animated based on child visibility.")
+		continuity_background_changes = 0
+		continuity_origin_path = str(session.call("get_background_path"))
 		await _expect_success("request_main_menu", [0], "main_menu")
+		_check(continuity_background_changes == 1, "Main Menu visit published more than one background.")
+		revealed_path = str(session.call("get_background_path"))
+		_check(background.texture == session.call("get_texture"), "Main Menu revealed a stale texture.")
+		_check(background.scale == Vector2.ONE and background.modulate == Color.WHITE, "Main Menu added a visit fade/zoom.")
+		await create_timer(0.8).timeout
+		_check(str(session.call("get_background_path")) == revealed_path and continuity_background_changes == 1, "Main Menu background changed again after reveal.")
+		_check(background.scale == Vector2.ONE and background.modulate == Color.WHITE, "Late Main Menu animation altered the final destination.")
+		_check((startup.get("menu_dim") as ColorRect).visible, "Main Menu lost its continuity scrim.")
+		monitor_continuity = false
 
 	await _expect_success("request_song_library", [], "song_library")
 	# A user-paused MusicSession must remain paused after a timed-out entry, and
@@ -185,6 +219,33 @@ func _run() -> void:
 	await process_frame
 	_cleanup_new_orphan_nodes(baseline_orphans)
 	call_deferred("_finish", 1 if failures > 0 else 0)
+
+func _on_background_changed(_state: Dictionary) -> void:
+	if monitor_continuity:
+		continuity_background_changes += 1
+
+func _observe_continuity() -> void:
+	if not monitor_continuity or not is_instance_valid(shell) or not bool(shell.get("switching")):
+		return
+	continuity_frames += 1
+	var startup: Control = shell.get("startup_screen") as Control
+	var library: Control = shell.get("song_library_screen") as Control
+	_check(not (startup.is_visible_in_tree() and startup.modulate.a > 0.001 and library.is_visible_in_tree() and library.modulate.a > 0.001), "Resident foregrounds overlap during transition.")
+	if shell.get_node_or_null("RouteBackdrop") == null:
+		# Preload holds the origin fully visible; foreground animation has not
+		# started yet. No global background publication is permitted here.
+		var origin: Control = startup if str(shell.call("get_active_route")) == "main_menu" else library
+		_check(origin.is_visible_in_tree() and origin.modulate.a == 1.0, "Preload altered the outgoing foreground before preparation finished.")
+		_check(str(root.get_node("BackgroundSession").call("get_background_path")) == continuity_origin_path, "Preload published the background before the foreground handoff.")
+		return
+	for screen: Control in [startup, library]:
+		for item: CanvasItem in screen.call("shell_background_items"):
+			_check(not item.visible, "Screen-local background participated in the foreground fade.")
+	if library.is_visible_in_tree() and library.modulate.a > 0.001:
+		var visual: Control = (library.get("song_select") as Control).get("backdrop_visual") as Control
+		_check(str(visual.get("current_background_path")) == str(root.get_node("BackgroundSession").call("get_background_path")) and float(visual.get("background_fade")) == 1.0, "Incoming Library frame used an unfinished background.")
+	if startup.is_visible_in_tree() and startup.modulate.a > 0.001:
+		_check((startup.get("menu_visual") as Control).modulate.a == 1.0, "Main Menu brand has an independent reveal after route preparation.")
 
 func _expect_success(method_name: String, arguments: Array, expected_route: String, max_frames: int = 600) -> void:
 	var previous_route := str(shell.call("get_active_route"))

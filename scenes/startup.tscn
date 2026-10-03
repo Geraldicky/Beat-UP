@@ -212,7 +212,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.0156863, 0.0196078, 0.027451, 0.34)
+color = Color(0.0431373, 0.0509804, 0.0666667, 0.93)
 
 [node name="MenuVisual" type="Control" parent="MainMenu" unique_id=1685307215]
 unique_name_in_owner = true

@@ -421,13 +421,22 @@ func _commit_route(outgoing: Control, incoming: Control, route: String, directio
 		active_screen = route
 		return
 
-	# v17.4.49: Song Library is a resident screen. Do not run selection, record
-	# refresh, artwork loading, or preview work before its route tween has had a
-	# chance to render. This mirrors osu!'s separation between immediate screen
-	# navigation and deferred beatmap/media work.
+	# Prepare only route ambience here. Catalog/records/preview remain deferred;
+	# a route reveal must never wait for, or be followed by, a second image swap.
+	var continuity := (outgoing == startup_screen and incoming == song_library_screen) or (outgoing == song_library_screen and incoming == startup_screen)
+	var prepared: Dictionary = {}
+	if continuity:
+		switching = true
+		prepared = await get_node("/root/BackgroundSession").call("prepare_random_background", route)
+		# If ambience cannot load, retain the current cached background rather than
+		# leave a late resource completion capable of altering this transaction.
+		context["background_prepared"] = true
 	_notify_screen(incoming, "shell_prepare_resume", context)
 
-	await _animate_switch(outgoing, incoming, direction)
+	if continuity:
+		await _animate_menu_library_switch(outgoing, incoming, prepared)
+	else:
+		await _animate_switch(outgoing, incoming, direction)
 	active_screen = route
 	_notify_screen(outgoing, "shell_did_suspend", context)
 	_notify_screen(incoming, "shell_will_resume", context)
@@ -530,6 +539,74 @@ func _animate_switch(outgoing: Control, incoming: Control, direction: float) -> 
 	switching = false
 	if perf != null:
 		perf.call("end_span", perf_span, {"duration_target_s": SCREEN_TWEEN_DURATION})
+
+func _animate_menu_library_switch(outgoing: Control, incoming: Control, prepared: Dictionary) -> void:
+	switching = true
+	var perf: Node = get_node_or_null("/root/PerformanceMonitor")
+	var perf_span := "route_%s_to_%s" % [outgoing.name, incoming.name]
+	if perf != null:
+		perf.call("begin_span", perf_span)
+	var session := get_node("/root/BackgroundSession")
+	var source_texture := session.call("get_texture") as Texture2D
+	var destination_texture := session.call("get_texture_for_path", str(prepared.get("background", session.call("get_background_path")))) as Texture2D
+	# Presentation-only layer, below both resident foregrounds. It never owns
+	# background selection or route state and is freed when the tween completes.
+	var backdrop := ColorRect.new()
+	backdrop.name = "RouteBackdrop"
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop.color = Color(0.0431373, 0.0509804, 0.0666667)
+	add_child(backdrop)
+	move_child(backdrop, $ScreenHost.get_index())
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var source := _transition_background_texture(backdrop, source_texture, 0.07)
+	var destination := _transition_background_texture(backdrop, destination_texture, 0.0)
+	var hidden_items: Dictionary = {}
+	for screen: Control in [outgoing, incoming]:
+		for item: CanvasItem in screen.call("shell_background_items"):
+			if item != null:
+				hidden_items[item] = item.visible
+				item.hide()
+	outgoing.process_mode = Node.PROCESS_MODE_DISABLED
+	incoming.process_mode = Node.PROCESS_MODE_DISABLED
+	incoming.modulate.a = 0.0
+	incoming.hide()
+	var background_tween := create_tween().set_parallel(true)
+	background_tween.tween_property(source, "modulate:a", 0.0, SCREEN_TWEEN_DURATION)
+	background_tween.tween_property(destination, "modulate:a", 0.07, SCREEN_TWEEN_DURATION)
+	var exit_tween := create_tween()
+	exit_tween.tween_property(outgoing, "modulate:a", 0.0, 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	await exit_tween.finished
+	outgoing.hide()
+	session.call("commit_prepared_background", prepared)
+	incoming.call("shell_apply_prepared_background")
+	# Binding the prepared texture may update a detail wash's visibility. Keep
+	# every screen-local background out of the foreground reveal until handoff.
+	for item: CanvasItem in hidden_items:
+		item.hide()
+	incoming.show()
+	var enter_tween := create_tween()
+	enter_tween.tween_property(incoming, "modulate:a", 1.0, 0.12).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	await enter_tween.finished
+	for item: CanvasItem in hidden_items:
+		item.visible = bool(hidden_items[item])
+	_set_screen_state(outgoing, false)
+	_set_screen_state(incoming, true)
+	background_tween.kill()
+	backdrop.free()
+	switching = false
+	if perf != null:
+		perf.call("end_span", perf_span, {"duration_target_s": SCREEN_TWEEN_DURATION})
+
+func _transition_background_texture(parent: Control, texture: Texture2D, opacity: float) -> TextureRect:
+	var view := TextureRect.new()
+	view.texture = texture
+	view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	view.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	view.modulate.a = opacity
+	parent.add_child(view)
+	view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	return view
 
 func _set_screen_state(screen: Control, enabled: bool) -> void:
 	screen.visible = enabled

@@ -9,9 +9,8 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resized.connect(queue_redraw)
 	_apply_album_flow_structure()
-	modulate.a = 0.0
-	var tween := create_tween()
-	tween.tween_property(self, "modulate:a", 1.0, 0.42).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	# Startup owns boot presentation; AppShell owns resident route reveals.
+	# A child-local tween would resume later when its hidden parent is activated.
 	queue_redraw()
 
 func set_selection(index: int) -> void:
@@ -30,17 +29,16 @@ func _apply_album_flow_structure() -> void:
 	var main_menu := get_parent()
 	if main_menu == null:
 		return
-	for node_name in ["MenuBackground", "MenuTitle", "NowPlayingCard", "MenuVersion", "UtilityRow"]:
+	for node_name in ["MenuBackground", "MenuDim", "MenuTitle", "NowPlayingCard", "MenuVersion", "UtilityRow"]:
 		var node := main_menu.get_node_or_null(node_name) as CanvasItem
 		if node != null:
 			node.show()
-	for node_name in ["MenuDim", "MenuRule", "OrbCluster", "BackgroundInfo", "SelectionIndex", "SelectionDescription", "MainFooter", "TopAccent"]:
+	for node_name in ["MenuRule", "OrbCluster", "BackgroundInfo", "SelectionIndex", "SelectionDescription", "MainFooter", "TopAccent"]:
 		var node := main_menu.get_node_or_null(node_name) as CanvasItem
 		if node != null:
 			node.hide()
-	# Show the current-song artwork at its authored brightness. The previous
-	# full-screen black scrim and tinted alpha modulation made every background
-	# look muddy and much darker than the source art.
+	# Match the Library's restrained generic-background exposure so resident
+	# navigation does not jump between authored brightness and a dark scrim.
 	var background := main_menu.get_node_or_null("MenuBackground") as TextureRect
 	if background != null:
 		background.modulate = Color.WHITE

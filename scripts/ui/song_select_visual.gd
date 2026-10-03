@@ -42,6 +42,17 @@ func set_song(song_id: String, difficulty_id: String, background_path: String = 
 func set_audio_levels(_levels: PackedFloat32Array) -> void:
 	pass
 
+func apply_prepared_background(path: String, texture: Texture2D) -> void:
+	# Retire any old poll before a route reveal. Its late completion cannot
+	# overwrite the prepared texture or start another ambient crossfade.
+	pending_generation += 1
+	pending_background_path = ""
+	previous_texture = null
+	current_texture = texture
+	current_background_path = path
+	background_fade = 1.0
+	queue_redraw()
+
 func get_audio_levels() -> PackedFloat32Array:
 	return PackedFloat32Array()
 

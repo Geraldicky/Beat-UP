@@ -51,6 +51,40 @@ var texture_cache: Dictionary = {}
 var rng := RandomNumberGenerator.new()
 var current_background_index := -1
 
+# Preparation does not publish global state. AppShell commits only after the
+# outgoing foreground is gone, before revealing the incoming foreground.
+func prepare_random_background(source: String) -> Dictionary:
+	var next_index := rng.randi_range(0, BACKGROUND_PATHS.size() - 1)
+	if next_index == current_background_index:
+		next_index = (next_index + 1) % BACKGROUND_PATHS.size()
+	var path := BACKGROUND_PATHS[next_index]
+	var texture: Texture2D = texture_cache.get(path) as Texture2D
+	if texture == null:
+		if not ResourceLoader.exists(path):
+			return {}
+		var error := ResourceLoader.load_threaded_request(path, "Texture2D", true)
+		if error != OK and ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+			return {}
+		var deadline := Time.get_ticks_msec() + 3000
+		while ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			if Time.get_ticks_msec() >= deadline:
+				return {}
+			await get_tree().process_frame
+		if ResourceLoader.load_threaded_get_status(path) != ResourceLoader.THREAD_LOAD_LOADED:
+			return {}
+		texture = ResourceLoader.load_threaded_get(path) as Texture2D
+		if texture == null:
+			return {}
+		texture_cache[path] = texture
+	return {"background": path, "background_index": next_index, "source": source}
+
+func commit_prepared_background(prepared: Dictionary) -> void:
+	var path := str(prepared.get("background", ""))
+	if path.is_empty() or texture_cache.get(path) == null:
+		return
+	current_background_index = int(prepared.get("background_index", -1))
+	set_background(path, prepared)
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	rng.randomize()

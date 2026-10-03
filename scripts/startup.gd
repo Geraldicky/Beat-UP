@@ -1173,8 +1173,8 @@ func _animate_main_menu_background_visit() -> void:
 	if main_menu_background_controller != null:
 		main_menu_background_controller.call("animate_visit")
 
-func _show_main_menu_immediate(preserve_music_state: bool = false) -> void:
-	if not is_visible_in_tree():
+func _show_main_menu_immediate(preserve_music_state: bool = false, preparing_route: bool = false) -> void:
+	if not preparing_route and not is_visible_in_tree():
 		return
 	splash.visible = false
 	settings_menu.visible = false
@@ -1205,7 +1205,8 @@ func _show_main_menu_immediate(preserve_music_state: bool = false) -> void:
 		button.disabled = false
 		button.modulate.a = 1.0
 		button.scale = Vector2.ONE
-	call_deferred("_after_main_menu_reveal")
+	if not preparing_route:
+		call_deferred("_after_main_menu_reveal")
 
 func _show_main_menu() -> void:
 	var session_state: Dictionary = menu_bgm.get_music_state()
@@ -1937,9 +1938,22 @@ func _cancel_pending_main_menu_reveal() -> void:
 
 # AppShell lifecycle hooks. Main Menu activation remains centralized here, while
 # the shell owns route transitions and input locking.
+func shell_prepare_resume(context: Dictionary) -> void:
+	if bool(context.get("background_prepared", false)):
+		_cancel_pending_main_menu_reveal()
+		main_menu_background_controller.set("background_randomization_suppressed", true)
+		_show_main_menu_immediate(true, true)
+
+func shell_apply_prepared_background() -> void:
+	main_menu_background_controller.call("apply_global_state", get_node("/root/BackgroundSession").call("get_state"), false)
+
+func shell_background_items() -> Array:
+	return [get_node("Background"), menu_background, menu_dim]
+
 func shell_will_resume(context: Dictionary) -> void:
 	var focus_index: int = int(context.get("focus_index", _get_main_menu_focus_index()))
 	activate_from_shell(focus_index, {}, bool(context.get("preserve_music_state", false)))
+	main_menu_background_controller.set("background_randomization_suppressed", false)
 
 func shell_did_resume(_context: Dictionary) -> void:
 	call_deferred("_focus_default_menu_button")

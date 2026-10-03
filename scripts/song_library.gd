@@ -274,12 +274,19 @@ func shell_prepare_resume(_context: Dictionary) -> void:
 
 func shell_will_resume(context: Dictionary) -> void:
 	action_locked = false
-	_randomize_route_background("song_library")
+	if not bool(context.get("background_prepared", false)) and not bool(context.get("navigation_rollback", false)):
+		_randomize_route_background("song_library")
 	var selected_song_id: String = str(context.get("selected_song_id", ""))
 	activate_from_shell(selected_song_id, false)
 	# Progress/record refresh is safe now because AppShell invokes this hook after
 	# the route animation for Song Library has completed.
 	_apply_pending_best_stats()
+
+func shell_apply_prepared_background() -> void:
+	song_select.call("refresh_ambient_background", true)
+
+func shell_background_items() -> Array:
+	return [song_select.get_node("Backdrop"), song_select.get_node("BackdropVisual"), song_select.get_node("BackdropShade"), song_select.get("album_flow_detail_backdrop")]
 
 func shell_did_resume(context: Dictionary) -> void:
 	if song_select != null and song_select.has_method("shell_did_resume"):
