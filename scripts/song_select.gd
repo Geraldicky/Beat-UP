@@ -20,6 +20,11 @@ const LIBRARY_ACCENT_HOVER := Color("8bdcff")
 const LibraryVectorIcon = preload("res://scripts/ui/library_vector_icon.gd")
 const LIBRARY_SURFACE := Color("10151b")
 const LIBRARY_BORDER := Color("38424e")
+const ICON_CHEVRON_LEFT := preload("res://assets/ui/icons/chevron_left.svg")
+const ICON_CHEVRON_RIGHT := preload("res://assets/ui/icons/chevron_right.svg")
+const ICON_CHEVRON_DOWN := preload("res://assets/ui/icons/chevron_down.svg")
+const ICON_CHEVRON_UP := preload("res://assets/ui/icons/chevron_up.svg")
+const ICON_SEARCH := preload("res://assets/ui/icons/search.svg")
 
 signal play_requested(song_id: String, difficulty_id: String, random_mode: bool)
 signal practice_requested(song_id: String, difficulty_id: String, random_mode: bool, section_index: int)
@@ -549,7 +554,8 @@ func _install_album_flow_song_library_layout() -> void:
 	count_label.visible = false
 	back_button.reparent(header_row)
 	header_row.move_child(back_button, 0)
-	back_button.text = "‹    BACK"
+	back_button.text = "BACK"
+	back_button.icon = ICON_CHEVRON_LEFT
 	back_button.visible = true
 	var header_divider := ColorRect.new()
 	header_divider.name = "LibraryHeaderDivider"
@@ -862,7 +868,8 @@ void fragment() {
 	selection_index.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	album_flow_prev_song_button = Button.new()
 	album_flow_prev_song_button.name = "PreviousSongButton"
-	album_flow_prev_song_button.text = "‹"
+	album_flow_prev_song_button.text = ""
+	album_flow_prev_song_button.icon = ICON_CHEVRON_LEFT
 	album_flow_prev_song_button.flat = true
 	album_flow_prev_song_button.focus_mode = Control.FOCUS_NONE
 	album_flow_prev_song_button.custom_minimum_size = Vector2(30, 30)
@@ -870,7 +877,8 @@ void fragment() {
 	track_nav_row.add_child(album_flow_prev_song_button)
 	album_flow_next_song_button = Button.new()
 	album_flow_next_song_button.name = "NextSongButton"
-	album_flow_next_song_button.text = "›"
+	album_flow_next_song_button.text = ""
+	album_flow_next_song_button.icon = ICON_CHEVRON_RIGHT
 	album_flow_next_song_button.flat = true
 	album_flow_next_song_button.focus_mode = Control.FOCUS_NONE
 	album_flow_next_song_button.custom_minimum_size = Vector2(30, 30)
@@ -1001,7 +1009,8 @@ func _install_album_flow_filter_tabs() -> void:
 		var toolbar_spacer := toolbar.get_node_or_null("LibraryToolbarSpacer") as Control
 		if toolbar_spacer != null:
 			toolbar_spacer.visible = false
-		search_input.placeholder_text = "⌕   Search songs, artists, or tags..."
+		search_input.placeholder_text = "Search songs, artists, or tags..."
+		_install_album_flow_search_icon()
 		search_input.visible = true
 
 	filters_panel.visible = false
@@ -1882,13 +1891,43 @@ func _transparent_row_style(radius: float, left: float, right: float, top: float
 	style.content_margin_bottom = bottom
 	return style
 
+func _install_album_flow_search_icon() -> void:
+	if search_input == null:
+		return
+	var icon := search_input.get_node_or_null("SearchIcon") as TextureRect
+	if icon == null:
+		icon = TextureRect.new()
+		icon.name = "SearchIcon"
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.texture = ICON_SEARCH
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.set_anchors_preset(Control.PRESET_CENTER_LEFT)
+		icon.offset_left = 12.0
+		icon.offset_right = 30.0
+		icon.offset_top = -9.0
+		icon.offset_bottom = 9.0
+		search_input.add_child(icon)
+	icon.modulate = Color(MinimalThemeScript.TEXT, 0.72)
+
+
+func _sync_album_flow_dropdown_icons() -> void:
+	if artist_filter != null:
+		artist_filter.add_theme_icon_override("arrow", ICON_CHEVRON_DOWN)
+	if difficulty_filter != null:
+		difficulty_filter.add_theme_icon_override("arrow", ICON_CHEVRON_DOWN)
+	if sort_filter != null:
+		var sort_icon: Texture2D = ICON_CHEVRON_UP if selected_sort_mode == "BPM Asc" else ICON_CHEVRON_DOWN
+		sort_filter.add_theme_icon_override("arrow", sort_icon)
+
+
 func _style_search_input(input: LineEdit) -> void:
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color(MinimalThemeScript.SURFACE, 0.56)
 	normal.border_color = Color(MinimalThemeScript.BORDER, 0.36)
 	normal.set_corner_radius_all(2)
 	normal.set_border_width_all(1)
-	normal.content_margin_left = 14.0
+	normal.content_margin_left = 40.0
 	normal.content_margin_right = 14.0
 	normal.content_margin_top = 6.0
 	normal.content_margin_bottom = 6.0
@@ -2529,6 +2568,7 @@ func _sync_album_flow_header_filter_labels() -> void:
 		difficulty_filter.text = selected_difficulty_filter.to_upper()
 	if sort_filter != null:
 		sort_filter.text = selected_sort_mode.to_upper()
+	_sync_album_flow_dropdown_icons()
 
 func _select_option_text(button, target: String) -> void:
 	for i in range(button.get_item_count()):
