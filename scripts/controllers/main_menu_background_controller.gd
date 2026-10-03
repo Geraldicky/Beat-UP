@@ -55,9 +55,7 @@ func randomize(force: bool = false) -> void:
 	if candidates.size() > 1:
 		for _attempt in range(12):
 			chosen_index = rng.randi_range(0, candidates.size() - 1)
-			var candidate: Dictionary = candidates[chosen_index] as Dictionary
-			var candidate_path: String = str(candidate.get("path", ""))
-			if force or candidate_path != current_background_path:
+			if force or chosen_index != current_background_index:
 				break
 	set_by_index(chosen_index, main_menu != null and main_menu.visible, true)
 
@@ -66,17 +64,9 @@ func set_by_index(index: int, force_animation: bool = false, autoplay: bool = tr
 		return
 	var safe_index: int = int(posmod(index, candidates.size()))
 	var chosen: Dictionary = candidates[safe_index] as Dictionary
-	var path: String = str(chosen.get("path", ""))
-	if path.is_empty():
-		return
 	current_background_index = safe_index
-	current_background_path = path
+	_randomize_ambient_background(chosen, false)
 	_publish_candidate_selection(chosen)
-	var applied_global_background: bool = apply_global_state(_global_background_state(), false)
-	if not applied_global_background and ResourceLoader.exists(path):
-		var loaded_resource: Resource = ResourceLoader.load(path)
-		if loaded_resource is Texture2D:
-			menu_background.texture = loaded_resource as Texture2D
 	background_song.text = str(chosen.get("title", "SONG LIBRARY")).to_upper()
 	background_artist.text = str(chosen.get("artist", ""))
 	visit_count += 1
@@ -117,7 +107,7 @@ func ensure_music_ready(fade_duration: float = 0.18) -> bool:
 		fallback_index = int(posmod(fallback_index, candidates.size()))
 		current_background_index = fallback_index
 		candidate = (candidates[fallback_index] as Dictionary).duplicate(true)
-		current_background_path = str(candidate.get("path", ""))
+		_randomize_ambient_background(candidate, false)
 	if candidate.is_empty():
 		return false
 
@@ -146,19 +136,7 @@ func sync_from_music_session() -> bool:
 		track_override[key] = global_song[key]
 	var matched_index: int = _find_candidate_index_by_audio(audio_path)
 	current_background_index = matched_index
-	if matched_index >= 0:
-		var candidate: Dictionary = candidates[matched_index] as Dictionary
-		current_background_path = str(candidate.get("path", ""))
-	var applied_background: bool = apply_global_state(_global_background_state(), false)
-	if not applied_background:
-		var background_path: String = str(track_override.get("background", ""))
-		if background_path.is_empty() and matched_index >= 0:
-			var fallback_candidate: Dictionary = candidates[matched_index] as Dictionary
-			background_path = str(fallback_candidate.get("path", ""))
-		if not background_path.is_empty() and ResourceLoader.exists(background_path):
-			var background_resource: Resource = ResourceLoader.load(background_path)
-			if background_resource is Texture2D:
-				menu_background.texture = background_resource as Texture2D
+	_randomize_ambient_background(track_override, false)
 	var was_paused: bool = bool(state.get("paused", false))
 	if not was_paused and menu_bgm.has_method("start_menu_music"):
 		menu_bgm.call("start_menu_music", 0.18)
@@ -215,6 +193,15 @@ func apply_global_state(state: Dictionary, animate: bool = false) -> bool:
 		animate_visit()
 	return true
 
+func _randomize_ambient_background(metadata: Dictionary = {}, animate: bool = false) -> bool:
+	var background_session: Node = _background_session()
+	if background_session == null or not background_session.has_method("randomize_background"):
+		return false
+	var path := str(background_session.call("randomize_background", "main_menu", true, metadata))
+	if path.is_empty():
+		return false
+	return apply_global_state(background_session.call("get_state") as Dictionary, animate)
+
 func animate_visit() -> void:
 	if menu_background == null or host == null:
 		return
@@ -270,7 +257,7 @@ func _publish_candidate_selection(candidate: Dictionary) -> void:
 		if existing_difficulty.is_empty():
 			existing_difficulty = "normal"
 	var metadata: Dictionary = candidate.duplicate(true)
-	metadata["background"] = str(candidate.get("path", ""))
+	metadata["background"] = current_background_path
 	metadata["source"] = "main_menu"
 	selection_state.call("set_selection", song_id, existing_difficulty, metadata)
 
