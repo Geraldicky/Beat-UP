@@ -12,6 +12,7 @@ policy = (ROOT / "scripts/score_policy.gd").read_text(encoding="utf-8")
 identity = (ROOT / "scripts/score_identity.gd").read_text(encoding="utf-8")
 select = (ROOT / "scripts/song_select.gd").read_text(encoding="utf-8")
 select_scene = (ROOT / "scenes/song_select.tscn").read_text(encoding="utf-8")
+song_row = (ROOT / "scripts" / "ui" / "song_library" / "song_row.gd").read_text(encoding="utf-8")
 runtime_access = (ROOT / "scripts/runtime_resource_access.gd").read_text(encoding="utf-8")
 
 assert any(('config/version="%s"' % version) in project for version in ["18.5.0", "18.5.0.1", "18.5.0.2", "18.5.0.2.1", "18.5.0.2.2", "18.6.0", "18.7.0", "18.7.0.1"])
@@ -58,7 +59,10 @@ assert max(estimated_fcs) <= 9_999_999
 assert 'var selected_info_tab: String = "ranking"' in select
 assert 'details_tab_button.visible = false' in select
 assert 'details_panel.visible = false' in select
-assert 'button.tooltip_text = ""' in select
+# Song-row presentation moved into the reusable SongRow component. Preserve
+# the v18.5 invariant (no redundant full-title tooltip) at the current owner.
+assert 'header_button.tooltip_text = ""' in song_row
+assert 'header_button.tooltip_text = title' not in song_row
 assert 'button.tooltip_text = str(rep.get("title"' not in select
 assert 'RuntimeResourceAccessScript.audio_exists' in select
 assert 'RuntimeResourceAccessScript.audio_exists' in main
