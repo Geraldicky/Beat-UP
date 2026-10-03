@@ -19,6 +19,10 @@ func _check(condition: bool, message: String) -> void:
 	push_error(message)
 
 func _run() -> void:
+	if OS.get_environment("BEAT_UP_QA_SONG_LIBRARY") != "isolated":
+		push_error("Run with isolated APPDATA/XDG_DATA_HOME and BEAT_UP_QA_SONG_LIBRARY=isolated.")
+		quit(2)
+		return
 	UserSettings.set_input_style("8_direction")
 	root.get_node("AppSessionState").mark_splash_seen()
 
