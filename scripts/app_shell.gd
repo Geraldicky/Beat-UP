@@ -368,7 +368,8 @@ func _gameplay_visual_payload(chart: Dictionary, request: Dictionary, fallback: 
 	payload["difficulty"] = difficulty_text
 	payload["bpm"] = float(chart.get("bpm", 0.0))
 	payload["star_rating"] = int(chart.get("star_rating", 0))
-	payload["background"] = str(chart.get("background", ""))
+	var background_session: Node = get_node_or_null("/root/BackgroundSession")
+	payload["background"] = str(background_session.call("get_background_path")) if background_session != null and background_session.has_method("get_background_path") else str(fallback.get("background", ""))
 	payload["random_mode"] = bool(request.get("random_mode", false))
 	payload["source_path"] = str(request.get("_resolved_source_path", ""))
 	payload["source_hash"] = str(request.get("_resolved_source_hash", ""))
