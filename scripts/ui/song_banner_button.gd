@@ -48,8 +48,8 @@ func _draw() -> void:
 func _draw_banner(rect: Rect2) -> void:
 	if card_variant == "compact_song":
 		if button_pressed:
-			draw_rect(rect, Color("122337", 0.90))
-			draw_rect(Rect2(Vector2(4.0, 1.0), Vector2(maxf(0.0, rect.size.x - 5.0), maxf(0.0, rect.size.y - 2.0))), Color(accent_color, 0.10))
+			draw_rect(rect, Color("101820", 0.85))
+			draw_rect(Rect2(Vector2(3.0, 1.0), Vector2(maxf(0.0, rect.size.x - 4.0), maxf(0.0, rect.size.y - 2.0))), Color(accent_color, 0.025))
 		elif is_hovered():
 			draw_rect(rect, Color(accent_color, 0.035))
 		draw_line(Vector2(0.0, rect.size.y - 1.0), Vector2(rect.size.x, rect.size.y - 1.0), Color(1, 1, 1, 0.055), 1.0)
@@ -113,13 +113,14 @@ func _draw_accent(rect: Rect2) -> void:
 		border_alpha = maxf(border_alpha, 0.75)
 	var border_color := Color(accent_color, border_alpha)
 	draw_rect(rect, border_color, false, 1.0)
-	var strip_width := 4.0 if card_variant == "compact_song" else (5.0 if card_variant == "song" else 3.0)
+	var strip_width := 3.0 if card_variant == "compact_song" else (5.0 if card_variant == "song" else 3.0)
 	var strip_alpha := 1.0 if button_pressed else 0.0
 	if strip_alpha > 0.0:
 		# Layered inner strips provide the short cyan bloom visible in the mockup
 		# without requiring a full-screen post-processing effect.
-		draw_rect(Rect2(Vector2.ZERO, Vector2(strip_width + 12.0, rect.size.y)), Color(accent_color, 0.055))
-		draw_rect(Rect2(Vector2.ZERO, Vector2(strip_width + 6.0, rect.size.y)), Color(accent_color, 0.10))
+		if card_variant != "compact_song":
+			draw_rect(Rect2(Vector2.ZERO, Vector2(strip_width + 12.0, rect.size.y)), Color(accent_color, 0.055))
+			draw_rect(Rect2(Vector2.ZERO, Vector2(strip_width + 6.0, rect.size.y)), Color(accent_color, 0.10))
 		draw_rect(Rect2(Vector2.ZERO, Vector2(strip_width, rect.size.y)), Color(accent_color, strip_alpha))
 	var shine_alpha := 0.16 if button_pressed else 0.0
 	if shine_alpha > 0.0:

@@ -2,6 +2,8 @@ extends SceneTree
 
 const ScoreIdentity = preload("res://scripts/score_identity.gd")
 const UserSettings = preload("res://scripts/user_settings.gd")
+const Palette = preload("res://scripts/ui/minimal_theme.gd")
+const VectorIcon = preload("res://scripts/ui/library_vector_icon.gd")
 
 var failures := 0
 
@@ -17,6 +19,10 @@ func _initialize() -> void:
 	call_deferred("run")
 
 func run() -> void:
+	if OS.get_environment("BEAT_UP_QA_SONG_LIBRARY") != "isolated":
+		push_error("Run with isolated APPDATA/XDG_DATA_HOME and BEAT_UP_QA_SONG_LIBRARY=isolated.")
+		quit(2)
+		return
 	var scene := load("res://scenes/song_library.tscn") as PackedScene
 	var library := scene.instantiate() as Control
 	root.add_child(library)
@@ -56,7 +62,8 @@ func run() -> void:
 	check(filter_normal.border_color.a >= 0.30 and filter_normal.border_color.a <= 0.38, "Filter border contrast is outside the approved range.")
 	check(is_equal_approx(filter_hover.border_color.a, 0.65) or filter_hover.border_color.a > 0.65, "Filter hover does not expose the cyan edge clearly enough.")
 	check(search_focus.border_width_left == 2 and filter_focus.border_width_left == 2, "Top controls do not expose a 2 px focus edge.")
-	check(search_focus.shadow_color.a > 0.0 and filter_focus.shadow_color.a > 0.0, "Top controls are missing the soft focus glow.")
+	check(search_focus.shadow_size == 0 and filter_focus.shadow_size == 0, "Toolbar focus must use a crisp edge, not glow.")
+	check(search_normal.corner_radius_top_left <= 2 and filter_normal.corner_radius_top_left <= 2, "Toolbar is too rounded.")
 	var filter_text_alpha: float = selector.artist_filter.get_theme_color("font_color").a
 	check(is_equal_approx(filter_text_alpha, 0.84) or filter_text_alpha > 0.84, "Filter text is too transparent against the artwork.")
 	check(selector.back_button.get_theme_color("font_color").a >= 0.85, "Back text is too transparent against the artwork.")
@@ -82,14 +89,14 @@ func run() -> void:
 	check(selector.album_flow_record_panel != null and selector.album_flow_record_panel.get_parent() == selector.album_flow_center_column, "Best Record is not in the center inspection column.")
 	check(selector.album_flow_record_panel.get_theme_stylebox("panel") is StyleBoxEmpty, "Best Record still renders an opaque/dark panel background.")
 	check(not selector.album_flow_record_panel.get_global_rect().intersects(selector.album_flow_artwork.get_global_rect()), "Best Record overlaps the selected artwork.")
-	check(selector.album_flow_record_breakdown_row != null and selector.album_flow_record_breakdown_row.get_child_count() == 4, "Judgement breakdown is incomplete.")
+	check(selector.album_flow_record_breakdown_row != null and selector.album_flow_record_breakdown_row.get_child_count() == 7, "Judgement breakdown is incomplete.")
 	check(selector.album_flow_score_cluster != null and selector.album_flow_score_cluster.get_global_rect().position.y >= selector.album_flow_artwork.get_global_rect().end.y, "Best-score hierarchy is not positioned beneath the jacket.")
 	check(selector.album_flow_difficulty_row.get_parent() == selector.album_flow_sidebar, "Difficulty selector is not in the configuration column.")
 	check(selector.album_flow_mode_row.get_parent() == selector.album_flow_sidebar and selector.album_flow_modifier_row.get_parent() == selector.album_flow_sidebar, "Mode/mod controls are not in the configuration column.")
 	check(selector.play_button.get_parent() == selector.album_flow_sidebar and selector.play_button.size.y >= 70.0, "Play is not the dominant bottom-right call to action.")
 	check(selector.album_flow_bottom_panel != null and not selector.album_flow_bottom_panel.visible, "Legacy detached Difficulty/Play dock is still visible.")
 	check(selector.album_flow_list_header != null and selector.album_flow_list_header.is_visible_in_tree(), "Dense song-list column header is missing.")
-	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a >= 0.30 and selector.backdrop_visual.modulate.a <= 0.38, "Selected-song background atmosphere is missing or too strong.")
+	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a > 0.0 and selector.backdrop_visual.modulate.a <= 0.08, "Selected-song background atmosphere is missing or too strong.")
 	check(selector.album_flow_ambient != null and not selector.album_flow_ambient.visible, "Abstract ambient geometry should be suppressed in the mockup-matched composition.")
 	check(selector.album_flow_meta_line != null and selector.album_flow_meta_line.text.contains("BPM"), "Inline song metadata is missing.")
 	check(selector.album_flow_prev_song_button != null and selector.album_flow_next_song_button != null, "Track previous/next controls are missing.")
@@ -98,16 +105,16 @@ func run() -> void:
 	check(selected_index >= 0, "No initial song was selected.")
 	if selected_index >= 0:
 		var selected_button := selector.song_buttons[selected_index] as Button
-		check(selected_button.custom_minimum_size.y >= 78.0 and selected_button.custom_minimum_size.y <= 86.0, "Selected song row does not match the mockup's scanning rhythm.")
+		check(selected_button.custom_minimum_size.y >= 68.0 and selected_button.custom_minimum_size.y <= 72.0, "Selected song row does not match the mockup's scanning rhythm.")
 		var jacket := selected_button.find_child("SongJacket", true, false) as TextureRect
-		check(jacket != null and jacket.custom_minimum_size.x >= 60.0 and jacket.custom_minimum_size.x <= 68.0, "Selected row jacket size does not match the mockup hierarchy.")
+		check(jacket != null and jacket.custom_minimum_size.x >= 54.0 and jacket.custom_minimum_size.x <= 60.0, "Selected row jacket size does not match the mockup hierarchy.")
 		var title := selected_button.find_child("SongTitle", true, false) as Label
 		var artist := selected_button.find_child("SongArtist", true, false) as Label
 		check(title != null and artist != null and title.get_parent() == artist.get_parent() and title.get_parent() is VBoxContainer, "Song title and artist are not stacked like the mockup.")
 	check(selector.detail_title.get_theme_font_size("font_size") >= 38, "Selected-song title hierarchy is too small.")
-	check(selector.play_button.custom_minimum_size.y >= 110.0, "Play button is not dominant enough at 1920×1080.")
+	check(selector.play_button.custom_minimum_size.y >= 96.0 and selector.play_button.custom_minimum_size.y <= 108.0, "Play button is not dominant enough at 1920×1080.")
 	var play_style := selector.play_button.get_theme_stylebox("normal") as StyleBoxFlat
-	check(play_style != null and play_style.shadow_size >= 10, "Play button is missing the restrained cyan glow treatment.")
+	check(play_style != null and play_style.shadow_size == 0, "Play must use an outline, not neon bloom.")
 
 	selector.search_input.text = "blue zenith"
 	selector._on_search_changed(selector.search_input.text)
@@ -137,6 +144,16 @@ func run() -> void:
 	check(selector.filtered_song_ids.all(func(song_id: String) -> bool: return not selector._find_level(song_id, "master").is_empty()), "Difficulty filtering admitted a song without Master.")
 	selector.selected_difficulty_filter = "All Difficulties"
 	selector._apply_filters(false)
+	selector.selected_artist_filter = "Crywolf"
+	selector._apply_filters(false)
+	check(not selector.filtered_song_ids.is_empty() and selector.filtered_song_ids.all(func(song_id: String) -> bool: return selector._display_artist(selector._representative(song_id)) == "Crywolf"), "Artist filter no longer selects actual artist metadata.")
+	selector.selected_artist_filter = "All Artists"
+	selector._apply_filters(false)
+	var before_next: String = selector.selected_song_id
+	selector.album_flow_next_song_button.pressed.emit()
+	check(selector.selected_song_id != before_next, "Next-song action did not change selection.")
+	selector.album_flow_prev_song_button.pressed.emit()
+	check(selector.selected_song_id == before_next, "Previous-song action did not restore selection.")
 
 	var rapid_ids: Array[String] = []
 	for song_id in selector.filtered_song_ids:
@@ -172,6 +189,9 @@ func run() -> void:
 	selector._on_random_mod_toggled(true)
 	await process_frame
 	check(selector.random_mode_enabled and selector.album_flow_random_button.button_pressed, "Random active state did not refresh.")
+	check(selector.album_flow_random_button.find_child("StateLabel", true, false).text == "ON", "Random text does not reflect actual state.")
+	selector.album_flow_random_button.grab_focus()
+	check(selector.album_flow_random_button.has_focus(), "Mod controls lost keyboard focus.")
 	selector._on_random_mod_toggled(false)
 
 	var chart: Dictionary = selector._find_level(selector.selected_song_id, selector.selected_difficulty)
@@ -181,6 +201,23 @@ func run() -> void:
 	check(selector.album_flow_best_rank_value.text == "S", "Best rank did not refresh.")
 	check(selector.album_flow_best_score_value.text == "10,680,000", "Best score did not refresh or format correctly.")
 	check(selector.album_flow_best_accuracy_value.text == "98.42%", "Best accuracy did not refresh.")
+	check(selector.album_flow_best_combo_value.text.contains("512"), "MAX COMBO was lost.")
+	check(selector.album_flow_score_cluster.find_child("RecordDate", true, false).text.is_empty(), "A timestamp was invented for a legacy record.")
+	selector.set_best_stats_store({score_key: {"score": 10680000, "best_accuracy": 98.42, "best_rank": "S", "best_max_combo": 512, "completed_at": 1700000000, "perfect": 432, "great": 36, "good": 8, "miss": 1}})
+	selector._apply_theme_config()
+	await process_frame
+	check(selector.album_flow_score_cluster.find_child("RecordDate", true, false).text == "2023-11-14 22:13", "Stored record timestamp was not displayed.")
+	_check_presentation(selector)
+	check(selector.album_flow_record_perfect_value.text == "432", "Judgement values were lost on restyling.")
+	var diamond := selector.album_flow_best_card.get_node("RankDiamond") as Control
+	check(diamond.get_script() == VectorIcon and diamond.get("kind") == "rank", "Rank must use vector diamond geometry.")
+	check(selector.album_flow_best_card.get_theme_stylebox("panel") is StyleBoxEmpty, "A rectangle is still drawn behind the rank.")
+	check(selector.practice_button.find_child("StateLabel", true, false).text == "SELECT", "Practice was misrepresented as an ON/OFF modifier.")
+	check(not selector.practice_button.disabled, "Practice unexpectedly disabled for a playable chart.")
+	selector.practice_button.pressed.emit()
+	await process_frame
+	check(is_instance_valid(selector.practice_popup._panel) and selector.practice_popup._panel.is_visible_in_tree(), "Practice no longer opens the section selector.")
+	selector.practice_popup.close(true)
 	selector.set_best_stats_store({})
 	await process_frame
 	check(selector.album_flow_best_score_value.text == "NO RECORD" and selector.album_flow_best_rank_value.text.is_empty(), "No-record state still shows meaningless placeholders.")
@@ -193,12 +230,29 @@ func run() -> void:
 	check(selector.play_button.pressed.get_connections().size() > 0, "Play action is disconnected.")
 	check(selector.back_button.pressed.get_connections().size() > 0, "Back action is disconnected.")
 
-	root.size = Vector2i(1280, 720)
-	root.content_scale_size = Vector2i(1280, 720)
+	# Nine-digit scores, tall titles and selected state must fit actual containers.
+	selector.set_best_stats_store({score_key: {"score": 999999999, "best_accuracy": 100.0, "best_rank": "SS", "best_max_combo": 9999}})
+	for resolution: Vector2i in [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)]:
+		root.size = resolution
+		root.content_scale_size = resolution
+		await create_timer(0.4).timeout
+		selector._center_selected_row(false)
+		await process_frame
+		await process_frame
+		_check_layout(selector, resolution)
+		if OS.get_cmdline_user_args().has("capture"):
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png("user://library_%dx%d.png" % [resolution.x, resolution.y])
+	var original_audio: String = str(chart.audio)
+	chart.audio = "res://music/qa_missing_visual_fixture.ogg"
+	selector._update_detail(false)
 	await process_frame
+	check(selector.play_button.disabled and selector.practice_button.disabled, "Unavailable chart actions remain enabled.")
+	check(not selector.play_button.find_child("PlayIcon", true, false).visible, "Unavailable Play retains the launch icon.")
+	chart.audio = original_audio
+	selector._update_detail(false)
 	await process_frame
-	check(selector.wheel_column.get_global_rect().end.y <= 721.0, "Song browser overflows a common 1280×720 viewport.")
-	check(selector.info_panel.get_global_rect().end.y <= 721.0, "Song detail overflows a common 1280×720 viewport.")
+	check(not selector.play_button.disabled, "Play did not recover when valid audio returned.")
 	root.size = Vector2i(1920, 1080)
 	root.content_scale_size = Vector2i(1920, 1080)
 	await process_frame
@@ -207,7 +261,8 @@ func run() -> void:
 	if OS.get_cmdline_user_args().has("capture"):
 		var image := root.get_texture().get_image()
 		if image != null and not image.is_empty():
-			image.save_png("res://tests/song_library_rhythm_redesign_1920x1080.png")
+			image.save_png("user://song_library_rhythm_redesign_1920x1080.png")
+			print("CAPTURE: ", ProjectSettings.globalize_path("user://song_library_rhythm_redesign_1920x1080.png"))
 		else:
 			check(false, "Could not capture the 1920×1080 Song Library viewport.")
 
@@ -216,6 +271,42 @@ func run() -> void:
 	await process_frame
 	await process_frame
 	quit(0 if failures == 0 else 1)
+
+func _check_presentation(selector: Control) -> void:
+	var values: Array = [selector.album_flow_record_perfect_value, selector.album_flow_record_great_value, selector.album_flow_record_good_value, selector.album_flow_record_miss_value]
+	var colors: Array[Color] = [Palette.PERFECT_PINK, Palette.GREAT_GREEN, Palette.GOOD_CYAN, Palette.MISS_RED]
+	for index in range(values.size()):
+		var value: Label = values[index]
+		check(value.get_theme_color("font_color").is_equal_approx(colors[index]), "Theme pass erased a semantic judgement color.")
+		check(value.get_theme_font_size("font_size") >= 21, "Judgement numeric hierarchy was erased.")
+		var caption := value.get_parent().get_child(0) as Label
+		check(caption.get_theme_color("font_color").is_equal_approx(Color(colors[index], 0.9)), "Judgement caption lost its semantic color.")
+	for button: Button in [selector.album_flow_mode_8_button, selector.album_flow_random_button, selector.practice_button]:
+		check((button.get_theme_stylebox("normal") as StyleBoxFlat).shadow_size == 0, "Configuration controls regained glow.")
+	for icon_name in ["PlayIcon", "PlayArrow"]:
+		check(selector.play_button.find_child(icon_name, true, false).get_script() == VectorIcon, "Play still relies on a text glyph.")
+	for button: Button in selector.album_flow_difficulty_row.get_children():
+		var marker := button.get_node("SelectionMarker") as Control
+		check(marker.get_script() == VectorIcon, "Difficulty selection must use vector geometry.")
+		check(marker.visible == (button.name == "%sDifficultyButton" % selector.selected_difficulty.capitalize()), "Rebuilt difficulty selection marker is stale.")
+
+func _check_layout(selector: Control, resolution: Vector2i) -> void:
+	for control: Control in [selector.header_row, selector.wheel_column, selector.info_panel, selector.album_flow_record_panel, selector.play_button]:
+		var rect := control.get_global_rect()
+		check(rect.position.x >= 0 and rect.end.x <= resolution.x + 1 and rect.end.y <= resolution.y + 1, "Viewport overflow: %s at %s" % [control.name, resolution])
+	var previous_end := 0.0
+	for control: Control in [selector.back_button, selector.title_label, selector.search_input, selector.artist_filter, selector.difficulty_filter, selector.sort_filter]:
+		check(control.get_global_rect().position.x >= previous_end, "Header controls overlap.")
+		previous_end = control.get_global_rect().end.x
+	var accuracy_rect: Rect2 = selector.album_flow_best_accuracy_value.get_global_rect()
+	var score_rect: Rect2 = selector.album_flow_best_score_value.get_global_rect()
+	check(not accuracy_rect.intersects(score_rect), "Record values overlap.")
+	check(score_rect.end.x <= selector.album_flow_best_card.get_global_rect().position.x, "Score overlaps diamond rank.")
+	check(not selector.album_flow_artwork.get_global_rect().intersects(selector.album_flow_record_panel.get_global_rect()), "Record overlaps jacket.")
+	var row: Control = selector.song_buttons[selector.filtered_song_ids.find(selector.selected_song_id)]
+	check(selector.song_scroll.get_global_rect().intersects(row.get_global_rect()), "Selected song is offscreen.")
+	check(selector.album_flow_mode_8_button.button_pressed and not selector.album_flow_mode_4_button.button_pressed, "Layout refresh changed input-mode state.")
+	_check_presentation(selector)
 
 func _is_bpm_sorted(selector: Control, ascending: bool) -> bool:
 	for index in range(1, selector.filtered_song_ids.size()):
