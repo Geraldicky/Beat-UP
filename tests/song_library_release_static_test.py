@@ -4,6 +4,9 @@ root = Path(__file__).resolve().parents[1]
 song = (root / "scripts" / "song_select.gd").read_text(encoding="utf-8")
 interaction = (root / "scripts" / "ui" / "interaction_polish.gd").read_text(encoding="utf-8")
 gate = (root / "tests" / "release_gate.py").read_text(encoding="utf-8")
+background_session = (root / "scripts" / "background_session.gd").read_text(encoding="utf-8")
+startup = (root / "scripts" / "startup.gd").read_text(encoding="utf-8")
+battle_background = (root / "scripts" / "ui" / "battle_background.gd").read_text(encoding="utf-8")
 
 required = [
     'const SongRowScene = preload("res://scenes/ui/song_library/song_row.tscn")',
@@ -44,6 +47,18 @@ for runtime_test in [
 
 if 'beat_up_micro_tween' not in interaction:
     raise SystemExit("Interaction micro-motion does not cancel superseded tweens.")
+
+background_paths = [
+    root / "assets" / "backgrounds" / f"background_{index:02d}.png"
+    for index in range(1, 40)
+]
+if not all(path.is_file() for path in background_paths):
+    raise SystemExit("Randomized 39-image background pool is incomplete.")
+if background_session.count('res://assets/backgrounds/background_') != 39:
+    raise SystemExit("BackgroundSession does not own the canonical 39-image randomized pool.")
+for production_text in [song, startup, battle_background]:
+    if "res://assets/song_backgrounds/" in production_text:
+        raise SystemExit("Release-facing UI still depends on song-named fullscreen backgrounds.")
 
 for path in [
     "assets/ui/icons/arrow_right.svg",
