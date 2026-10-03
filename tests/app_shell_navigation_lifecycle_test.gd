@@ -61,6 +61,7 @@ func _run() -> void:
 	_check(route_changes.size() == route_count_before, "Timed-out Chart Studio entry emitted a false route change.")
 	_check(not bool(root.get_node("MusicSession").call("is_paused")), "Shell did not restore music that it paused for timed-out Chart Studio entry.")
 	_check(not bool(navigation.call("is_navigating")), "Chart Studio timeout left NavigationController locked.")
+	_check(bool(startup.get("splash_finished")), "Suspending Main Menu did not retire its pending boot reveal.")
 	await process_frame
 	_check(_focus_is_within(startup), "Main Menu focus was not restored after Chart Studio failure.")
 	# Releasing the injected stall cannot let the expired generation commit later.
@@ -69,6 +70,16 @@ func _run() -> void:
 		await process_frame
 	_check(str(shell.call("get_active_route")) == "main_menu", "A stale Chart Studio completion committed after timeout.")
 	_check(route_changes.size() == route_count_before, "A stale Chart Studio completion emitted a route change.")
+	# Main Menu rollback restores presentation, not a new music activation.
+	_configure_music(true)
+	var paused_stream: AudioStream = (root.get_node("MusicSession").get("player") as AudioStreamPlayer).stream
+	shell.call("set_navigation_test_failure", "chart_studio_stall", true)
+	startup.call("_on_chart_studio_pressed")
+	await _wait_for_navigation()
+	_check(bool(root.get_node("MusicSession").call("is_paused")), "Main Menu rollback resumed user-paused music.")
+	_check((root.get_node("MusicSession").get("player") as AudioStreamPlayer).stream == paused_stream, "Main Menu rollback replaced the user's paused stream.")
+	shell.call("set_navigation_test_failure", "chart_studio_stall", false)
+	root.get_node("MusicSession").call("set_paused", false)
 
 	# Main Menu <-> Song Library is repeatable and each transaction completes once.
 	for _cycle in range(2):
@@ -95,6 +106,10 @@ func _run() -> void:
 	var library_timeout_result: Dictionary = completions.back()
 	_check(str(library_timeout_result.get("outcome", "")) == "failure", "Song Library Chart Studio timeout did not report failure.")
 	_check(route_changes.size() == route_count_before, "Timed-out Chart Studio entry committed a route.")
+	# Wait past the old boot callback deadline: a hidden Main Menu must not
+	# resume playback or reclaim focus after this transaction has finished.
+	await create_timer(1.7).timeout
+	_check(bool(root.get_node("MusicSession").call("is_paused")), "A stale Main Menu reveal resumed user-paused music after rollback.")
 	await process_frame
 	_check(_focus_matches_route("song_library"), "Song Library focus policy was not restored after Chart Studio failure.")
 	shell.call("set_navigation_test_failure", "chart_studio_stall", false)

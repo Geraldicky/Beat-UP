@@ -26,20 +26,20 @@ const MENU_ITEMS := [
 ]
 
 const MENU_BACKGROUND_CANDIDATES := [
-	{"path": "res://assets/song_backgrounds/aleph_0.png", "title": "Aleph-0", "artist": "LeaF", "audio": "res://music/imported/aleph_0.ogg"},
-	{"path": "res://assets/song_backgrounds/aresenes_bazaar.png", "title": "Aresene's Bazaar", "artist": "James Landino", "audio": "res://music/imported/aresenes_bazaar.ogg"},
-	{"path": "res://assets/song_backgrounds/bad_apple.png", "title": "Bad Apple!!", "artist": "Alstroemeria Records feat. nomico", "audio": "res://music/imported/bad_apple.ogg"},
-	{"path": "res://assets/song_backgrounds/big_daddy.png", "title": "Big Daddy", "artist": "USAO", "audio": "res://music/imported/big_daddy.ogg"},
-	{"path": "res://assets/song_backgrounds/blue_zenith.png", "title": "Blue Zenith", "artist": "xi", "audio": "res://music/imported/blue_zenith.ogg"},
-	{"path": "res://assets/song_backgrounds/diana_boncheva_feat_banya_beethoven_virus_full_version.png", "title": "Beethoven Virus (Full Version)", "artist": "Diana Boncheva feat. BanYa", "audio": "res://music/imported/diana_boncheva_feat_banya_beethoven_virus_full_version.ogg"},
-	{"path": "res://assets/song_backgrounds/exit_this_earths_atomosphere.png", "title": "Exit This Earth's Atomosphere", "artist": "Camellia", "audio": "res://music/imported/exit_this_earths_atomosphere.ogg"},
-	{"path": "res://assets/song_backgrounds/freedom_dive.png", "title": "FREEDOM DiVE↓", "artist": "xi", "audio": "res://music/imported/freedom_dive.ogg"},
-	{"path": "res://assets/song_backgrounds/moonlight_sonata_3rd_movement_meganeko_remix.png", "title": "Moonlight Sonata 3rd Movement (meganeko Remix)", "artist": "meganeko", "audio": "res://music/imported/moonlight_sonata_3rd_movement_meganeko_remix.ogg"},
-	{"path": "res://assets/song_backgrounds/necrofantasia.png", "title": "Necrofantasia", "artist": "ZUN", "audio": "res://music/imported/necrofantasia.ogg"},
-	{"path": "res://assets/song_backgrounds/night_of_nights.png", "title": "Night of Nights", "artist": "COOL&CREATE / beatMARIO", "audio": "res://music/imported/night_of_nights.ogg"},
-	{"path": "res://assets/song_backgrounds/oshama_scramble.png", "title": "Oshama Scramble!", "artist": "t+pazolite", "audio": "res://music/imported/oshama_scramble.ogg"},
-	{"path": "res://assets/song_backgrounds/septette_for_the_dead_princess.png", "title": "Septette for the Dead Princess", "artist": "ZUN", "audio": "res://music/imported/septette_for_the_dead_princess.ogg"},
-	{"path": "res://assets/song_backgrounds/un_owen_was_her.png", "title": "U.N. Owen Was Her? & Flowering Night (Koa Remix)", "artist": "Koa / ZUN", "audio": "res://music/imported/un_owen_was_her.ogg"},
+	{"title": "Aleph-0", "artist": "LeaF", "audio": "res://music/imported/aleph_0.ogg"},
+	{"title": "Aresene's Bazaar", "artist": "James Landino", "audio": "res://music/imported/aresenes_bazaar.ogg"},
+	{"title": "Bad Apple!!", "artist": "Alstroemeria Records feat. nomico", "audio": "res://music/imported/bad_apple.ogg"},
+	{"title": "Big Daddy", "artist": "USAO", "audio": "res://music/imported/big_daddy.ogg"},
+	{"title": "Blue Zenith", "artist": "xi", "audio": "res://music/imported/blue_zenith.ogg"},
+	{"title": "Beethoven Virus (Full Version)", "artist": "Diana Boncheva feat. BanYa", "audio": "res://music/imported/diana_boncheva_feat_banya_beethoven_virus_full_version.ogg"},
+	{"title": "Exit This Earth's Atomosphere", "artist": "Camellia", "audio": "res://music/imported/exit_this_earths_atomosphere.ogg"},
+	{"title": "FREEDOM DiVE↓", "artist": "xi", "audio": "res://music/imported/freedom_dive.ogg"},
+	{"title": "Moonlight Sonata 3rd Movement (meganeko Remix)", "artist": "meganeko", "audio": "res://music/imported/moonlight_sonata_3rd_movement_meganeko_remix.ogg"},
+	{"title": "Necrofantasia", "artist": "ZUN", "audio": "res://music/imported/necrofantasia.ogg"},
+	{"title": "Night of Nights", "artist": "COOL&CREATE / beatMARIO", "audio": "res://music/imported/night_of_nights.ogg"},
+	{"title": "Oshama Scramble!", "artist": "t+pazolite", "audio": "res://music/imported/oshama_scramble.ogg"},
+	{"title": "Septette for the Dead Princess", "artist": "ZUN", "audio": "res://music/imported/septette_for_the_dead_princess.ogg"},
+	{"title": "U.N. Owen Was Her? & Flowering Night (Koa Remix)", "artist": "Koa / ZUN", "audio": "res://music/imported/un_owen_was_her.ogg"},
 ]
 
 const TUTORIAL_STEPS := [
@@ -1100,6 +1100,8 @@ func _launch_logo_stage() -> void:
 	logo_tween.tween_property(splash_logo_frame, "scale", Vector2.ONE, 0.42).set_delay(0.06).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 
 func _begin_main_menu_under_splash() -> void:
+	if splash_finished:
+		return
 	# Reveal the destination behind the launch logo so there is no black cut.
 	settings_menu.visible = false
 	calibration_screen.visible = false
@@ -1171,7 +1173,9 @@ func _animate_main_menu_background_visit() -> void:
 	if main_menu_background_controller != null:
 		main_menu_background_controller.call("animate_visit")
 
-func _show_main_menu_immediate() -> void:
+func _show_main_menu_immediate(preserve_music_state: bool = false) -> void:
+	if not is_visible_in_tree():
+		return
 	splash.visible = false
 	settings_menu.visible = false
 	calibration_screen.visible = false
@@ -1179,7 +1183,8 @@ func _show_main_menu_immediate() -> void:
 	credits_screen.visible = false
 	exit_dialog.visible = false
 	main_menu.visible = true
-	_ensure_main_menu_music_ready(0.18)
+	if not preserve_music_state:
+		_ensure_main_menu_music_ready(0.18)
 	_update_now_playing_card()
 	_refresh_pivots()
 	var restored_button: Button = _main_menu_button_for_index(_get_main_menu_focus_index())
@@ -1261,6 +1266,8 @@ func _show_main_menu() -> void:
 	active_tween.chain().tween_callback(Callable(self, "_after_main_menu_reveal"))
 
 func _after_main_menu_reveal() -> void:
+	if not is_visible_in_tree() or in_transition:
+		return
 	if first_run_tutorial_pending:
 		first_run_tutorial_pending = false
 		_open_tutorial(true)
@@ -1896,13 +1903,15 @@ func _release_navigation_lock_after_result(result: Variant) -> void:
 		button.disabled = false
 	call_deferred("_focus_default_menu_button")
 
-func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}) -> void:
+func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}, preserve_music_state: bool = false) -> void:
+	_cancel_pending_main_menu_reveal()
 	_set_main_menu_focus_index(clampi(focus_index, 0, maxi(0, menu_buttons.size() - 1)))
-	var resumed_library_audio: bool = _sync_main_menu_from_music_session()
-	if not resumed_library_audio:
-		resumed_library_audio = _apply_library_audio_handoff(audio_handoff)
-	if not resumed_library_audio:
-		_randomize_main_menu_background(false)
+	if not preserve_music_state:
+		var resumed_library_audio: bool = _sync_main_menu_from_music_session()
+		if not resumed_library_audio:
+			resumed_library_audio = _apply_library_audio_handoff(audio_handoff)
+		if not resumed_library_audio:
+			_randomize_main_menu_background(false)
 	if get_tree().has_meta(RETURN_TO_MENU_META):
 		get_tree().remove_meta(RETURN_TO_MENU_META)
 	if get_tree().has_meta(RETURN_TO_MENU_FOCUS_META):
@@ -1910,19 +1919,33 @@ func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}) -
 	in_transition = false
 	for button in menu_buttons:
 		button.disabled = false
-	_show_main_menu_immediate()
+	_show_main_menu_immediate(preserve_music_state)
+
+func _cancel_pending_main_menu_reveal() -> void:
+	# Boot/reveal tweens process even while the resident screen is suspended.
+	# Retire their callbacks before they can resume music or steal route focus.
+	if active_tween != null:
+		active_tween.kill()
+		active_tween = null
+	if launch_menu_tween != null:
+		launch_menu_tween.kill()
+		launch_menu_tween = null
+	splash_finished = true
+	_mark_launch_splash_seen()
+	splash.visible = false
 
 
 # AppShell lifecycle hooks. Main Menu activation remains centralized here, while
 # the shell owns route transitions and input locking.
 func shell_will_resume(context: Dictionary) -> void:
 	var focus_index: int = int(context.get("focus_index", _get_main_menu_focus_index()))
-	activate_from_shell(focus_index)
+	activate_from_shell(focus_index, {}, bool(context.get("preserve_music_state", false)))
 
 func shell_did_resume(_context: Dictionary) -> void:
 	call_deferred("_focus_default_menu_button")
 
 func shell_will_suspend(_context: Dictionary) -> void:
+	_cancel_pending_main_menu_reveal()
 	in_transition = true
 
 func shell_did_suspend(_context: Dictionary) -> void:

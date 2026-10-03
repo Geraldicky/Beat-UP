@@ -12,7 +12,7 @@ for normal in sorted(CHARTS.glob("*/normal.json")):
     if not audio.startswith("res://"):
         missing.append((data.get("song_id"), audio, "invalid path"))
         continue
-    local = ROOT / audio.removeprefix("res://")
+    local = ROOT / audio[len("res://"):]
     if not local.is_file():
         missing.append((data.get("song_id"), audio, "missing file"))
     seen.add(data.get("song_id"))

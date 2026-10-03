@@ -1,0 +1,175 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/song_library/record_panel.gd" id="1_record"]
+[ext_resource type="Script" path="res://scripts/ui/library_vector_icon.gd" id="2_icon"]
+
+[node name="AlbumFlowRecordPanel" type="PanelContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_record")
+
+[node name="RecordMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 8
+
+[node name="AlbumFlowScoreCluster" type="VBoxContainer" parent="RecordMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="RecordTitleRow" type="HBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BestCaption" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/RecordTitleRow"]
+layout_mode = 2
+text = "BEST RECORD"
+
+[node name="TitleRule" type="HSeparator" parent="RecordMargin/AlbumFlowScoreCluster/RecordTitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="RecordDate" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/RecordTitleRow"]
+layout_mode = 2
+
+[node name="AlbumFlowRecordMetrics" type="HBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="AccuracyStack" type="VBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="AccuracyCaption" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics/AccuracyStack"]
+layout_mode = 2
+text = "ACCURACY"
+
+[node name="BestAccuracyValue" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics/AccuracyStack"]
+layout_mode = 2
+text = "—"
+
+[node name="MetricDivider" type="VSeparator" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="ScoreStack" type="VBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="ScoreCaption" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics/ScoreStack"]
+layout_mode = 2
+text = "SCORE"
+
+[node name="BestScoreValue" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics/ScoreStack"]
+layout_mode = 2
+text = "NO RECORD"
+
+[node name="AlbumFlowBestCard" type="PanelContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="RankDiamond" type="TextureRect" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics/AlbumFlowBestCard"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_icon")
+
+[node name="BestMargin" type="MarginContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics/AlbumFlowBestCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 4
+
+[node name="BestRankValue" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowRecordMetrics/AlbumFlowBestCard/BestMargin"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BreakdownRule" type="HSeparator" parent="RecordMargin/AlbumFlowScoreCluster"]
+layout_mode = 2
+
+[node name="AlbumFlowJudgementBreakdown" type="HBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="PerfectCell" type="VBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 1
+
+[node name="Caption" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/PerfectCell"]
+layout_mode = 2
+text = "PERFECT"
+horizontal_alignment = 1
+
+[node name="Value" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/PerfectCell"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="Sep1" type="VSeparator" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown"]
+layout_mode = 2
+
+[node name="GreatCell" type="VBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 1
+
+[node name="Caption" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/GreatCell"]
+layout_mode = 2
+text = "GREAT"
+horizontal_alignment = 1
+
+[node name="Value" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/GreatCell"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="Sep2" type="VSeparator" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown"]
+layout_mode = 2
+
+[node name="GoodCell" type="VBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 1
+
+[node name="Caption" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/GoodCell"]
+layout_mode = 2
+text = "GOOD"
+horizontal_alignment = 1
+
+[node name="Value" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/GoodCell"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="Sep3" type="VSeparator" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown"]
+layout_mode = 2
+
+[node name="MissCell" type="VBoxContainer" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 1
+
+[node name="Caption" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/MissCell"]
+layout_mode = 2
+text = "MISS"
+horizontal_alignment = 1
+
+[node name="Value" type="Label" parent="RecordMargin/AlbumFlowScoreCluster/AlbumFlowJudgementBreakdown/MissCell"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="BestComboValue" type="Label" parent="RecordMargin/AlbumFlowScoreCluster"]
+layout_mode = 2
+horizontal_alignment = 2

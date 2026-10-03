@@ -34,6 +34,17 @@ func _ready() -> void:
 	for raw_path in QUICK_PRELOAD_SCENES:
 		preload_scene(str(raw_path))
 
+func _exit_tree() -> void:
+	# ResourceLoader has no cancellation API. Join warm-ups owned by this
+	# autoload before engine shutdown tears down script/class registration.
+	# This may wait at exit only; navigation and the frame loop stay asynchronous.
+	for raw_path: Variant in preload_requests.keys():
+		var scene_path := str(raw_path)
+		var status := ResourceLoader.load_threaded_get_status(scene_path)
+		if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS or status == ResourceLoader.THREAD_LOAD_LOADED:
+			ResourceLoader.load_threaded_get(scene_path)
+	preload_requests.clear()
+
 # Transitions are atomic. A key pressed while the visual handoff owns the screen
 # must not leak into the destination scene after a scene swap.
 func _input(event: InputEvent) -> void:

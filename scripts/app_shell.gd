@@ -144,7 +144,13 @@ func show_chart_studio(transaction_id: int = 0) -> Dictionary:
 	if editor == null:
 		var load_failure_reason := chart_studio_last_load_error if not chart_studio_last_load_error.is_empty() else "Chart Studio could not be loaded."
 		_restore_music_after_chart_studio()
-		_rollback_to_origin(outgoing, chart_studio_screen, previous_route, context)
+		# A failed Chart Studio attempt never transferred route ownership. Mark the
+		# resume as a rollback so resident screens restore UI/focus without starting
+		# new media that could override a user's pre-existing paused state.
+		var rollback_context := context.duplicate(true)
+		rollback_context["navigation_rollback"] = true
+		rollback_context["preserve_music_state"] = true
+		_rollback_to_origin(outgoing, chart_studio_screen, previous_route, rollback_context)
 		_notify_screen(outgoing, "handle_navigation_failure", {
 			"route": ROUTE_CHART_STUDIO,
 			"error": load_failure_reason,
