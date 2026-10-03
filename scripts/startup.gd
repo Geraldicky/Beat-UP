@@ -26,20 +26,20 @@ const MENU_ITEMS := [
 ]
 
 const MENU_BACKGROUND_CANDIDATES := [
-	{"path": "res://assets/song_backgrounds/aleph_0.png", "title": "Aleph-0", "artist": "LeaF", "audio": "res://music/imported/aleph_0.ogg"},
-	{"path": "res://assets/song_backgrounds/aresenes_bazaar.png", "title": "Aresene's Bazaar", "artist": "James Landino", "audio": "res://music/imported/aresenes_bazaar.ogg"},
-	{"path": "res://assets/song_backgrounds/bad_apple.png", "title": "Bad Apple!!", "artist": "Alstroemeria Records feat. nomico", "audio": "res://music/imported/bad_apple.ogg"},
-	{"path": "res://assets/song_backgrounds/big_daddy.png", "title": "Big Daddy", "artist": "USAO", "audio": "res://music/imported/big_daddy.ogg"},
-	{"path": "res://assets/song_backgrounds/blue_zenith.png", "title": "Blue Zenith", "artist": "xi", "audio": "res://music/imported/blue_zenith.ogg"},
-	{"path": "res://assets/song_backgrounds/diana_boncheva_feat_banya_beethoven_virus_full_version.png", "title": "Beethoven Virus (Full Version)", "artist": "Diana Boncheva feat. BanYa", "audio": "res://music/imported/diana_boncheva_feat_banya_beethoven_virus_full_version.ogg"},
-	{"path": "res://assets/song_backgrounds/exit_this_earths_atomosphere.png", "title": "Exit This Earth's Atomosphere", "artist": "Camellia", "audio": "res://music/imported/exit_this_earths_atomosphere.ogg"},
-	{"path": "res://assets/song_backgrounds/freedom_dive.png", "title": "FREEDOM DiVE↓", "artist": "xi", "audio": "res://music/imported/freedom_dive.ogg"},
-	{"path": "res://assets/song_backgrounds/moonlight_sonata_3rd_movement_meganeko_remix.png", "title": "Moonlight Sonata 3rd Movement (meganeko Remix)", "artist": "meganeko", "audio": "res://music/imported/moonlight_sonata_3rd_movement_meganeko_remix.ogg"},
-	{"path": "res://assets/song_backgrounds/necrofantasia.png", "title": "Necrofantasia", "artist": "ZUN", "audio": "res://music/imported/necrofantasia.ogg"},
-	{"path": "res://assets/song_backgrounds/night_of_nights.png", "title": "Night of Nights", "artist": "COOL&CREATE / beatMARIO", "audio": "res://music/imported/night_of_nights.ogg"},
-	{"path": "res://assets/song_backgrounds/oshama_scramble.png", "title": "Oshama Scramble!", "artist": "t+pazolite", "audio": "res://music/imported/oshama_scramble.ogg"},
-	{"path": "res://assets/song_backgrounds/septette_for_the_dead_princess.png", "title": "Septette for the Dead Princess", "artist": "ZUN", "audio": "res://music/imported/septette_for_the_dead_princess.ogg"},
-	{"path": "res://assets/song_backgrounds/un_owen_was_her.png", "title": "U.N. Owen Was Her? & Flowering Night (Koa Remix)", "artist": "Koa / ZUN", "audio": "res://music/imported/un_owen_was_her.ogg"},
+	{"title": "Aleph-0", "artist": "LeaF", "audio": "res://music/imported/aleph_0.ogg"},
+	{"title": "Aresene's Bazaar", "artist": "James Landino", "audio": "res://music/imported/aresenes_bazaar.ogg"},
+	{"title": "Bad Apple!!", "artist": "Alstroemeria Records feat. nomico", "audio": "res://music/imported/bad_apple.ogg"},
+	{"title": "Big Daddy", "artist": "USAO", "audio": "res://music/imported/big_daddy.ogg"},
+	{"title": "Blue Zenith", "artist": "xi", "audio": "res://music/imported/blue_zenith.ogg"},
+	{"title": "Beethoven Virus (Full Version)", "artist": "Diana Boncheva feat. BanYa", "audio": "res://music/imported/diana_boncheva_feat_banya_beethoven_virus_full_version.ogg"},
+	{"title": "Exit This Earth's Atomosphere", "artist": "Camellia", "audio": "res://music/imported/exit_this_earths_atomosphere.ogg"},
+	{"title": "FREEDOM DiVE↓", "artist": "xi", "audio": "res://music/imported/freedom_dive.ogg"},
+	{"title": "Moonlight Sonata 3rd Movement (meganeko Remix)", "artist": "meganeko", "audio": "res://music/imported/moonlight_sonata_3rd_movement_meganeko_remix.ogg"},
+	{"title": "Necrofantasia", "artist": "ZUN", "audio": "res://music/imported/necrofantasia.ogg"},
+	{"title": "Night of Nights", "artist": "COOL&CREATE / beatMARIO", "audio": "res://music/imported/night_of_nights.ogg"},
+	{"title": "Oshama Scramble!", "artist": "t+pazolite", "audio": "res://music/imported/oshama_scramble.ogg"},
+	{"title": "Septette for the Dead Princess", "artist": "ZUN", "audio": "res://music/imported/septette_for_the_dead_princess.ogg"},
+	{"title": "U.N. Owen Was Her? & Flowering Night (Koa Remix)", "artist": "Koa / ZUN", "audio": "res://music/imported/un_owen_was_her.ogg"},
 ]
 
 const TUTORIAL_STEPS := [
