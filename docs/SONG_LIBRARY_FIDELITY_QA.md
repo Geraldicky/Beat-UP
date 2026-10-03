@@ -35,6 +35,12 @@ scenes/ui/song_library/
 `song_select.gd` owns orchestration/state binding rather than rebuilding those
 static hierarchies imperatively.
 
+Fullscreen ambience is deliberately decoupled from song cover art. The 39 legacy
+1600×900 Beat UP! backgrounds now live in `assets/backgrounds/` as neutral
+`background_01.png` … `background_39.png` assets. `BackgroundSession` chooses
+from that pool, while `assets/song_thumbnails/` remains the source for song rows
+and the selected artwork panel.
+
 ## Locked behavior
 
 - Local browsing updates `selected_song_id` / `selected_difficulty`.
