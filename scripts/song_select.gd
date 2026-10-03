@@ -172,6 +172,7 @@ var difficulty_margin_velocity: Dictionary = {}
 var scroll_target := -1.0
 var applying_scroll_target := false
 var detail_transition_generation := 0
+var preview_resume_generation := 0
 var background_texture_cache: Dictionary = {}
 var selected_info_tab: String = "ranking"
 var run_picker: BeatDropdown
@@ -2884,14 +2885,23 @@ func _start_selected_preview() -> void:
 # Starting the preview here keeps synchronous audio/resource work out of the
 # transition frame, which prevents the ~1s hitch seen when entering Library.
 func shell_did_resume(context: Dictionary) -> void:
-	# Rollback from a failed Chart Studio navigation means Song Library never
-	# actually ceded media ownership. Do not queue a fresh preview here: doing so
-	# could replace/unpause a MusicSession the user had already paused manually.
+	# Every resume gets a new generation. Deferred preview starts from an older
+	# route activation must never survive a suspend/rollback boundary.
+	preview_resume_generation += 1
 	if bool(context.get("preserve_music_state", false)):
 		return
-	call_deferred("_start_selected_preview")
+	var resume_generation := preview_resume_generation
+	call_deferred("_start_selected_preview_if_current", resume_generation)
+
+func _start_selected_preview_if_current(resume_generation: int) -> void:
+	if resume_generation != preview_resume_generation:
+		return
+	_start_selected_preview()
 
 func shell_will_suspend(_context: Dictionary) -> void:
+	# Invalidate both an already-queued preview and any call_deferred() from the
+	# previous resume that has not executed yet.
+	preview_resume_generation += 1
 	if preview_player != null and preview_player.has_method("cancel_pending_preview"):
 		preview_player.call("cancel_pending_preview")
 
