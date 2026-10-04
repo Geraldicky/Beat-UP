@@ -86,6 +86,7 @@ func _run() -> void:
 		gameplay.call("update_hud")
 		_check_gameplay_hud(gameplay, resolution)
 	_check_gameplay_identity(gameplay)
+	await _check_audio_completion(gameplay)
 
 	library_result = await navigation.call("request_song_library", "bad_apple", false)
 	_check(str(library_result.get("outcome", "")) == "success", "Gameplay -> Song Library failed.")
@@ -171,14 +172,80 @@ func _check_gameplay_hud(gameplay: Control, resolution: Vector2i) -> void:
 	var judgment := gameplay.get_node("Feedback/JudgmentSprite") as Control
 	var hit_zone := gameplay.get_node("Battle/Track/HitZone") as Control
 	var combo_label := gameplay.get_node("HUD/ComboLabel") as Label
+	var song_panel := gameplay.get_node("HUD/SongInfoPanel") as Control
+	var title := song_panel.get_node("SongTitleLabel") as Label
+	var artist := song_panel.get_node("ArtistLabel") as Label
+	var difficulty := song_panel.get_node("DifficultyLabel") as Label
+	var time_label := song_panel.get_node("DurationLabel") as Label
+	var compass := gameplay.get_node("Battle/Track/Lane/InputCompass") as Control
 	judgment.visible = true
-	for control in [stats, pause, score, accuracy, progress, judgment, hit_zone]:
+	for control in [stats, pause, score, accuracy, progress, judgment, hit_zone, song_panel, title, artist, difficulty, time_label, compass]:
 		_check(_inside_viewport(control, resolution), "Gameplay control %s is clipped at %s." % [control.name, resolution])
 	_check(not stats.get_global_rect().intersects(pause.get_global_rect()), "Score/accuracy overlaps Pause at %s." % resolution)
 	_check(judgment.get_global_rect().end.y <= hit_zone.get_global_rect().position.y + 1.0, "Judgment is not above the hit zone at %s." % resolution)
 	_check(not combo_label.visible, "Retired gameplay combo label became visible at %s." % resolution)
+	_check(title.visible and difficulty.visible and time_label.visible, "Gameplay song context is hidden.")
+	_check(song_panel.get_global_rect().end.x < stats.position.x, "Song identity and score are not separated left/right.")
+	_check(not title.get_global_rect().intersects(artist.get_global_rect()), "Song title overlaps artist: %s / %s" % [title.get_global_rect(), artist.get_global_rect()])
+	_check(not score.get_global_rect().intersects(accuracy.get_global_rect()), "Score overlaps accuracy: %s / %s" % [score.get_global_rect(), accuracy.get_global_rect()])
+	_check(stats.get_global_rect().encloses(score.get_global_rect()) and stats.get_global_rect().encloses(accuracy.get_global_rect()), "Compact performance panel clips score or accuracy at %s: %s / %s / %s." % [resolution, stats.get_global_rect(), score.get_global_rect(), accuracy.get_global_rect()])
+	_check(compass.get_global_rect().position.y > hit_zone.get_global_rect().end.y, "Input display competes with incoming notes.")
+	var track := gameplay.get_node("Battle/Track") as Control
+	var config: Resource = track.get("layout_config") as Resource
+	var hit_point := track.get_node("HitPoint") as Marker2D
+	_check(hit_point.position.is_equal_approx(Vector2(track.size.x * float(config.get("hit_x_ratio")), track.size.y * float(config.get("lane_y_ratio")))), "Visual redesign moved the timing receptor.")
+
+func _check_audio_completion(gameplay: Control) -> void:
+	var shared := root.get_node("MusicSession").call("get_current_stream") as AudioStream
+	var run_stream := (gameplay.get_node("Audio/Music") as AudioStreamPlayer).stream
+	_check(shared != run_stream, "Bundled gameplay retained MusicSession's cached preview resource.")
+	if shared is AudioStreamOggVorbis:
+		_check(not (run_stream as AudioStreamOggVorbis).loop, "Bundled run inherited looping.")
+		var looped_preview := shared.duplicate() as AudioStreamOggVorbis
+		looped_preview.loop = true
+		var isolated := gameplay.call("create_gameplay_audio_stream", looped_preview) as AudioStreamOggVorbis
+		_check(isolated != looped_preview and not isolated.loop and looped_preview.loop, "Compressed preview/run loop policies are not isolated.")
+	# Model a cached preview stream whose owner enabled looping. Launch must
+	# isolate that policy, not alter the preview or depend on a duration watchdog.
+	var preview := AudioStreamWAV.new()
+	preview.format = AudioStreamWAV.FORMAT_16_BITS
+	preview.mix_rate = 22050
+	preview.data = PackedByteArray()
+	var silence := PackedByteArray()
+	silence.resize(22050)
+	silence.fill(0)
+	preview.data = silence
+	preview.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	preview.loop_end = 11025
+	var chart: Dictionary = (gameplay.get("level_data") as Dictionary).duplicate(true)
+	chart["song_id"] = "qa_gameplay_completion"
+	chart["id"] = "qa_gameplay_completion"
+	chart["duration"] = 0.5
+	chart["events"] = [{"time": 0.1, "direction": 8, "type": "normal"}]
+	chart["space_events"] = []
+	gameplay.set("practice_mode_active", false)
+	_check(bool(gameplay.call("_start_resolved_level", chart, preview)), "Synthetic completion run failed to launch.")
+	var player := gameplay.get_node("Audio/Music") as AudioStreamPlayer
+	_check(player.stream != preview, "Gameplay retained shared preview stream.")
+	_check((player.stream as AudioStreamWAV).loop_mode == AudioStreamWAV.LOOP_DISABLED, "Gameplay inherited preview looping.")
+	_check(preview.loop_mode == AudioStreamWAV.LOOP_FORWARD, "Gameplay mutated preview looping.")
+	var finished_count := [0]
+	player.finished.connect(func() -> void: finished_count[0] += 1)
+	var deadline := Time.get_ticks_msec() + 6000
+	while not bool(gameplay.get("fight_over")) and Time.get_ticks_msec() < deadline:
+		await process_frame
+	_check(finished_count[0] == 1, "Non-looping run must emit one natural audio completion.")
+	_check(bool(gameplay.get("fight_over")), "Audio completion never finalized the run.")
+	while root.get_node("SceneTransition").call("is_transitioning") and Time.get_ticks_msec() < deadline:
+		await process_frame
+	var result := gameplay.get("result_overlay") as Control
+	_check(result.is_visible_in_tree(), "Finished song did not reveal Results.")
+	await create_timer(0.6).timeout
+	_check(not player.playing and finished_count[0] == 1, "Completed song restarted after Results.")
 
 func _check_gameplay_identity(gameplay: Control) -> void:
+	var scrim := gameplay.get_node("Background/ReadabilityScrim") as ColorRect
+	_check(scrim.mouse_filter == Control.MOUSE_FILTER_IGNORE and scrim.color.a > 0.5, "Gameplay ambience lacks its non-interactive readability scrim.")
 	var palette: Resource = load("res://config/theme_config.tres")
 	_check(palette.get("normal_note_color").is_equal_approx(MinimalThemeScript.NORMAL_BLUE), "Normal note is not Beat UP! blue.")
 	_check(palette.get("diagonal_note_outline").is_equal_approx(MinimalThemeScript.DIAGONAL_ORANGE), "Diagonal note is not Beat UP! orange.")

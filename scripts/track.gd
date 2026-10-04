@@ -65,17 +65,14 @@ func apply_layout() -> void:
 	lane.size = Vector2(maxf(1.0, lane_right - lane_left), lane_height)
 	if lane.has_method("set_receptor_x"):
 		lane.call("set_receptor_x", hit_x - lane_left)
-	var receptor_local_x := hit_x - lane_left
-	var compass_size := clampf(lane_height * 0.72, 78.0, 128.0)
-	var compass_space := maxf(compass_size + 12.0, receptor_local_x - layout_config.hit_zone_size * 0.65)
-	var compass_center_x := clampf(compass_space * 0.48, compass_size * 0.5 + 8.0, compass_space - compass_size * 0.5)
-	input_compass.position = Vector2(compass_center_x - compass_size * 0.5, (lane_height - compass_size) * 0.5)
+	var compass_size := clampf(size.y * 0.16, 108.0, 174.0)
+	input_compass.position = Vector2(24.0, size.y - compass_size - 28.0) - lane.position
 	input_compass.size = Vector2.ONE * compass_size
 	lane_shadow.position = lane.position + Vector2(0.0, shadow_offset)
 	lane_shadow.modulate = theme_config.lane_shadow
 	lane_shadow.size = lane.size
 
-	var hit_size: Vector2 = Vector2.ONE * layout_config.hit_zone_size
+	var hit_size: Vector2 = Vector2.ONE * get_visual_hit_zone_size()
 	hit_zone.position = hit_point.position - hit_size * 0.5
 	hit_zone.size = hit_size
 	hit_zone.pivot_offset = hit_size * 0.5
@@ -96,6 +93,10 @@ func apply_layout() -> void:
 	space_badge.position = Vector2(0.0, prompt_size.y - badge_height)
 	space_badge.size = Vector2(prompt_size.x, badge_height)
 	space_badge.pivot_offset = space_badge.size * 0.5
+
+func get_visual_hit_zone_size() -> float:
+	# Visual geometry only: HitPoint, spawn, travel and judgement are unchanged.
+	return layout_config.hit_zone_size * 1.25 * clampf(size.y / 1080.0, 0.85, 1.1)
 
 func clear_notes() -> void:
 	for child in notes.get_children():

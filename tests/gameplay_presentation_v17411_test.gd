@@ -54,7 +54,7 @@ func _run() -> void:
 	var stats_panel := game.get_node("HUD/BattleStatsPanel") as Control
 	var song_panel := game.get_node("HUD/SongInfoPanel") as Control
 	var pause_button := game.get_node("HUD/PauseButton") as Control
-	_check(stats_panel.position.x < song_panel.position.x, "Score/HUD stats panel is not on the left of song context.")
+	_check(song_panel.get_global_rect().end.x < stats_panel.position.x, "Song context is not left of the score/accuracy HUD.")
 	_check(song_panel.position.x + song_panel.size.x <= pause_button.position.x + 1.0, "Song context overlaps the Pause area.")
 	game.queue_free()
 	await process_frame

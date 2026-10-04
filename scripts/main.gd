@@ -79,6 +79,9 @@ const FOUR_DIRECTIONS := [
 @onready var combo_label: Label = $HUD/ComboLabel
 @onready var song_info_panel: Panel = $HUD/SongInfoPanel
 @onready var song_title_label: Label = $HUD/SongInfoPanel/SongTitleLabel
+@onready var artist_label: Label = $HUD/SongInfoPanel/ArtistLabel
+@onready var song_artwork: TextureRect = $HUD/SongInfoPanel/SongArtwork
+var hud_artwork_song_id := ""
 @onready var bpm_label: Label = $HUD/SongInfoPanel/BPMLabel
 @onready var difficulty_label: Label = $HUD/SongInfoPanel/DifficultyLabel
 @onready var duration_label: Label = $HUD/SongInfoPanel/DurationLabel
@@ -411,12 +414,11 @@ func _apply_theme_config() -> void:
 	if theme_config == null:
 		return
 	background_rect.color = theme_config.base_dark
-	# Song identity was already established by Song Launch. During play, keep only
-	# the timing-critical HUD and a thin progress line.
-	song_title_label.visible = false
-	bpm_label.visible = false
-	difficulty_label.visible = false
-	duration_label.visible = false
+	# Song context is peripheral; incoming notes retain the contrast priority.
+	song_title_label.visible = true
+	bpm_label.visible = true
+	difficulty_label.visible = true
+	duration_label.visible = true
 	combo_label.add_theme_color_override("font_color", theme_config.text_primary)
 	accuracy_caption.add_theme_color_override("font_color", theme_config.text_secondary)
 	accuracy_label.add_theme_color_override("font_color", theme_config.text_primary)
@@ -425,13 +427,16 @@ func _apply_theme_config() -> void:
 	difficulty_label.add_theme_color_override("font_color", theme_config.accent_primary)
 	duration_label.add_theme_color_override("font_color", theme_config.text_secondary)
 	MinimalThemeScript.apply_heading(song_title_label, 14, MinimalThemeScript.TEXT)
+	song_title_label.add_theme_font_override("font", MinimalThemeScript.semibold_font())
+	MinimalThemeScript.apply_heading(artist_label, 18, MinimalThemeScript.MUTED)
 	feedback_main.add_theme_color_override("font_color", theme_config.text_primary)
 	feedback_sub.add_theme_color_override("font_color", theme_config.text_secondary)
 	judgment_sprite.add_theme_font_override("font", MinimalThemeScript.semibold_font())
 	judgment_sprite.add_theme_font_size_override("font_size", 42)
 	judgment_sprite.add_theme_color_override("font_outline_color", Color(0.02, 0.025, 0.04, 0.82))
 	judgment_sprite.add_theme_constant_override("outline_size", 4)
-	MinimalThemeScript.apply_mono(score_caption, 10, Color(MinimalThemeScript.MUTED, 0.84))
+	MinimalThemeScript.apply_mono(score_caption, 12, Color(MinimalThemeScript.MUTED, 0.84))
+	MinimalThemeScript.apply_mono(accuracy_caption, 12, MinimalThemeScript.MUTED)
 	MinimalThemeScript.apply_hud_value(score_digits)
 	score_digits.refresh_style()
 	MinimalThemeScript.apply_mono(accuracy_label, 16, Color(MinimalThemeScript.TEXT, 0.90))
@@ -447,7 +452,7 @@ func _apply_theme_config() -> void:
 	countdown_status.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.90))
 	countdown_mode.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	countdown_mode.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.48))
-	battle_stats_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s0(0.0))
+	battle_stats_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	song_info_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s0(0.0))
 	pause_button.add_theme_stylebox_override("normal", MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE, 0.34), Color(MinimalThemeScript.BORDER, 0.20), MinimalThemeScript.RADIUS_SM))
 	pause_button.add_theme_stylebox_override("hover", MinimalThemeScript.button_style(Color(MinimalThemeScript.SURFACE_RAISED, 0.70), MinimalThemeScript.ACCENT, MinimalThemeScript.RADIUS_SM))
@@ -477,37 +482,38 @@ func _apply_ui_layout() -> void:
 	var lane_y: float = viewport_size.y * track.layout_config.lane_y_ratio
 	var lane_height: float = viewport_size.y * track.layout_config.lane_height_ratio
 	var lane_bottom: float = lane_y + lane_height * 0.5
-	var hit_radius: float = track.layout_config.hit_zone_size * 0.5
+	var hit_radius: float = track.get_visual_hit_zone_size() * 0.5
 	var inner: float = clampf(float(ui_layout_config.battle_panel_inner_margin) * reference_scale, 8.0, 12.0)
 
-	# v17.4.11 gameplay hierarchy: score owns the top-left corner, song context
-	# stays centered in the remaining top rail, and Pause remains top-right.
-	# These panels are deliberately compact so the per-song artwork can remain
-	# visible without competing with the timing-critical lane.
-	var stats_width: float = clampf(viewport_size.x * 0.165, 232.0, 316.0)
+	# Hybrid composition: identity/progress on the left, performance on the
+	# right, and Pause outside both. The timing receptor coordinates stay fixed.
+	var stats_width: float = clampf(viewport_size.x * 0.18, 252.0, 346.0)
 	# Keep the live score and accuracy in two genuinely separate rows.  The
 	# previous compact height worked for short scores, but seven-digit v18.5
 	# totals let the score glyphs descend into the accuracy row.
-	var stats_height: float = clampf(104.0 * reference_scale, 96.0, 112.0)
-	var stats_left: float = margin
+	var stats_height: float = maxf(152.0 * reference_scale, 128.0)
+	var stats_left: float = viewport_size.x - margin - button_size - 16.0 - stats_width
 	battle_stats_panel.position = Vector2(stats_left, margin)
 	battle_stats_panel.size = Vector2(stats_width, stats_height)
 
 	score_caption.position = battle_stats_panel.position + Vector2(inner, 7.0)
 	score_caption.size = Vector2(maxf(1.0, stats_width - inner * 2.0), 18.0)
 	score_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	score_digits.position = battle_stats_panel.position + Vector2(inner, 19.0)
-	score_digits.size = Vector2(maxf(1.0, stats_width - inner * 2.0), 42.0)
-	accuracy_caption.position = battle_stats_panel.position + Vector2(inner, stats_height - 27.0)
-	accuracy_caption.size = Vector2(maxf(70.0, stats_width - inner * 2.0 - 92.0), 16.0)
+	score_digits.position = battle_stats_panel.position + Vector2(inner, 28.0 * reference_scale)
+	score_digits.size = Vector2(maxf(1.0, stats_width - inner * 2.0), 64.0 * reference_scale)
+	score_digits.add_theme_font_size_override("font_size", roundi(44.0 * reference_scale))
+	score_digits.refresh_style()
+	accuracy_caption.position = battle_stats_panel.position + Vector2(inner + 20.0 * reference_scale, stats_height * 0.69)
+	accuracy_caption.size = Vector2(stats_width * 0.35, 20.0)
 	accuracy_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	accuracy_label.position = battle_stats_panel.position + Vector2(stats_width - inner - 92.0, stats_height - 30.0)
-	accuracy_label.size = Vector2(92.0, 22.0)
+	accuracy_label.add_theme_font_size_override("font_size", roundi(26.0 * reference_scale))
+	accuracy_label.size = Vector2(150.0 * reference_scale, 34.0 * reference_scale)
+	accuracy_label.position = battle_stats_panel.position + Vector2(stats_width - inner - 150.0 * reference_scale, stats_height - accuracy_label.size.y - 6.0 * reference_scale)
 
-	var song_left_bound: float = stats_left + stats_width + float(ui_layout_config.section_gap)
-	var song_right_bound: float = viewport_size.x - margin - button_size - float(ui_layout_config.item_gap) - float(ui_layout_config.section_gap)
+	var song_left_bound: float = margin
+	var song_right_bound: float = stats_left - float(ui_layout_config.section_gap)
 	var song_available: float = maxf(1.0, song_right_bound - song_left_bound)
-	var desired_song_width: float = maxf(320.0, viewport_size.x * ui_layout_config.battle_song_info_width_ratio)
+	var desired_song_width: float = song_available
 	var song_width: float = minf(desired_song_width, song_available)
 	var song_left: float = song_left_bound + maxf(0.0, (song_available - song_width) * 0.5)
 	song_info_label_layout(song_left, margin, song_width, float(ui_layout_config.battle_song_info_height))
@@ -555,22 +561,31 @@ func _apply_ui_layout() -> void:
 	feedback_sub.size = Vector2(520.0, 26.0)
 
 func song_info_label_layout(left: float, top: float, width: float, height: float) -> void:
-	# Album Flow gameplay keeps only song progress. Song title/artist/difficulty
-	# belong to Song Launch and Result, not the persistent timing HUD.
-	var progress_width: float = clampf(width, 280.0, 680.0)
-	var progress_left: float = left + maxf(0.0, (width - progress_width) * 0.5)
-	song_info_panel.position = Vector2(progress_left, top + 2.0)
-	song_info_panel.size = Vector2(progress_width, 10.0)
-	duration_bar.position = Vector2(0.0, 3.0)
-	duration_bar.size = Vector2(progress_width, 3.0)
-	song_title_label.position = Vector2.ZERO
-	song_title_label.size = Vector2.ZERO
-	bpm_label.position = Vector2.ZERO
-	bpm_label.size = Vector2.ZERO
-	difficulty_label.position = Vector2.ZERO
-	difficulty_label.size = Vector2.ZERO
-	duration_label.position = Vector2.ZERO
-	duration_label.size = Vector2.ZERO
+	var scale_factor := clampf(minf(size.x / 1920.0, size.y / 1080.0), 0.72, 1.15)
+	var artwork_size := 120.0 * scale_factor
+	var text_left := artwork_size + 20.0 * scale_factor
+	var text_width := maxf(1.0, width - text_left - 12.0)
+	song_info_panel.position = Vector2(left, top)
+	song_info_panel.size = Vector2(width, maxf(height, 176.0 * scale_factor))
+	song_artwork.position = Vector2(8.0, 8.0)
+	song_artwork.size = Vector2.ONE * artwork_size
+	song_title_label.position = Vector2(text_left, 4.0)
+	song_title_label.size = Vector2(text_width, 42.0 * scale_factor)
+	song_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	song_title_label.add_theme_font_size_override("font_size", roundi(32.0 * scale_factor))
+	artist_label.size = Vector2(text_width, 28.0 * scale_factor)
+	artist_label.add_theme_font_size_override("font_size", roundi(22.0 * scale_factor))
+	artist_label.position = Vector2(text_left, song_title_label.position.y + song_title_label.size.y + 6.0 * scale_factor)
+	var metadata_top := artist_label.position.y + artist_label.size.y + 14.0 * scale_factor
+	difficulty_label.position = Vector2(text_left, metadata_top)
+	difficulty_label.size = Vector2(text_width - 100.0 * scale_factor, 24.0)
+	bpm_label.position = Vector2(width - 106.0 * scale_factor, metadata_top)
+	bpm_label.size = Vector2(100.0 * scale_factor, 24.0)
+	var progress_top := maxf(156.0 * scale_factor, metadata_top + difficulty_label.size.y + 12.0 * scale_factor)
+	duration_bar.position = Vector2(text_left, progress_top)
+	duration_bar.size = Vector2(maxf(1.0, text_width - 156.0 * scale_factor), 5.0)
+	duration_label.position = Vector2(width - 150.0 * scale_factor, progress_top - 11.0 * scale_factor)
+	duration_label.size = Vector2(146.0 * scale_factor, 24.0)
 
 func _connect_screen_signal(screen: Object, signal_name: StringName, callback: Callable) -> void:
 	if screen == null or not screen.has_signal(signal_name):
@@ -1206,7 +1221,9 @@ func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream)
 		music.stream_paused = false
 	background_visual.set_process(true)
 
-	music.stream = loaded_stream
+	# Preview playback mutates cached stream loop flags. A run owns its playback
+	# policy: never mutate that shared resource or inherit its preview loop.
+	music.stream = create_gameplay_audio_stream(loaded_stream)
 	_begin_v18_replay_session()
 	if not practice_mode_active and not replay_playback_active:
 		_begin_playtest_session()
@@ -1455,6 +1472,16 @@ func _cancel_gameplay_countdown() -> void:
 	_hide_gameplay_countdown()
 	if skip_intro_button != null:
 		skip_intro_button.visible = false
+
+func create_gameplay_audio_stream(source: AudioStream) -> AudioStream:
+	var stream := source.duplicate() as AudioStream
+	if stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = false
+	elif stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = false
+	elif stream is AudioStreamWAV:
+		(stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_DISABLED
+	return stream
 
 func load_audio_stream(path: String) -> AudioStream:
 	if path.is_empty():
@@ -2372,6 +2399,15 @@ func update_hud() -> void:
 	accuracy_label.text = "%.2f%%" % live_accuracy
 
 	song_title_label.text = str(hud_source.get("title", selected_song_id.to_upper() if not selected_song_id.is_empty() else "SONG"))
+	song_title_label.text = song_title_label.text.to_upper()
+	artist_label.text = str(hud_source.get("artist", ""))
+	# Thumbnail-only artwork; fullscreen ambience remains BackgroundSession's
+	# generic pool. Cache identity so repeated HUD updates never load the jacket.
+	if hud_artwork_song_id != selected_song_id:
+		hud_artwork_song_id = selected_song_id
+		var jacket_path := "res://assets/song_thumbnails/%s.png" % selected_song_id
+		song_artwork.texture = ResourceLoader.load(jacket_path) as Texture2D if ResourceLoader.exists(jacket_path) else null
+		song_artwork.visible = song_artwork.texture != null
 	bpm_label.text = "%d BPM" % int(round(float(hud_source.get("bpm", get_bpm()))))
 	difficulty_label.text = str(hud_source.get("difficulty", hud_source.get("chart_difficulty", "NORMAL"))).to_upper()
 	difficulty_label.text += "  ·  %s" % ("4K" if input_style == "4_arrow" else "8K")

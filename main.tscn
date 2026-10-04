@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/track.tscn" id="2_track"]
@@ -17,6 +17,7 @@
 [ext_resource type="Resource" path="res://config/result_config.tres" id="15_result_config"]
 [ext_resource type="Resource" path="res://config/ui_layout_config.tres" id="16_layout"]
 [ext_resource type="Script" path="res://scripts/ui/gameplay_countdown_visual.gd" id="17_countdown"]
+[ext_resource type="Script" path="res://scripts/ui/gameplay_performance_panel.gd" id="18_performance"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -57,6 +58,16 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("9_background")
 
+[node name="ReadabilityScrim" type="ColorRect" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.009, 0.012, 0.018, 0.64)
+
 [node name="Battle" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -83,6 +94,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="BattleStatsPanel" type="Panel" parent="HUD"]
+script = ExtResource("18_performance")
 layout_mode = 0
 mouse_filter = 2
 
@@ -147,6 +159,18 @@ horizontal_alignment = 2
 layout_mode = 0
 theme_override_font_sizes/font_size = 12
 text = "150 BPM"
+
+[node name="ArtistLabel" type="Label" parent="HUD/SongInfoPanel"]
+layout_mode = 0
+mouse_filter = 2
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="SongArtwork" type="TextureRect" parent="HUD/SongInfoPanel"]
+layout_mode = 0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
 
 [node name="DifficultyLabel" type="Label" parent="HUD/SongInfoPanel"]
 layout_mode = 0

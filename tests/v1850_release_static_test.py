@@ -25,9 +25,10 @@ assert 'score_scale_multiplier = 13.0' in gameplay_resource
 assert 'ScorePolicy.note_award' in main
 assert 'ScorePolicy.space_award' in main
 assert 'ScorePolicy.accumulate' in main
-assert 'var stats_height: float = clampf(104.0 * reference_scale, 96.0, 112.0)' in main
-assert 'Vector2(inner, stats_height - 27.0)' in main
-assert 'Vector2(stats_width - inner - 92.0, stats_height - 30.0)' in main
+# Score/accuracy row separation is exercised at every desktop resolution by
+# phase4_ui_foundation_test.gd; do not pin the retired compact HUD coordinates.
+layout_qa = (ROOT / 'tests/phase4_ui_foundation_test.gd').read_text(encoding='utf-8')
+assert 'not score.get_global_rect().intersects(accuracy.get_global_rect())' in layout_qa
 assert 'const MAX_DISPLAY_SCORE := 9_999_999' in policy
 assert 'class_name' not in policy
 assert 'const RULES_VERSION := "beatup_rules_v2"' in identity
