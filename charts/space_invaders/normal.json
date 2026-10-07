@@ -13,7 +13,7 @@
 	"beat_offset": 0.205078,
 	"duration": 348.009116,
 	"seed": 1744317.0,
-	"recommended": "NORMAL • 4★ • 549 notes • 13 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 4★ • 525 notes • 13 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.955078,
@@ -134,11 +134,6 @@
 			"time": 22.001953,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 22.705078,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 22.939453,
@@ -346,11 +341,6 @@
 			"direction": 8
 		},
 		{
-			"time": 45.205078,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 45.673828,
 			"type": "normal",
 			"direction": 9
@@ -479,11 +469,6 @@
 			"time": 67.236328,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 67.705078,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 68.173828,
@@ -724,11 +709,6 @@
 			"time": 97.470703,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 97.705078,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 97.939453,
@@ -1001,11 +981,6 @@
 			"direction": 9
 		},
 		{
-			"time": 127.236328,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 127.470703,
 			"type": "normal",
 			"direction": 2
@@ -1074,21 +1049,6 @@
 			"time": 134.736328,
 			"type": "reverse",
 			"direction": 6
-		},
-		{
-			"time": 136.142578,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 137.548828,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 138.486328,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 138.955078,
@@ -1311,11 +1271,6 @@
 			"direction": 4
 		},
 		{
-			"time": 165.205078,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 165.673828,
 			"type": "normal",
 			"direction": 9
@@ -1446,36 +1401,6 @@
 			"direction": 9
 		},
 		{
-			"time": 180.205078,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 180.673828,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 181.142578,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 181.611328,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 181.845703,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 183.486328,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 183.955078,
 			"type": "normal",
 			"direction": 8
@@ -1489,11 +1414,6 @@
 			"time": 185.830078,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 187.705078,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 189.580078,
@@ -1586,11 +1506,6 @@
 			"direction": 6
 		},
 		{
-			"time": 210.205078,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 211.611328,
 			"type": "normal",
 			"direction": 8
@@ -1661,16 +1576,6 @@
 			"direction": 1
 		},
 		{
-			"time": 225.673828,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 227.080078,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 228.955078,
 			"type": "normal",
 			"direction": 2
@@ -1694,11 +1599,6 @@
 			"time": 232.236328,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 232.705078,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 233.173828,
@@ -1924,11 +1824,6 @@
 			"time": 254.970703,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 255.205078,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 255.908203,
@@ -2184,11 +2079,6 @@
 			"time": 278.173828,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 279.111328,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 280.048828,
@@ -2531,11 +2421,6 @@
 			"direction": 4
 		},
 		{
-			"time": 314.736328,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 315.439453,
 			"type": "normal",
 			"direction": 1
@@ -2736,11 +2621,6 @@
 			"direction": 4
 		},
 		{
-			"time": 341.455078,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 342.626953,
 			"type": "normal",
 			"direction": 9
@@ -2924,7 +2804,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 33
+		"reverse": 32
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2953,8 +2833,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 549,
-		"reverse_count": 33,
+		"note_count": 525,
+		"reverse_count": 32,
 		"space_count": 13,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -3023,5 +2903,71 @@
 		"analysis_master_original_name": "Teminite & MDK - Space Invaders [Iu8P_vplUiM].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				135.205078,
+				138.955078
+			],
+			[
+				180.205078,
+				183.955078
+			],
+			[
+				225.205078,
+				228.955078
+			]
+		],
+		"before": {
+			"song_id": "space_invaders",
+			"difficulty": "normal",
+			"bpm": 128.0,
+			"duration": 348.009116,
+			"notes": 549,
+			"spaces": 13,
+			"average_inputs_per_second": 1.615,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 16,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 19,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 342.188
+		},
+		"after": {
+			"song_id": "space_invaders",
+			"difficulty": "normal",
+			"bpm": 128.0,
+			"duration": 348.009116,
+			"notes": 525,
+			"spaces": 13,
+			"average_inputs_per_second": 1.546,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 15,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 6,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					134.736328,
+					138.955078
+				],
+				[
+					179.736328,
+					183.955078
+				],
+				[
+					224.736328,
+					228.955078
+				]
+			],
+			"longest_active_run_seconds": 130.781
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

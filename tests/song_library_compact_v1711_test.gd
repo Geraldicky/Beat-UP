@@ -26,7 +26,7 @@ func _run() -> void:
 	_check(selector.search_input.custom_minimum_size.y <= 36.0, "Search control is too tall at 1280×720.")
 	_check(selector.play_button.custom_minimum_size.y <= 72.0, "Play CTA did not compact at 1280×720.")
 	_check(selector.album_flow_mode_4_button.custom_minimum_size.y <= 46.0 and selector.album_flow_mode_8_button.custom_minimum_size.y <= 46.0, "Mode controls did not compact.")
-	_check(selector.album_flow_random_button.custom_minimum_size.y <= 60.0 and selector.practice_button.custom_minimum_size.y <= 60.0, "Mod controls did not compact.")
+	_check(selector.album_flow_random_button.custom_minimum_size.y <= 60.0 and selector.note_speed_button.custom_minimum_size.y <= 60.0, "Secondary controls did not compact.")
 
 	var rows: Array = selector.song_buttons
 	_check(not rows.is_empty(), "Compact library generated no song rows.")

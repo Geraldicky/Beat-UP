@@ -294,13 +294,13 @@ func _make_entry_button(entry_name: String, is_directory: bool) -> Button:
 	button.custom_minimum_size.y = 40
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.toggle_mode = not is_directory
-	button.tooltip_text = _current_dir.path_join(entry_name)
+	var entry_path := _current_dir.path_join(entry_name)
 	MinimalThemeScript.style_tertiary(button, MinimalThemeScript.GOLD if is_directory else MinimalThemeScript.CYAN)
 	if is_directory:
-		button.pressed.connect(_navigate_to.bind(button.tooltip_text))
+		button.pressed.connect(_navigate_to.bind(entry_path))
 	else:
-		button.pressed.connect(_toggle_file.bind(button.tooltip_text, button))
-		button.gui_input.connect(_on_file_gui_input.bind(button.tooltip_text))
+		button.pressed.connect(_toggle_file.bind(entry_path, button))
+		button.gui_input.connect(_on_file_gui_input.bind(entry_path))
 	return button
 
 func _toggle_file(path: String, button: Button) -> void:

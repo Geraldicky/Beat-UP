@@ -28,6 +28,40 @@ const SOURCE_PRIORITY := {
 
 var _cache: Array = []
 var _authoritative_claims: Dictionary = {}
+var _launch_thread: Thread
+var _launch_worker: Node
+
+# The worker owns an off-tree catalog, never the live scene/catalog state.
+# Publish its result only after joining; UI remains on the main thread.
+func resolve_playable_async(song_id: String, difficulty_id: String) -> Dictionary:
+	if _launch_thread != null:
+		return {"ok": false, "error": "Chart preparation is already active."}
+	_launch_worker = get_script().new() as Node
+	_launch_worker.set("level_files", level_files.duplicate())
+	_launch_worker.set("scan_roots", scan_roots.duplicate())
+	_launch_thread = Thread.new()
+	var error := _launch_thread.start(Callable(_launch_worker, "resolve_playable").bind(song_id, difficulty_id, true))
+	if error != OK:
+		_release_launch_worker()
+		return {"ok": false, "error": "Could not start chart preparation."}
+	while _launch_thread.is_alive():
+		await get_tree().process_frame
+	var resolution: Dictionary = _launch_thread.wait_to_finish() as Dictionary
+	_cache = _launch_worker.get("_cache") as Array
+	_authoritative_claims = _launch_worker.get("_authoritative_claims") as Dictionary
+	_release_launch_worker()
+	return resolution
+
+func _release_launch_worker() -> void:
+	if _launch_thread != null and _launch_thread.is_started():
+		_launch_thread.wait_to_finish()
+	_launch_thread = null
+	if is_instance_valid(_launch_worker):
+		_launch_worker.free()
+	_launch_worker = null
+
+func _exit_tree() -> void:
+	_release_launch_worker()
 
 func load_all(force_refresh: bool = false) -> Array:
 	if not force_refresh and not _cache.is_empty():

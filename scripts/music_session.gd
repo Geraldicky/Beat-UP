@@ -59,6 +59,17 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if volume_tween != null:
 		volume_tween.kill()
+	if is_instance_valid(player):
+		player.stop()
+		player.stream = null
+	for raw_path: Variant in audio_preload_requests.keys():
+		var path := str(raw_path)
+		var status := ResourceLoader.load_threaded_get_status(path)
+		if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS or status == ResourceLoader.THREAD_LOAD_LOADED:
+			ResourceLoader.load_threaded_get(path)
+	audio_preload_requests.clear()
+	audio_stream_cache.clear()
+	audio_cache_order.clear()
 	spectrum_instance = null
 	var current_bus_index: int = AudioServer.get_bus_index(BUS_NAME)
 	if current_bus_index < 0:
@@ -87,7 +98,7 @@ func play_track(audio_path: String, start_position: float = 0.0, metadata: Dicti
 		_apply_loop_to_stream(player.stream, loop)
 		# Refreshing metadata/volume for the current track must not override an
 		# explicit pause. Resume ownership belongs to set_paused(false) or
-		# ensure_playing(), not to an incidental preview refresh.
+		# explicit transport commands, not to an incidental preview refresh.
 		if not player.stream_paused:
 			_set_target_volume(target_db, fade_duration)
 		track_changed.emit(get_state())
@@ -146,7 +157,11 @@ func update_metadata(metadata: Dictionary) -> void:
 	track_changed.emit(get_state())
 
 func ensure_playing(fade_duration: float = 0.18) -> void:
+	# Automatic keep-alive must not revoke a pause decision. Explicit Resume uses
+	# set_paused(false); selecting a different track uses play_track().
 	if player == null or player.stream == null:
+		return
+	if player.stream_paused:
 		return
 	var was_paused: bool = player.stream_paused
 	player.stream_paused = false

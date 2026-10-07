@@ -17,9 +17,9 @@ const ANALYSIS_PART_BEATS := 8
 # Machine-readable chart generator identity. Bulk generation uses the integer
 # revision for stale/up-to-date checks; bump both values whenever chart output
 # rules change. Charts without this metadata are treated as revision 0.
-const CHART_GENERATOR_CODE := "BUP-CG-01870"
-const CHART_GENERATOR_REVISION := 1870
-const CHART_GENERATOR_VERSION := "18.7.0"
+const CHART_GENERATOR_CODE := "BUP-CG-01871"
+const CHART_GENERATOR_REVISION := 1871
+const CHART_GENERATOR_VERSION := "18.7.0-readability.1"
 
 func get_generator_code() -> String:
 	return CHART_GENERATOR_CODE
@@ -632,7 +632,7 @@ func generate_chart(base_chart: Dictionary, analysis: Dictionary, difficulty_id:
 	var spaces: Array[float] = _generate_space_events_v10(phrases, beat_times, energy, onset, hop_seconds, bpm, playable_start, active_end, profile)
 	var events: Array = _generate_music_events_v16(phrases, beat_times, energy, onset, hop_seconds, bpm, playable_start, active_end, spaces, profile, difficulty_id, generation_seed)
 	_assign_musical_directions_v15(events, difficulty_id, bpm, generation_seed)
-	_apply_musical_special_notes_v169(events, spaces, phrases, difficulty_id, bpm, generation_seed)
+	# Reverse is a player-selected runtime mod, never a generated difficulty tax.
 	var generator_diagnostics: Dictionary = _generator_diagnostics_v16(events, phrases, bpm, profile)
 	_strip_generation_fields_v10(events)
 
@@ -645,6 +645,7 @@ func generate_chart(base_chart: Dictionary, analysis: Dictionary, difficulty_id:
 	chart["runtime_directions"] = false
 	chart["authored_directions"] = true
 	chart["generator_meta"] = {
+		"readability_policy": "optional_reverse_absolute_gap_v1",
 		"generated_by": "Beat UP! chart generator",
 		"code": CHART_GENERATOR_CODE,
 		"revision": CHART_GENERATOR_REVISION,
@@ -3010,7 +3011,7 @@ func _select_phrase_candidates_v16(candidates: Array, target: int, phrase: Dicti
 	var quotas: Dictionary = _allocate_bar_quotas_v16(by_bar, bar_indices, target, profile, noise_seed)
 	var selected: Array = []
 	var previous_slots: Dictionary = {}
-	var minimum_gap: float = 60.0 / maxf(1.0, bpm) * float(profile.get("minimum_gap_beats", 0.5)) * 0.92
+	var minimum_gap: float = maxf(float(profile.get("minimum_gap_seconds", 0.0)), 60.0 / maxf(1.0, bpm) * float(profile.get("minimum_gap_beats", 0.5)) * 0.92)
 	for raw_bar_index in bar_indices:
 		var bar_index: int = int(raw_bar_index)
 		var pool: Array = (by_bar[bar_index] as Array).duplicate(true)
@@ -3122,7 +3123,7 @@ func _enforce_playability_v15(events: Array, bpm: float, profile: Dictionary) ->
 	var recent_times: Array[float] = []
 	var fatigue_times: Array[float] = []
 	var beat: float = 60.0 / maxf(1.0, bpm)
-	var minimum_gap: float = beat * float(profile.get("minimum_gap_beats", 0.5)) * 0.90
+	var minimum_gap: float = maxf(float(profile.get("minimum_gap_seconds", 0.0)), beat * float(profile.get("minimum_gap_beats", 0.5)) * 0.90)
 	var rapid_threshold: float = beat * float(profile.get("rapid_gap_beats", 0.55))
 	var max_rapid_run: int = int(profile.get("max_rapid_run", 8))
 	var max_window_hits: int = maxi(1, ceili(float(profile.get("max_notes_per_second", 5.0))))
@@ -4035,6 +4036,7 @@ func _difficulty_profile_v10(difficulty_id: String) -> Dictionary:
 				"sixteenth_bias_scale": 0.42,
 				"sixteenth_score_offset": -0.18,
 				"minimum_gap_beats": 0.25,
+				"minimum_gap_seconds": 0.14,
 				"rapid_gap_beats": 0.31,
 				"max_rapid_run": 12,
 				"max_notes_per_second": 8.0,
@@ -4082,6 +4084,7 @@ func _difficulty_profile_v10(difficulty_id: String) -> Dictionary:
 				"sixteenth_bias_scale": 0.72,
 				"sixteenth_score_offset": 0.0,
 				"minimum_gap_beats": 0.25,
+				"minimum_gap_seconds": 0.10,
 				"rapid_gap_beats": 0.28,
 				"max_rapid_run": 20,
 				"max_notes_per_second": 10.5,
@@ -4124,6 +4127,7 @@ func _difficulty_profile_v10(difficulty_id: String) -> Dictionary:
 				"lead_in_bars": 1,
 				"sixteenth_mode": "none",
 				"minimum_gap_beats": 0.50,
+				"minimum_gap_seconds": 0.22,
 				"rapid_gap_beats": 0.55,
 				"max_rapid_run": 8,
 				"max_notes_per_second": 5.2,

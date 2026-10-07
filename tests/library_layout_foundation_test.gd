@@ -33,8 +33,17 @@ func run() -> void:
 		await create_timer(0.25).timeout
 		for control: Control in [selection.header_row, selection.wheel_column, selection.info_panel, selection.album_flow_record_panel, selection.play_button]:
 			var rect := control.get_global_rect()
-			check(rect.position.x >= 0 and rect.end.x <= resolution.x + 1 and rect.end.y <= resolution.y + 1, "Viewport overflow: %s at %s" % [control.name, resolution])
+			check(rect.position.x >= 0 and rect.position.y >= 0 and rect.end.x <= resolution.x + 1 and rect.end.y <= resolution.y + 1, "Viewport overflow: %s at %s: %s" % [control.name, resolution, rect])
 		check(not selection.album_flow_artwork.get_global_rect().intersects(selection.album_flow_record_panel.get_global_rect()), "Best Record overlaps selected artwork at %s." % resolution)
+		for song_id: String in ["space_invaders", "diana_boncheva_feat_banya_beethoven_virus_full_version", "bad_apple"]:
+			selection.set_selected_song(song_id)
+			check(selection.get_selected_song_id() == song_id, "Layout fixture selection is missing: %s." % song_id)
+			await create_timer(0.15).timeout
+			var top_inset: int = selection.main_margin.get_theme_constant("margin_top")
+			for control: Control in [selection.back_button, selection.title_label, selection.search_input, selection.artist_filter, selection.difficulty_filter, selection.sort_filter]:
+				var rect := control.get_global_rect()
+				check(rect.position.y >= top_inset - 1 and rect.end.y <= resolution.y, "Header clipped above safe inset: %s at %s (%s)." % [control.name, resolution, song_id])
+			check(selection.play_button.get_global_rect().end.y <= resolution.y, "Keeping header visible pushed Play offscreen at %s (%s)." % [resolution, song_id])
 
 	var original_audio: String = str(chart.get("audio", ""))
 	chart["audio"] = "res://music/qa_missing_visual_fixture.ogg"

@@ -19,6 +19,7 @@ var pending_generation := 0
 var current_song_id := ""
 
 func _ready() -> void:
+	preload("res://scripts/ui/procedural_background.gd").install(self, "library")
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resized.connect(queue_redraw)
 	queue_redraw()
@@ -110,6 +111,8 @@ func _apply_loaded_background(path: String, texture: Texture2D) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	if has_node("ProceduralAtmosphere"):
+		return
 	if size.x <= 1.0 or size.y <= 1.0:
 		return
 	draw_rect(Rect2(Vector2.ZERO, size), BG)

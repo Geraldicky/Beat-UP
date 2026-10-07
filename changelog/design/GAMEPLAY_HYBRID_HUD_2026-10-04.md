@@ -74,3 +74,39 @@ is still managed by its existing seek/restart lifecycle, not stream looping.
 Runtime layout coverage extends the existing isolated Phase 4 suite at 1280x720,
 1600x900 and 1920x1080. Retired static score-row coordinates are replaced by that
 behavioral overlap contract, not dummy legacy layout code. Version stays 18.7.0.1.
+
+## Playfield polish after checkpoint f1c2508
+
+The white receptor retains its existing centre/size and now uses a crisp 4px
+stroke. Judgement colour stays on short FX, not the receptor itself. Space adds
+a fixed gold diamond centred on the same HitPoint while the existing approach
+diamond still follows its unchanged timing/progress calculations. The Space
+caption is dark with gold text rather than a solid gold bar.
+
+The lane uses a stronger neutral matte scrim (86%, 90% receptor deck) so bright
+generic backgrounds cannot compete with note outlines/arrows. Note rendering,
+reverse shape/red-outline-only semantics and all motion/timing coordinates are
+unchanged. BackgroundSession continues to select the generic randomized pool.
+
+Input feedback is a compact square-key compass with vector direction arrows,
+more legible inactive labels, mode caption and gold Space-binding caption.
+At run launch only, Track receives the captured input snapshot for presentation.
+The visual copies labels; canonical input matching, replay keys and persistence
+remain in their existing owners. Custom bindings do not alter direction semantics.
+
+Motion-design adaptation: judgement is frequent keyboard feedback, so text is
+fully visible immediately; total lifetime is 300ms with 100ms opacity exit,
+98% entry scale and 3px/4px displacement, using existing quadratic easing.
+No springs, bounce, particles or continuously pulsing key cells were added.
+The existing effect-intensity control still scales displacement/scale.
+
+osu-reference mapping (audited HUDOverlay and TestSceneHUDOverlay paths above):
+flow is run state → peripheral presentation; ownership remains main/Track;
+lifecycle captures labels at launch and clears transient activity on reset;
+the problem is readable information without obscuring the playfield; principle
+is that HUD observes authoritative state rather than creating gameplay rules;
+osu-specific Bindables/skins/DI remain excluded; Beat UP! equivalent is the
+existing run snapshot, Track and compass; adaptation is only scoped visuals and
+launch-time labels; do not copy rulesets or score processors; regressions cover
+custom 4K/8K/Space labels, immutable snapshot data, immediate semantic judgement
+colours, fixed gold target/white receptor, natural completion and desktop layout.

@@ -37,8 +37,10 @@ assert 'migrate_v185_score_scale' in identity
 assert 'score_scale_migration' in identity
 assert 'migrate_v185_score_scale(best_stats_store, levels' in main
 
-# Across all 117 authored charts, an ideal run sits in the requested 1–9
-# million band. Reverse and SPACE rewards are included in this estimate.
+# The original v18.5 million-point floor depended on authored note density.
+# Approved pacing revisions deliberately remove inputs without adding rewards.
+# Preserve the scoring scale/cap and original floor for unrevised content;
+# revised charts must still award at least the unchanged base reward per note.
 estimated_fcs = []
 for path in ROOT.glob("charts/*/*.json"):
     chart = json.loads(path.read_text(encoding="utf-8"))
@@ -54,7 +56,10 @@ for path in ROOT.glob("charts/*/*.json"):
     final_combo_multiplier = 3.0 if len(events) >= 200 else multiplier
     score += sum(round(250 * final_combo_multiplier * 1.2 * 13.0) for _ in chart.get("space_events", []))
     estimated_fcs.append(int(score))
-assert min(estimated_fcs) >= 1_000_000
+    assert score >= len(events) * 120 * 13.0
+    if "pacing_meta" not in chart:
+        assert score >= 1_000_000
+assert min(estimated_fcs) > 0
 assert max(estimated_fcs) <= 9_999_999
 
 assert 'var selected_info_tab: String = "ranking"' in select

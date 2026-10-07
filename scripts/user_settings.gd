@@ -17,6 +17,9 @@ const MIN_TIMING_OFFSET_MS := -200.0
 const MAX_TIMING_OFFSET_MS := 200.0
 
 const DEFAULT_INPUT_STYLE := "8_direction"
+const DEFAULT_NOTE_TRAVEL_TIME := 1.5
+const MIN_NOTE_TRAVEL_TIME := 0.6
+const MAX_NOTE_TRAVEL_TIME := 2.6
 const VALID_INPUT_STYLES := ["8_direction", "4_arrow"]
 const DEFAULT_EFFECT_INTENSITY := 75.0
 const MIN_EFFECT_INTENSITY := 0.0
@@ -89,6 +92,7 @@ static func normalize_config(config: ConfigFile) -> bool:
 	if not VALID_INPUT_STYLES.has(input_style):
 		input_style = DEFAULT_INPUT_STYLE
 	changed = _set_if_changed(config, "gameplay", "input_style", input_style) or changed
+	changed = _set_if_changed(config, "gameplay", "note_travel_time", _read_float(config, "gameplay", "note_travel_time", DEFAULT_NOTE_TRAVEL_TIME, MIN_NOTE_TRAVEL_TIME, MAX_NOTE_TRAVEL_TIME)) or changed
 
 	for action_value: Variant in DEFAULT_GAMEPLAY_BINDINGS.keys():
 		var action: String = str(action_value)
@@ -247,7 +251,16 @@ static func create_gameplay_input_snapshot() -> Dictionary:
 	return {
 		"input_style": style,
 		"bindings": bindings,
+		"note_travel_time": _read_float(config, "gameplay", "note_travel_time", DEFAULT_NOTE_TRAVEL_TIME, MIN_NOTE_TRAVEL_TIME, MAX_NOTE_TRAVEL_TIME),
 	}
+
+static func get_note_travel_time() -> float:
+	return float(load_config().get_value("gameplay", "note_travel_time", DEFAULT_NOTE_TRAVEL_TIME))
+
+static func set_note_travel_time(value: float) -> void:
+	var config := load_config()
+	config.set_value("gameplay", "note_travel_time", clampf(value, MIN_NOTE_TRAVEL_TIME, MAX_NOTE_TRAVEL_TIME) if is_finite(value) else DEFAULT_NOTE_TRAVEL_TIME)
+	_save_config(config)
 
 
 static func set_gameplay_binding(action: String, keycode: int) -> bool:
@@ -430,6 +443,7 @@ static func reset_all() -> void:
 	config.set_value("display", "window_mode", DEFAULT_WINDOW_MODE)
 	config.set_value("display", "vsync_enabled", DEFAULT_VSYNC_ENABLED)
 	config.set_value("gameplay", "input_style", DEFAULT_INPUT_STYLE)
+	config.set_value("gameplay", "note_travel_time", DEFAULT_NOTE_TRAVEL_TIME)
 	_save_config(config)
 	apply_master_volume(DEFAULT_MASTER_VOLUME)
 	apply_display_settings(DEFAULT_RESOLUTION, DEFAULT_WINDOW_MODE, DEFAULT_VSYNC_ENABLED)
@@ -605,8 +619,11 @@ static func _read_string(config: ConfigFile, section: String, key: String, defau
 
 
 static func _set_if_changed(config: ConfigFile, section: String, key: String, value: Variant) -> bool:
-	if config.has_section_key(section, key) and config.get_value(section, key) == value:
-		return false
+	if config.has_section_key(section, key):
+		var previous: Variant = config.get_value(section, key)
+		# Comparing incompatible Variants (e.g. malformed String vs float) throws.
+		if typeof(previous) == typeof(value) and previous == value:
+			return false
 	config.set_value(section, key, value)
 	return true
 

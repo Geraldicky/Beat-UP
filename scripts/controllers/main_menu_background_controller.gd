@@ -29,6 +29,7 @@ func configure(
 ) -> void:
 	host = owner
 	menu_background = background_view
+	preload("res://scripts/ui/procedural_background.gd").install(menu_background, "menu")
 	background_song = song_label
 	background_artist = artist_label
 	menu_bgm = bgm_controller

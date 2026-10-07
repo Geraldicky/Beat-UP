@@ -33,8 +33,7 @@ func run() -> void:
 	var game: Control = shell.gameplay_screen
 	selection._select_difficulty("hard")
 	var request := {"song_id": "big_daddy", "difficulty_id": "hard", "random_mode": false}
-	shell.launch_gameplay(request, {})
-	await create_timer(1.5).timeout
+	await shell.launch_gameplay(request, {})
 	check(shell.get_active_route() == "gameplay", "Gameplay launch completes")
 	game._auto_pause_on_focus_loss()
 	check(game.game_paused, "Focus loss pauses gameplay")
@@ -65,8 +64,7 @@ func run() -> void:
 	check(selection.ranking_list.get_child_count() > 0 and control_tree_contains_text(selection.ranking_list.get_child(0), "123,456"), "Local run history displays new score")
 	check(selection._progress_entry("big_daddy", "hard").get("score", 0) == 123456, "Progress lookup receives new record")
 	# Subsequent lower-score run must update plays, while retaining the best.
-	shell.launch_gameplay(request, {})
-	await create_timer(1.5).timeout
+	await shell.launch_gameplay(request, {})
 	check(shell.get_active_route() == "gameplay", "Gameplay launch completes")
 	game.fight_over = true
 	game.music.stop()

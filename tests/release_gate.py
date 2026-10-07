@@ -21,6 +21,9 @@ checks = [
     'music_session_variant_type_v174491_test.py',
     'typography_system_v17451_test.py',
     'song_library_release_static_test.py',
+    'chart_pacing_pilot_test.py',
+    'chart_pacing_library_test.py',
+    'chart_tempo_trial_test.py',
 ]
 for name in checks:
     subprocess.run([sys.executable, str(root/'tests'/name)], check=True)
@@ -33,9 +36,19 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
         print(imported.stdout, imported.stderr)
         raise SystemExit('Import/parser/warning check failed')
     runtime_tests = [
+        'runtime_foundation_test.gd',
+        'timing_v1748_test.gd',
+        'gameplay_integrity_v168_test.gd',
+        'ui_polish_test.gd',
+        'procedural_background_test.gd',
+        'result_redesign_test.gd',
         'records_foundation_test.gd',
         'gameplay_input_binding_snapshot_test.gd',
+        'reverse_mod_test.gd',
+        'note_readability_test.gd',
+        'chart_pacing_timeline_test.gd',
         'app_shell_navigation_lifecycle_test.gd',
+        'loading_presentation_test.gd',
         'main_menu_standalone_fallback_test.gd',
         'phase4_ui_foundation_test.gd',
         'live_records_foundation_test.gd',
@@ -49,10 +62,20 @@ with tempfile.TemporaryDirectory(prefix='beatup-qa-') as directory:
         isolated = base/name
         isolated.mkdir()
         env = dict(os.environ, XDG_DATA_HOME=str(isolated), APPDATA=str(isolated))
-        if name == 'gameplay_input_binding_snapshot_test.gd':
+        if name == 'runtime_foundation_test.gd':
+            env['BEAT_UP_QA_RUNTIME_FOUNDATION'] = 'isolated'
+        elif name == 'ui_polish_test.gd':
+            env['BEAT_UP_QA_POLISH'] = 'isolated'
+        elif name == 'gameplay_input_binding_snapshot_test.gd':
             env['BEAT_UP_QA_SETTINGS_FIXTURE'] = 'gameplay-input-binding-snapshot'
+        elif name == 'reverse_mod_test.gd':
+            env['BEAT_UP_QA_REVERSE_MOD'] = 'isolated'
+        elif name == 'note_readability_test.gd':
+            env['BEAT_UP_QA_READABILITY'] = 'isolated'
         elif name == 'app_shell_navigation_lifecycle_test.gd':
             env['BEAT_UP_QA_NAVIGATION_LIFECYCLE'] = 'isolated'
+        elif name == 'loading_presentation_test.gd':
+            env['BEAT_UP_QA_LOADING_PRESENTATION'] = 'isolated'
         elif name == 'main_menu_standalone_fallback_test.gd':
             env['BEAT_UP_QA_STANDALONE_NAVIGATION'] = 'isolated'
         elif name == 'phase4_ui_foundation_test.gd':

@@ -13,7 +13,7 @@
 	"beat_offset": 0.188859,
 	"duration": 182.09093,
 	"seed": 1744305.0,
-	"recommended": "NORMAL • 4★ • 287 notes • 6 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 4★ • 272 notes • 6 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.671618,
@@ -174,11 +174,6 @@
 			"time": 17.568169,
 			"type": "reverse",
 			"direction": 8
-		},
-		{
-			"time": 18.395756,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 18.809549,
@@ -536,11 +531,6 @@
 			"direction": 9
 		},
 		{
-			"time": 58.119893,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 58.533687,
 			"type": "normal",
 			"direction": 2
@@ -609,26 +599,6 @@
 			"time": 65.568169,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 66.395756,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 66.809549,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 68.050928,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 68.464721,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 70.119893,
@@ -744,11 +714,6 @@
 			"time": 87.499204,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 87.912997,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 88.32679,
@@ -881,11 +846,6 @@
 			"direction": 8
 		},
 		{
-			"time": 109.430238,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 109.844031,
 			"type": "normal",
 			"direction": 9
@@ -899,31 +859,6 @@
 			"time": 111.912997,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 112.740583,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 113.568169,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 114.395756,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 114.809549,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 115.223342,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 116.050928,
@@ -1119,11 +1054,6 @@
 			"time": 138.395756,
 			"type": "reverse",
 			"direction": 8
-		},
-		{
-			"time": 139.223342,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 139.430238,
@@ -1344,11 +1274,6 @@
 			"time": 160.32679,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 160.740583,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 161.154376,
@@ -1615,7 +1540,7 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 287,
+		"note_count": 272,
 		"reverse_count": 17,
 		"space_count": 6,
 		"analysis_driven": true,
@@ -1685,5 +1610,63 @@
 		"analysis_master_original_name": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				66.395756,
+				69.706101
+			],
+			[
+				112.740583,
+				116.050928
+			]
+		],
+		"before": {
+			"song_id": "sonic_blaster",
+			"difficulty": "normal",
+			"bpm": 145.0,
+			"duration": 182.09093,
+			"notes": 287,
+			"spaces": 6,
+			"average_inputs_per_second": 1.609,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 4,
+			"peak_five_second_inputs": 14,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 7,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 171.31
+		},
+		"after": {
+			"song_id": "sonic_blaster",
+			"difficulty": "normal",
+			"bpm": 145.0,
+			"duration": 182.09093,
+			"notes": 272,
+			"spaces": 6,
+			"average_inputs_per_second": 1.527,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 4,
+			"peak_five_second_inputs": 14,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 1,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					65.568169,
+					70.119893
+				],
+				[
+					111.912997,
+					116.050928
+				]
+			],
+			"longest_active_run_seconds": 62.897
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

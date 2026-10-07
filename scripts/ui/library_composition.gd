@@ -171,13 +171,13 @@ func apply(s) -> void:
 	s.action_row.add_theme_constant_override("separation", 8)
 	s.back_button.custom_minimum_size = Vector2(82, 38)
 	s.mods_button.custom_minimum_size = Vector2(126, 38)
-	s.practice_button.custom_minimum_size = Vector2(104, 38)
+	s.note_speed_button.custom_minimum_size = Vector2(104, 38)
 	s.replay_button.custom_minimum_size = Vector2(96, 38)
 	s.play_button.custom_minimum_size = Vector2(210, 46)
 	s.play_button.size_flags_horizontal = Control.SIZE_FILL
 	VisualTheme.style_tertiary(s.back_button, VisualTheme.ACCENT)
 	VisualTheme.style_secondary(s.mods_button, VisualTheme.ACCENT)
-	VisualTheme.style_tertiary(s.practice_button, VisualTheme.GOLD)
+	VisualTheme.style_tertiary(s.note_speed_button, VisualTheme.GOLD)
 	VisualTheme.style_tertiary(s.replay_button, VisualTheme.ACCENT_LIGHT)
 	VisualTheme.style_primary(s.play_button)
 
@@ -224,12 +224,10 @@ func refresh(s) -> void:
 		chip.custom_minimum_size = Vector2(96, 26)
 		chip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		chip.clip_text = true
-		chip.tooltip_text = c.text + " — remove filter"
 		chip.pressed.connect(func() -> void: c.select(0); c.item_selected.emit(0))
 		chips.add_child(chip)
 	chips.visible = chips.get_child_count() > 0
 	filter_button.text = "FILTERS" if not chips.visible else "FILTERS · %d" % chips.get_child_count()
-	s.detail_title.tooltip_text = s.detail_title.text
 	apply(s)
 
 func render_ranking(s) -> void:
@@ -324,6 +322,8 @@ func render_ranking(s) -> void:
 		if s.ranking_random_mode:
 			mode_text += " · RND"
 		mode_tag.text = mode_text
+		if s.get_reverse_percent() > 0:
+			mode_tag.text += " · REV %d%%" % s.get_reverse_percent()
 		mode_tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		VisualTheme.apply_mono(mode_tag, 10, VisualTheme.ACCENT)
 		right.add_child(mode_tag)

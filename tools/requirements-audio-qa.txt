@@ -1,0 +1,3 @@
+# Optional offline QA only, Python 3.12; not a Godot/runtime dependency.
+librosa==0.11.0
+matplotlib==3.10.7

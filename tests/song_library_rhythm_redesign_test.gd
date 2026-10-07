@@ -100,9 +100,9 @@ func run() -> void:
 	var active_mode_button: Button = selector.album_flow_mode_4_button if UserSettings.get_input_style() == "4_arrow" else selector.album_flow_mode_8_button
 	check(active_mode_button.get_node_or_null("SelectionMarker") != null and active_mode_button.get_node("SelectionMarker").visible, "Active input mode does not show the mockup-style top diamond marker.")
 	check(selector.album_flow_random_button.find_child("StateLabel", true, false) != null, "Random button is missing its mockup-style state label.")
-	check(selector.practice_button.find_child("StateLabel", true, false) != null, "Practice button is missing its mockup-style state label.")
+	check(selector.note_speed_button.find_child("StateLabel", true, false) != null, "Note Speed button is missing its mockup-style state label.")
 	check(selector.play_button.find_child("PlayIcon", true, false) != null and selector.play_button.find_child("PlayDivider", true, false) != null and selector.play_button.find_child("PlayArrow", true, false) != null, "Play button is missing the mockup-style icon/divider/arrow composition.")
-	check(selector.practice_button.is_visible_in_tree() and selector.practice_button.pressed.get_connections().size() > 0, "Practice action is missing or disconnected.")
+	check(selector.note_speed_button.is_visible_in_tree() and selector.note_speed_button.pressed.get_connections().size() > 0, "Note Speed action is missing or disconnected.")
 	check(selector.album_flow_artwork.size.x >= 400.0 and selector.album_flow_artwork.size.y >= 400.0, "Selected jacket is not a large focal point at 1920×1080.")
 	check(selector.album_flow_artwork.size.x >= 570.0 and selector.album_flow_artwork.size.y >= 570.0, "Selected jacket does not match the mockup's dominant 1920×1080 scale.")
 	check(selector.album_flow_artwork_frame != null and selector.album_flow_artwork_frame.get_child_count() == 8, "Selected jacket is missing its luminous corner framing.")
@@ -116,12 +116,25 @@ func run() -> void:
 	check(selector.play_button.get_parent() == selector.album_flow_sidebar and selector.play_button.size.y >= 70.0, "Play is not the dominant bottom-right call to action.")
 	check(selector.find_child("AlbumFlowBottomPanel", true, false) == null, "Legacy detached Difficulty/Play dock still exists.")
 	check(selector.album_flow_list_header != null and selector.album_flow_list_header.is_visible_in_tree(), "Dense song-list column header is missing.")
-	check(selector.backdrop_visual.is_visible_in_tree() and selector.backdrop_visual.modulate.a > 0.0 and selector.backdrop_visual.modulate.a <= 0.08, "Randomized background atmosphere is missing or too strong.")
+	var atmosphere := selector.backdrop_visual.get_node_or_null("ProceduralAtmosphere") as Control
+	check(selector.backdrop_visual.is_visible_in_tree() and atmosphere != null, "Procedural atmosphere is missing.")
+	if atmosphere != null:
+		var atmosphere_material := atmosphere.material as ShaderMaterial
+		check(atmosphere_material != null and float(atmosphere_material.get_shader_parameter("strength")) <= 1.0, "Library atmosphere exceeds restrained accent strength.")
 	var ambient_path := str(root.get_node("BackgroundSession").call("get_background_path"))
 	check(ambient_path.begins_with("res://assets/backgrounds/background_"), "Song Library did not use the randomized generic background pool.")
 	check(selector.album_flow_detail_backdrop.texture != selector.album_flow_artwork.texture, "Song cover art leaked back into the fullscreen/detail background.")
 	check(selector.find_child("SongLibraryAmbient", true, false) == null, "Dead abstract ambient geometry still exists in the release composition.")
 	check(selector.album_flow_meta_line != null and selector.album_flow_meta_line.text.contains("BPM"), "Inline song metadata is missing.")
+	check(selector.reverse_mod_buttons.size() == 5, "Reverse levels are missing.")
+	selector.reverse_mod_buttons[2].pressed.emit()
+	check(selector.get_reverse_percent() == 50 and selector.reverse_mod_buttons[2].button_pressed, "Reverse level selection did not refresh.")
+	selector.set_reverse_percent(0)
+	check(selector.album_flow_meta_line.get_parent() == selector.album_flow_identity, "BPM/duration is separated from the song identity group.")
+	check(selector.album_flow_random_button.custom_minimum_size.y <= 56, "Random still uses an oversized panel.")
+	check(selector.song_scroll.get_parent().get_node("ListSeparator").is_visible_in_tree(), "Song list clipping boundary is not visible.")
+	check(not selector.album_flow_meta_line.text.contains("8K") and not selector.album_flow_meta_line.text.contains("4K"), "Metadata duplicates the Mode selection.")
+	check(selector.note_speed_button.get_parent() == selector.album_flow_sidebar and selector.note_speed_button.get_index() == selector.play_button.get_index() - 1, "Note Speed is not a secondary action adjacent to Play.")
 	check(selector.album_flow_prev_song_button != null and selector.album_flow_next_song_button != null, "Track previous/next controls are missing.")
 
 	# #19 data-binding contract: release-facing metadata must come from the selected catalog entry,
@@ -147,7 +160,8 @@ func run() -> void:
 		var title := selected_button.find_child("SongTitle", true, false) as Label
 		var artist := selected_button.find_child("SongArtist", true, false) as Label
 		check(title != null and artist != null and title.get_parent() == artist.get_parent() and title.get_parent() is VBoxContainer, "Song title and artist are not stacked like the mockup.")
-	check(selector.detail_title.get_theme_font_size("font_size") >= 38, "Selected-song title hierarchy is too small.")
+	check(selector.detail_title.get_theme_font_size("font_size") >= 30 and selector.detail_title.get_theme_font_size("font_size") > selector.detail_meta.get_theme_font_size("font_size"), "Adaptive selected-song title lost its primary hierarchy.")
+	check(selector.album_flow_list_header.get_node("WheelCaption").text == "TITLE / ARTIST" and selector.wheel_mode_label.text == "BPM", "List header still suggests a separate artist column.")
 	check(selector.play_button.custom_minimum_size.y >= 96.0 and selector.play_button.custom_minimum_size.y <= 108.0, "Play button is not dominant enough at 1920×1080.")
 	var play_style := selector.play_button.get_theme_stylebox("normal") as StyleBoxFlat
 	check(play_style != null and play_style.shadow_size == 0, "Play must use an outline, not neon bloom.")
@@ -258,9 +272,16 @@ func run() -> void:
 	selector.set_best_stats_store({score_key: {"score": 10680000, "best_accuracy": 98.42, "best_rank": "S", "best_max_combo": 512, "cleared": true}})
 	await process_frame
 	check(selector.album_flow_best_rank_value.text == "S", "Best rank did not refresh.")
+	check(selector.album_flow_best_score_value.is_visible_in_tree() and selector.album_flow_best_accuracy_value.is_visible_in_tree(), "Valid record metrics remained hidden.")
+	check(not selector.album_flow_score_cluster.get_node("EmptyRecord").is_visible_in_tree(), "Valid record still shows the empty message.")
 	check(selector.album_flow_best_score_value.text == "10,680,000", "Best score did not refresh or format correctly.")
 	check(selector.album_flow_best_accuracy_value.text == "98.42%", "Best accuracy did not refresh.")
 	check(selector.album_flow_best_combo_value.text.contains("512"), "MAX COMBO was lost.")
+	selector.set_reverse_percent(50)
+	check(selector.album_flow_best_score_value.text == "NO RECORD", "Reverse shows the unmodded PB.")
+	selector.set_reverse_percent(0)
+	check(selector.album_flow_best_score_value.text == "10,680,000", "OFF lost the existing PB.")
+	check(selector.album_flow_best_combo_value.get_theme_color("font_color").a >= 0.70, "Combo footer is too faint.")
 	check(selector.album_flow_score_cluster.find_child("RecordDate", true, false).text.is_empty(), "A timestamp was invented for a legacy record.")
 	selector.set_best_stats_store({score_key: {"score": 10680000, "best_accuracy": 98.42, "best_rank": "S", "best_max_combo": 512, "completed_at": 1700000000, "perfect": 432, "great": 36, "good": 8, "miss": 1}})
 	selector._apply_theme_config()
@@ -271,15 +292,29 @@ func run() -> void:
 	var diamond := selector.album_flow_best_card.get_node("RankDiamond") as TextureRect
 	check(diamond.get_script() == VectorIcon and diamond.get("kind") == "rank" and diamond.texture != null, "Rank must use the canonical SVG-backed diamond asset.")
 	check(selector.album_flow_best_card.get_theme_stylebox("panel") is StyleBoxEmpty, "A rectangle is still drawn behind the rank.")
-	check(selector.practice_button.find_child("StateLabel", true, false).text == "SELECT", "Practice was misrepresented as an ON/OFF modifier.")
-	check(not selector.practice_button.disabled, "Practice unexpectedly disabled for a playable chart.")
-	selector.practice_button.pressed.emit()
+	check(selector.note_speed_button.find_child("StateLabel", true, false).text == "%.2f s" % UserSettings.get_note_travel_time(), "Note Speed value is stale.")
+	check(not selector.note_speed_button.disabled, "Note Speed unexpectedly disabled for a playable chart.")
+	check(not selector.note_speed_button.button_pressed and not selector.note_speed_button.get_node("SelectionMarker").visible, "Note Speed action is falsely presented as an active modifier.")
+	selector.note_speed_button.pressed.emit()
 	await process_frame
-	check(is_instance_valid(selector.practice_popup._panel) and selector.practice_popup._panel.is_visible_in_tree(), "Practice no longer opens the section selector.")
-	selector.practice_popup.close(true)
+	check(is_instance_valid(selector.note_speed_dialog) and selector.note_speed_dialog.visible, "Note Speed no longer opens its live preview.")
+	# Headless DisplayServer reports a dummy 64x64 physical window. UI bounds
+	# are measured against the logical content viewport, as for other controls.
+	check(selector.note_speed_dialog.size.x <= root.content_scale_size.x and selector.note_speed_dialog.size.y <= root.content_scale_size.y, "Note Speed popup exceeds the logical viewport.")
+	selector.note_speed_dialog.slider.value = 1.8
+	check(is_equal_approx(selector.note_speed_dialog.preview.travel_time, 1.8) and is_equal_approx(UserSettings.get_note_travel_time(), 1.8), "Library Note Speed failed to update preview and canonical settings.")
+	selector.note_speed_dialog.hide()
+	check(selector.note_speed_button.find_child("StateLabel", true, false).text == "1.80 s", "Library speed summary failed to refresh after closing.")
+	check(not selector.has_signal("practice_requested") and selector.find_child("PracticeButton", true, false) == null, "Retired Practice action still exists.")
+	selector.note_speed_button.pressed.emit()
+	selector.shell_will_suspend({})
+	check(not selector.note_speed_dialog.visible, "Note Speed popup leaked into another resident route.")
 	selector.set_best_stats_store({})
 	await process_frame
 	check(selector.album_flow_best_score_value.text == "NO RECORD" and selector.album_flow_best_rank_value.text.is_empty(), "No-record state still shows meaningless placeholders.")
+	check(not selector.album_flow_best_score_value.is_visible_in_tree() and not selector.album_flow_best_accuracy_value.is_visible_in_tree(), "Empty record still exposes placeholder metrics.")
+	check(selector.album_flow_score_cluster.get_node("EmptyRecord").is_visible_in_tree(), "Empty record message is missing.")
+	check(not selector.album_flow_best_combo_value.is_visible_in_tree(), "Empty record duplicates its instruction in the combo footer.")
 	selector.set_best_stats_store({score_key: {"score": 10680000, "best_accuracy": 98.42, "best_rank": "S", "best_max_combo": 512, "cleared": true}})
 
 	selector.song_scroll.scroll_vertical = 240
@@ -301,6 +336,12 @@ func run() -> void:
 		await process_frame
 		await process_frame
 		_check_layout(selector, resolution)
+		await _check_title_slot(selector)
+		selector.note_speed_button.pressed.emit()
+		await process_frame
+		check(selector.note_speed_dialog.size.x <= resolution.x and selector.note_speed_dialog.size.y + 32 <= resolution.y, "Note Speed popup/title does not fit %s." % resolution)
+		check(selector.note_speed_dialog.preview.size.y >= 172, "Live preview lost its gameplay lane height.")
+		selector.note_speed_dialog.hide()
 		check(selector.selected_song_id == responsive_song and selector.selected_difficulty == responsive_difficulty, "Responsive relayout changed logical selection at %s." % resolution)
 		if OS.get_cmdline_user_args().has("capture"):
 			await RenderingServer.frame_post_draw
@@ -309,7 +350,7 @@ func run() -> void:
 	chart.audio = "res://music/qa_missing_visual_fixture.ogg"
 	selector._update_detail(false)
 	await process_frame
-	check(selector.play_button.disabled and selector.practice_button.disabled, "Unavailable chart actions remain enabled.")
+	check(selector.play_button.disabled and not selector.note_speed_button.disabled, "Unavailable chart should block Play, not visual preferences.")
 	check(not selector.play_button.find_child("PlayIcon", true, false).visible, "Unavailable Play retains the launch icon.")
 	chart.audio = original_audio
 	selector._update_detail(false)
@@ -334,6 +375,33 @@ func run() -> void:
 	await process_frame
 	quit(0 if failures == 0 else 1)
 
+func _check_title_slot(selector: Control) -> void:
+	var original_title: String = selector.detail_title.text
+	var title_height := -1.0
+	var configuration_y := -1.0
+	var short_size := 0
+	for title in ["CRAB RAVE", "UNITED (L.A.O.S REMIX)", "A VERY LONG SELECTED SONG TITLE WITH MANY WORDS THAT MUST REMAIN BOUNDED"]:
+		selector.detail_title.text = title
+		selector._fit_album_flow_title()
+		for frame in range(3):
+			await process_frame
+		if title_height < 0:
+			title_height = selector.album_flow_identity.size.y
+			configuration_y = selector.album_flow_difficulty_row.get_global_rect().position.y
+			short_size = selector.detail_title.get_theme_font_size("font_size")
+		else:
+			check(is_equal_approx(title_height, selector.album_flow_identity.size.y), "Title length changed the identity slot height.")
+			check(is_equal_approx(configuration_y, selector.album_flow_difficulty_row.get_global_rect().position.y), "Title length shifted difficulty controls.")
+			check(selector.detail_title.get_theme_font_size("font_size") <= short_size, "Long title was not sized adaptively.")
+		check(selector.detail_title.max_lines_visible == 2 and selector.detail_title.clip_text, "Long title is not bounded to two lines.")
+		check(selector.detail_title.size.y >= selector.detail_title.get_theme_font("font").get_height(selector.detail_title.get_theme_font_size("font_size")), "Clipped title collapsed to zero height.")
+		check(selector.detail_title.get_global_rect().end.y <= selector.detail_meta.get_global_rect().position.y, "Selected title overlaps artist.")
+		check(selector.detail_meta.get_global_rect().position.y - selector.detail_title.get_global_rect().end.y <= 7.0, "Title/artist separation is excessively large.")
+		check(selector.album_flow_meta_line.get_global_rect().position.y - selector.detail_meta.get_global_rect().end.y <= 7.0, "Artist/metadata separation is excessively large.")
+	selector.detail_title.text = original_title
+	selector._fit_album_flow_title()
+	await process_frame
+
 func _check_presentation(selector: Control) -> void:
 	var values: Array = [selector.album_flow_record_perfect_value, selector.album_flow_record_great_value, selector.album_flow_record_good_value, selector.album_flow_record_miss_value]
 	var colors: Array[Color] = [Palette.PERFECT_PINK, Palette.GREAT_GREEN, Palette.GOOD_CYAN, Palette.MISS_RED]
@@ -343,7 +411,7 @@ func _check_presentation(selector: Control) -> void:
 		check(value.get_theme_font_size("font_size") >= 21, "Judgement numeric hierarchy was erased.")
 		var caption := value.get_parent().get_child(0) as Label
 		check(caption.get_theme_color("font_color").is_equal_approx(Color(colors[index], 0.9)), "Judgement caption lost its semantic color.")
-	for button: Button in [selector.album_flow_mode_8_button, selector.album_flow_random_button, selector.practice_button]:
+	for button: Button in [selector.album_flow_mode_8_button, selector.album_flow_random_button, selector.note_speed_button]:
 		check((button.get_theme_stylebox("normal") as StyleBoxFlat).shadow_size == 0, "Configuration controls regained glow.")
 	for icon_name in ["PlayIcon", "PlayArrow"]:
 		var icon := selector.play_button.find_child(icon_name, true, false) as TextureRect
@@ -354,6 +422,9 @@ func _check_presentation(selector: Control) -> void:
 		check(marker.visible == (button.name == "%sDifficultyButton" % selector.selected_difficulty.capitalize()), "Rebuilt difficulty selection marker is stale.")
 
 func _check_layout(selector: Control, resolution: Vector2i) -> void:
+	for button: Button in selector.reverse_mod_buttons:
+		var rect := button.get_global_rect()
+		check(rect.size.y >= 30 and rect.end.x <= resolution.x and rect.end.y <= selector.note_speed_button.get_global_rect().position.y, "Reverse controls clipped or overlap Note Speed.")
 	for control: Control in [selector.header_row, selector.wheel_column, selector.info_panel, selector.album_flow_center_column, selector.album_flow_sidebar, selector.album_flow_record_panel, selector.play_button]:
 		var rect := control.get_global_rect()
 		check(rect.position.x >= 0 and rect.end.x <= resolution.x + 1 and rect.end.y <= resolution.y + 1, "Viewport overflow: %s at %s" % [control.name, resolution])

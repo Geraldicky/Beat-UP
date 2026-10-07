@@ -17,10 +17,9 @@ const BOOT_SPLASH_META := "beat_up_boot_splash_completed"
 
 const MENU_ITEMS := [
 	{"label": "PLAY", "title": "PLAY", "description": "Pick a song. Hit the beat."},
-	{"label": "CHART STUDIO", "title": "CHART STUDIO", "description": "Import OGG + FLAC, generate charts, and edit the timeline."},
 	{"label": "SETTINGS", "title": "SETTINGS", "description": "Display, input, audio, and timing."},
 	{"label": "QUIT", "title": "EXIT", "description": "Close Beat UP!."},
-	{"label": "HOW TO PLAY", "title": "HOW TO PLAY", "description": "Controls, timing, note rules, and practice."},
+	{"label": "HOW TO PLAY", "title": "HOW TO PLAY", "description": "Controls, timing, and note rules."},
 	{"label": "CALIBRATE", "title": "CALIBRATION", "description": "Sync input and audio timing."},
 	{"label": "CREDITS", "title": "CREDITS", "description": "Project credits and acknowledgements."},
 ]
@@ -46,7 +45,7 @@ const TUTORIAL_STEPS := [
 	{
 		"kicker": "INPUT",
 		"title": "Match the direction.",
-		"body": "Use 8K Numpad or the 4K Arrow fallback. Try the highlighted input on the practice lane.",
+		"body": "Use 8K Numpad or the 4K Arrow fallback. Try the highlighted input on the demonstration lane.",
 		"tip": "TRY IT · press a direction key",
 	},
 	{
@@ -57,15 +56,9 @@ const TUTORIAL_STEPS := [
 	},
 	{
 		"kicker": "SPECIALS",
-		"title": "Read color before shape.",
-		"body": "Red Reverse means press the opposite direction. Gold means SPACE. Orange diagonals only appear in 8K.",
+		"title": "Follow the arrow. Check the outline.",
+		"body": "Follow the arrow for normal notes. With Reverse mod enabled, a red outline means the opposite input. Gold means SPACE; orange diagonals appear only in 8K.",
 		"tip": "TRY IT · Reverse + SPACE",
-	},
-	{
-		"kicker": "PRACTICE",
-		"title": "Finish one short phrase.",
-		"body": "Play a mixed training phrase with the same timing rules used in gameplay. No record is saved.",
-		"tip": "CLEAR THE PHRASE · then start a song",
 	},
 ]
 
@@ -155,7 +148,6 @@ const TUTORIAL_STEPS := [
 @onready var audio_offset_label: Label = %AudioOffsetLabel
 @onready var settings_hint: Label = %SettingsHint
 @onready var play_button: Button = %PlayButton
-@onready var chart_studio_button: Button = %ChartStudioButton
 @onready var settings_button: Button = %SettingsButton
 @onready var exit_button: Button = %ExitButton
 @onready var help_button: Button = %HelpButton
@@ -195,7 +187,6 @@ const TUTORIAL_STEPS := [
 @onready var tutorial_controls_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialControlsTab
 @onready var tutorial_timing_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialTimingTab
 @onready var tutorial_notes_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialNotesTab
-@onready var tutorial_practice_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialPracticeTab
 @onready var tutorial_previous_button: Button = $HelpScreen/HelpMargin/HelpVBox/HelpActions/TutorialPreviousButton
 @onready var credits_screen: Control = %CreditsScreen
 @onready var credits_margin: MarginContainer = $CreditsScreen/CreditsMargin
@@ -232,6 +223,9 @@ var exit_dialog_tween: Tween
 var settings_tabs: Array[Button] = []
 var settings_tab_index := 0
 var v18_effect_intensity_slider: HSlider
+var note_speed_slider: HSlider
+var note_speed_value: Label
+var note_speed_preview: Control
 var v18_effect_intensity_value: Label
 var v18_binding_buttons: Dictionary = {}
 var v18_binding_capture_action: String = ""
@@ -262,8 +256,8 @@ func _ready() -> void:
 	var display_applied: bool = UserSettingsScript.apply_display_preferences()
 	_setup_display_controls()
 	_build_v18_settings_controls()
-	menu_buttons = [play_button, chart_studio_button, settings_button, exit_button, help_button, quick_calibration_button, credits_button]
-	tutorial_tabs = [tutorial_controls_tab, tutorial_timing_tab, tutorial_notes_tab, tutorial_practice_tab]
+	menu_buttons = [play_button, settings_button, exit_button, help_button, quick_calibration_button, credits_button]
+	tutorial_tabs = [tutorial_controls_tab, tutorial_timing_tab, tutorial_notes_tab]
 	settings_tabs = [display_tab, audio_tab, timing_tab]
 	_setup_main_menu_controllers()
 	for index in range(menu_buttons.size()):
@@ -292,7 +286,6 @@ func _ready() -> void:
 	splash.modulate.a = 1.0
 	transition_overlay.modulate.a = 0.0
 	play_button.pressed.connect(_on_play_pressed)
-	chart_studio_button.pressed.connect(_on_chart_studio_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	help_button.pressed.connect(_on_help_pressed)
 	quick_calibration_button.pressed.connect(_on_quick_calibration_pressed)
@@ -308,10 +301,6 @@ func _ready() -> void:
 	tutorial_arrow_button.pressed.connect(_on_tutorial_input_style_selected.bind("4_arrow"))
 	for tab_index in range(tutorial_tabs.size()):
 		tutorial_tabs[tab_index].pressed.connect(_set_tutorial_step.bind(tab_index))
-	if tutorial_visual.has_signal("practice_updated"):
-		tutorial_visual.practice_updated.connect(_on_tutorial_practice_updated)
-	if tutorial_visual.has_signal("practice_completed"):
-		tutorial_visual.practice_completed.connect(_on_tutorial_practice_completed)
 	credits_back_button.pressed.connect(_return_to_main_menu)
 	exit_confirm_button.pressed.connect(_confirm_exit)
 	exit_cancel_button.pressed.connect(_cancel_exit)
@@ -499,11 +488,11 @@ func _on_play_pause_track_pressed() -> void:
 	now_playing_controller.call("toggle_pause")
 
 func _process(delta: float) -> void:
-	if now_playing_controller != null and main_menu.visible and not settings_menu.visible:
+	if now_playing_controller != null and main_menu.is_visible_in_tree() and not settings_menu.visible:
 		now_playing_controller.call("update_progress")
 	if main_menu_controller != null:
 		var levels: PackedFloat32Array = menu_bgm.get_latest_levels() if menu_bgm != null else PackedFloat32Array()
-		main_menu_controller.call("process_visual", delta, main_menu.visible and not settings_menu.visible, levels)
+		main_menu_controller.call("process_visual", delta, main_menu.is_visible_in_tree() and not settings_menu.visible, levels)
 
 func _apply_main_menu_live_pulse(energy: float, delta: float) -> void:
 	if main_menu_controller != null:
@@ -562,7 +551,7 @@ func _apply_layout_config() -> void:
 	var item_gap: int = roundi(clampf(9.0 * reference_scale, 7.0, 11.0))
 	var rail_x: float = clampf(viewport_size.x * 0.70, hero_center.x + hero_radius + 72.0, viewport_size.x - margin - rail_width)
 	var rail_y: float = clampf(viewport_size.y * 0.32, 220.0, 350.0)
-	var primary_buttons: Array[Button] = [play_button, chart_studio_button, settings_button, exit_button]
+	var primary_buttons: Array[Button] = [play_button, settings_button, exit_button]
 	var rail_height: float = play_height + item_height * 3.0 + float(item_gap) * 3.0
 	menu_stack.custom_minimum_size = Vector2(rail_width, 0.0)
 	menu_stack.size = Vector2(rail_width, rail_height)
@@ -594,10 +583,18 @@ func _apply_layout_config() -> void:
 	now_playing_card.position = Vector2(margin, clampf(viewport_size.y * 0.038, 26.0, 42.0))
 	now_playing_card.size = Vector2(now_playing_width, now_playing_height)
 	now_playing_card.pivot_offset = now_playing_card.size * 0.5
+	# Let the title absorb spare space, not push the transport out of the rail.
+	var compact_rail := viewport_size.x < 1550.0
+	now_playing_title.custom_minimum_size.x = 160.0 if compact_rail else 280.0
+	now_playing_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	now_playing_artist.custom_minimum_size.x = 120.0 if compact_rail else 200.0
 	if track_progress_bar != null:
-		track_progress_bar.custom_minimum_size = Vector2(clampf(now_playing_width * 0.31, 220.0, 520.0), 3.0)
+		track_progress_bar.custom_minimum_size = Vector2(120.0 if compact_rail else 260.0, 3.0)
 	if duration_value != null:
 		duration_value.custom_minimum_size = Vector2(112.0, 0.0)
+	var rail_content := now_playing_card.get_node("CardMargin/CardContent") as HBoxContainer
+	rail_content.alignment = BoxContainer.ALIGNMENT_BEGIN
+	rail_content.get_node("TrackControls").add_theme_constant_override("separation", 8 if compact_rail else 12)
 
 	menu_version.position = Vector2(viewport_size.x - margin - 130.0, viewport_size.y - clampf(margin * 0.62, 30.0, 54.0))
 	menu_version.size = Vector2(130.0, 24.0)
@@ -686,22 +683,19 @@ func _apply_theme() -> void:
 	menu_version.add_theme_font_size_override("font_size", 11)
 	menu_version.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.54))
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.62), 12, Color(MinimalThemeScript.ACCENT_LIGHT, 0.20), 1, 0.0))
-	MinimalThemeScript.apply_mono(now_playing_kicker, 9, Color(MinimalThemeScript.ACCENT, 0.92))
-	now_playing_kicker.add_theme_font_size_override("font_size", 9)
+	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.82), 6, Color(MinimalThemeScript.ACCENT_LIGHT, 0.20), 1, 0.0))
+	MinimalThemeScript.apply_mono(now_playing_kicker, 12, Color(MinimalThemeScript.ACCENT, 0.92))
 	now_playing_kicker.visible = true
 	now_playing_kicker.text = "NOW PLAYING"
-	MinimalThemeScript.apply_heading(now_playing_title, 16, MinimalThemeScript.TEXT)
-	now_playing_title.add_theme_font_size_override("font_size", 16)
+	MinimalThemeScript.apply_heading(now_playing_title, 18, MinimalThemeScript.TEXT)
 	now_playing_title.clip_text = true
 	now_playing_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_title.custom_minimum_size.x = 310.0
-	MinimalThemeScript.apply_body(now_playing_artist, 11, Color(1.0, 1.0, 1.0, 0.72))
+	MinimalThemeScript.apply_body(now_playing_artist, 14, Color(1.0, 1.0, 1.0, 0.72))
 	now_playing_artist.add_theme_font_override("font", MinimalThemeScript.medium_font())
 	now_playing_artist.clip_text = true
 	now_playing_artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	now_playing_artist.custom_minimum_size.x = 132.0
-	MinimalThemeScript.apply_mono(duration_value, 10, Color(1.0, 1.0, 1.0, 0.74))
+	MinimalThemeScript.apply_mono(duration_value, 12, Color(1.0, 1.0, 1.0, 0.74))
 	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.14), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
 	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.94), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
 	for transport_button in [prev_track_button, play_pause_track_button, next_track_button]:
@@ -760,7 +754,8 @@ func _apply_theme() -> void:
 	MinimalThemeScript.apply_heading(tutorial_heading, tutorial_heading.get_theme_font_size("font_size"), MinimalThemeScript.TEXT)
 	_refresh_tutorial_input_style_controls()
 	_style_tutorial_tabs()
-	settings_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s3(26.0))
+	settings_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color("0e1219"), 6, Color(MinimalThemeScript.BORDER, 0.85), 1, 24.0))
+	_install_settings_footer()
 	credits_info_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s2(30.0))
 	credits_visual_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.90), MinimalThemeScript.RADIUS_LG, Color(MinimalThemeScript.ACCENT, 0.18), 1, 0.0))
 	credits_title.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
@@ -771,7 +766,27 @@ func _apply_theme() -> void:
 		tab.add_theme_font_override("font", MinimalThemeScript.medium_font())
 		tab.add_theme_font_size_override("font_size", 12)
 	_style_settings_tabs()
-	exit_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s3(22.0))
+	exit_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color("0e1219"), 6, MinimalThemeScript.BORDER, 1, 24.0))
+	exit_confirm_button.add_theme_color_override("font_color", Color("ff8793"))
+	exit_confirm_button.add_theme_stylebox_override("normal", MinimalThemeScript.button_style(Color(MinimalThemeScript.DANGER, 0.12), Color(MinimalThemeScript.DANGER, 0.65), 4))
+	_apply_layout_config()
+
+func _install_settings_footer() -> void:
+	# Keep the existing controls/signals, but only the settings body scrolls.
+	if settings_panel.has_node("SettingsFrame"):
+		return
+	var scroll := settings_panel.get_node("SettingsScroll") as ScrollContainer
+	var actions := settings_vbox.get_node("SettingsActions") as HBoxContainer
+	var frame := VBoxContainer.new()
+	frame.name = "SettingsFrame"
+	frame.add_theme_constant_override("separation", 16)
+	settings_panel.add_child(frame)
+	scroll.reparent(frame)
+	scroll.custom_minimum_size.y = 0
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	actions.reparent(frame)
+	for button in [back_button, reset_defaults_button]:
+		button.custom_minimum_size.y = 44
 
 func _style_settings_tabs() -> void:
 	for index in range(settings_tabs.size()):
@@ -822,7 +837,7 @@ func _style_main_menu_button(button: Button, _index: int) -> void:
 		accent = MinimalThemeScript.DANGER
 
 	button.add_theme_font_override("font", MinimalThemeScript.mono_font() if is_utility else MinimalThemeScript.medium_font())
-	button.add_theme_font_size_override("font_size", 11 if is_utility else theme_config.button_size + (6 if is_primary else 1))
+	button.add_theme_font_size_override("font_size", 12 if is_utility else theme_config.button_size + (6 if is_primary else 1))
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT if not is_utility else HORIZONTAL_ALIGNMENT_CENTER
 
 	var normal_style := StyleBoxFlat.new()
@@ -1029,6 +1044,7 @@ func _on_resolution_selected(_index: int) -> void:
 
 func _on_input_style_selected(index: int) -> void:
 	UserSettingsScript.set_input_style("4_arrow" if index == 1 else "8_direction")
+	_refresh_note_speed(UserSettingsScript.get_note_travel_time())
 	_refresh_tutorial_input_style_controls()
 	if tutorial_visual != null:
 		tutorial_visual.queue_redraw()
@@ -1082,6 +1098,9 @@ func _set_splash_logo_reveal(width: float) -> void:
 	if splash_logo_frame == null or splash_logo_window == null:
 		return
 	var reveal_width: float = clampf(width, 0.0, splash_logo_frame.size.x)
+	# Fixed wordmark geometry: animate only its clipping window.
+	splash_logo.size = splash_logo_frame.size
+	splash_logo.position = Vector2.ZERO
 	splash_logo_window.position = Vector2.ZERO
 	splash_logo_window.size = Vector2(reveal_width, splash_logo_frame.size.y)
 
@@ -1422,10 +1441,6 @@ func _on_play_pressed() -> void:
 	# instantiated after PLAY SONG.
 	_transition_to_scene("res://scenes/song_library.tscn")
 
-func _on_chart_studio_pressed() -> void:
-	_remember_main_menu_focus(chart_studio_button)
-	_transition_to_scene("res://scenes/chart_editor.tscn", "OPENING CHART STUDIO")
-
 func _on_settings_pressed() -> void:
 	_remember_main_menu_focus(settings_button)
 	_show_settings()
@@ -1468,8 +1483,6 @@ func _on_tutorial_input_style_selected(style: String) -> void:
 	input_style_option.select(1 if style == "4_arrow" else 0)
 	_refresh_tutorial_input_style_controls()
 	if tutorial_visual != null:
-		if tutorial_visual.get_step() == TUTORIAL_STEPS.size() - 1:
-			tutorial_visual.reset_practice()
 		tutorial_visual.queue_redraw()
 
 func _refresh_tutorial_input_style_controls() -> void:
@@ -1495,9 +1508,6 @@ func _apply_tutorial_input_button_style(button: Button, selected: bool) -> void:
 	for color_name in ["font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
 		button.add_theme_color_override(color_name, MinimalThemeScript.TEXT)
 
-func _tutorial_practice_tip() -> String:
-	return "PRACTICE · Read each cue. Red = opposite direction. Gold = Space."
-
 func _set_tutorial_step(index: int, animate := true) -> void:
 	tutorial_step_index = clampi(index, 0, TUTORIAL_STEPS.size() - 1)
 	var step_data: Dictionary = TUTORIAL_STEPS[tutorial_step_index]
@@ -1510,7 +1520,7 @@ func _set_tutorial_step(index: int, animate := true) -> void:
 		dot_parts.append("●" if dot_index == tutorial_step_index else "○")
 	tutorial_step_dots.text = "  ".join(dot_parts)
 	tutorial_previous_button.disabled = tutorial_step_index == 0
-	tutorial_button.text = "Next →" if tutorial_step_index < TUTORIAL_STEPS.size() - 1 else "Restart practice"
+	tutorial_button.text = "Next →" if tutorial_step_index < TUTORIAL_STEPS.size() - 1 else "Play a song →"
 	tutorial_input_style_block.visible = tutorial_step_index == 0
 	tutorial_visual.set_step(tutorial_step_index)
 	_refresh_tutorial_input_style_controls()
@@ -1536,26 +1546,7 @@ func _on_tutorial_next_pressed() -> void:
 	if tutorial_step_index < TUTORIAL_STEPS.size() - 1:
 		_set_tutorial_step(tutorial_step_index + 1)
 		return
-	var progress := tutorial_visual.get_practice_progress()
-	if bool(progress.get("finished", false)):
-		_on_play_pressed()
-	else:
-		tutorial_visual.reset_practice()
-		tutorial_tip.text = _tutorial_practice_tip()
-
-func _on_tutorial_practice_updated(hits: int, total: int, judgement: String) -> void:
-	if tutorial_step_index != TUTORIAL_STEPS.size() - 1:
-		return
-	tutorial_tip.text = "PRACTICE · %02d / %02d HITS · %s · RED=OPPOSITE · GOLD=SPACE" % [hits, total, judgement]
-	if not bool(tutorial_visual.get_practice_progress().get("finished", false)):
-		tutorial_button.text = "Restart practice"
-
-func _on_tutorial_practice_completed(hits: int, total: int) -> void:
-	if tutorial_step_index != TUTORIAL_STEPS.size() - 1:
-		return
-	tutorial_tip.text = "COMPLETE · %02d / %02d HITS · READY FOR A SONG" % [hits, total]
-	tutorial_button.text = "Play a song →"
-	tutorial_button.grab_focus()
+	_on_play_pressed()
 
 func _on_credits_pressed() -> void:
 	_remember_main_menu_focus(credits_button)
@@ -1688,13 +1679,52 @@ func _on_audio_offset_changed(value: float) -> void:
 func _build_v18_settings_controls() -> void:
 	if timing_settings_group == null or v18_effect_intensity_slider != null:
 		return
+	var speed_group := VBoxContainer.new()
+	speed_group.name = "NoteSpeedSettings"
+	speed_group.add_theme_constant_override("separation", 8)
+	timing_settings_group.add_child(speed_group)
+	timing_settings_group.move_child(speed_group, 0)
+	var speed_title := Label.new()
+	speed_title.text = "NOTE SPEED · LIVE PREVIEW"
+	MinimalThemeScript.apply_mono(speed_title, 11, MinimalThemeScript.CYAN)
+	speed_group.add_child(speed_title)
+	note_speed_preview = preload("res://scripts/ui/note_speed_preview.gd").new()
+	speed_group.add_child(note_speed_preview)
+	var speed_row := HBoxContainer.new()
+	speed_row.add_theme_constant_override("separation", 12)
+	speed_group.add_child(speed_row)
+	note_speed_slider = HSlider.new()
+	note_speed_slider.min_value = UserSettingsScript.MIN_NOTE_TRAVEL_TIME
+	note_speed_slider.max_value = UserSettingsScript.MAX_NOTE_TRAVEL_TIME
+	note_speed_slider.step = 0.1
+	note_speed_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	note_speed_slider.value_changed.connect(_on_note_speed_changed)
+	speed_row.add_child(note_speed_slider)
+	note_speed_value = Label.new()
+	note_speed_value.custom_minimum_size.x = 170
+	speed_row.add_child(note_speed_value)
+	var presets := HBoxContainer.new()
+	speed_group.add_child(presets)
+	for preset: Dictionary in [{"text": "FAST · 1.2s", "time": 1.2}, {"text": "STANDARD · 1.5s", "time": 1.5}, {"text": "RELAXED · 1.8s", "time": 1.8}]:
+		var button := Button.new()
+		button.text = preset.text
+		button.pressed.connect(func(): note_speed_slider.value = float(preset.time))
+		presets.add_child(button)
+	var preview_tempo := Button.new()
+	preview_tempo.text = "PREVIEW: 140 / 220 BPM"
+	preview_tempo.pressed.connect(func(): note_speed_preview.demo_bpm = 220.0 if note_speed_preview.demo_bpm == 140.0 else 140.0)
+	presets.add_child(preview_tempo)
+	var speed_hint := Label.new()
+	speed_hint.text = "Visual only · Applies next run · Audio, judgement and score do not change."
+	speed_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	MinimalThemeScript.apply_mono(speed_hint, 11, MinimalThemeScript.MUTED)
+	speed_group.add_child(speed_hint)
 	var separator := HSeparator.new()
 	separator.custom_minimum_size = Vector2(0.0, 8.0)
 	timing_settings_group.add_child(separator)
 
 	var effects_title := Label.new()
 	effects_title.text = "GAMEPLAY FEEDBACK"
-	effects_title.tooltip_text = "Adjust visual hit-feedback intensity. Timing windows and scoring are never changed."
 	MinimalThemeScript.apply_mono(effects_title, 11, MinimalThemeScript.CYAN)
 	timing_settings_group.add_child(effects_title)
 
@@ -1704,14 +1734,12 @@ func _build_v18_settings_controls() -> void:
 	var effects_label := Label.new()
 	effects_label.text = "Effect Intensity"
 	effects_label.custom_minimum_size = Vector2(180.0, 0.0)
-	effects_label.tooltip_text = "Scales hit burst, pulse, and receptor animation. Judgement text remains readable at 0%."
 	effects_row.add_child(effects_label)
 	v18_effect_intensity_slider = HSlider.new()
 	v18_effect_intensity_slider.min_value = 0.0
 	v18_effect_intensity_slider.max_value = 100.0
 	v18_effect_intensity_slider.step = 5.0
 	v18_effect_intensity_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	v18_effect_intensity_slider.tooltip_text = effects_label.tooltip_text
 	v18_effect_intensity_slider.value_changed.connect(_on_v18_effect_intensity_changed)
 	effects_row.add_child(v18_effect_intensity_slider)
 	v18_effect_intensity_value = Label.new()
@@ -1721,11 +1749,10 @@ func _build_v18_settings_controls() -> void:
 
 	var controls_title := Label.new()
 	controls_title.text = "CUSTOM GAMEPLAY KEYS"
-	controls_title.tooltip_text = "Click a binding, then press a new key. Duplicate gameplay keys are rejected."
 	MinimalThemeScript.apply_mono(controls_title, 11, MinimalThemeScript.CYAN)
 	timing_settings_group.add_child(controls_title)
 	v18_binding_hint = Label.new()
-	v18_binding_hint.text = "Bindings are shared by gameplay, Practice, and Replay validation."
+	v18_binding_hint.text = "Bindings are shared by gameplay and Replay validation."
 	v18_binding_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v18_binding_hint.add_theme_color_override("font_color", MinimalThemeScript.MUTED)
 	timing_settings_group.add_child(v18_binding_hint)
@@ -1757,14 +1784,12 @@ func _build_v18_settings_controls() -> void:
 		grid.add_child(label)
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(180.0, 32.0)
-		button.tooltip_text = "Click, then press the key you want to assign."
 		button.pressed.connect(_begin_v18_binding_capture.bind(action))
 		grid.add_child(button)
 		v18_binding_buttons[action] = button
 
 	var reset_bindings := Button.new()
 	reset_bindings.text = "RESET KEY BINDINGS"
-	reset_bindings.tooltip_text = "Restore default Numpad, Arrow, and Space controls."
 	reset_bindings.pressed.connect(_reset_v18_bindings)
 	timing_settings_group.add_child(reset_bindings)
 
@@ -1772,6 +1797,17 @@ func _on_v18_effect_intensity_changed(value: float) -> void:
 	UserSettingsScript.set_effect_intensity(value)
 	if v18_effect_intensity_value != null:
 		v18_effect_intensity_value.text = "%d%%" % roundi(value)
+
+func _on_note_speed_changed(value: float) -> void:
+	UserSettingsScript.set_note_travel_time(value)
+	_refresh_note_speed(value)
+
+func _refresh_note_speed(value: float) -> void:
+	if note_speed_preview != null:
+		note_speed_preview.input_style = UserSettingsScript.get_input_style()
+		note_speed_preview.set_read_time(value)
+	if note_speed_value != null:
+		note_speed_value.text = "%.2f s · READ TIME" % value
 
 func _begin_v18_binding_capture(action: String) -> void:
 	v18_binding_capture_action = action
@@ -1813,6 +1849,10 @@ func _reset_v18_bindings() -> void:
 		v18_binding_hint.text = "Default gameplay bindings restored."
 
 func _load_settings() -> void:
+	var read_time := UserSettingsScript.get_note_travel_time()
+	if note_speed_slider != null:
+		note_speed_slider.set_value_no_signal(read_time)
+	_refresh_note_speed(read_time)
 	var master_volume := UserSettingsScript.get_master_volume()
 	var sfx_value := UserSettingsScript.get_menu_sfx_volume()
 	var sfx_enabled := UserSettingsScript.get_menu_sfx_enabled()
@@ -1876,12 +1916,6 @@ func _transition_to_scene(path: String, _loading_label: String = "LOADING SONG L
 		var navigation: Node = _resident_navigation_controller()
 		if navigation != null and navigation.has_method("request_song_library"):
 			var result: Variant = await navigation.call("request_song_library")
-			_release_navigation_lock_after_result(result)
-			return
-	if path == "res://scenes/chart_editor.tscn":
-		var chart_navigation: Node = _resident_navigation_controller()
-		if chart_navigation != null and chart_navigation.has_method("request_chart_studio"):
-			var result: Variant = await chart_navigation.call("request_chart_studio")
 			_release_navigation_lock_after_result(result)
 			return
 	menu_bgm.fade_out(0.12)

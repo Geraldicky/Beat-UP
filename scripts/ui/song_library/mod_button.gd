@@ -19,4 +19,4 @@ func set_state(state_text: String, accent: Color, active: bool, compact: bool) -
 	MinimalThemeScript.apply_mono(title_label, 11 if compact else 13, MinimalThemeScript.TEXT)
 	title_label.add_theme_font_override("font", MinimalThemeScript.semibold_font())
 	state_label.text = state_text
-	MinimalThemeScript.apply_mono(state_label, 10, accent if active else Color(MinimalThemeScript.TEXT, 0.55))
+	MinimalThemeScript.apply_mono(state_label, 12, accent if active else Color(MinimalThemeScript.TEXT, 0.62))

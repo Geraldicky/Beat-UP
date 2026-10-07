@@ -13,7 +13,7 @@
 	"beat_offset": 1.9285,
 	"duration": 258.986667,
 	"seed": 174204.0,
-	"recommended": "MASTER • 8★ • 1052 notes • 18 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 8★ • 961 notes • 18 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.1285,
@@ -181,11 +181,6 @@
 			"direction": 7
 		},
 		{
-			"time": 11.3785,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 11.5285,
 			"type": "reverse",
 			"direction": 1
@@ -274,21 +269,6 @@
 			"time": 14.8285,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 14.9785,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 15.1285,
-			"type": "reverse",
-			"direction": 6
-		},
-		{
-			"time": 15.2785,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 15.5785,
@@ -526,21 +506,6 @@
 			"direction": 9
 		},
 		{
-			"time": 24.5785,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 24.7285,
-			"type": "reverse",
-			"direction": 6
-		},
-		{
-			"time": 24.8785,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 25.0285,
 			"type": "reverse",
 			"direction": 9
@@ -694,11 +659,6 @@
 			"time": 30.8035,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 30.8785,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 31.1785,
@@ -1001,11 +961,6 @@
 			"direction": 9
 		},
 		{
-			"time": 42.5785,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 42.6535,
 			"type": "normal",
 			"direction": 7
@@ -1034,21 +989,6 @@
 			"time": 43.6285,
 			"type": "reverse",
 			"direction": 6
-		},
-		{
-			"time": 43.7785,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 43.9285,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
-			"time": 44.0785,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 44.2285,
@@ -1124,11 +1064,6 @@
 			"time": 46.7035,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 46.7785,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 46.9285,
@@ -1209,11 +1144,6 @@
 			"time": 50.0035,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 50.0785,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 50.2285,
@@ -1419,16 +1349,6 @@
 			"time": 58.0285,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 58.3285,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
-			"time": 58.4785,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 58.6285,
@@ -1671,21 +1591,6 @@
 			"direction": 4
 		},
 		{
-			"time": 67.7785,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 67.9285,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
-			"time": 68.0785,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 68.3785,
 			"type": "normal",
 			"direction": 7
@@ -1699,86 +1604,6 @@
 			"time": 68.9785,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 69.1285,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 69.2035,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 69.2785,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 69.4285,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 69.7285,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 70.1785,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 70.7785,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 71.5285,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 71.8285,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 71.9785,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 72.1285,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 72.2785,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 72.7285,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 73.3285,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 73.4785,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 73.6285,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 73.9285,
@@ -1814,11 +1639,6 @@
 			"time": 76.4035,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 76.4785,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 77.2285,
@@ -1899,16 +1719,6 @@
 			"time": 83.5285,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 83.8285,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 83.9785,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 84.2785,
@@ -2096,16 +1906,6 @@
 			"direction": 2
 		},
 		{
-			"time": 97.9285,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 98.0785,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 98.2285,
 			"type": "normal",
 			"direction": 2
@@ -2274,11 +2074,6 @@
 			"time": 108.8785,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 109.6285,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 109.9285,
@@ -2456,11 +2251,6 @@
 			"direction": 6
 		},
 		{
-			"time": 116.9785,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 117.1285,
 			"type": "normal",
 			"direction": 8
@@ -2551,11 +2341,6 @@
 			"direction": 6
 		},
 		{
-			"time": 120.7285,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
 			"time": 121.0285,
 			"type": "normal",
 			"direction": 8
@@ -2609,11 +2394,6 @@
 			"time": 123.2035,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 123.2785,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 123.4285,
@@ -2699,11 +2479,6 @@
 			"time": 126.8035,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 126.8785,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 127.0285,
@@ -3011,16 +2786,6 @@
 			"direction": 6
 		},
 		{
-			"time": 139.9285,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
-			"time": 140.0785,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 140.2285,
 			"type": "normal",
 			"direction": 7
@@ -3276,21 +3041,6 @@
 			"direction": 2
 		},
 		{
-			"time": 150.7285,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 150.8035,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 150.8785,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 151.1785,
 			"type": "normal",
 			"direction": 1
@@ -3314,11 +3064,6 @@
 			"time": 151.7035,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 151.7785,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 151.9285,
@@ -3581,21 +3326,6 @@
 			"direction": 4
 		},
 		{
-			"time": 168.5785,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 168.7285,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 168.8785,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 168.9535,
 			"type": "normal",
 			"direction": 6
@@ -3624,11 +3354,6 @@
 			"time": 170.0035,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 170.0785,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 170.2285,
@@ -3699,71 +3424,6 @@
 			"time": 174.4285,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 174.8035,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 175.0285,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 175.4785,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 175.9285,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 176.2285,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 176.5285,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 177.0535,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 177.4285,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 178.0285,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 178.3285,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 178.9285,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 179.0785,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 179.2285,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 179.5285,
@@ -3891,21 +3551,6 @@
 			"direction": 9
 		},
 		{
-			"time": 186.5785,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 186.7285,
-			"type": "reverse",
-			"direction": 8
-		},
-		{
-			"time": 186.8785,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 187.0285,
 			"type": "normal",
 			"direction": 2
@@ -3949,11 +3594,6 @@
 			"time": 188.6035,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 188.6785,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 188.8285,
@@ -4086,11 +3726,6 @@
 			"direction": 2
 		},
 		{
-			"time": 194.0785,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 194.2285,
 			"type": "normal",
 			"direction": 4
@@ -4109,11 +3744,6 @@
 			"time": 194.6035,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 194.6785,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 194.8285,
@@ -4149,16 +3779,6 @@
 			"time": 195.8785,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 196.1785,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 196.3285,
-			"type": "reverse",
-			"direction": 8
 		},
 		{
 			"time": 196.6285,
@@ -4451,11 +4071,6 @@
 			"direction": 3
 		},
 		{
-			"time": 208.4785,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 208.6285,
 			"type": "normal",
 			"direction": 4
@@ -4479,21 +4094,6 @@
 			"time": 209.5285,
 			"type": "reverse",
 			"direction": 6
-		},
-		{
-			"time": 209.6785,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 209.8285,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 209.9785,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 210.1285,
@@ -4576,11 +4176,6 @@
 			"direction": 2
 		},
 		{
-			"time": 213.2785,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 213.5785,
 			"type": "normal",
 			"direction": 7
@@ -4656,11 +4251,6 @@
 			"direction": 4
 		},
 		{
-			"time": 216.5785,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 216.8785,
 			"type": "normal",
 			"direction": 9
@@ -4689,11 +4279,6 @@
 			"time": 218.0035,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 218.0785,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 218.2285,
@@ -4749,21 +4334,6 @@
 			"time": 220.1035,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 220.1785,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 220.3285,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
-			"time": 220.4785,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 220.6285,
@@ -4881,11 +4451,6 @@
 			"direction": 9
 		},
 		{
-			"time": 227.0785,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 227.2285,
 			"type": "normal",
 			"direction": 6
@@ -4969,11 +4534,6 @@
 			"time": 231.7285,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 232.0285,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 232.4785,
@@ -5141,11 +4701,6 @@
 			"direction": 2
 		},
 		{
-			"time": 242.0785,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 242.2285,
 			"type": "normal",
 			"direction": 6
@@ -5164,11 +4719,6 @@
 			"time": 243.4285,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 244.0285,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 244.6285,
@@ -5199,11 +4749,6 @@
 			"time": 246.8035,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 246.8785,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 247.0285,
@@ -5418,7 +4963,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 179
+		"reverse": 169
 	},
 	"generator_diagnostics": {
 		"version": "17.4.19",
@@ -5456,8 +5001,8 @@
 		"longest_sub_170ms_chain_notes": 8
 	},
 	"difficulty_profile": {
-		"note_count": 1052,
-		"reverse_count": 179,
+		"note_count": 961,
+		"reverse_count": 169,
 		"space_count": 18,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -5540,5 +5085,63 @@
 		"retained_direction_changes": false,
 		"space_events_changed": false,
 		"policy": "complexity plus sustained pressure; microbursts allowed but long unreadable chains are broken"
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				69.1285,
+				73.9285
+			],
+			[
+				174.7285,
+				179.5285
+			]
+		],
+		"before": {
+			"song_id": "blue_zenith",
+			"difficulty": "master",
+			"bpm": 200.0,
+			"duration": 258.986667,
+			"notes": 1052,
+			"spaces": 18,
+			"average_inputs_per_second": 4.131,
+			"peak_half_second_inputs": 6,
+			"peak_one_second_inputs": 9,
+			"peak_five_second_inputs": 32,
+			"fast_direction_changes_under_170ms": 563,
+			"arrows_within_250ms_of_space": 44,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 249.6
+		},
+		"after": {
+			"song_id": "blue_zenith",
+			"difficulty": "master",
+			"bpm": 200.0,
+			"duration": 258.986667,
+			"notes": 961,
+			"spaces": 18,
+			"average_inputs_per_second": 3.78,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 8,
+			"peak_five_second_inputs": 30,
+			"fast_direction_changes_under_170ms": 477,
+			"arrows_within_250ms_of_space": 3,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					68.9785,
+					73.9285
+				],
+				[
+					174.4285,
+					179.5285
+				]
+			],
+			"longest_active_run_seconds": 100.5
+		},
+		"subdivision_notes_removed": 21,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

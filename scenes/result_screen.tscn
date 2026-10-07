@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/result_screen.gd" id="1_script"]
 [ext_resource type="Resource" path="res://config/theme_config.tres" id="2_theme"]
@@ -8,6 +8,10 @@
 [ext_resource type="Resource" path="res://config/result_config.tres" id="6_result"]
 [ext_resource type="Script" path="res://scripts/ui/rolling_value_label.gd" id="7_rolling"]
 [ext_resource type="Script" path="res://scripts/ui/result_judgement_bar.gd" id="8_judgement_bar"]
+
+[ext_resource type="Script" path="res://scripts/ui/result_run_graph.gd" id="9_graph"]
+[ext_resource type="Script" path="res://scripts/ui/result_score_label.gd" id="10_digits"]
+[ext_resource type="Script" path="res://scripts/ui/result_glass_panel.gd" id="11_glass"]
 
 [node name="ResultScreen" type="Control"]
 layout_mode = 3
@@ -60,53 +64,76 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 78)
 layout_mode = 2
 
-[node name="TitleGroup" type="VBoxContainer" parent="MainMargin/RootVBox/HeaderBar"]
+[node name="PageTitle" type="Label" parent="MainMargin/RootVBox/HeaderBar"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="PageTitle" type="Label" parent="MainMargin/RootVBox/HeaderBar/TitleGroup"]
-unique_name_in_owner = true
-layout_mode = 2
 theme_override_colors/font_color = Color(0.662745, 0.721569, 1, 1)
 theme_override_font_sizes/font_size = 12
-text = "RESULTS"
+text = "R E S U L T"
 
-[node name="SongTitle" type="Label" parent="MainMargin/RootVBox/HeaderBar/TitleGroup"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "SONG TITLE"
-text_overrun_behavior = 3
 
-[node name="SongMeta" type="Label" parent="MainMargin/RootVBox/HeaderBar/TitleGroup"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "ARTIST  •  HARD  •  AUTHORED  •  9★  •  150 BPM"
-text_overrun_behavior = 3
-
-[node name="BestPlate" type="PanelContainer" parent="MainMargin/RootVBox/HeaderBar"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="NewBest" type="Label" parent="MainMargin/RootVBox/HeaderBar/BestPlate"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "NEW PERSONAL BEST"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HeaderLine" type="HSeparator" parent="MainMargin/RootVBox"]
-layout_mode = 2
-
-[node name="Content" type="HBoxContainer" parent="MainMargin/RootVBox"]
+[node name="Content" type="Control" parent="MainMargin/RootVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="SongColumn" type="HBoxContainer" parent="MainMargin/RootVBox/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="JacketArea" type="AspectRatioContainer" parent="MainMargin/RootVBox/Content/SongColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+ratio = 1.0
+stretch_mode = 2
+
+[node name="SongArtwork" type="TextureRect" parent="MainMargin/RootVBox/Content/SongColumn/JacketArea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SongInfo" type="VBoxContainer" parent="MainMargin/RootVBox/Content/SongColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NowPlayed" type="Label" parent="MainMargin/RootVBox/Content/SongColumn/SongInfo"]
+layout_mode = 2
+text = "NOW PLAYED"
+
+[node name="SongTitle" type="Label" parent="MainMargin/RootVBox/Content/SongColumn/SongInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "SONG TITLE"
+autowrap_mode = 2
+max_lines_visible = 2
+text_overrun_behavior = 3
+
+[node name="SongMeta" type="Label" parent="MainMargin/RootVBox/Content/SongColumn/SongInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ARTIST  •  HARD  •  AUTHORED  •  9★  •  150 BPM"
+max_lines_visible = 1
+text_overrun_behavior = 3
+
+[node name="TagSpacer" type="Control" parent="MainMargin/RootVBox/Content/SongColumn/SongInfo"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SongTags" type="HFlowContainer" parent="MainMargin/RootVBox/Content/SongColumn/SongInfo"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 4
+
 [node name="RankPanel" type="PanelContainer" parent="MainMargin/RootVBox/Content"]
 unique_name_in_owner = true
+script = ExtResource("11_glass")
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -118,13 +145,13 @@ alignment = 1
 
 [node name="RankCaption" type="Label" parent="MainMargin/RootVBox/Content/RankPanel/RankColumn"]
 layout_mode = 2
-text = "RANK"
+text = "F I N A L   R A N K"
 horizontal_alignment = 1
 
 [node name="RankArea" type="AspectRatioContainer" parent="MainMargin/RootVBox/Content/RankPanel/RankColumn"]
-custom_minimum_size = Vector2(286, 286)
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 360)
 layout_mode = 2
-size_flags_vertical = 3
 ratio = 1.0
 stretch_mode = 2
 
@@ -146,7 +173,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("5_rank_meter")
-ring_width = 14.0
 
 [node name="RankCenter" type="CenterContainer" parent="MainMargin/RootVBox/Content/RankPanel/RankColumn/RankArea/RankStack"]
 layout_mode = 1
@@ -162,13 +188,15 @@ alignment = 1
 
 [node name="RankValue" type="Label" parent="MainMargin/RootVBox/Content/RankPanel/RankColumn/RankArea/RankStack/RankCenter/VBox"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 132
 text = "S"
 horizontal_alignment = 1
 
-[node name="RankSub" type="Label" parent="MainMargin/RootVBox/Content/RankPanel/RankColumn/RankArea/RankStack/RankCenter/VBox"]
+[node name="RankSub" type="Label" parent="MainMargin/RootVBox/Content/RankPanel/RankColumn"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 text = "EXCELLENT"
 horizontal_alignment = 1
@@ -176,13 +204,14 @@ horizontal_alignment = 1
 [node name="RankHint" type="Label" parent="MainMargin/RootVBox/Content/RankPanel/RankColumn"]
 visible = false
 layout_mode = 2
-text = "PERFORMANCE SUMMARY"
+text = ""
 horizontal_alignment = 1
 
 [node name="StatsColumn" type="VBoxContainer" parent="MainMargin/RootVBox/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+alignment = 1
 
 [node name="ScorePanel" type="PanelContainer" parent="MainMargin/RootVBox/Content/StatsColumn"]
 unique_name_in_owner = true
@@ -195,26 +224,41 @@ layout_mode = 2
 
 [node name="ScoreHeader" type="HBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox"]
 layout_mode = 2
+alignment = 1
 
 [node name="ScoreCaption" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox/ScoreHeader"]
 layout_mode = 2
 text = "SCORE"
 
-[node name="Spacer" type="Control" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox/ScoreHeader"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ScoreStatus" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox/ScoreHeader"]
-unique_name_in_owner = true
-layout_mode = 2
-text = ""
-
 [node name="ScoreValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox"]
 unique_name_in_owner = true
+script = ExtResource("10_digits")
 layout_mode = 2
 theme_override_font_sizes/font_size = 68
 text = "0"
-horizontal_alignment = 2
+horizontal_alignment = 1
+
+[node name="BestPlate" type="PanelContainer" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="NewBest" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox/BestPlate"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "NEW PERSONAL BEST"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreStatus" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/ScorePanel/ScoreVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+size_flags_horizontal = 3
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="PrimaryStats" type="HBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn"]
 unique_name_in_owner = true
@@ -231,11 +275,13 @@ layout_mode = 2
 
 [node name="Title" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/AccuracyCard/VBox"]
 layout_mode = 2
+horizontal_alignment = 1
 text = "ACCURACY"
 
 [node name="AccuracyValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/AccuracyCard/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
+horizontal_alignment = 1
 script = ExtResource("7_rolling")
 decimal_places = 2
 suffix = "%"
@@ -243,35 +289,14 @@ suffix = "%"
 [node name="AccuracyBar" type="ProgressBar" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/AccuracyCard/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 5)
+visible = false
 layout_mode = 2
 max_value = 100.0
 show_percentage = false
 
-[node name="ComboCard" type="PanelContainer" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/ComboCard"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/ComboCard/VBox"]
-layout_mode = 2
-text = "MAX COMBO"
-
-[node name="ComboValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/ComboCard/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-script = ExtResource("7_rolling")
-suffix = "x"
-
-[node name="Meta" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/ComboCard/VBox"]
-layout_mode = 2
-visible = false
-text = ""
-
 [node name="PerfectRateCard" type="PanelContainer" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -280,187 +305,257 @@ layout_mode = 2
 
 [node name="Title" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/PerfectRateCard/VBox"]
 layout_mode = 2
-text = "PERFECT RATE"
+horizontal_alignment = 1
+text = "% PERFECT"
 
 [node name="PerfectRateValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/PerfectRateCard/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
+horizontal_alignment = 1
 script = ExtResource("7_rolling")
 decimal_places = 2
 suffix = "%"
 
 [node name="Meta" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/PerfectRateCard/VBox"]
 layout_mode = 2
+horizontal_alignment = 1
 visible = false
 text = ""
 
-[node name="BreakdownPanel" type="PanelContainer" parent="MainMargin/RootVBox/Content/StatsColumn"]
+[node name="Details" type="VBoxContainer" parent="MainMargin/RootVBox/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="BreakdownPanel" type="PanelContainer" parent="MainMargin/RootVBox/Content/Details"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 142)
 layout_mode = 2
 
-[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel"]
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel"]
 layout_mode = 2
 
-[node name="Header" type="HBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox"]
+[node name="Header" type="HBoxContainer" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Header"]
+[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Header"]
 layout_mode = 2
-text = "JUDGEMENT BREAKDOWN"
+text = "PERFORMANCE"
 
-[node name="Spacer" type="Control" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Header"]
+[node name="Spacer" type="Control" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="JudgedValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Header"]
+[node name="JudgedValue" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Header"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0 NOTES"
 
-[node name="Line" type="HSeparator" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox"]
+[node name="Line" type="HSeparator" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox"]
 layout_mode = 2
 
-[node name="JudgementBar" type="Control" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox"]
+[node name="JudgementBar" type="Control" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
+visible = false
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("8_judgement_bar")
 
-[node name="Grid" type="GridContainer" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox"]
+[node name="Grid" type="GridContainer" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox"]
 layout_mode = 2
-columns = 4
+columns = 2
 
-[node name="PerfectTitle" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="PerfectTitle" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "PERFECT"
-horizontal_alignment = 1
+horizontal_alignment = 0
+vertical_alignment = 1
 
-[node name="GreatTitle" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="PerfectValue" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("7_rolling")
+horizontal_alignment = 2
+
+[node name="GreatTitle" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "GREAT"
-horizontal_alignment = 1
+horizontal_alignment = 0
+vertical_alignment = 1
 
-[node name="GoodTitle" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="GreatValue" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("7_rolling")
+horizontal_alignment = 2
+
+[node name="GoodTitle" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "GOOD"
-horizontal_alignment = 1
+horizontal_alignment = 0
+vertical_alignment = 1
 
-[node name="MissTitle" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="GoodValue" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("7_rolling")
+horizontal_alignment = 2
+
+[node name="MissTitle" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "MISS"
-horizontal_alignment = 1
+horizontal_alignment = 0
+vertical_alignment = 1
 
-[node name="PerfectValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="MissValue" type="Label" parent="MainMargin/RootVBox/Content/Details/BreakdownPanel/VBox/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 script = ExtResource("7_rolling")
-horizontal_alignment = 1
+horizontal_alignment = 2
 
-[node name="GreatValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="TimingGraph" type="Control" parent="MainMargin/RootVBox/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+mouse_filter = 2
+script = ExtResource("9_graph")
+
+[node name="ProgressPanel" type="VBoxContainer" parent="MainMargin/RootVBox/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+
+[node name="ComboCard" type="PanelContainer" parent="MainMargin/RootVBox/Content/ProgressPanel"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-script = ExtResource("7_rolling")
-horizontal_alignment = 1
 
-[node name="GoodValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Content/ProgressPanel/ComboCard"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/ProgressPanel/ComboCard/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "MAX COMBO"
+
+[node name="ComboValue" type="Label" parent="MainMargin/RootVBox/Content/ProgressPanel/ComboCard/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-script = ExtResource("7_rolling")
 horizontal_alignment = 1
+script = ExtResource("7_rolling")
+suffix = "x"
 
-[node name="MissValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/BreakdownPanel/VBox/Grid"]
+[node name="Meta" type="Label" parent="MainMargin/RootVBox/Content/ProgressPanel/ComboCard/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+visible = false
+text = ""
+
+
+[node name="ProgressGraph" type="Control" parent="MainMargin/RootVBox/Content/ProgressPanel"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-script = ExtResource("7_rolling")
-horizontal_alignment = 1
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("9_graph")
+progress_mode = true
 
-[node name="SpecialPanel" type="PanelContainer" parent="MainMargin/RootVBox/Content/StatsColumn"]
+[node name="ModsPanel" type="PanelContainer" parent="MainMargin/RootVBox/Content"]
+unique_name_in_owner = true
+script = ExtResource("11_glass")
+layout_mode = 0
+
+[node name="ModsContent" type="VBoxContainer" parent="MainMargin/RootVBox/Content/ModsPanel"]
+layout_mode = 2
+
+[node name="ModsText" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "No mods active"
+autowrap_mode = 2
+
+[node name="SpecialPanel" type="PanelContainer" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 102)
 layout_mode = 2
 
-[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel"]
+[node name="VBox" type="VBoxContainer" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox"]
+[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox"]
 layout_mode = 2
 text = "SPECIAL NOTES"
 
-[node name="SpecialRow" type="HBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox"]
+[node name="SpecialRow" type="VBoxContainer" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SpaceMetric" type="VBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow"]
+[node name="SpaceMetric" type="HBoxContainer" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow/SpaceMetric"]
+[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow/SpaceMetric"]
 layout_mode = 2
 text = "SPACE"
 horizontal_alignment = 1
 
-[node name="SpaceValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow/SpaceMetric"]
+[node name="SpaceValue" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow/SpaceMetric"]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("7_rolling")
 horizontal_alignment = 1
 
-[node name="SpaceMeta" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow/SpaceMetric"]
+[node name="SpaceMeta" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow/SpaceMetric"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0 MISS"
 horizontal_alignment = 1
 
-[node name="ReverseMetric" type="VBoxContainer" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow"]
+[node name="ReverseMetric" type="HBoxContainer" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow/ReverseMetric"]
+[node name="Title" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow/ReverseMetric"]
 layout_mode = 2
 text = "REVERSE"
 horizontal_alignment = 1
 
-[node name="ReverseValue" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow/ReverseMetric"]
+[node name="ReverseValue" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow/ReverseMetric"]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("7_rolling")
 horizontal_alignment = 1
 
-[node name="ReverseMeta" type="Label" parent="MainMargin/RootVBox/Content/StatsColumn/SpecialPanel/VBox/SpecialRow/ReverseMetric"]
+[node name="ReverseMeta" type="Label" parent="MainMargin/RootVBox/Content/ModsPanel/ModsContent/SpecialPanel/VBox/SpecialRow/ReverseMetric"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0 TOTAL · 0 MISS"
 horizontal_alignment = 1
 
-[node name="BottomLine" type="HSeparator" parent="MainMargin/RootVBox"]
+
+[node name="OutcomeBreathingRoom" type="Control" parent="MainMargin/RootVBox"]
+unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
 
 [node name="BottomBar" type="HBoxContainer" parent="MainMargin/RootVBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-alignment = 2
-
-[node name="FooterHint" type="Label" parent="MainMargin/RootVBox/BottomBar"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-text = "ENTER  RETRY    ·    ESC  SONG LIBRARY"
-vertical_alignment = 1
+alignment = 1
 
 [node name="BackButton" type="Button" parent="MainMargin/RootVBox/BottomBar"]
 unique_name_in_owner = true
@@ -472,4 +567,11 @@ text = "SONG LIBRARY"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(190, 56)
 layout_mode = 2
-text = "RETRY"
+text = "PLAY AGAIN"
+
+[node name="FooterHint" type="Label" parent="MainMargin/RootVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ENTER PLAY AGAIN    ·    ESC SONG LIBRARY"
+vertical_alignment = 1
+horizontal_alignment = 1

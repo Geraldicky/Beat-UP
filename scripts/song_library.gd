@@ -22,10 +22,8 @@ func _ready() -> void:
 
 func _connect_library_signals() -> void:
 	_connect_signal("play_requested", Callable(self, "_on_play_requested"))
-	_connect_signal("practice_requested", Callable(self, "_on_practice_requested"))
 	_connect_signal("replay_requested", Callable(self, "_on_replay_requested"))
 	_connect_signal("back_requested", Callable(self, "_on_back_requested"))
-	_connect_signal("chart_editor_requested", Callable(self, "_on_chart_editor_requested"))
 	_connect_signal("import_charts_requested", Callable(self, "_on_import_charts_requested"))
 	_connect_signal("refresh_requested", Callable(self, "_on_refresh_requested"))
 
@@ -93,6 +91,7 @@ func _on_play_requested(song_id: String, difficulty_id: String, random_mode: boo
 		"song_id": song_id,
 		"difficulty_id": difficulty_id,
 		"random_mode": random_mode,
+		"reverse_percent": int(song_select.call("get_reverse_percent")),
 	}
 	var level: Dictionary = _find_level(song_id, difficulty_id)
 	var representative: Dictionary = _representative(song_id)
@@ -120,9 +119,6 @@ func _on_play_requested(song_id: String, difficulty_id: String, random_mode: boo
 	get_tree().set_meta(PENDING_LIBRARY_LAUNCH_META, launch_request)
 	SceneTransition.change_scene_to_gameplay("res://main.tscn", visual_payload)
 
-func _on_practice_requested(song_id: String, difficulty_id: String, random_mode: bool, section_index: int) -> void:
-	_launch_v18_request(song_id, difficulty_id, random_mode, {"practice_section_index": section_index})
-
 func _on_replay_requested(song_id: String, difficulty_id: String, random_mode: bool, replay_data: Dictionary) -> void:
 	_launch_v18_request(song_id, difficulty_id, random_mode, {"replay_data": replay_data.duplicate(true)})
 
@@ -134,6 +130,7 @@ func _launch_v18_request(song_id: String, difficulty_id: String, random_mode: bo
 		"song_id": song_id,
 		"difficulty_id": difficulty_id,
 		"random_mode": random_mode,
+		"reverse_percent": int(song_select.call("get_reverse_percent")),
 	}
 	for key: Variant in extra.keys():
 		launch_request[key] = extra[key]
@@ -141,7 +138,7 @@ func _launch_v18_request(song_id: String, difficulty_id: String, random_mode: bo
 	var representative: Dictionary = _representative(song_id)
 	var canonical: Dictionary = _get_global_song_state()
 	var canonical_matches: bool = str(canonical.get("song_id", "")) == song_id
-	var mode_suffix: String = "PRACTICE" if extra.has("practice_section_index") else ("REPLAY" if extra.has("replay_data") else str(level.get("difficulty", difficulty_id)).to_upper())
+	var mode_suffix: String = "REPLAY" if extra.has("replay_data") else str(level.get("difficulty", difficulty_id)).to_upper()
 	var launch_background := _randomize_route_background("gameplay")
 	var visual_payload: Dictionary = {
 		"title": str(canonical.get("title", level.get("title", representative.get("title", song_id.replace("_", " "))))) if canonical_matches else str(level.get("title", representative.get("title", song_id.replace("_", " ")))),
@@ -199,18 +196,6 @@ func _on_back_requested() -> void:
 		return
 	SceneTransition.change_scene_quick("res://scenes/app_shell.tscn")
 
-func _on_chart_editor_requested() -> void:
-	if action_locked or _navigation_busy():
-		return
-	var navigation: Node = get_node_or_null("/root/NavigationController")
-	if navigation != null and navigation.has_method("has_registered_shell") and bool(navigation.call("has_registered_shell")):
-		action_locked = true
-		var result: Variant = await navigation.call("request_chart_studio")
-		_release_action_lock_after_failed_navigation(result)
-		return
-	# Compatibility fallback for running SongLibrary as a standalone scene.
-	SceneTransition.change_scene_quick("res://scenes/chart_editor.tscn")
-
 func _on_refresh_requested() -> void:
 	_reload_library()
 
@@ -267,10 +252,11 @@ func refresh_from_shell_deferred() -> void:
 
 
 
-# v17.4.49 resident-screen lifecycle. `shell_prepare_resume` is intentionally
-# constant-time and is the only hook allowed before the route tween starts.
-func shell_prepare_resume(_context: Dictionary) -> void:
+# Bind existing resident selection before reveal. No catalog reload or audio
+# activation here; refresh/preview remain owned by the post-commit hooks.
+func shell_prepare_resume(context: Dictionary) -> void:
 	action_locked = false
+	song_select.call("prepare_route_selection", str(context.get("selected_song_id", "")))
 
 func shell_will_resume(context: Dictionary) -> void:
 	action_locked = false

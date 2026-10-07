@@ -30,10 +30,10 @@ func _apply_control(node: Node) -> void:
 	if not (node is Control):
 		return
 	var control: Control = node as Control
+	# Hover explanations are intentionally disabled; keep keyboard focus intact.
+	control.tooltip_text = ""
 	if control is Button:
 		var button: Button = control as Button
 		button.focus_mode = Control.FOCUS_ALL
-		if button.tooltip_text.is_empty() and not button.text.strip_edges().is_empty():
-			button.tooltip_text = button.text.strip_edges().replace("\n", " ")
 	elif control is LineEdit or control is Slider or control is SpinBox or control is OptionButton:
 		control.focus_mode = Control.FOCUS_ALL

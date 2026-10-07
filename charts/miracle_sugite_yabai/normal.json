@@ -13,7 +13,7 @@
 	"beat_offset": 0.06494,
 	"duration": 244.143946,
 	"seed": 1744301.0,
-	"recommended": "NORMAL • 4★ • 408 notes • 9 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 4★ • 389 notes • 9 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 6.68563,
@@ -79,11 +79,6 @@
 			"time": 17.44425,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 18.271837,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 18.68563,
@@ -259,11 +254,6 @@
 			"time": 37.720112,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 38.133906,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 38.961492,
@@ -646,11 +636,6 @@
 			"direction": 7
 		},
 		{
-			"time": 76.202871,
-			"type": "reverse",
-			"direction": 8
-		},
-		{
 			"time": 77.030457,
 			"type": "normal",
 			"direction": 9
@@ -741,26 +726,6 @@
 			"direction": 8
 		},
 		{
-			"time": 86.961492,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 87.375285,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 87.789078,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 88.616664,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 89.44425,
 			"type": "normal",
 			"direction": 7
@@ -809,11 +774,6 @@
 			"time": 96.478733,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 97.720112,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 98.547699,
@@ -969,11 +929,6 @@
 			"time": 117.168388,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 117.582181,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 118.409768,
@@ -1179,11 +1134,6 @@
 			"time": 138.68563,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 139.099423,
-			"type": "reverse",
-			"direction": 8
 		},
 		{
 			"time": 139.513216,
@@ -1431,11 +1381,6 @@
 			"direction": 3
 		},
 		{
-			"time": 163.927009,
-			"type": "reverse",
-			"direction": 6
-		},
-		{
 			"time": 164.340802,
 			"type": "normal",
 			"direction": 8
@@ -1444,36 +1389,6 @@
 			"time": 165.168388,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 165.995974,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 166.823561,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 167.237354,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 167.651147,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 168.06494,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 168.271837,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 168.892526,
@@ -1664,11 +1579,6 @@
 			"time": 191.651147,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 192.06494,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 192.478733,
@@ -1889,11 +1799,6 @@
 			"time": 214.409768,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 215.237354,
-			"type": "reverse",
-			"direction": 9
 		},
 		{
 			"time": 216.06494,
@@ -2222,7 +2127,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 24
+		"reverse": 18
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2251,8 +2156,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 408,
-		"reverse_count": 24,
+		"note_count": 389,
+		"reverse_count": 18,
 		"space_count": 9,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2321,5 +2226,63 @@
 		"analysis_master_original_name": "ヒゲドライバー - ミラクルすぎてヤバイ feat. shully [puaOtCox2CI].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				86.133906,
+				89.444251
+			],
+			[
+				165.582181,
+				168.892526
+			]
+		],
+		"before": {
+			"song_id": "miracle_sugite_yabai",
+			"difficulty": "normal",
+			"bpm": 145.0,
+			"duration": 244.143946,
+			"notes": 408,
+			"spaces": 9,
+			"average_inputs_per_second": 1.708,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 4,
+			"peak_five_second_inputs": 14,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 9,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 230.483
+		},
+		"after": {
+			"song_id": "miracle_sugite_yabai",
+			"difficulty": "normal",
+			"bpm": 145.0,
+			"duration": 244.143946,
+			"notes": 389,
+			"spaces": 9,
+			"average_inputs_per_second": 1.63,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 4,
+			"peak_five_second_inputs": 13,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					85.720112,
+					89.44425
+				],
+				[
+					165.168388,
+					168.892526
+				]
+			],
+			"longest_active_run_seconds": 79.034
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

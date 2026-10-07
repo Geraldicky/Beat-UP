@@ -30,10 +30,8 @@ const ICON_CHEVRON_UP_PATH := "res://assets/ui/icons/chevron_up.svg"
 const ICON_SEARCH_PATH := "res://assets/ui/icons/search.svg"
 
 signal play_requested(song_id: String, difficulty_id: String, random_mode: bool)
-signal practice_requested(song_id: String, difficulty_id: String, random_mode: bool, section_index: int)
 signal replay_requested(song_id: String, difficulty_id: String, random_mode: bool, replay_data: Dictionary)
 signal back_requested
-signal chart_editor_requested
 signal import_charts_requested(paths: PackedStringArray)
 signal refresh_requested
 
@@ -117,7 +115,6 @@ signal refresh_requested
 @onready var play_button: Button = %PlayButton
 @onready var import_button: Button = %ImportButton
 @onready var refresh_button: Button = %RefreshButton
-@onready var editor_button: Button = %EditorButton
 @onready var pack_export_button: Button = %PackExportButton
 @onready var back_button: Button = %BackButton
 @onready var import_hint: Label = %ImportHint
@@ -150,6 +147,9 @@ var selected_progress_filter := "All Progress"
 var selected_sort_mode := "BPM Asc"
 var selected_search_query := ""
 var random_mode_enabled := false
+var reverse_mod_percent := 0
+var reverse_mod_row: HBoxContainer
+var reverse_mod_buttons: Array[Button] = []
 var song_buttons: Array[Button] = []
 var song_groups: Array = []
 var song_header_wrappers: Array = []
@@ -172,6 +172,7 @@ var scroll_target := -1.0
 var applying_scroll_target := false
 var detail_transition_generation := 0
 var preview_resume_generation := 0
+var preparing_route_presentation := false
 var background_texture_cache: Dictionary = {}
 var selected_info_tab: String = "ranking"
 var run_picker: BeatDropdown
@@ -180,9 +181,9 @@ var selected_record: int = 0
 var record_context: String = ""
 var export_button: Button
 var v18_mode_row: HBoxContainer
-var practice_button: Button
+var note_speed_button: Button
+var note_speed_dialog: AcceptDialog
 var replay_button: Button
-var practice_popup
 var rank_sort_button: Button
 var rank_sort_mode: String = "score"
 var progress_graph: Control
@@ -220,6 +221,7 @@ var album_flow_best_score_value: Label
 var album_flow_best_combo_value: Label
 var album_flow_best_accuracy_value: Label
 var album_flow_modifier_row: HBoxContainer
+var album_flow_identity: VBoxContainer
 var album_flow_random_button: Button
 var album_flow_mode_row: HBoxContainer
 var album_flow_mode_4_button: Button
@@ -266,7 +268,6 @@ func _ready() -> void:
 	random_mod_button.toggled.connect(_on_random_mod_toggled)
 	import_button.pressed.connect(_open_import_dialog)
 	refresh_button.pressed.connect(func(): refresh_requested.emit())
-	editor_button.pressed.connect(_on_editor_pressed)
 	pack_export_button.pressed.connect(_export_selected_level_pack)
 	back_button.pressed.connect(_on_back_pressed)
 	import_dialog.files_selected.connect(func(paths: PackedStringArray): import_charts_requested.emit(paths))
@@ -284,7 +285,6 @@ func _ready() -> void:
 	# creator_tools setting remains accepted for older project overrides.
 	var creator_tools_available: bool = bool(ProjectSettings.get_setting("beat_up/player_creator_enabled", true)) or bool(ProjectSettings.get_setting("beat_up/creator_tools_enabled", true))
 	import_button.visible = creator_tools_available
-	editor_button.visible = creator_tools_available
 	refresh_button.visible = creator_tools_available
 	pack_export_button.visible = creator_tools_available
 	_setup_home_style_now_playing()
@@ -294,7 +294,7 @@ func _ready() -> void:
 	_apply_layout_config()
 	_apply_theme_config()
 	composition.apply(self)
-	InteractionPolishScript.install_buttons([back_button, practice_button, play_button, album_flow_mode_4_button, album_flow_mode_8_button, album_flow_random_button, details_tab_button, ranking_tab_button, import_button, refresh_button, editor_button, pack_export_button])
+	InteractionPolishScript.install_buttons([back_button, note_speed_button, play_button, album_flow_mode_4_button, album_flow_mode_8_button, album_flow_random_button, details_tab_button, ranking_tab_button, import_button, refresh_button, pack_export_button])
 	_set_info_tab(selected_info_tab, false)
 	_sync_mods_panel(false)
 	_rebuild_filters()
@@ -547,7 +547,7 @@ func _install_album_flow_song_library_layout() -> void:
 	# atmosphere. The actual browsing/configuration surfaces stay crisp above it.
 	now_playing_card.visible = false
 	backdrop_visual.visible = true
-	backdrop_visual.modulate = Color(1, 1, 1, 0.07)
+	backdrop_visual.modulate = Color.WHITE
 	header_row.visible = true
 	title_label.text = "S O N G   L I B R A R Y"
 	count_label.text = "BEAT UP!"
@@ -605,7 +605,7 @@ func _install_album_flow_song_library_layout() -> void:
 	album_flow_detail_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	album_flow_detail_backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	album_flow_detail_backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	album_flow_detail_backdrop.modulate = Color(1, 1, 1, 0.02)
+	album_flow_detail_backdrop.modulate = Color(1, 1, 1, 0.0)
 	info_panel.add_child(album_flow_detail_backdrop)
 	info_panel.move_child(album_flow_detail_backdrop, 0)
 
@@ -744,17 +744,22 @@ void fragment() {
 	album_flow_next_song_button.pressed.connect(_select_song_relative.bind(1))
 	track_nav_row.add_child(album_flow_next_song_button)
 
-	detail_title.reparent(album_flow_sidebar)
-	detail_meta.reparent(album_flow_sidebar)
+	album_flow_identity = VBoxContainer.new()
+	album_flow_identity.name = "SongIdentity"
+	album_flow_identity.add_theme_constant_override("separation", 6)
+	album_flow_sidebar.add_child(album_flow_identity)
+	detail_title.reparent(album_flow_identity)
+	detail_title.resized.connect(_fit_album_flow_title)
+	detail_meta.reparent(album_flow_identity)
 	detail_flavor.visible = false
 	detail_description.visible = false
 	mode_status.reparent(album_flow_sidebar)
 
 	album_flow_meta_line = Label.new()
 	album_flow_meta_line.name = "AlbumFlowMetaLine"
-	album_flow_meta_line.text = "— BPM   ·   —   ·   8K"
+	album_flow_meta_line.text = "— BPM   ·   —"
 	album_flow_meta_line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	album_flow_sidebar.add_child(album_flow_meta_line)
+	album_flow_identity.add_child(album_flow_meta_line)
 
 	var metadata_separator := HSeparator.new()
 	metadata_separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -819,18 +824,38 @@ void fragment() {
 	album_flow_modifier_row.add_child(album_flow_random_button)
 	album_flow_random_button.call("configure", "shuffle", "RANDOM", "OFF", MinimalThemeScript.PINK, false, size.x < 1550.0)
 	album_flow_random_button.toggled.connect(_on_random_mod_toggled)
+	reverse_mod_row = HBoxContainer.new()
+	reverse_mod_row.name = "ReverseModRow"
+	reverse_mod_row.add_theme_constant_override("separation", 6)
+	album_flow_sidebar.add_child(reverse_mod_row)
+	var reverse_caption := Label.new()
+	reverse_caption.text = "REVERSE"
+	MinimalThemeScript.apply_mono(reverse_caption, 12, MinimalThemeScript.MUTED)
+	reverse_mod_row.add_child(reverse_caption)
+	var reverse_group := ButtonGroup.new()
+	for percent: int in preload("res://scripts/reverse_mod.gd").LEVELS:
+		var option := Button.new()
+		option.text = "OFF" if percent == 0 else "%d%%" % percent
+		option.toggle_mode = true
+		option.button_group = reverse_group
+		option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		option.custom_minimum_size.y = 30
+		option.set_meta("reverse_percent", percent)
+		option.pressed.connect(set_reverse_percent.bind(percent))
+		reverse_mod_row.add_child(option)
+		reverse_mod_buttons.append(option)
 
-	var legacy_practice_button := practice_button
-	practice_button = ModButtonScene.instantiate() as Button
-	practice_button.name = "PracticeButton"
-	practice_button.tooltip_text = "Loop one authored musical section. Practice results never change normal records."
-	practice_button.toggle_mode = false
-	album_flow_modifier_row.add_child(practice_button)
-	practice_button.call("configure", "target", "PRACTICE", "SELECT", LIBRARY_ACCENT, true, size.x < 1550.0)
-	practice_button.toggle_mode = false
-	practice_button.pressed.connect(_open_v18_practice_menu)
-	if legacy_practice_button != null:
-		legacy_practice_button.queue_free()
+	var legacy_note_speed_button := note_speed_button
+	note_speed_button = ModButtonScene.instantiate() as Button
+	note_speed_button.name = "NoteSpeedButton"
+	note_speed_button.toggle_mode = false
+	# Note Speed opens a presentation setting, not a scoring modifier.
+	album_flow_sidebar.add_child(note_speed_button)
+	note_speed_button.call("configure", "arrow", "NOTE SPEED", "%.2f s" % UserSettingsScript.get_note_travel_time(), LIBRARY_ACCENT, false, size.x < 1550.0)
+	note_speed_button.toggle_mode = false
+	note_speed_button.pressed.connect(_open_note_speed)
+	if legacy_note_speed_button != null:
+		legacy_note_speed_button.queue_free()
 	replay_button.visible = false
 	action_row.visible = false
 
@@ -838,11 +863,11 @@ void fragment() {
 	album_flow_sidebar_spacer.name = "SidebarActionSpacer"
 	album_flow_sidebar_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	album_flow_sidebar.add_child(album_flow_sidebar_spacer)
+	album_flow_sidebar.move_child(note_speed_button, album_flow_sidebar_spacer.get_index())
 
 	var legacy_play_button := play_button
 	play_button = PlayButtonScene.instantiate() as Button
 	play_button.name = "PlayButton"
-	play_button.tooltip_text = "Start the selected chart."
 	play_button.pressed.connect(_play_selected_chart)
 	album_flow_sidebar.add_child(play_button)
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -868,7 +893,7 @@ func _install_album_flow_filter_tabs() -> void:
 		var toolbar_spacer := toolbar.get_node_or_null("LibraryToolbarSpacer") as Control
 		if toolbar_spacer != null:
 			toolbar_spacer.visible = false
-		search_input.placeholder_text = "Search songs, artists, or tags..."
+		search_input.placeholder_text = "Search songs or artists..."
 		_install_album_flow_search_icon()
 		search_input.visible = true
 
@@ -887,17 +912,39 @@ func _install_album_flow_filter_tabs() -> void:
 		wheel_header.custom_minimum_size.y = 28
 		var wheel_caption := wheel_header.get_node_or_null("WheelCaption") as Label
 		if wheel_caption != null:
-			wheel_caption.text = "#     TITLE"
-			wheel_caption.custom_minimum_size.x = 252
+			wheel_caption.text = "TITLE / ARTIST"
+			wheel_caption.custom_minimum_size.x = 0
+			wheel_caption.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var number_header := Label.new()
+			number_header.name = "NumberHeader"
+			number_header.text = "#"
+			number_header.custom_minimum_size.x = 38
+			number_header.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			MinimalThemeScript.apply_mono(number_header, 9, Color(MinimalThemeScript.TEXT, 0.48))
+			wheel_header.add_child(number_header)
+			wheel_header.move_child(number_header, 0)
+			var jacket_gap := Control.new()
+			jacket_gap.name = "JacketHeaderGap"
+			jacket_gap.custom_minimum_size.x = 102
+			wheel_header.add_child(jacket_gap)
+			wheel_header.move_child(jacket_gap, 1)
+			var old_spacer := wheel_header.get_node_or_null("WheelSpacer") as Control
+			if old_spacer != null:
+				old_spacer.visible = false
 			MinimalThemeScript.apply_mono(wheel_caption, 9, Color(MinimalThemeScript.TEXT, 0.48))
 		var mode_header := wheel_header.get_node_or_null("WheelModeLabel") as Label
 		if mode_header != null:
-			mode_header.text = "ARTIST                    BPM"
+			mode_header.text = "BPM"
+			mode_header.custom_minimum_size.x = 52
 			MinimalThemeScript.apply_mono(mode_header, 9, Color(MinimalThemeScript.TEXT, 0.48))
 	library_hint.visible = false
 	var separator := library_box.get_node_or_null("ListSeparator") as Control
 	if separator != null:
-		separator.visible = false
+		separator.visible = true
+		var boundary := StyleBoxLine.new()
+		boundary.color = Color(MinimalThemeScript.TEXT, 0.16)
+		boundary.thickness = 1
+		separator.add_theme_stylebox_override("separator", boundary)
 
 	album_flow_filter_tabs = HBoxContainer.new()
 	album_flow_filter_tabs.name = "AlbumFlowFilterTabs"
@@ -945,7 +992,7 @@ func _apply_album_flow_song_library_layout() -> void:
 		return
 	now_playing_card.visible = false
 	backdrop_visual.visible = true
-	backdrop_visual.modulate = Color(1, 1, 1, 0.07)
+	backdrop_visual.modulate = Color.WHITE
 	header_row.visible = true
 	for legacy_control: Control in [info_tabs, details_panel, best_card, action_row, footer_panel]:
 		legacy_control.visible = false
@@ -957,6 +1004,9 @@ func _apply_album_flow_song_library_layout() -> void:
 	main_margin.add_theme_constant_override("margin_right", 18 if compact else 30)
 	main_margin.add_theme_constant_override("margin_top", 12 if compact else 20)
 	main_margin.add_theme_constant_override("margin_bottom", 12 if compact else 22)
+	# A tall sidebar must never grow the full-screen margin upwards and crop
+	# the toolbar. Keep its origin stable; fit desktop-height gaps below.
+	main_margin.grow_vertical = Control.GROW_DIRECTION_END
 	root_vbox.add_theme_constant_override("separation", 8 if compact else 18)
 	header_row.custom_minimum_size.y = 44 if compact else 42
 	header_row.add_theme_constant_override("separation", 9 if compact else 10)
@@ -993,7 +1043,7 @@ func _apply_album_flow_song_library_layout() -> void:
 	album_flow_center_column.size_flags_stretch_ratio = 0.56
 	album_flow_sidebar.size_flags_stretch_ratio = 0.44
 	album_flow_sidebar.custom_minimum_size.x = 280 if compact else 390
-	album_flow_sidebar.add_theme_constant_override("separation", 8 if compact else 14)
+	album_flow_sidebar.add_theme_constant_override("separation", 6 if size.y < 1000.0 else (8 if compact else 14))
 
 	# The reference dedicates roughly 31.5% of the viewport width to the jacket.
 	# Deriving this from the viewport also avoids the undersized first-frame art.
@@ -1028,10 +1078,10 @@ func _apply_album_flow_song_library_layout() -> void:
 	for mode_button in [album_flow_mode_4_button, album_flow_mode_8_button]:
 		mode_button.custom_minimum_size = Vector2(90, 46 if compact else 60)
 		mode_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	album_flow_random_button.custom_minimum_size = Vector2(120, 60 if compact else 78)
+	album_flow_random_button.custom_minimum_size = Vector2(120, 44 if compact else 56)
 	album_flow_random_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	practice_button.custom_minimum_size = Vector2(0, 60 if compact else 78)
-	practice_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	note_speed_button.custom_minimum_size = Vector2(0, 42 if compact else 52)
+	note_speed_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	play_button.custom_minimum_size = Vector2(0, clampf(104.0 * layout_scale, 72.0, 104.0))
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1044,10 +1094,35 @@ func _apply_album_flow_song_library_layout() -> void:
 	sort_filter.custom_minimum_size = Vector2(108 if compact else 126, 36 if compact else 40)
 	if album_flow_list_header != null:
 		album_flow_list_header.custom_minimum_size.y = 28
+		var gap := album_flow_list_header.get_node_or_null("JacketHeaderGap") as Control
+		if gap != null:
+			gap.custom_minimum_size.x = 92 if compact else 102
 	_apply_album_flow_filter_tab_style()
 	for chip: Control in album_flow_difficulty_row.get_children():
 		chip.custom_minimum_size.y = 58 if compact else 76
 	_apply_album_flow_song_library_theme()
+
+func _fit_album_flow_title() -> void:
+	if album_flow_sidebar == null:
+		return
+	var compact := size.x < 1550.0 or size.y < 840.0
+	var base_size := 32 if compact else 40
+	var minimum_size := 24 if compact else 30
+	var font := MinimalThemeScript.semibold_font()
+	var available := maxf(detail_title.size.x, album_flow_sidebar.custom_minimum_size.x)
+	var natural_width := font.get_string_size(detail_title.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, base_size).x
+	var fitted := base_size
+	if natural_width > available:
+		fitted = clampi(floori(base_size * available / natural_width), minimum_size, base_size)
+	if detail_title.get_theme_font_size("font_size") != fitted:
+		detail_title.add_theme_font_size_override("font_size", fitted)
+	# Group copy tightly; reserve space after the group, not between title/artist.
+	# Clipped Labels report no intrinsic minimum height: reserve actual copy lines.
+	# Use the Label's shaped line count, not a separate width estimate. Word wrapping
+	# can require two lines even when that estimate rounds down to one.
+	var lines := mini(2, maxi(1, detail_title.get_line_count()))
+	detail_title.custom_minimum_size.y = ceilf(font.get_height(fitted) * lines + detail_title.get_theme_constant("line_spacing") * (lines - 1))
+	album_flow_identity.custom_minimum_size.y = ceilf(font.get_height(base_size) * 2.0 + MinimalThemeScript.body_font().get_height(18 if compact else 22) + MinimalThemeScript.mono_font().get_height(11) + 12.0)
 
 func _apply_album_flow_filter_tab_style() -> void:
 	if album_flow_filter_tabs == null:
@@ -1094,7 +1169,7 @@ func _apply_album_flow_song_library_theme() -> void:
 	title_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	back_button.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	back_button.add_theme_font_size_override("font_size", 10)
+	back_button.add_theme_font_size_override("font_size", 12)
 	back_button.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.86))
 	back_button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 	count_label.add_theme_font_override("font", MinimalThemeScript.mono_font())
@@ -1103,18 +1178,17 @@ func _apply_album_flow_song_library_theme() -> void:
 
 	detail_title.add_theme_font_override("font", MinimalThemeScript.semibold_font())
 	detail_title.uppercase = true
-	detail_title.add_theme_font_size_override("font_size", 32 if compact else 40)
 	detail_title.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	detail_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail_title.max_lines_visible = 2
-	detail_title.clip_text = false
-	detail_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD_ELLIPSIS
-	detail_title.custom_minimum_size.y = 0
+	detail_title.clip_text = true
+	detail_title.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+	_fit_album_flow_title()
 	detail_meta.add_theme_font_override("font", MinimalThemeScript.body_font())
-	detail_meta.add_theme_font_size_override("font_size", 20 if compact else 28)
+	detail_meta.add_theme_font_size_override("font_size", 18 if compact else 22)
 	detail_meta.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.74))
 	selection_index.add_theme_font_override("font", MinimalThemeScript.mono_font())
-	selection_index.add_theme_font_size_override("font_size", 10)
+	selection_index.add_theme_font_size_override("font_size", 12)
 	selection_index.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.56))
 	mode_status.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	mode_status.add_theme_font_size_override("font_size", 9)
@@ -1164,17 +1238,21 @@ func _apply_album_flow_song_library_theme() -> void:
 			var label := node as Label
 			var role := str(label.get_meta("album_role", ""))
 			match role:
+				"empty_record":
+					MinimalThemeScript.apply_body(label, 20 if compact else 24, Color(MinimalThemeScript.TEXT, 0.72))
+				"empty_record_hint":
+					MinimalThemeScript.apply_body(label, 12 if compact else 13, MinimalThemeScript.MUTED)
 				"rank":
 					MinimalThemeScript.apply_numeric(label, _library_rank_font_size(), _rank_display_color(label.text))
 				"judgement_caption", "judgement_value":
 					var ink: Color = label.get_meta("judgement_color")
 					if role == "judgement_caption":
-						MinimalThemeScript.apply_mono(label, 9 if compact else 11, Color(ink, 0.9))
+						MinimalThemeScript.apply_mono(label, 11 if compact else 12, Color(ink, 0.9))
 					else:
 						MinimalThemeScript.apply_numeric(label, 21 if compact else 26, ink)
 				"metric_caption":
 					label.add_theme_font_override("font", MinimalThemeScript.mono_font())
-					label.add_theme_font_size_override("font_size", 10 if compact else 11)
+					label.add_theme_font_size_override("font_size", 11 if compact else 12)
 					label.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.50))
 				"score_value":
 					label.add_theme_font_override("font", MinimalThemeScript.semibold_font())
@@ -1187,7 +1265,9 @@ func _apply_album_flow_song_library_theme() -> void:
 				"combo_value":
 					label.add_theme_font_override("font", MinimalThemeScript.mono_font())
 					label.add_theme_font_size_override("font_size", 10)
-					label.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.52))
+					label.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.72))
+				"record_date":
+					MinimalThemeScript.apply_mono(label, 10 if compact else 12, Color(MinimalThemeScript.TEXT, 0.72))
 				_:
 					label.add_theme_font_override("font", MinimalThemeScript.mono_font())
 					label.add_theme_font_size_override("font_size", 10 if compact else 12)
@@ -1195,16 +1275,14 @@ func _apply_album_flow_song_library_theme() -> void:
 
 	for header_filter in [artist_filter, difficulty_filter, sort_filter]:
 		header_filter.add_theme_font_override("font", MinimalThemeScript.mono_font())
-		header_filter.add_theme_font_size_override("font_size", 10)
+		header_filter.add_theme_font_size_override("font_size", 12)
 		header_filter.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.84))
 		header_filter.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT)
 		header_filter.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
 		header_filter.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT)
 	_style_album_play_button()
 	_style_album_secondary_chip(album_flow_random_button, random_mode_enabled, MinimalThemeScript.PINK)
-	# Practice is an accented action in the reference. It still opens the authored
-	# section picker; only its presentation is active/outlined here.
-	_style_album_secondary_chip(practice_button, true, LIBRARY_ACCENT)
+	_style_album_secondary_chip(note_speed_button, false, LIBRARY_ACCENT)
 	for mode_button in [album_flow_mode_4_button, album_flow_mode_8_button]:
 		_style_album_segment_button(mode_button, mode_button.button_pressed)
 	_apply_album_flow_filter_tab_style()
@@ -1286,11 +1364,12 @@ func _refresh_album_flow_best_card(chart: Dictionary) -> void:
 		return
 	var entry: Dictionary = {}
 	if not chart.is_empty():
-		var key := ScoreIdentity.key(chart, UserSettingsScript.get_input_style(), random_mode_enabled)
+		var key := ScoreIdentity.key(chart, UserSettingsScript.get_input_style(), random_mode_enabled, reverse_mod_percent)
 		var raw: Variant = best_stats.get(key, {})
 		if raw is Dictionary:
 			entry = raw as Dictionary
 	var has_record := not entry.is_empty() and int(entry.get("score", 0)) > 0
+	album_flow_record_panel.call("set_record_available", has_record)
 	album_flow_best_caption_value.text = "BEST RECORD"
 	album_flow_best_rank_value.text = str(entry.get("best_rank", entry.get("rank", ""))) if has_record else ""
 	var rank_ink := _rank_display_color(album_flow_best_rank_value.text)
@@ -1309,7 +1388,8 @@ func _refresh_album_flow_best_card(chart: Dictionary) -> void:
 	var combo_value := int(entry.get("best_max_combo", entry.get("max_combo", 0)))
 	var accuracy_value := float(entry.get("best_accuracy", entry.get("accuracy", 0.0)))
 	album_flow_best_accuracy_value.text = ("%.2f%%" % accuracy_value) if has_record else "—"
-	album_flow_best_combo_value.text = ("MAX COMBO  %d" % combo_value) if has_record and combo_value > 0 else "PLAY THIS CHART TO SET A SCORE"
+	album_flow_best_combo_value.text = ("MAX COMBO  %d" % combo_value) if has_record and combo_value > 0 else ""
+	album_flow_best_combo_value.visible = has_record and combo_value > 0
 	if album_flow_record_breakdown_row != null:
 		album_flow_record_breakdown_row.visible = has_record
 	if album_flow_record_perfect_value != null:
@@ -1342,6 +1422,12 @@ func _library_rank_font_size() -> int:
 	return (22 if compact else 28) if album_flow_best_rank_value.text.length() > 1 else (36 if compact else 46)
 
 func _update_album_flow_modifier_state() -> void:
+	for option: Button in reverse_mod_buttons:
+		var active := int(option.get_meta("reverse_percent")) == reverse_mod_percent
+		option.set_pressed_no_signal(active)
+		_library_outline_button(option, active, MinimalThemeScript.DANGER)
+		option.add_theme_font_override("font", MinimalThemeScript.mono_font())
+		option.add_theme_font_size_override("font_size", 12)
 	if album_flow_showcase_row == null:
 		return
 	mods_button.text = "4 KEY" if UserSettingsScript.get_input_style() == "4_arrow" else "8 KEY"
@@ -1356,9 +1442,9 @@ func _update_album_flow_modifier_state() -> void:
 		album_flow_random_button.set_pressed_no_signal(random_mode_enabled)
 		_set_album_flow_mod_button_state(album_flow_random_button, "ON" if random_mode_enabled else "OFF", MinimalThemeScript.PINK, random_mode_enabled)
 		_style_album_secondary_chip(album_flow_random_button, random_mode_enabled, MinimalThemeScript.PINK)
-	if practice_button != null:
-		_set_album_flow_mod_button_state(practice_button, "SELECT", LIBRARY_ACCENT, true)
-		_style_album_secondary_chip(practice_button, true, LIBRARY_ACCENT)
+	if note_speed_button != null:
+		_set_album_flow_mod_button_state(note_speed_button, "%.2f s" % UserSettingsScript.get_note_travel_time() if not note_speed_button.disabled else "UNAVAILABLE", LIBRARY_ACCENT, false)
+		_style_album_secondary_chip(note_speed_button, false, LIBRARY_ACCENT)
 
 func _apply_theme_config() -> void:
 	if theme_config == null:
@@ -1397,7 +1483,7 @@ func _apply_theme_config() -> void:
 	library_hint.add_theme_font_size_override("font_size", theme_config.caption_size)
 	footer_status.add_theme_color_override("font_color", theme_config.text_secondary)
 	footer_status.add_theme_font_size_override("font_size", theme_config.caption_size)
-	for button in [play_button, mods_button, import_button, refresh_button, editor_button, back_button, mode_8_button, mode_4_button, random_mod_button, mods_close_button, practice_button, replay_button, rank_sort_button]:
+	for button in [play_button, mods_button, import_button, refresh_button, back_button, mode_8_button, mode_4_button, random_mod_button, mods_close_button, note_speed_button, replay_button, rank_sort_button]:
 		if button != null:
 			_style_button(button)
 	_style_option_button(artist_filter)
@@ -1414,8 +1500,8 @@ func _apply_theme_config() -> void:
 	_style_mods_ui()
 	MinimalThemeScript.style_secondary(back_button, MinimalThemeScript.CYAN)
 	_style_action_back(back_button)
-	if practice_button != null:
-		MinimalThemeScript.style_secondary(practice_button, MinimalThemeScript.CYAN)
+	if note_speed_button != null:
+		MinimalThemeScript.style_secondary(note_speed_button, MinimalThemeScript.CYAN)
 	if replay_button != null:
 		MinimalThemeScript.style_secondary(replay_button, MinimalThemeScript.CYAN)
 	if rank_sort_button != null:
@@ -2115,6 +2201,17 @@ func set_random_mode(enabled: bool) -> void:
 func get_random_mode() -> bool:
 	return random_mode_enabled
 
+func get_reverse_percent() -> int:
+	return reverse_mod_percent
+
+func set_reverse_percent(percent: int) -> void:
+	if percent not in preload("res://scripts/reverse_mod.gd").LEVELS or transitioning_out:
+		return
+	reverse_mod_percent = percent
+	_update_album_flow_modifier_state()
+	_update_detail(false)
+	_update_best_stats()
+
 func set_catalog(new_levels: Array) -> void:
 	levels = new_levels
 	_rebuild_song_ids()
@@ -2171,6 +2268,20 @@ func set_selected_song(song_id: String) -> void:
 
 func get_selected_song_id() -> String:
 	return selected_song_id
+
+func prepare_route_selection(song_id: String) -> void:
+	# Finalise resident presentation while hidden; do not take audio ownership.
+	detail_transition_generation += 1
+	if info_tween != null and info_tween.is_valid():
+		info_tween.kill()
+	info_panel.modulate.a = 1.0
+	preparing_route_presentation = true
+	if not song_id.is_empty():
+		set_selected_song(song_id)
+	# Also flush a pending local difficulty/detail transition on a same-song return.
+	_update_detail(false)
+	preparing_route_presentation = false
+	call_deferred("_center_selected_row", false)
 
 func get_selected_difficulty() -> String:
 	return selected_difficulty
@@ -2359,6 +2470,13 @@ func _rebuild_song_list() -> void:
 		empty_label.add_theme_font_size_override("font_size", 15)
 		empty_label.add_theme_color_override("font_color", MinimalThemeScript.MUTED)
 		song_list.add_child(empty_label)
+		var clear_filters := Button.new()
+		clear_filters.name = "ClearLibraryFilters"
+		clear_filters.text = "CLEAR SEARCH & FILTERS"
+		clear_filters.custom_minimum_size.y = 44
+		MinimalThemeScript.style_secondary(clear_filters)
+		clear_filters.pressed.connect(_clear_library_filters)
+		song_list.add_child(clear_filters)
 
 	for index in range(filtered_song_ids.size()):
 		var song_id: String = filtered_song_ids[index]
@@ -2424,7 +2542,7 @@ func _rebuild_song_list() -> void:
 
 	var totals := _completion_totals()
 	count_label.text = "SONG LIBRARY"
-	wheel_mode_label.text = "ARTIST                    BPM" if is_album_flow_library_layout_active() else "%d TRACK%s" % [song_ids.size(), "" if song_ids.size() == 1 else "S"]
+	wheel_mode_label.text = "BPM" if is_album_flow_library_layout_active() else "%d TRACK%s" % [song_ids.size(), "" if song_ids.size() == 1 else "S"]
 	library_hint.text = "%d VISIBLE  ·  %d CLEARED" % [filtered_song_ids.size(), totals[0]]
 	_refresh_song_rows(false)
 	call_deferred("_center_selected_row", false)
@@ -2454,6 +2572,8 @@ func _apply_song_header_text_emphasis(button: Button, is_selected: bool, distanc
 					alpha = clampf(base_alpha * lerpf(0.86, 0.94, proximity), 0.80, 0.98)
 				"song_subtitle":
 					alpha = clampf(base_alpha * lerpf(0.78, 0.86, proximity), 0.70, 0.90)
+				"song_level":
+					alpha = lerpf(0.64, 0.76, proximity)
 				_:
 					alpha = clampf(base_alpha * lerpf(0.48, 0.66, proximity), 0.32, 0.64)
 		label.add_theme_color_override("font_color", Color(1, 1, 1, alpha))
@@ -2724,9 +2844,26 @@ func _preferred_initial_song() -> String:
 				return song_id
 	return filtered_song_ids[0] if not filtered_song_ids.is_empty() else ""
 
+func _clear_library_filters() -> void:
+	search_input.text = ""
+	selected_search_query = ""
+	selected_artist_filter = "All Artists"
+	selected_difficulty_filter = "All Difficulties"
+	selected_progress_filter = "All Progress"
+	artist_filter.select(0)
+	difficulty_filter.select(0)
+	_apply_filters(false)
+	search_input.grab_focus()
+
 func _update_detail(animated: bool = true) -> void:
 	if animated:
 		_pulse_info()
+	var has_selection := not selected_song_id.is_empty()
+	# Never present the previous chart or record as an empty search result.
+	for presentation: Control in [hero_panel, album_flow_record_panel, album_flow_identity, album_flow_difficulty_caption, album_flow_difficulty_row]:
+		if presentation != null:
+			presentation.visible = has_selection
+	selection_index.get_parent().visible = has_selection
 	if selected_song_id.is_empty():
 		if album_flow_artwork != null:
 			album_flow_artwork.texture = null
@@ -2737,7 +2874,7 @@ func _update_detail(animated: bool = true) -> void:
 		song_visual.visible = false
 		run_picker.clear()
 		run_picker.disabled = true
-		detail_title.text = "NO SONGS FOUND"
+		detail_title.text = ""
 		detail_meta.visible = false
 		detail_meta.text = ""
 		detail_description.text = "SELECT ANOTHER FILTER OR IMPORT CHART JSON FILES"
@@ -2775,7 +2912,8 @@ func _update_detail(animated: bool = true) -> void:
 		_set_album_flow_play_text("NO PLAYABLE CHART")
 		footer_status.text = ""
 		footer_status.add_theme_color_override("font_color", MinimalThemeScript.MUTED)
-		preview_player.stop_immediately()
+		if not preparing_route_presentation:
+			preview_player.stop_immediately()
 		composition.refresh(self)
 		return
 	var rep: Dictionary = _representative(selected_song_id)
@@ -2827,7 +2965,7 @@ func _update_detail(animated: bool = true) -> void:
 	duration_value.text = _format_duration(duration)
 	notes_value.text = "4 KEY" if UserSettingsScript.get_input_style() == "4_arrow" else "8 KEY"
 	if album_flow_meta_line != null:
-		album_flow_meta_line.text = "%d BPM   ·   %s   ·   %s" % [bpm, _format_duration(duration), "4K" if UserSettingsScript.get_input_style() == "4_arrow" else "8K"]
+		album_flow_meta_line.text = "%d BPM   ·   %s" % [bpm, _format_duration(duration)]
 	_update_chart_breakdown(chart, events_value, input_mode_label, stars, recommendation, standard_progress, chart_playable)
 	ranking_context.text = ""
 	ranking_context.visible = false
@@ -2845,7 +2983,7 @@ func _update_detail(animated: bool = true) -> void:
 			album_flow_detail_backdrop.visible = ambient_texture != null
 	song_visual.call("set_song", selected_song_id, selected_difficulty, ambient_background_path)
 	backdrop_visual.call("set_song", selected_song_id, selected_difficulty, ambient_background_path)
-	if is_visible_in_tree():
+	if is_visible_in_tree() and not preparing_route_presentation:
 		if preview_player.has_method("queue_chart_preview"):
 			preview_player.call("queue_chart_preview", chart, 0.14)
 		else:
@@ -2856,14 +2994,13 @@ func _update_detail(animated: bool = true) -> void:
 	_update_album_flow_modifier_state()
 	play_button.disabled = not chart_playable
 	_set_album_flow_play_text("PLAY" if chart_playable else ("AUDIO MISSING" if not RuntimeResourceAccessScript.audio_exists(str(chart.get("audio", ""))) else "INVALID CHART"))
-	if practice_button != null:
-		var sections_value_v18: Variant = chart.get("sections", [])
-		practice_button.disabled = (not chart_playable) or not (sections_value_v18 is Array) or (sections_value_v18 as Array).is_empty()
-		_set_album_flow_mod_button_state(practice_button, "SELECT" if not practice_button.disabled else "UNAVAILABLE", LIBRARY_ACCENT, not practice_button.disabled)
-		_style_album_secondary_chip(practice_button, not practice_button.disabled, LIBRARY_ACCENT)
+	if note_speed_button != null:
+		note_speed_button.disabled = transitioning_out
+		_set_album_flow_mod_button_state(note_speed_button, "%.2f s" % UserSettingsScript.get_note_travel_time() if not note_speed_button.disabled else "UNAVAILABLE", LIBRARY_ACCENT, false)
+		_style_album_secondary_chip(note_speed_button, false, LIBRARY_ACCENT)
 	if replay_button != null:
 		var replay_manager_v18: Node = get_node_or_null("/root/ReplayManager")
-		replay_button.disabled = not chart_playable or replay_manager_v18 == null or not bool(replay_manager_v18.call("has_latest", chart, UserSettingsScript.get_input_style(), random_mode_enabled))
+		replay_button.disabled = not chart_playable or replay_manager_v18 == null or not bool(replay_manager_v18.call("has_latest", _selected_v18_chart(), UserSettingsScript.get_input_style(), random_mode_enabled))
 	composition.refresh(self)
 	footer_status.text = ""
 	footer_status.add_theme_color_override("font_color", MinimalThemeScript.MUTED)
@@ -2899,6 +3036,8 @@ func _start_selected_preview_if_current(resume_generation: int) -> void:
 	_start_selected_preview()
 
 func shell_will_suspend(_context: Dictionary) -> void:
+	if note_speed_dialog != null:
+		note_speed_dialog.hide()
 	# Invalidate both an already-queued preview and any call_deferred() from the
 	# previous resume that has not executed yet.
 	preview_resume_generation += 1
@@ -3126,7 +3265,6 @@ func _build_record_controls() -> void:
 	rank_sort_button = Button.new()
 	rank_sort_button.name = "RankingSortButton"
 	rank_sort_button.text = "SORT: SCORE" if rank_sort_mode == "score" else "SORT: NEWEST"
-	rank_sort_button.tooltip_text = "Sort local runs by top score or latest date. Current: score"
 	rank_sort_button.custom_minimum_size = Vector2(84, 28)
 	MinimalThemeScript.style_secondary(rank_sort_button)
 	rank_sort_button.pressed.connect(_toggle_v18_rank_sort)
@@ -3175,36 +3313,30 @@ func _build_record_controls() -> void:
 	add_child(export_button)
 
 func _build_v18_action_controls() -> void:
-	# Integrate Practice / Replay into the bottom action row so the library keeps one clean control band.
+	# Integrate Note Speed / Replay into the bottom action row.
 	v18_mode_row = null
 	action_row.add_theme_constant_override("separation", 8)
 	play_button.custom_minimum_size = Vector2(220, 44)
 	play_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-	practice_button = Button.new()
-	practice_button.name = "PracticeButton"
-	practice_button.text = "PRACTICE"
-	practice_button.tooltip_text = "Loop one authored musical section. Practice results never change normal records."
-	practice_button.custom_minimum_size = Vector2(118, 34)
-	MinimalThemeScript.style_secondary(practice_button)
-	practice_button.pressed.connect(_open_v18_practice_menu)
-	action_row.add_child(practice_button)
-	action_row.move_child(practice_button, play_button.get_index())
+	note_speed_button = Button.new()
+	note_speed_button.name = "NoteSpeedButton"
+	note_speed_button.text = "NOTE SPEED"
+	note_speed_button.custom_minimum_size = Vector2(118, 34)
+	MinimalThemeScript.style_secondary(note_speed_button)
+	note_speed_button.pressed.connect(_open_note_speed)
+	action_row.add_child(note_speed_button)
+	action_row.move_child(note_speed_button, play_button.get_index())
 
 	replay_button = Button.new()
 	replay_button.name = "ReplayButton"
 	replay_button.text = "REPLAY"
-	replay_button.tooltip_text = "Play the latest deterministic local replay for this chart and ruleset."
 	replay_button.custom_minimum_size = Vector2(106, 34)
 	MinimalThemeScript.style_secondary(replay_button)
 	replay_button.pressed.connect(_play_v18_latest_replay)
 	action_row.add_child(replay_button)
 	action_row.move_child(replay_button, play_button.get_index())
 
-	practice_popup = preload("res://scripts/ui/beat_context_menu.gd").new()
-	practice_popup.name = "PracticeSectionMenu"
-	practice_popup.id_pressed.connect(_launch_v18_practice_section)
-	add_child(practice_popup)
 
 
 func _build_v18_progress_controls() -> void:
@@ -3214,33 +3346,10 @@ func _build_v18_progress_controls() -> void:
 	progress_insight_label = null
 
 func _selected_v18_chart() -> Dictionary:
-	return _find_level(selected_song_id, selected_difficulty)
-
-func _open_v18_practice_menu() -> void:
-	var chart: Dictionary = _selected_v18_chart()
-	if chart.is_empty():
-		return
-	practice_popup.clear()
-	var sections_value: Variant = chart.get("sections", [])
-	if not (sections_value is Array) or (sections_value as Array).is_empty():
-		practice_popup.add_item("NO AUTHORED SECTIONS", -1)
-		practice_popup.set_item_disabled(0, true)
-	else:
-		var sections: Array = sections_value as Array
-		for i: int in range(sections.size()):
-			if not (sections[i] is Dictionary):
-				continue
-			var section: Dictionary = sections[i] as Dictionary
-			var role: String = str(section.get("role", section.get("name", "section"))).replace("_", " ").to_upper()
-			var start_s: float = float(section.get("start", 0.0))
-			var end_s: float = float(section.get("end", start_s))
-			practice_popup.add_item("%s  ·  %s–%s" % [role, _format_duration(start_s), _format_duration(end_s)], i)
-	practice_popup.popup_near(practice_button, true)
-
-func _launch_v18_practice_section(section_index: int) -> void:
-	if section_index < 0 or selected_song_id.is_empty():
-		return
-	_transition_out(func(): practice_requested.emit(selected_song_id, selected_difficulty, random_mode_enabled, section_index), false)
+	var chart := _find_level(selected_song_id, selected_difficulty).duplicate(true)
+	if reverse_mod_percent > 0:
+		chart["_reverse_mod_percent"] = reverse_mod_percent
+	return chart
 
 func _play_v18_latest_replay() -> void:
 	var chart: Dictionary = _selected_v18_chart()
@@ -3259,7 +3368,6 @@ func _toggle_v18_rank_sort() -> void:
 	rank_sort_mode = "date" if rank_sort_mode == "score" else "score"
 	if rank_sort_button != null:
 		rank_sort_button.text = "SORT: SCORE" if rank_sort_mode == "score" else "SORT: NEWEST"
-		rank_sort_button.tooltip_text = "Sort local runs by top score or latest date. Current: %s" % rank_sort_mode
 	selected_record = 0
 	_update_best_stats()
 
@@ -3285,7 +3393,7 @@ func _update_best_stats() -> void:
 		record_rows = []
 		_render_local_ranking()
 		return
-	var key: String = ScoreIdentity.key(chart, ranking_input_style, ranking_random_mode)
+	var key: String = ScoreIdentity.key(chart, ranking_input_style, ranking_random_mode, reverse_mod_percent)
 	record_context = key
 	var entry_value: Variant = best_stats.get(key, {})
 	var entry: Dictionary = entry_value as Dictionary if entry_value is Dictionary else {}
@@ -3345,12 +3453,7 @@ func _display_record() -> void:
 	_render_local_ranking()
 
 func _rank_display_color(rank: String) -> Color:
-	match rank.to_upper():
-		"SS", "S": return MinimalThemeScript.PINK
-		"A": return MinimalThemeScript.GOLD
-		"B": return MinimalThemeScript.CYAN
-		"C": return MinimalThemeScript.SUCCESS
-		_: return MinimalThemeScript.MUTED
+	return MinimalThemeScript.RANK_COLORS.get(rank.to_upper(), MinimalThemeScript.MUTED)
 
 func _progress_entry(song_id: String, difficulty_id: String) -> Dictionary:
 	if song_id.is_empty() or difficulty_id.is_empty():
@@ -3358,7 +3461,7 @@ func _progress_entry(song_id: String, difficulty_id: String) -> Dictionary:
 	var chart: Dictionary = _find_level(song_id, difficulty_id)
 	if chart.is_empty():
 		return {}
-	var key := ScoreIdentity.key(chart, UserSettingsScript.get_input_style(), random_mode_enabled)
+	var key := ScoreIdentity.key(chart, UserSettingsScript.get_input_style(), random_mode_enabled, reverse_mod_percent)
 	var raw: Variant = best_stats.get(key, {})
 	return raw as Dictionary if raw is Dictionary else {}
 
@@ -3518,8 +3621,10 @@ func _play_selected_chart() -> void:
 	_transition_out(func(): play_requested.emit(selected_song_id, selected_difficulty, random_mode_enabled), false)
 
 func _lock_navigation_controls() -> void:
-	var navigation_buttons: Array[Button] = [play_button, back_button, mods_button, import_button, refresh_button, editor_button, pack_export_button]
-	if practice_button != null: navigation_buttons.append(practice_button)
+	for option: Button in reverse_mod_buttons:
+		option.disabled = true
+	var navigation_buttons: Array[Button] = [play_button, back_button, mods_button, import_button, refresh_button, pack_export_button]
+	if note_speed_button != null: navigation_buttons.append(note_speed_button)
 	if replay_button != null: navigation_buttons.append(replay_button)
 	for button in navigation_buttons:
 		button.disabled = true
@@ -3530,11 +3635,12 @@ func _lock_navigation_controls() -> void:
 	sort_filter.disabled = true
 
 func _unlock_navigation_controls(refresh_detail: bool = true) -> void:
+	for option: Button in reverse_mod_buttons:
+		option.disabled = false
 	back_button.disabled = false
 	mods_button.disabled = false
 	import_button.disabled = false
 	refresh_button.disabled = false
-	editor_button.disabled = false
 	pack_export_button.disabled = false
 	search_input.editable = true
 	artist_filter.disabled = false
@@ -3561,9 +3667,6 @@ func show_playback_error(message: String) -> void:
 
 func _on_back_pressed() -> void:
 	_transition_out(func(): back_requested.emit(), true)
-
-func _on_editor_pressed() -> void:
-	_transition_out(func(): chart_editor_requested.emit(), false)
 
 func _transition_out(action: Callable, preserve_music: bool = false) -> void:
 	# v17.4.21.5: an inbound seamless handoff still counts as an active
@@ -3717,6 +3820,10 @@ func _format_duration(seconds: float) -> String:
 	return "%d:%02d" % [floori(float(total) / 60.0), total % 60]
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if note_speed_dialog != null and note_speed_dialog.visible:
+		if event is InputEventKey:
+			get_viewport().set_input_as_handled()
+		return
 	if SceneTransition.is_transitioning():
 		if event is InputEventKey:
 			get_viewport().set_input_as_handled()
@@ -3793,3 +3900,19 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		current_index = wrapi(current_index + (-1 if key.keycode == KEY_UP else 1), 0, filtered_song_ids.size())
 		_select_song(filtered_song_ids[current_index])
 		get_viewport().set_input_as_handled()
+
+func _open_note_speed() -> void:
+	if transitioning_out:
+		return
+	if note_speed_dialog == null:
+		note_speed_dialog = preload("res://scripts/ui/note_speed_dialog.gd").new()
+		add_child(note_speed_dialog)
+		note_speed_dialog.visibility_changed.connect(_on_note_speed_dialog_visibility_changed)
+	var chart := _find_level(selected_song_id, selected_difficulty)
+	var rep := _representative(selected_song_id)
+	note_speed_dialog.open(UserSettingsScript.get_input_style(), float(chart.get("bpm", rep.get("bpm", 140.0))))
+
+func _on_note_speed_dialog_visibility_changed() -> void:
+	_update_album_flow_modifier_state()
+	if not note_speed_dialog.visible and note_speed_button.is_visible_in_tree():
+		note_speed_button.grab_focus()

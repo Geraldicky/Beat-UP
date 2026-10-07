@@ -35,6 +35,7 @@ const PERFECT_PINK := PINK
 const GREAT_GREEN := SUCCESS
 const GOOD_CYAN := CYAN
 const MISS_RED := DANGER
+const RANK_COLORS := {"D": Color("ff596c"), "C": Color("ffa451"), "B": Color("62e69b"), "A": Color("729dff"), "S": Color("43d9ff"), "SS": Color("ffdb72")}
 
 # Global design tokens.
 const SPACE_XS := 4

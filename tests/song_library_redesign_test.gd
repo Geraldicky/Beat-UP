@@ -29,7 +29,7 @@ func run() -> void:
 	check(s.album_flow_record_panel != null and s.album_flow_record_panel.get_parent() == s.album_flow_center_column, "Reusable Best Record component is not installed.")
 	check(s.album_flow_difficulty_row.get_child_count() == 3, "Reusable difficulty cards are incomplete.")
 	check(s.album_flow_mode_4_button != null and s.album_flow_mode_8_button != null, "Reusable mode buttons are missing.")
-	check(s.album_flow_random_button != null and s.practice_button != null, "Reusable mod buttons are missing.")
+	check(s.album_flow_random_button != null and s.note_speed_button != null, "Random and Note Speed controls are missing.")
 	check(s.play_button.find_child("PlayIcon", true, false) != null, "Reusable Play component is missing its canonical icon.")
 	check(s.sort_filter.get_item_count() == 2, "Release Song Library sort contract is not BPM Asc/Desc only.")
 

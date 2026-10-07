@@ -11,7 +11,6 @@ const ThemeConfigScript = preload("res://config/theme_config.gd")
 @onready var notes: Control = $Notes
 @onready var lane_shadow: Control = $LaneShadow
 @onready var lane: Control = $Lane
-@onready var input_compass: NumpadCompassVisual = $Lane/InputCompass
 @onready var hit_point: Marker2D = $HitPoint
 @onready var spawn_point: Marker2D = $SpawnPoint
 @onready var hit_zone: Control = $HitZone
@@ -20,11 +19,16 @@ const ThemeConfigScript = preload("res://config/theme_config.gd")
 @onready var space_prompt: Control = $SpacePrompt
 @onready var space_approach: Control = $SpacePrompt/ApproachDiamond
 @onready var space_badge: Control = $SpacePrompt/PromptBadge
+@onready var space_target: Control = $SpacePrompt/TargetDiamond
 @onready var hit_pulse: Control = $FX/HitPulse
 @onready var hit_burst: Control = $FX/HitBurst
 
 var hit_feedback_tween: Tween
 var effect_intensity: float = 0.75
+var _has_position_snapshot := false
+var _last_visual_time := 0.0
+var _last_travel_time := 1.0
+var _last_current_note: RhythmNote
 
 func _ready() -> void:
 	if layout_config == null:
@@ -38,6 +42,7 @@ func _ready() -> void:
 func _apply_gameplay_palette() -> void:
 	hit_zone.set("fill_color", theme_config.hit_zone_fill)
 	hit_zone.set("stroke_color", theme_config.hit_zone_border)
+	hit_zone.set("stroke_width", 4.0)
 	hit_zone_inner.set("fill_color", theme_config.hit_zone_inner_fill)
 	hit_zone_inner.set("stroke_color", theme_config.hit_zone_inner_border)
 	hit_zone_caption.add_theme_color_override("font_color", Color(theme_config.base_dark, 0.82))
@@ -65,9 +70,6 @@ func apply_layout() -> void:
 	lane.size = Vector2(maxf(1.0, lane_right - lane_left), lane_height)
 	if lane.has_method("set_receptor_x"):
 		lane.call("set_receptor_x", hit_x - lane_left)
-	var compass_size := clampf(size.y * 0.16, 108.0, 174.0)
-	input_compass.position = Vector2(24.0, size.y - compass_size - 28.0) - lane.position
-	input_compass.size = Vector2.ONE * compass_size
 	lane_shadow.position = lane.position + Vector2(0.0, shadow_offset)
 	lane_shadow.modulate = theme_config.lane_shadow
 	lane_shadow.size = lane.size
@@ -90,23 +92,31 @@ func apply_layout() -> void:
 	space_prompt.size = prompt_size
 	space_approach.pivot_offset = prompt_size * 0.5
 	var badge_height: float = layout_config.space_badge_height
-	space_badge.position = Vector2(0.0, prompt_size.y - badge_height)
+	space_badge.position = Vector2(0.0, (prompt_size.y + hit_size.y) * 0.5 + 10.0)
 	space_badge.size = Vector2(prompt_size.x, badge_height)
 	space_badge.pivot_offset = space_badge.size * 0.5
+	var target_size := layout_config.space_approach_target_size
+	space_target.position = Vector2.ONE * ((prompt_size.x - target_size) * 0.5)
+	space_target.size = Vector2.ONE * target_size
+	space_target.set("stroke_color", theme_config.space_accent)
+	# Resize can happen while the song clock is frozen. Reproject the last visual
+	# snapshot onto the new lane; never advance the clock or judge notes here.
+	if _has_position_snapshot:
+		update_note_positions(_last_visual_time, _last_travel_time, _last_current_note if is_instance_valid(_last_current_note) else null)
 
 func get_visual_hit_zone_size() -> float:
 	# Visual geometry only: HitPoint, spawn, travel and judgement are unchanged.
 	return layout_config.hit_zone_size * 1.25 * clampf(size.y / 1080.0, 0.85, 1.1)
 
 func clear_notes() -> void:
+	_has_position_snapshot = false
 	for child in notes.get_children():
 		notes.remove_child(child)
 		child.queue_free()
 	set_space_prompt(false, 0.0, false)
-	if input_compass != null:
-		input_compass.reset_activity()
 
 func clear_notes_batched(batch_size: int = 96) -> void:
+	_has_position_snapshot = false
 	# Used by the persistent AppShell after gameplay has become hidden. Freeing a
 	# full MASTER chart in one frame can stall the newly revealed Song Library,
 	# so distribute node detachment across idle frames.
@@ -122,19 +132,14 @@ func clear_notes_batched(batch_size: int = 96) -> void:
 		if (index + 1) % safe_batch_size == 0:
 			await get_tree().process_frame
 	set_space_prompt(false, 0.0, false)
-	if input_compass != null:
-		input_compass.reset_activity()
 
-func set_input_style(style: String) -> void:
-	if input_compass != null:
-		input_compass.set_input_style(style)
+func set_input_binding_labels(snapshot: Dictionary) -> void:
+	# Keep the Space timing prompt accurate without a compass or live settings I/O.
+	var bindings: Dictionary = snapshot.get("bindings", {})
+	($SpacePrompt/PromptBadge/Label as Label).text = OS.get_keycode_string(int(bindings.get("space", KEY_SPACE))).to_upper()
 
 func set_effect_intensity_percent(value: float) -> void:
 	effect_intensity = clampf(value / 100.0, 0.0, 1.0)
-
-func flash_input(keycode: int) -> void:
-	if input_compass != null:
-		input_compass.flash_key(keycode)
 
 func spawn_note(data: Dictionary) -> RhythmNote:
 	if note_scene == null:
@@ -147,6 +152,10 @@ func spawn_note(data: Dictionary) -> RhythmNote:
 	return note
 
 func update_note_positions(current_time: float, travel_time: float, current_note: RhythmNote) -> void:
+	_has_position_snapshot = true
+	_last_visual_time = current_time
+	_last_travel_time = travel_time
+	_last_current_note = current_note
 	var hit_x: float = hit_point.position.x
 	var spawn_x: float = spawn_point.position.x
 	var lane_y: float = hit_point.position.y
@@ -203,7 +212,8 @@ func play_hit_feedback(rating: String) -> void:
 	hit_pulse.scale = Vector2.ONE * pulse_start_scale
 	hit_burst.scale = Vector2.ONE * burst_start_scale
 	hit_zone.scale = Vector2.ONE * receptor_scale
-	hit_zone.modulate = Color.WHITE.lerp(feedback_color, fx)
+	# Keep the timing anchor white; judgement colour belongs to the brief FX.
+	hit_zone.modulate = Color.WHITE
 
 	hit_feedback_tween = create_tween()
 	hit_feedback_tween.set_parallel(true)

@@ -9,7 +9,7 @@ static func export_zip() -> Dictionary:
  _collect("user://playtest_data", paths)
  _collect("user://performance", paths)
  _collect("user://replays", paths)
- for extra: String in ["user://best_level_stats.json", "user://practice_records.json", "user://user_settings.json"]:
+ for extra: String in ["user://best_level_stats.json", "user://user_settings.json"]:
   if FileAccess.file_exists(extra): paths.append(extra)
  var count: int = 0
  for source: String in paths:

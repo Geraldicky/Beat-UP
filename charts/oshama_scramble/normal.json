@@ -13,7 +13,7 @@
 	"beat_offset": 2.594868,
 	"duration": 122.044127,
 	"seed": 174214.0,
-	"recommended": "NORMAL • 5★ • 269 notes • 6 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 5★ • 238 notes • 6 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.858026,
@@ -76,11 +76,6 @@
 			"direction": 4
 		},
 		{
-			"time": 9.384342,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 10.015921,
 			"type": "normal",
 			"direction": 2
@@ -121,11 +116,6 @@
 			"direction": 8
 		},
 		{
-			"time": 12.858026,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 13.015921,
 			"type": "normal",
 			"direction": 9
@@ -156,11 +146,6 @@
 			"direction": 3
 		},
 		{
-			"time": 15.542236,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 15.858026,
 			"type": "normal",
 			"direction": 8
@@ -184,11 +169,6 @@
 			"time": 17.436973,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 17.594868,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 17.752763,
@@ -239,46 +219,6 @@
 			"time": 22.489605,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 22.805394,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 23.121184,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 24.068552,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 25.015921,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 25.33171,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 25.963289,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 26.594868,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 27.226447,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 27.858026,
@@ -421,16 +361,6 @@
 			"direction": 2
 		},
 		{
-			"time": 42.542236,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 42.700131,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 43.015921,
 			"type": "reverse",
 			"direction": 6
@@ -491,11 +421,6 @@
 			"direction": 1
 		},
 		{
-			"time": 47.279079,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 47.436973,
 			"type": "normal",
 			"direction": 6
@@ -504,11 +429,6 @@
 			"time": 47.752763,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 47.910657,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 48.068552,
@@ -549,11 +469,6 @@
 			"time": 50.279079,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 50.436973,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 50.594868,
@@ -611,11 +526,6 @@
 			"direction": 6
 		},
 		{
-			"time": 55.489605,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 55.6475,
 			"type": "normal",
 			"direction": 3
@@ -636,19 +546,9 @@
 			"direction": 2
 		},
 		{
-			"time": 57.384342,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 57.858026,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 58.173815,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 58.489605,
@@ -684,11 +584,6 @@
 			"time": 61.015921,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 61.173815,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 61.33171,
@@ -799,11 +694,6 @@
 			"time": 72.068552,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 73.33171,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 73.805394,
@@ -946,11 +836,6 @@
 			"direction": 3
 		},
 		{
-			"time": 88.489605,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 88.963289,
 			"type": "normal",
 			"direction": 7
@@ -969,11 +854,6 @@
 			"time": 90.068552,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 90.226447,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 90.384342,
@@ -996,11 +876,6 @@
 			"direction": 1
 		},
 		{
-			"time": 91.489605,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 92.279079,
 			"type": "reverse",
 			"direction": 6
@@ -1014,11 +889,6 @@
 			"time": 93.226447,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 93.384342,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 93.542236,
@@ -1116,11 +986,6 @@
 			"direction": 6
 		},
 		{
-			"time": 101.594868,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 101.910657,
 			"type": "normal",
 			"direction": 7
@@ -1154,11 +1019,6 @@
 			"time": 103.963289,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 104.121184,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 104.752763,
@@ -1201,11 +1061,6 @@
 			"direction": 1
 		},
 		{
-			"time": 107.279079,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 107.594868,
 			"type": "normal",
 			"direction": 2
@@ -1224,11 +1079,6 @@
 			"time": 108.384342,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 108.700131,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 109.015921,
@@ -1304,11 +1154,6 @@
 			"time": 114.068552,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 114.226447,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 114.858026,
@@ -1498,7 +1343,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 16
+		"reverse": 15
 	},
 	"generator_diagnostics": {
 		"version": "17.4.19",
@@ -1536,8 +1381,8 @@
 		"longest_sub_170ms_chain_notes": 3
 	},
 	"difficulty_profile": {
-		"note_count": 269,
-		"reverse_count": 16,
+		"note_count": 238,
+		"reverse_count": 15,
 		"space_count": 6,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -1620,5 +1465,55 @@
 		"retained_direction_changes": false,
 		"space_events_changed": false,
 		"policy": "readability-first; short bursts; frequent recovery; Reverse remains introductory pressure"
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				22.805394,
+				27.858026
+			]
+		],
+		"before": {
+			"song_id": "oshama_scramble",
+			"difficulty": "normal",
+			"bpm": 190.0,
+			"duration": 122.044127,
+			"notes": 269,
+			"spaces": 6,
+			"average_inputs_per_second": 2.253,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 18,
+			"fast_direction_changes_under_170ms": 40,
+			"arrows_within_250ms_of_space": 7,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 117.158
+		},
+		"after": {
+			"song_id": "oshama_scramble",
+			"difficulty": "normal",
+			"bpm": 190.0,
+			"duration": 122.044127,
+			"notes": 238,
+			"spaces": 6,
+			"average_inputs_per_second": 1.999,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 4,
+			"peak_five_second_inputs": 15,
+			"fast_direction_changes_under_170ms": 13,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					22.489605,
+					27.858026
+				]
+			],
+			"longest_active_run_seconds": 93.158
+		},
+		"subdivision_notes_removed": 16,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

@@ -5,8 +5,8 @@ class_name TaikoLaneVisual
 # games. It deliberately uses only flat colour, lines, and spacing so the
 # gameplay remains readable without depending on image assets.
 
-@export var surface_color := Color(0.018, 0.025, 0.036, 0.58)
-@export var input_surface_color := Color(0.018, 0.025, 0.036, 0.64)
+@export var surface_color := Color(0.012, 0.018, 0.026, 0.86)
+@export var input_surface_color := Color(0.012, 0.018, 0.026, 0.90)
 @export var border_color := Color(0.36, 0.42, 0.56, 0.30)
 @export var guide_color := Color(0.85, 0.88, 1.0, 0.28)
 @export var tick_color := Color(0.85, 0.88, 1.0, 0.10)

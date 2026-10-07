@@ -13,7 +13,7 @@
 	"beat_offset": 0.06494,
 	"duration": 244.143946,
 	"seed": 1744301.0,
-	"recommended": "MASTER • 9★ • 733 notes • 14 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 9★ • 701 notes • 14 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 6.68563,
@@ -49,11 +49,6 @@
 			"time": 11.133906,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 11.651147,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 12.478733,
@@ -209,11 +204,6 @@
 			"time": 24.478733,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 24.892526,
-			"type": "reverse",
-			"direction": 9
 		},
 		{
 			"time": 25.306319,
@@ -424,11 +414,6 @@
 			"time": 37.720112,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 38.133906,
-			"type": "reverse",
-			"direction": 4
 		},
 		{
 			"time": 38.547699,
@@ -811,11 +796,6 @@
 			"direction": 8
 		},
 		{
-			"time": 59.651147,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 60.06494,
 			"type": "normal",
 			"direction": 3
@@ -1106,16 +1086,6 @@
 			"direction": 8
 		},
 		{
-			"time": 76.099423,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 76.202871,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 76.616664,
 			"type": "reverse",
 			"direction": 4
@@ -1281,39 +1251,9 @@
 			"direction": 3
 		},
 		{
-			"time": 86.547699,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 86.961492,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 87.375285,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 87.789078,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 88.616664,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 89.44425,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 90.271837,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 90.582181,
@@ -1484,11 +1424,6 @@
 			"time": 103.927009,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 104.340802,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 104.754595,
@@ -1694,11 +1629,6 @@
 			"time": 117.168388,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 117.582181,
-			"type": "reverse",
-			"direction": 4
 		},
 		{
 			"time": 117.995974,
@@ -2086,16 +2016,6 @@
 			"direction": 2
 		},
 		{
-			"time": 139.099423,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 139.202871,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 139.513216,
 			"type": "reverse",
 			"direction": 7
@@ -2391,16 +2311,6 @@
 			"direction": 4
 		},
 		{
-			"time": 155.547699,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 155.651147,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 155.858043,
 			"type": "normal",
 			"direction": 8
@@ -2576,41 +2486,6 @@
 			"direction": 7
 		},
 		{
-			"time": 165.995974,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 166.823561,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 167.237354,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 167.651147,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 168.06494,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 168.271837,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 168.478733,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 168.892526,
 			"type": "normal",
 			"direction": 2
@@ -2704,11 +2579,6 @@
 			"time": 177.168388,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 177.582181,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 177.892526,
@@ -2974,21 +2844,6 @@
 			"time": 191.651147,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 191.961492,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 192.06494,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 192.168388,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 192.478733,
@@ -3396,16 +3251,6 @@
 			"direction": 6
 		},
 		{
-			"time": 215.133906,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 215.237354,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 215.651147,
 			"type": "normal",
 			"direction": 3
@@ -3614,11 +3459,6 @@
 			"time": 229.306319,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 230.133906,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 230.547699,
@@ -3852,7 +3692,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 132
+		"reverse": 127
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -3881,8 +3721,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 733,
-		"reverse_count": 132,
+		"note_count": 701,
+		"reverse_count": 127,
 		"space_count": 14,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -3951,5 +3791,63 @@
 		"analysis_master_original_name": "ヒゲドライバー - ミラクルすぎてヤバイ feat. shully [puaOtCox2CI].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				86.133906,
+				89.444251
+			],
+			[
+				165.582181,
+				168.892526
+			]
+		],
+		"before": {
+			"song_id": "miracle_sugite_yabai",
+			"difficulty": "master",
+			"bpm": 145.0,
+			"duration": 244.143946,
+			"notes": 733,
+			"spaces": 14,
+			"average_inputs_per_second": 3.06,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 9,
+			"peak_five_second_inputs": 26,
+			"fast_direction_changes_under_170ms": 173,
+			"arrows_within_250ms_of_space": 22,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 231.207
+		},
+		"after": {
+			"song_id": "miracle_sugite_yabai",
+			"difficulty": "master",
+			"bpm": 145.0,
+			"duration": 244.143946,
+			"notes": 701,
+			"spaces": 14,
+			"average_inputs_per_second": 2.929,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 8,
+			"peak_five_second_inputs": 26,
+			"fast_direction_changes_under_170ms": 167,
+			"arrows_within_250ms_of_space": 2,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					85.927009,
+					89.44425
+				],
+				[
+					165.375285,
+					168.892526
+				]
+			],
+			"longest_active_run_seconds": 79.241
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

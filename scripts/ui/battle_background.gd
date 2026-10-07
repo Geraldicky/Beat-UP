@@ -4,10 +4,17 @@ class_name BattleBackground
 var current_background_path := ""
 
 func _ready() -> void:
+	preload("res://scripts/ui/procedural_background.gd").install(self, "gameplay")
+	set_process(true)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+
+func _process(_delta: float) -> void:
+	# Existing gameplay lifecycle enables/disables this owner; the atmosphere
+	# uses that same pause contract rather than shader TIME (which never pauses).
+	pass
 
 func set_song_background(path: String, _song_id: String = "") -> bool:
 	var requested_path := path.strip_edges()

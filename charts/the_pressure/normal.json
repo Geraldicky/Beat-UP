@@ -13,7 +13,7 @@
 	"beat_offset": 0.05632,
 	"duration": 248.52322,
 	"seed": 1744321.0,
-	"recommended": "NORMAL • 5★ • 497 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 5★ • 437 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 1.468085,
@@ -74,11 +74,6 @@
 			"time": 9.585732,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 9.938673,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 10.291614,
@@ -381,11 +376,6 @@
 			"direction": 3
 		},
 		{
-			"time": 39.585732,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
 			"time": 39.938673,
 			"type": "normal",
 			"direction": 6
@@ -441,11 +431,6 @@
 			"direction": 7
 		},
 		{
-			"time": 43.997496,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 44.703379,
 			"type": "normal",
 			"direction": 8
@@ -454,41 +439,6 @@
 			"time": 45.05632,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 45.585732,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 45.938673,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 46.997496,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 47.703379,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 48.762202,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 49.821026,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 50.526908,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 51.232791,
@@ -569,11 +519,6 @@
 			"time": 61.468085,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 62.173967,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 63.585732,
@@ -701,11 +646,6 @@
 			"direction": 2
 		},
 		{
-			"time": 83.350438,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 84.05632,
 			"type": "normal",
 			"direction": 1
@@ -756,19 +696,9 @@
 			"direction": 6
 		},
 		{
-			"time": 89.526908,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 89.703379,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 89.879849,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 90.05632,
@@ -906,16 +836,6 @@
 			"direction": 1
 		},
 		{
-			"time": 101.526908,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 101.703379,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 102.05632,
 			"type": "normal",
 			"direction": 2
@@ -1031,29 +951,14 @@
 			"direction": 4
 		},
 		{
-			"time": 111.762202,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 111.938673,
 			"type": "normal",
 			"direction": 6
 		},
 		{
-			"time": 112.115144,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 112.291614,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 112.468085,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 112.644555,
@@ -1116,11 +1021,6 @@
 			"direction": 9
 		},
 		{
-			"time": 117.762202,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 117.938673,
 			"type": "normal",
 			"direction": 6
@@ -1156,11 +1056,6 @@
 			"direction": 4
 		},
 		{
-			"time": 120.938673,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 121.115144,
 			"type": "normal",
 			"direction": 9
@@ -1191,19 +1086,9 @@
 			"direction": 2
 		},
 		{
-			"time": 123.762202,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 123.938673,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 124.291614,
-			"type": "reverse",
-			"direction": 9
 		},
 		{
 			"time": 124.644555,
@@ -1316,19 +1201,9 @@
 			"direction": 4
 		},
 		{
-			"time": 135.05632,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 135.232791,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 135.409261,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 135.585732,
@@ -1441,46 +1316,6 @@
 			"direction": 2
 		},
 		{
-			"time": 156.762202,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 158.173967,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 159.585732,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 160.997496,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 161.526908,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 161.703379,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 163.115144,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 163.468085,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 163.821026,
 			"type": "normal",
 			"direction": 8
@@ -1576,19 +1411,9 @@
 			"direction": 8
 		},
 		{
-			"time": 179.879849,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 180.05632,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 180.232791,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 180.762202,
@@ -1624,11 +1449,6 @@
 			"time": 183.232791,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 183.409261,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 183.585732,
@@ -1721,24 +1541,9 @@
 			"direction": 6
 		},
 		{
-			"time": 190.821026,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 191.173967,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 191.879849,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 192.05632,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 192.409261,
@@ -1776,19 +1581,9 @@
 			"direction": 9
 		},
 		{
-			"time": 194.703379,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 194.879849,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 195.05632,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 195.232791,
@@ -1871,29 +1666,14 @@
 			"direction": 6
 		},
 		{
-			"time": 202.115144,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 202.291614,
 			"type": "normal",
 			"direction": 7
 		},
 		{
-			"time": 202.468085,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 202.644555,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 202.821026,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 202.997496,
@@ -1931,11 +1711,6 @@
 			"direction": 1
 		},
 		{
-			"time": 205.644555,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 205.821026,
 			"type": "normal",
 			"direction": 7
@@ -1966,11 +1741,6 @@
 			"direction": 7
 		},
 		{
-			"time": 208.115144,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 208.291614,
 			"type": "normal",
 			"direction": 3
@@ -1994,11 +1764,6 @@
 			"time": 210.05632,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 210.232791,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 210.762202,
@@ -2026,11 +1791,6 @@
 			"direction": 3
 		},
 		{
-			"time": 212.350438,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 212.526908,
 			"type": "normal",
 			"direction": 9
@@ -2051,19 +1811,9 @@
 			"direction": 4
 		},
 		{
-			"time": 214.115144,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 214.291614,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 214.644555,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 214.997496,
@@ -2116,19 +1866,9 @@
 			"direction": 2
 		},
 		{
-			"time": 218.703379,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 218.879849,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 219.05632,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 219.232791,
@@ -2191,29 +1931,14 @@
 			"direction": 1
 		},
 		{
-			"time": 225.05632,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 225.232791,
 			"type": "normal",
 			"direction": 6
 		},
 		{
-			"time": 225.409261,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 225.585732,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 225.762202,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 225.938673,
@@ -2311,11 +2036,6 @@
 			"direction": 8
 		},
 		{
-			"time": 232.468085,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 232.644555,
 			"type": "normal",
 			"direction": 7
@@ -2324,11 +2044,6 @@
 			"time": 232.997496,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 233.173967,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 233.350438,
@@ -2371,19 +2086,9 @@
 			"direction": 6
 		},
 		{
-			"time": 235.997496,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 236.879849,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 237.232791,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 237.585732,
@@ -2434,11 +2139,6 @@
 			"time": 240.762202,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 240.938673,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 241.115144,
@@ -2668,7 +2368,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 30
+		"reverse": 27
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2697,8 +2397,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 497,
-		"reverse_count": 30,
+		"note_count": 437,
+		"reverse_count": 27,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2767,5 +2467,63 @@
 		"analysis_master_original_name": "[Hard Dance] - Stonebank - The Pressure [Monstercat Release] [45eSOGguEew].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				45.232791,
+				50.87985
+			],
+			[
+				158.173967,
+				163.821026
+			]
+		],
+		"before": {
+			"song_id": "the_pressure",
+			"difficulty": "normal",
+			"bpm": 170.0,
+			"duration": 248.52322,
+			"notes": 497,
+			"spaces": 10,
+			"average_inputs_per_second": 2.04,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 18,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 12,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 245.647
+		},
+		"after": {
+			"song_id": "the_pressure",
+			"difficulty": "normal",
+			"bpm": 170.0,
+			"duration": 248.52322,
+			"notes": 437,
+			"spaces": 10,
+			"average_inputs_per_second": 1.799,
+			"peak_half_second_inputs": 2,
+			"peak_one_second_inputs": 4,
+			"peak_five_second_inputs": 15,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					45.05632,
+					51.232791
+				],
+				[
+					156.762202,
+					163.821026
+				]
+			],
+			"longest_active_run_seconds": 105.529
+		},
+		"subdivision_notes_removed": 34,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

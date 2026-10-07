@@ -2,7 +2,18 @@ extends PanelContainer
 
 const MinimalThemeScript = preload("res://scripts/ui/minimal_theme.gd")
 
+func set_record_available(available: bool) -> void:
+	var cluster := $RecordMargin/AlbumFlowScoreCluster
+	cluster.get_node("AlbumFlowRecordMetrics").visible = available
+	cluster.get_node("BreakdownRule").visible = available
+	cluster.get_node("EmptyRecord").visible = not available
+	cluster.get_node("EmptyRecordHint").visible = not available
+
 func _ready() -> void:
+	$RecordMargin/AlbumFlowScoreCluster/EmptyRecord.set_meta("album_role", "empty_record")
+	$RecordMargin/AlbumFlowScoreCluster/EmptyRecordHint.set_meta("album_role", "empty_record_hint")
+	MinimalThemeScript.apply_body($RecordMargin/AlbumFlowScoreCluster/EmptyRecord, 24, Color(MinimalThemeScript.TEXT, 0.72))
+	MinimalThemeScript.apply_body($RecordMargin/AlbumFlowScoreCluster/EmptyRecordHint, 13, MinimalThemeScript.MUTED)
 	var caption := $RecordMargin/AlbumFlowScoreCluster/RecordTitleRow/BestCaption as Label
 	caption.set_meta("album_role", "caption")
 	var record_date := $RecordMargin/AlbumFlowScoreCluster/RecordTitleRow/RecordDate as Label

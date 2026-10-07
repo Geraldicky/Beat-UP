@@ -42,6 +42,9 @@ func _apply_album_flow_structure() -> void:
 	var background := main_menu.get_node_or_null("MenuBackground") as TextureRect
 	if background != null:
 		background.modulate = Color.WHITE
+	var dim := main_menu.get_node_or_null("MenuDim") as ColorRect
+	if dim != null:
+		dim.color.a = 0.0
 
 func _selection_accent() -> Color:
 	if selection_index == 3:

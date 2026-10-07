@@ -12,8 +12,8 @@ func _initialize() -> void:
  call_deferred("run")
 func run() -> void:
  var shell_resource: PackedScene = load("res://scenes/app_shell.tscn")
- var editor_resource: PackedScene = load("res://scenes/chart_editor.tscn")
- check(shell_resource != null and editor_resource != null, "Resident and editor scenes load")
+ check(shell_resource != null, "Resident scene loads")
+ check(not ResourceLoader.exists("res://scenes/chart_editor.tscn"), "Retired editor is not shipped")
  var a: Dictionary = {"run_id": "a", "score": 2000, "accuracy": 90.0, "max_combo": 20, "rank": "A", "run_full_combo": false, "perfect": 8, "miss": 2}
  var b: Dictionary = {"run_id": "b", "score": 1000, "accuracy": 100.0, "max_combo": 40, "rank": "SS", "run_full_combo": true, "perfect": 10, "miss": 0}
  var first: Dictionary = Records.merge({}, a).entry

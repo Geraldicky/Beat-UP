@@ -15,7 +15,6 @@ const LayoutConfigScript = preload("res://config/ui_layout_config.gd")
 const MinimalThemeScript = preload("res://scripts/ui/minimal_theme.gd")
 const ReliableJsonStoreScript = preload("res://scripts/reliable_json_store.gd")
 const PlaytestTelemetryScript = preload("res://scripts/playtest_telemetry.gd")
-const PracticeRecordsScript = preload("res://scripts/v18/practice_records.gd")
 
 # Song-driven rhythm gameplay controller. Exact note timestamps live in JSON
 # chart files; scene composition remains editable in the hierarchy.
@@ -36,12 +35,12 @@ const PracticeRecordsScript = preload("res://scripts/v18/practice_records.gd")
 @export_range(1.0, 5.0, 0.25) var skip_intro_lead_time := 2.25
 
 @export_group("Judgment Popup Animation")
-@export_range(0.05, 2.0, 0.01) var judgment_display_duration := 0.42
-@export_range(0.01, 1.0, 0.01) var judgment_fade_out_duration := 0.14
+@export_range(0.05, 2.0, 0.01) var judgment_display_duration := 0.30
+@export_range(0.01, 1.0, 0.01) var judgment_fade_out_duration := 0.10
 @export_range(0.0, 1.0, 0.01) var judgment_pop_in_duration := 0.06
-@export var judgment_pop_start_scale := Vector2(0.94, 0.94)
-@export_range(0.0, 80.0, 1.0) var judgment_enter_offset_y := 10.0
-@export_range(-80.0, 0.0, 1.0) var judgment_exit_offset_y := -14.0
+@export var judgment_pop_start_scale := Vector2(0.98, 0.98)
+@export_range(0.0, 80.0, 1.0) var judgment_enter_offset_y := 3.0
+@export_range(-80.0, 0.0, 1.0) var judgment_exit_offset_y := -4.0
 
 
 const DIRECTIONS := [
@@ -101,7 +100,8 @@ var hud_artwork_song_id := ""
 @onready var countdown_overlay: Control = %CountdownOverlay
 @onready var countdown_stack: Control = $CountdownOverlay/Center/Stack
 @onready var countdown_visual: GameplayCountdownVisual = %Visual
-@onready var countdown_number: Label = %Number
+@onready var countdown_number: TextureRect = %Number
+@onready var countdown_fallback: Label = $CountdownOverlay/Center/Stack/Number/Fallback
 @onready var countdown_status: Label = %Status
 @onready var countdown_mode: Label = %Mode
 
@@ -150,6 +150,8 @@ var last_runtime_direction := -1
 var repeated_runtime_direction := 0
 var game_paused := false
 var random_mode_enabled := false
+var reverse_mod_percent := 0
+var run_note_travel_time := UserSettingsScript.DEFAULT_NOTE_TRAVEL_TIME
 var deterministic_direction_cursor := 0
 var deterministic_direction_seed := 0
 var deterministic_direction_history: Array[int] = []
@@ -185,17 +187,8 @@ var skip_intro_available := false
 var skip_intro_target_s := 0.0
 var first_playable_event_s := 0.0
 
-# v18 gameplay session modes. Practice filters the selected chart to one musical
-# section and loops it without touching normal records. Replay injects semantic
-# actions captured from a previous run against the exact same chart/rules identity.
+# Replay injects semantic actions against the exact same chart/rules identity.
 var effect_intensity: float = 0.75
-var practice_mode_active: bool = false
-var practice_section_index: int = -1
-var practice_section: Dictionary = {}
-var practice_start_s: float = 0.0
-var practice_end_s: float = 0.0
-var practice_loop_count: int = 0
-var practice_lead_in_s: float = 1.5
 var replay_requested_data: Dictionary = {}
 var replay_playback_active: bool = false
 var current_random_seed: int = 0
@@ -295,10 +288,24 @@ func _ready() -> void:
 		get_tree().remove_meta(RESULT_DEBUG_REQUEST_META)
 		call_deferred("show_result_debug_screen")
 
-func prepare_launch_request(request: Dictionary, force_refresh: bool = true) -> Dictionary:
+func prepare_launch_request_async(request: Dictionary) -> Dictionary:
+	# Freeze logical intent before yielding; UI selection cannot retarget this launch.
+	var frozen_request := request.duplicate(true)
+	var resolution := await level_catalog.resolve_playable_async(str(frozen_request.get("song_id", "")), str(frozen_request.get("difficulty_id", "normal")))
+	return prepare_launch_request(frozen_request, false, resolution)
+
+func prepare_launch_request(request: Dictionary, force_refresh: bool = true, prepared_resolution: Dictionary = {}) -> Dictionary:
+	if request.has("practice_section_index"):
+		return {"ok": false, "error": "Practice mode has been removed. Start a full song instead."}
+	var percent := int(request.get("reverse_percent", 0))
+	var replay_value: Variant = request.get("replay_data", {})
+	if replay_value is Dictionary and not (replay_value as Dictionary).is_empty():
+		percent = int((replay_value as Dictionary).get("score_identity", {}).get("reverse_percent", 0))
+	if percent not in preload("res://scripts/reverse_mod.gd").LEVELS:
+		return {"ok": false, "error": "Unsupported Reverse percentage."}
 	var song_id: String = str(request.get("song_id", ""))
 	var difficulty_id: String = str(request.get("difficulty_id", "normal")).to_lower()
-	var resolution: Dictionary = level_catalog.resolve_playable(song_id, difficulty_id, force_refresh)
+	var resolution: Dictionary = prepared_resolution if not prepared_resolution.is_empty() else level_catalog.resolve_playable(song_id, difficulty_id, force_refresh)
 	if not bool(resolution.get("ok", false)):
 		return resolution
 
@@ -312,11 +319,21 @@ func prepare_launch_request(request: Dictionary, force_refresh: bool = true) -> 
 			"difficulty_id": difficulty_id,
 		}
 	var chart: Dictionary = (chart_value as Dictionary).duplicate(true)
+	chart["_reverse_mod_percent"] = percent
+	chart["_retry_random_seed"] = int(request.get("random_seed", 0))
+	if replay_value is Dictionary and not (replay_value as Dictionary).is_empty():
+		var expected_identity := ScoreIdentity.identity(chart, "8_direction", false, percent)
+		var recorded_identity: Dictionary = replay_value.get("score_identity", {})
+		if str(expected_identity.get("reverse_version", "")) != str(recorded_identity.get("reverse_version", "")):
+			return {"ok": false, "error": "This replay uses historical Reverse rules and cannot be played under the current rules. Original replay data is preserved."}
+		var replay_speed: Variant = replay_value.get("note_travel_time", UserSettingsScript.DEFAULT_NOTE_TRAVEL_TIME)
+		if not (replay_speed is int or replay_speed is float) or not is_finite(float(replay_speed)) or float(replay_speed) < UserSettingsScript.MIN_NOTE_TRAVEL_TIME or float(replay_speed) > UserSettingsScript.MAX_NOTE_TRAVEL_TIME:
+			return {"ok": false, "error": "Replay contains an invalid visual note speed."}
 	var loaded_stream: AudioStream = resolution.get("audio_stream") as AudioStream
 	if loaded_stream == null:
 		return {
 			"ok": false,
-			"error": "Audio could not be loaded. Re-import it in Chart Studio (OGG Vorbis required).",
+			"error": "Audio could not be loaded. Check the audio path and format (OGG Vorbis required).",
 			"song_id": song_id,
 			"difficulty_id": difficulty_id,
 			"source_path": str(resolution.get("source_path", "")),
@@ -325,6 +342,7 @@ func prepare_launch_request(request: Dictionary, force_refresh: bool = true) -> 
 	var prepared_request: Dictionary = request.duplicate(true)
 	prepared_request["song_id"] = str(resolution.get("song_id", song_id))
 	prepared_request["difficulty_id"] = str(resolution.get("difficulty_id", difficulty_id))
+	prepared_request["reverse_percent"] = percent
 	prepared_request["_resolved_chart"] = chart
 	prepared_request["_resolved_audio_stream"] = loaded_stream
 	prepared_request["_resolved_source_path"] = str(resolution.get("source_path", ""))
@@ -360,10 +378,6 @@ func _launch_from_song_library(request: Dictionary) -> bool:
 	var song_id: String = str(prepared_request.get("song_id", ""))
 	var difficulty_id: String = str(prepared_request.get("difficulty_id", "normal")).to_lower()
 	random_mode_enabled = bool(prepared_request.get("random_mode", false))
-	practice_section_index = int(prepared_request.get("practice_section_index", -1))
-	practice_mode_active = practice_section_index >= 0
-	practice_section.clear()
-	practice_loop_count = 0
 	replay_requested_data.clear()
 	var replay_value: Variant = prepared_request.get("replay_data", {})
 	if replay_value is Dictionary:
@@ -416,7 +430,8 @@ func _apply_theme_config() -> void:
 	background_rect.color = theme_config.base_dark
 	# Song context is peripheral; incoming notes retain the contrast priority.
 	song_title_label.visible = true
-	bpm_label.visible = true
+	# BPM belongs to the single metadata row, not the far edge of the HUD.
+	bpm_label.visible = false
 	difficulty_label.visible = true
 	duration_label.visible = true
 	combo_label.add_theme_color_override("font_color", theme_config.text_primary)
@@ -445,9 +460,8 @@ func _apply_theme_config() -> void:
 	MinimalThemeScript.apply_mono(duration_label, 12, MinimalThemeScript.MUTED)
 	MinimalThemeScript.apply_mono(bpm_label, 12, MinimalThemeScript.CYAN)
 	MinimalThemeScript.apply_mono(difficulty_label, 12, MinimalThemeScript.PINK)
-	countdown_number.add_theme_font_override("font", MinimalThemeScript.semibold_font())
-	countdown_number.add_theme_color_override("font_outline_color", Color(0.01, 0.015, 0.025, 0.68))
-	countdown_number.add_theme_constant_override("outline_size", 6)
+	countdown_fallback.add_theme_font_override("font", MinimalThemeScript.semibold_font())
+	countdown_fallback.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
 	countdown_status.add_theme_font_override("font", MinimalThemeScript.mono_font())
 	countdown_status.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.90))
 	countdown_mode.add_theme_font_override("font", MinimalThemeScript.mono_font())
@@ -503,7 +517,7 @@ func _apply_ui_layout() -> void:
 	score_digits.size = Vector2(maxf(1.0, stats_width - inner * 2.0), 64.0 * reference_scale)
 	score_digits.add_theme_font_size_override("font_size", roundi(44.0 * reference_scale))
 	score_digits.refresh_style()
-	accuracy_caption.position = battle_stats_panel.position + Vector2(inner + 20.0 * reference_scale, stats_height * 0.69)
+	accuracy_caption.position = battle_stats_panel.position + Vector2(inner + 20.0 * reference_scale, stats_height - 40.0 * reference_scale)
 	accuracy_caption.size = Vector2(stats_width * 0.35, 20.0)
 	accuracy_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	accuracy_label.add_theme_font_size_override("font_size", roundi(26.0 * reference_scale))
@@ -513,9 +527,9 @@ func _apply_ui_layout() -> void:
 	var song_left_bound: float = margin
 	var song_right_bound: float = stats_left - float(ui_layout_config.section_gap)
 	var song_available: float = maxf(1.0, song_right_bound - song_left_bound)
-	var desired_song_width: float = song_available
+	var desired_song_width: float = 820.0 * reference_scale
 	var song_width: float = minf(desired_song_width, song_available)
-	var song_left: float = song_left_bound + maxf(0.0, (song_available - song_width) * 0.5)
+	var song_left: float = song_left_bound
 	song_info_label_layout(song_left, margin, song_width, float(ui_layout_config.battle_song_info_height))
 
 	pause_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -526,11 +540,10 @@ func _apply_ui_layout() -> void:
 
 	var skip_width: float = clampf(viewport_size.x * 0.10, 126.0, 164.0)
 	var skip_height: float = 34.0
-	skip_intro_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	skip_intro_button.offset_left = -margin - skip_width
-	skip_intro_button.offset_top = margin + button_size + 10.0
-	skip_intro_button.offset_right = -margin
-	skip_intro_button.offset_bottom = margin + button_size + 10.0 + skip_height
+	# Center the optional intro action in the lower free area, below the lane.
+	skip_intro_button.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	skip_intro_button.position = Vector2((viewport_size.x - skip_width) * 0.5, minf(viewport_size.y - margin - skip_height, maxf(viewport_size.y * 0.76, lane_bottom + 40.0 * reference_scale)))
+	skip_intro_button.size = Vector2(skip_width, skip_height)
 
 	# Combo and judgment live below the lane in distinct columns. This preserves
 	# the quick left-to-right scan of taiko HUDs without copying their skin.
@@ -562,30 +575,33 @@ func _apply_ui_layout() -> void:
 
 func song_info_label_layout(left: float, top: float, width: float, height: float) -> void:
 	var scale_factor := clampf(minf(size.x / 1920.0, size.y / 1080.0), 0.72, 1.15)
-	var artwork_size := 120.0 * scale_factor
-	var text_left := artwork_size + 20.0 * scale_factor
+	var artwork_size := 104.0 * scale_factor
+	var text_left := artwork_size + 24.0 * scale_factor
 	var text_width := maxf(1.0, width - text_left - 12.0)
 	song_info_panel.position = Vector2(left, top)
-	song_info_panel.size = Vector2(width, maxf(height, 176.0 * scale_factor))
-	song_artwork.position = Vector2(8.0, 8.0)
+	song_info_panel.size = Vector2(width, maxf(height * scale_factor, maxf(152.0 * scale_factor, 128.0)))
+	song_artwork.position = Vector2.ZERO
 	song_artwork.size = Vector2.ONE * artwork_size
-	song_title_label.position = Vector2(text_left, 4.0)
-	song_title_label.size = Vector2(text_width, 42.0 * scale_factor)
+	song_title_label.position = Vector2(text_left, 0.0)
+	song_title_label.size = Vector2(text_width, 38.0 * scale_factor)
 	song_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	song_title_label.add_theme_font_size_override("font_size", roundi(32.0 * scale_factor))
+	song_title_label.add_theme_font_size_override("font_size", roundi(30.0 * scale_factor))
 	artist_label.size = Vector2(text_width, 28.0 * scale_factor)
-	artist_label.add_theme_font_size_override("font_size", roundi(22.0 * scale_factor))
-	artist_label.position = Vector2(text_left, song_title_label.position.y + song_title_label.size.y + 6.0 * scale_factor)
-	var metadata_top := artist_label.position.y + artist_label.size.y + 14.0 * scale_factor
+	artist_label.add_theme_font_size_override("font_size", roundi(20.0 * scale_factor))
+	artist_label.position = Vector2(text_left, song_title_label.position.y + song_title_label.size.y + 4.0 * scale_factor)
+	var metadata_top := artist_label.position.y + artist_label.size.y + 8.0 * scale_factor
 	difficulty_label.position = Vector2(text_left, metadata_top)
-	difficulty_label.size = Vector2(text_width - 100.0 * scale_factor, 24.0)
+	difficulty_label.size = Vector2(text_width, 24.0 * scale_factor)
+	difficulty_label.add_theme_font_size_override("font_size", maxi(12, roundi(14.0 * scale_factor)))
 	bpm_label.position = Vector2(width - 106.0 * scale_factor, metadata_top)
 	bpm_label.size = Vector2(100.0 * scale_factor, 24.0)
-	var progress_top := maxf(156.0 * scale_factor, metadata_top + difficulty_label.size.y + 12.0 * scale_factor)
+	var progress_top := maxf(132.0 * scale_factor, metadata_top + difficulty_label.size.y + 12.0 * scale_factor)
+	var time_width := maxf(146.0 * scale_factor, 128.0)
 	duration_bar.position = Vector2(text_left, progress_top)
-	duration_bar.size = Vector2(maxf(1.0, text_width - 156.0 * scale_factor), 5.0)
-	duration_label.position = Vector2(width - 150.0 * scale_factor, progress_top - 11.0 * scale_factor)
-	duration_label.size = Vector2(146.0 * scale_factor, 24.0)
+	duration_bar.size = Vector2(maxf(1.0, text_width - time_width - 10.0), 4.0 * scale_factor)
+	duration_label.position = Vector2(width - time_width - 12.0, progress_top - 11.0 * scale_factor)
+	duration_label.size = Vector2(time_width, 24.0 * scale_factor)
+	duration_label.add_theme_font_size_override("font_size", maxi(12, roundi(14.0 * scale_factor)))
 
 func _connect_screen_signal(screen: Object, signal_name: StringName, callback: Callable) -> void:
 	if screen == null or not screen.has_signal(signal_name):
@@ -594,23 +610,11 @@ func _connect_screen_signal(screen: Object, signal_name: StringName, callback: C
 	if not screen.is_connected(signal_name, callback):
 		screen.connect(signal_name, callback)
 
-func open_chart_editor() -> void:
-	var navigation: Node = get_node_or_null("/root/NavigationController")
-	if navigation != null and navigation.has_method("has_registered_shell") and bool(navigation.call("has_registered_shell")):
-		navigation.call("request_chart_studio")
-		return
-	# Compatibility fallback for standalone gameplay scenes.
-	playtest_telemetry.abort_session("chart_editor")
-	music.stop()
-	SceneTransition.change_scene_quick("res://scenes/chart_editor.tscn")
-
 func _connect_song_select_signals() -> void:
 	var signal_map: Dictionary = {
 		"play_requested": Callable(self, "_on_song_select_play_requested"),
-		"practice_requested": Callable(self, "_on_song_select_practice_requested"),
 		"replay_requested": Callable(self, "_on_song_select_replay_requested"),
 		"back_requested": Callable(self, "_on_song_select_back_requested"),
-		"chart_editor_requested": Callable(self, "open_chart_editor"),
 		"import_charts_requested": Callable(self, "_on_import_charts_requested"),
 		"refresh_requested": Callable(self, "_on_song_select_refresh_requested"),
 	}
@@ -634,7 +638,6 @@ func load_user_preferences() -> void:
 	effect_intensity = UserSettingsScript.get_effect_intensity() / 100.0
 	UserSettingsScript.apply_master_volume(master_value)
 	apply_background_opacity(bg_value)
-	track.set_input_style(input_style)
 	if track.has_method("set_effect_intensity_percent"):
 		track.call("set_effect_intensity_percent", UserSettingsScript.get_effect_intensity())
 
@@ -791,14 +794,14 @@ func show_level_select() -> void:
 	if not selected_song_id.is_empty():
 		level_select.call("set_selected_song", selected_song_id)
 	level_select.call("set_random_mode", random_mode_enabled)
+	level_select.call("set_reverse_percent", reverse_mod_percent)
 	selected_song_id = str(level_select.call("get_selected_song_id"))
 	if level_select.has_method("focus_current_selection"):
 		level_select.call_deferred("focus_current_selection")
 	update_hud()
 
 func _on_song_select_play_requested(song_id: String, difficulty_id: String, random_mode: bool) -> void:
-	practice_mode_active = false
-	practice_section_index = -1
+	reverse_mod_percent = int(level_select.call("get_reverse_percent"))
 	replay_requested_data.clear()
 	replay_playback_active = false
 	selected_song_id = song_id
@@ -806,33 +809,17 @@ func _on_song_select_play_requested(song_id: String, difficulty_id: String, rand
 	# Input style can now be changed from the Song Library MODS panel, so refresh
 	# it immediately before entering gameplay instead of relying on startup state.
 	input_style = UserSettingsScript.get_input_style()
-	track.set_input_style(input_style)
 	var level_index: int = find_level_index(song_id, difficulty_id)
 	if level_index >= 0:
 		_transition_to_level(level_index)
 
-func _on_song_select_practice_requested(song_id: String, difficulty_id: String, random_mode: bool, section_index: int) -> void:
-	practice_mode_active = true
-	practice_section_index = section_index
-	replay_requested_data.clear()
-	replay_playback_active = false
-	selected_song_id = song_id
-	random_mode_enabled = random_mode
-	input_style = UserSettingsScript.get_input_style()
-	track.set_input_style(input_style)
-	var level_index: int = find_level_index(song_id, difficulty_id)
-	if level_index >= 0:
-		_transition_to_level(level_index, "PREPARING PRACTICE")
-
 func _on_song_select_replay_requested(song_id: String, difficulty_id: String, random_mode: bool, replay_data: Dictionary) -> void:
-	practice_mode_active = false
-	practice_section_index = -1
+	reverse_mod_percent = int(replay_data.get("score_identity", {}).get("reverse_percent", 0))
 	replay_requested_data = replay_data.duplicate(true)
 	replay_playback_active = not replay_requested_data.is_empty()
 	selected_song_id = song_id
 	random_mode_enabled = random_mode
 	input_style = UserSettingsScript.get_input_style()
-	track.set_input_style(input_style)
 	var level_index: int = find_level_index(song_id, difficulty_id)
 	if level_index >= 0:
 		_transition_to_level(level_index, "PREPARING REPLAY")
@@ -876,11 +863,26 @@ func _transition_to_level(level_index: int, _status: String = "PREPARING CHART")
 func _transition_to_identity(song_id: String, difficulty_id: String, _status: String = "PREPARING CHART") -> void:
 	if SceneTransition.is_transitioning():
 		return
-	var preparation: Dictionary = prepare_launch_request({
+	_prepare_and_transition({
 		"song_id": song_id,
 		"difficulty_id": difficulty_id,
 		"random_mode": random_mode_enabled,
-	}, true)
+		"reverse_percent": reverse_mod_percent,
+	})
+
+func _prepare_and_transition(request: Dictionary) -> void:
+	# Display provisional identity immediately; only the worker result may launch.
+	var preview_chart := level_data
+	for raw: Variant in levels:
+		if raw is Dictionary:
+			var candidate := raw as Dictionary
+			if str(candidate.get("song_id", "")) == str(request.get("song_id", "")) and str(candidate.get("chart_difficulty", "")) == str(request.get("difficulty_id", "")):
+				preview_chart = candidate
+				break
+	await SceneTransition.begin_gameplay_preparation(_build_gameplay_launch_payload_from_chart(preview_chart))
+	var preparation := await prepare_launch_request_async(request)
+	if not bool(preparation.get("ok", false)):
+		SceneTransition.cancel_gameplay_preparation()
 	_transition_to_prepared_request(preparation)
 
 func _transition_to_prepared_request(preparation: Dictionary) -> void:
@@ -912,6 +914,8 @@ func prepare_retry_request(force_refresh: bool = true) -> Dictionary:
 		"song_id": str(identity.get("song_id", "")),
 		"difficulty_id": str(identity.get("difficulty_id", "normal")),
 		"random_mode": random_mode_enabled,
+		"reverse_percent": reverse_mod_percent,
+		"random_seed": current_random_seed if reverse_mod_percent > 0 else 0,
 	}, force_refresh)
 
 func _transition_to_current_chart(_status: String = "RESTARTING CHART") -> void:
@@ -919,8 +923,13 @@ func _transition_to_current_chart(_status: String = "RESTARTING CHART") -> void:
 		return
 	# Retry resolves from the active chart identity and refreshes the catalog; it
 	# never trusts current_level_index, which may have shifted after an edit.
-	var preparation: Dictionary = prepare_retry_request(true)
-	_transition_to_prepared_request(preparation)
+	var identity := _current_chart_identity()
+	if identity.is_empty():
+		return
+	identity["random_mode"] = random_mode_enabled
+	identity["reverse_percent"] = reverse_mod_percent
+	identity["random_seed"] = current_random_seed if reverse_mod_percent > 0 else 0
+	_prepare_and_transition(identity)
 
 func _start_level_with_launch_motion(prepared_request: Dictionary) -> void:
 	var chart: Dictionary = prepared_request.get("_resolved_chart", {}) as Dictionary
@@ -1136,6 +1145,7 @@ func start_level(index: int) -> bool:
 		"song_id": str(selected_level.get("song_id", selected_level.get("id", ""))),
 		"difficulty_id": str(selected_level.get("chart_difficulty", selected_level.get("difficulty", "normal"))).to_lower(),
 		"random_mode": random_mode_enabled,
+		"reverse_percent": reverse_mod_percent,
 	}, true)
 	if not bool(preparation.get("ok", false)):
 		push_warning("Cannot play: chart invalid or audio missing. Install the matching Audio Pack.")
@@ -1152,6 +1162,8 @@ func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream)
 	if not RuntimeResourceAccessScript.audio_exists(str(launch_chart.get("audio", ""))) or not bool(preload("res://scripts/chart_integrity.gd").validate_structure(launch_chart).get("ok", false)):
 		return false
 	_capture_run_input_binding_snapshot()
+	if not replay_requested_data.is_empty():
+		run_note_travel_time = clampf(float(replay_requested_data.get("note_travel_time", run_note_travel_time)), UserSettingsScript.MIN_NOTE_TRAVEL_TIME, UserSettingsScript.MAX_NOTE_TRAVEL_TIME)
 	run_session.begin()
 	game_paused = false
 	if music != null:
@@ -1162,7 +1174,9 @@ func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream)
 	# The catalog winner is immutable source data for this run. All legacy
 	# direction authoring, RANDOM state and 4K projection happen on this deep copy.
 	level_data = launch_chart.duplicate(true)
-	replay_playback_active = (not practice_mode_active) and (not replay_requested_data.is_empty())
+	level_data["_note_travel_time"] = run_note_travel_time
+	reverse_mod_percent = int(level_data.get("_reverse_mod_percent", 0))
+	replay_playback_active = not replay_requested_data.is_empty()
 	if not level_data.has("_source_chart_hash"):
 		level_data["_source_chart_hash"] = ScoreIdentity.chart_hash(level_data)
 	level_data["_rules_hash"] = ScoreIdentity.rules_hash(gameplay_config, result_config)
@@ -1170,7 +1184,7 @@ func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream)
 	# once, using the same music-aware v15 choreography as newly generated charts,
 	# so gameplay never falls back to a visible 8-key arithmetic loop.
 	level_data = legacy_direction_author.author_legacy_directions(level_data)
-	_configure_v18_session_mode()
+	preload("res://scripts/reverse_mod.gd").apply(level_data, reverse_mod_percent)
 	var chart_events: Variant = level_data.get("events", [])
 	if not (chart_events is Array):
 		push_error("Level has no events array")
@@ -1207,7 +1221,7 @@ func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream)
 	fight_over = false
 	_cancel_gameplay_countdown()
 	_reset_feedback_visuals()
-	current_random_seed = 0
+	current_random_seed = int(level_data.get("_retry_random_seed", 0))
 	if random_mode_enabled:
 		if replay_playback_active:
 			current_random_seed = int(replay_requested_data.get("random_seed", 0))
@@ -1225,63 +1239,15 @@ func _start_resolved_level(launch_chart: Dictionary, loaded_stream: AudioStream)
 	# policy: never mutate that shared resource or inherit its preview loop.
 	music.stream = create_gameplay_audio_stream(loaded_stream)
 	_begin_v18_replay_session()
-	if not practice_mode_active and not replay_playback_active:
+	if not replay_playback_active:
 		_begin_playtest_session()
 	_arm_gameplay_start()
 	update_hud()
 	return true
 
-func _configure_v18_session_mode() -> void:
-	practice_section.clear()
-	practice_start_s = 0.0
-	practice_end_s = 0.0
-	if not practice_mode_active:
-		return
-	var sections_value: Variant = level_data.get("sections", [])
-	if not (sections_value is Array):
-		practice_mode_active = false
-		practice_section_index = -1
-		return
-	var sections: Array = sections_value as Array
-	if practice_section_index < 0 or practice_section_index >= sections.size() or not (sections[practice_section_index] is Dictionary):
-		practice_mode_active = false
-		practice_section_index = -1
-		return
-	practice_section = (sections[practice_section_index] as Dictionary).duplicate(true)
-	practice_start_s = maxf(0.0, float(practice_section.get("start", 0.0)))
-	practice_end_s = maxf(practice_start_s + 1.0, float(practice_section.get("end", practice_start_s + 1.0)))
-	var filtered_events: Array = []
-	var events_value: Variant = level_data.get("events", [])
-	if events_value is Array:
-		for raw_event: Variant in events_value as Array:
-			if not (raw_event is Dictionary):
-				continue
-			var event: Dictionary = raw_event as Dictionary
-			var event_time: float = float(event.get("time", 0.0))
-			if event_time >= practice_start_s and event_time <= practice_end_s:
-				filtered_events.append(event.duplicate(true))
-	level_data["events"] = filtered_events
-	var filtered_space: Array = []
-	var space_value: Variant = level_data.get("space_events", [])
-	if space_value is Array:
-		for raw_space: Variant in space_value as Array:
-			var space_time: float = -1.0
-			if raw_space is int or raw_space is float:
-				space_time = float(raw_space)
-			elif raw_space is Dictionary:
-				space_time = float((raw_space as Dictionary).get("time", -1.0))
-			if space_time >= practice_start_s and space_time <= practice_end_s:
-				filtered_space.append(space_time)
-	level_data["space_events"] = filtered_space
-
 func _begin_v18_replay_session() -> void:
 	var replay: Node = get_node_or_null("/root/ReplayManager")
 	if replay == null:
-		replay_playback_active = false
-		return
-	if practice_mode_active:
-		replay.call("abort_recording")
-		replay.call("stop_playback")
 		replay_playback_active = false
 		return
 	if replay_playback_active:
@@ -1316,7 +1282,7 @@ func _begin_gameplay_playback() -> void:
 	if not gameplay_preparing:
 		return
 	gameplay_preparing = false
-	var playback_start: float = maxf(0.0, practice_start_s - practice_lead_in_s) if practice_mode_active else 0.0
+	var playback_start: float = 0.0
 	fight_time = playback_start
 	_reset_runtime_timing_state()
 	if music != null:
@@ -1382,8 +1348,8 @@ func _start_resume_countdown() -> void:
 	countdown_displayed_second = -1
 	countdown_overlay.visible = true
 	countdown_overlay.modulate = Color.WHITE
-	countdown_status.text = "RESUME"
-	countdown_mode.text = "GET READY"
+	countdown_status.text = "RESUMING"
+	countdown_mode.visible = false
 	countdown_status.modulate = Color.WHITE
 	countdown_mode.modulate = Color.WHITE
 	countdown_stack.pivot_offset = countdown_stack.size * 0.5
@@ -1401,13 +1367,21 @@ func _update_resume_countdown(delta: float) -> void:
 func _update_resume_countdown_display(force: bool) -> void:
 	var shown_second: int = clampi(ceili(gameplay_prepare_remaining), 1, ceili(resume_countdown_duration))
 	countdown_visual.set_countdown(gameplay_prepare_remaining, resume_countdown_duration)
+	# Reveal the frozen approach notes before control returns. This is cosmetic;
+	# the countdown deadline and gameplay clock remain owned by the existing run.
+	var ready_alpha := clampf(gameplay_prepare_remaining / 0.35, 0.0, 1.0)
+	countdown_number.modulate.a = ready_alpha
+	countdown_fallback.modulate.a = ready_alpha
 	if not force and shown_second == countdown_displayed_second:
 		return
 	countdown_displayed_second = shown_second
-	countdown_number.text = str(shown_second)
-	countdown_number.add_theme_color_override("font_color", _countdown_step_color(shown_second))
-	countdown_number.modulate = Color(1.0, 1.0, 1.0, 0.0)
-	countdown_number.scale = Vector2.ONE * 1.26
+	countdown_number.texture = countdown_visual.get_number_texture(shown_second)
+	# Preserve the exported 1–5 second duration range without inventing assets
+	# for optional 4/5 steps. The standard 3/2/1 always uses generated artwork.
+	countdown_fallback.text = str(shown_second)
+	countdown_fallback.visible = countdown_number.texture == null
+	countdown_number.modulate = Color(1, 1, 1, ready_alpha)
+	countdown_number.scale = Vector2.ONE * (1.0 + 0.04 * clampf(effect_intensity, 0.0, 1.0))
 	countdown_number.pivot_offset = countdown_number.size * 0.5
 	countdown_visual.trigger_step()
 	if countdown_tween != null:
@@ -1415,8 +1389,7 @@ func _update_resume_countdown_display(force: bool) -> void:
 	countdown_tween = create_tween()
 	countdown_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	countdown_tween.set_parallel(true)
-	countdown_tween.tween_property(countdown_number, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	countdown_tween.tween_property(countdown_number, "modulate:a", 1.0, 0.075).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	countdown_tween.tween_property(countdown_number, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 
 func _countdown_step_color(second: int) -> Color:
 	match second:
@@ -1435,6 +1408,8 @@ func _finish_resume_countdown() -> void:
 	_hide_gameplay_countdown()
 	game_paused = false
 	pause_button.visible = not fight_over and not level_select.visible and not result_overlay.visible
+	if music_has_finished:
+		music_finished_clock_s = _monotonic_clock_s() - maxf(0.0, fight_time - music_finished_song_time)
 	if music != null:
 		music.stream_paused = false
 	resume_timing_check_pending = pause_timing_snapshot_valid
@@ -1450,7 +1425,6 @@ func _hide_gameplay_countdown() -> void:
 	if countdown_number != null:
 		countdown_number.scale = Vector2.ONE
 		countdown_number.modulate = Color.WHITE
-		countdown_number.add_theme_font_size_override("font_size", 112)
 	if countdown_status != null:
 		countdown_status.modulate = Color.WHITE
 	if countdown_mode != null:
@@ -1533,10 +1507,6 @@ func _process(delta: float) -> void:
 	update_hud()
 	var input_tail_s: float = maxf(0.0, user_input_offset_ms / 1000.0)
 	var finish_grace_s: float = maxf(gameplay_config.good_window, gameplay_config.space_good_window) + input_tail_s + 0.05
-	if practice_mode_active:
-		if fight_time >= practice_end_s + finish_grace_s:
-			_complete_v18_practice_loop()
-		return
 	var duration: float = get_song_duration()
 	if duration > 0.0 and fight_time >= duration + finish_grace_s:
 		end_fight()
@@ -1561,6 +1531,7 @@ func spawn_chart_note(event_data: Dictionary) -> void:
 	var data := build_note_data(event_data)
 	var note: RhythmNote = track.spawn_note(data)
 	if note != null:
+		note.set_meta("mod_reverse", bool(event_data.get("_mod_reverse", false)))
 		stream_notes.append(note)
 
 func build_note_data(event_data: Dictionary) -> Dictionary:
@@ -1653,11 +1624,6 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	if _developer_shortcuts_available() and (key_event.keycode == KEY_F2 or key_event.physical_keycode == KEY_F2):
-		open_chart_editor()
-		get_viewport().set_input_as_handled()
-		return
-
 	if resume_countdown_active:
 		get_viewport().set_input_as_handled()
 		return
@@ -1669,9 +1635,6 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if gameplay_preparing:
-		var preparation_key := get_pressed_gameplay_key(key_event)
-		if preparation_key != KEY_NONE:
-			track.flash_input(preparation_key)
 		if key_event.keycode == KEY_ESCAPE:
 			show_pause_overlay()
 		get_viewport().set_input_as_handled()
@@ -1758,7 +1721,7 @@ func _v18_key_for_replay_action(action: String) -> int:
 		_: return KEY_NONE
 
 func _record_v18_replay_action(action: String, key_event: InputEventKey, song_time_s: float) -> void:
-	if action.is_empty() or practice_mode_active or replay_playback_active:
+	if action.is_empty() or replay_playback_active:
 		return
 	var replay: Node = get_node_or_null("/root/ReplayManager")
 	if replay == null:
@@ -1797,7 +1760,6 @@ func _handle_v18_space_action(raw_time_s: float) -> void:
 	handle_space_prompt_input(space_input_time)
 
 func _handle_v18_direction_action(pressed_key: int, raw_time_s: float) -> void:
-	track.flash_input(pressed_key)
 	if pressed_key == KEY_KP_5:
 		return
 	var input_time: float = RhythmTimingScript.get_input_judgment_time(raw_time_s, user_input_offset_ms)
@@ -1823,53 +1785,6 @@ func _handle_v18_direction_action(pressed_key: int, raw_time_s: float) -> void:
 		register_hit(absf(current_offset), current, current_offset)
 		return
 	register_miss("WRONG INPUT", false, pressed_key, current_offset, true)
-
-func _complete_v18_practice_loop() -> void:
-	if not practice_mode_active or fight_over:
-		return
-	_reconcile_result_judgements()
-	var accuracy: float = calculate_accuracy()
-	var snapshot: Dictionary = _build_result_snapshot(accuracy, false)
-	snapshot["session_mode"] = "practice"
-	snapshot["practice_section_index"] = practice_section_index
-	snapshot["practice_section_role"] = str(practice_section.get("role", practice_section.get("name", "section")))
-	PracticeRecordsScript.record(level_data, input_style, random_mode_enabled, practice_section_index, practice_section, snapshot)
-	practice_loop_count += 1
-	show_feedback("PRACTICE %d" % practice_loop_count, "%.2f%% · looping section" % accuracy, theme_config.text_secondary, 0.55)
-	_restart_v18_practice_loop()
-
-func _restart_v18_practice_loop() -> void:
-	track.clear_notes()
-	stream_notes.clear()
-	current_note_index = 0
-	current_space_index = 0
-	var loop_events: Variant = level_data.get("events", [])
-	if loop_events is Array:
-		chart_timeline.load_events(loop_events as Array)
-	var loop_spaces: Variant = level_data.get("space_events", [])
-	space_events = load_space_events(loop_spaces as Array if loop_spaces is Array else [])
-	combo = 0
-	max_combo = 0
-	score = 0
-	score_digits.reset_value(0)
-	total_hits = 0
-	perfect_hits = 0
-	great_hits = 0
-	total_misses = 0
-	reverse_hits = 0
-	space_hits = 0
-	space_perfects = 0
-	space_misses = 0
-	_reset_feedback_visuals()
-	var playback_start: float = maxf(0.0, practice_start_s - practice_lead_in_s)
-	fight_time = playback_start
-	_reset_runtime_timing_state()
-	music_has_finished = false
-	if music != null:
-		music.stop()
-		music.stream_paused = false
-		music.play(playback_start)
-	update_hud()
 
 func load_space_events(raw_space_events: Array) -> Array[float]:
 	var loaded: Array[float] = []
@@ -1908,7 +1823,8 @@ func register_hit(distance: float, note: RhythmNote, signed_offset_s: float = 0.
 
 	var is_reverse: bool = note.note_type == "reverse"
 	if is_reverse:
-		points += gameplay_config.reverse_score_bonus
+		if not bool(note.get_meta("mod_reverse", false)):
+			points += gameplay_config.reverse_score_bonus
 		reverse_hits += 1
 
 	total_hits += 1
@@ -2040,6 +1956,7 @@ func _finalize_end_fight() -> void:
 	if not replay_playback_active:
 		is_new_best = commit_best_stats(accuracy)
 	var result_snapshot: Dictionary = _build_result_snapshot(accuracy, is_new_best)
+	var presentation_events: Array = playtest_telemetry.get_result_events() if not replay_playback_active else []
 	result_snapshot["session_mode"] = "replay" if replay_playback_active else "normal"
 	_report_runtime("result", "Gameplay run completed", {"song_id": selected_song_id, "difficulty": str(result_snapshot.get("difficulty_id", "")), "accuracy": accuracy, "score": score, "session_mode": str(result_snapshot.get("session_mode", "normal"))})
 	var replay: Node = get_node_or_null("/root/ReplayManager")
@@ -2050,6 +1967,9 @@ func _finalize_end_fight() -> void:
 		playtest_telemetry.complete_session(result_snapshot)
 		if replay != null:
 			replay.call("finish_recording", result_snapshot)
+	# Presentation-only data is attached after existing record/replay persistence.
+	result_snapshot["judgement_events"] = presentation_events
+	result_snapshot["song_duration_s"] = get_song_duration()
 	result_overlay.call("set_result", result_snapshot)
 	result_overlay.call("focus_default")
 	update_hud()
@@ -2210,6 +2130,8 @@ func _build_result_snapshot(accuracy: float, is_new_best: bool) -> Dictionary:
 	var artist: String = str(level_data.get("artist", "Unknown Artist"))
 	var difficulty: String = str(level_data.get("difficulty", "NORMAL"))
 	var mode_text: String = "RANDOM" if random_mode_enabled else "AUTHORED"
+	if reverse_mod_percent > 0:
+		mode_text += " · REV %d%%" % reverse_mod_percent
 	var input_mode_text: String = "4-ARROW" if input_style == "4_arrow" else "8-DIR"
 	var stars: int = int(level_data.get("star_rating", 1))
 	var expected_notes: int = _expected_note_count()
@@ -2249,6 +2171,7 @@ func _build_result_snapshot(accuracy: float, is_new_best: bool) -> Dictionary:
 		"completion_state": "completed",
 		"app_version": ScoreIdentity.app_version(),
 		"score_identity": ScoreIdentity.identity(level_data, input_style, random_mode_enabled),
+		"reverse_percent": reverse_mod_percent,
 		"meta": "%s  •  %s  •  %s  •  %s  •  %d★  •  %d BPM" % [artist, difficulty, input_mode_text, mode_text, stars, bpm],
 		"background": str(get_node_or_null("/root/BackgroundSession").call("get_background_path")) if get_node_or_null("/root/BackgroundSession") != null else "",
 		"difficulty_id": chart_difficulty_id,
@@ -2332,7 +2255,7 @@ func show_judgment_popup(rating: String) -> void:
 	judgment_sprite.add_theme_color_override("font_color", _judgment_color(rating))
 	judgment_sprite.visible = true
 	judgment_sprite.modulate = Color.WHITE
-	judgment_sprite.modulate.a = 0.0
+	judgment_sprite.modulate.a = 1.0
 	var target_scale: Vector2 = Vector2.ONE * ui_layout_config.battle_judgment_scale
 	var fx_amount: float = clampf(effect_intensity, 0.0, 1.0)
 	var pop_scale: Vector2 = target_scale.lerp(target_scale * judgment_pop_start_scale, fx_amount)
@@ -2411,10 +2334,11 @@ func update_hud() -> void:
 	bpm_label.text = "%d BPM" % int(round(float(hud_source.get("bpm", get_bpm()))))
 	difficulty_label.text = str(hud_source.get("difficulty", hud_source.get("chart_difficulty", "NORMAL"))).to_upper()
 	difficulty_label.text += "  ·  %s" % ("4K" if input_style == "4_arrow" else "8K")
+	difficulty_label.text += "  ·  %s" % bpm_label.text
 	if random_mode_enabled:
 		difficulty_label.text += "  ·  RND"
-	if practice_mode_active:
-		difficulty_label.text += "  ·  PRACTICE"
+	if reverse_mod_percent > 0:
+		difficulty_label.text += "  ·  REV %d%%" % reverse_mod_percent
 	elif replay_playback_active:
 		difficulty_label.text += "  ·  REPLAY"
 	duration_label.text = "%s / %s" % [
@@ -2543,6 +2467,8 @@ func get_current_note() -> RhythmNote:
 	return candidate as RhythmNote
 
 func get_raw_music_time() -> float:
+	if game_paused and pause_timing_snapshot_valid:
+		return pause_raw_music_snapshot_s
 	if music_has_finished:
 		return maxf(0.0, get_music_time() + user_audio_offset_ms / 1000.0)
 	var sampled_raw_time := RhythmTimingScript.get_raw_audio_time(music, fight_time)
@@ -2559,6 +2485,8 @@ func get_music_time() -> float:
 	# Canonical gameplay clock. Notes, SPACE, progress, late-note consumption,
 	# and judgment all use this exact song time. User audio compensation is
 	# applied here once, rather than being scattered through gameplay code.
+	if game_paused and music_has_finished:
+		return fight_time
 	if music_has_finished:
 		var tail_elapsed_s: float = maxf(0.0, _monotonic_clock_s() - music_finished_clock_s)
 		return maxf(0.0, music_finished_song_time + tail_elapsed_s)
@@ -2640,7 +2568,7 @@ func get_bpm() -> float:
 
 
 func get_travel_time() -> float:
-	return gameplay_config.get_travel_time(get_bpm())
+	return run_note_travel_time
 
 func _reset_runtime_direction_state() -> void:
 	last_runtime_direction = -1
@@ -2878,8 +2806,9 @@ func _capture_run_input_binding_snapshot() -> void:
 		"bindings": bindings.duplicate(true),
 	}
 	input_style = str(run_input_binding_snapshot.get("input_style", UserSettingsScript.DEFAULT_INPUT_STYLE))
+	run_note_travel_time = float(snapshot.get("note_travel_time", UserSettingsScript.DEFAULT_NOTE_TRAVEL_TIME))
 	if track != null:
-		track.set_input_style(input_style)
+		track.set_input_binding_labels(run_input_binding_snapshot)
 
 func get_run_input_binding_snapshot() -> Dictionary:
 	return run_input_binding_snapshot.duplicate(true)

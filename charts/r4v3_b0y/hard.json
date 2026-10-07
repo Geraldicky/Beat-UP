@@ -13,7 +13,7 @@
 	"beat_offset": 0.121534,
 	"duration": 179.745714,
 	"seed": 1744316.0,
-	"recommended": "HARD • 8★ • 528 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 8★ • 502 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.521534,
@@ -44,11 +44,6 @@
 			"time": 5.264391,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 5.607248,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 5.950105,
@@ -164,11 +159,6 @@
 			"time": 18.63582,
 			"type": "reverse",
 			"direction": 1
-		},
-		{
-			"time": 19.321534,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 19.664391,
@@ -416,16 +406,6 @@
 			"direction": 7
 		},
 		{
-			"time": 34.23582,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 34.407248,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 34.750105,
 			"type": "normal",
 			"direction": 1
@@ -669,11 +649,6 @@
 			"time": 47.43582,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 48.121534,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 48.978677,
@@ -951,16 +926,6 @@
 			"direction": 7
 		},
 		{
-			"time": 64.578677,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 64.750105,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 65.092963,
 			"type": "normal",
 			"direction": 8
@@ -1216,11 +1181,6 @@
 			"direction": 1
 		},
 		{
-			"time": 78.292963,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
 			"time": 78.63582,
 			"type": "normal",
 			"direction": 4
@@ -1309,61 +1269,6 @@
 			"time": 87.550105,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 87.892963,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 88.578677,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 89.264391,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 89.950105,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 90.63582,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 91.321534,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 92.007248,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 92.692963,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 93.03582,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 93.378677,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 93.550105,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 93.721534,
@@ -1631,11 +1536,6 @@
 			"direction": 2
 		},
 		{
-			"time": 119.43582,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 120.464391,
 			"type": "normal",
 			"direction": 3
@@ -1784,11 +1684,6 @@
 			"time": 132.63582,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 132.721534,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 132.807248,
@@ -1999,21 +1894,6 @@
 			"time": 143.43582,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 143.950105,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 144.121534,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 144.292963,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 144.464391,
@@ -2411,16 +2291,6 @@
 			"direction": 9
 		},
 		{
-			"time": 163.321534,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 163.492963,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 163.664391,
 			"type": "normal",
 			"direction": 8
@@ -2816,7 +2686,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 63
+		"reverse": 61
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2845,8 +2715,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 528,
-		"reverse_count": 63,
+		"note_count": 502,
+		"reverse_count": 61,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2915,5 +2785,55 @@
 		"analysis_master_original_name": "R4V3 B0Y - S3RL feat Krystal [XJA5IhsDD9M].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				87.892963,
+				93.378677
+			]
+		],
+		"before": {
+			"song_id": "r4v3_b0y",
+			"difficulty": "hard",
+			"bpm": 175.0,
+			"duration": 179.745714,
+			"notes": 528,
+			"spaces": 10,
+			"average_inputs_per_second": 2.993,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 25,
+			"fast_direction_changes_under_170ms": 5,
+			"arrows_within_250ms_of_space": 16,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 174.171
+		},
+		"after": {
+			"song_id": "r4v3_b0y",
+			"difficulty": "hard",
+			"bpm": 175.0,
+			"duration": 179.745714,
+			"notes": 502,
+			"spaces": 10,
+			"average_inputs_per_second": 2.848,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 25,
+			"fast_direction_changes_under_170ms": 3,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					87.550105,
+					93.378677
+				]
+			],
+			"longest_active_run_seconds": 85.029
+		},
+		"subdivision_notes_removed": 1,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }
