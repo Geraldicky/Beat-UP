@@ -13,7 +13,7 @@
 	"beat_offset": 0.255338,
 	"duration": 188.371927,
 	"seed": 1744306.0,
-	"recommended": "HARD • 8★ • 536 notes • 11 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 8★ • 497 notes • 11 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.655338,
@@ -39,11 +39,6 @@
 			"time": 5.055338,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 5.741052,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 6.083909,
@@ -199,11 +194,6 @@
 			"time": 24.598195,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 24.941052,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 25.283909,
@@ -446,11 +436,6 @@
 			"direction": 4
 		},
 		{
-			"time": 38.655338,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
 			"time": 38.998195,
 			"type": "normal",
 			"direction": 1
@@ -551,61 +536,6 @@
 			"direction": 7
 		},
 		{
-			"time": 44.655338,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 45.169624,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 45.512481,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 45.855338,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 46.198195,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 46.541052,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 46.883909,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 47.226767,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 48.255338,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 48.941052,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 49.283909,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 49.626767,
 			"type": "normal",
 			"direction": 2
@@ -654,11 +584,6 @@
 			"time": 54.512481,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 54.598195,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 54.683909,
@@ -714,16 +639,6 @@
 			"time": 57.169624,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 57.341052,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 57.512481,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 57.855338,
@@ -959,16 +874,6 @@
 			"time": 71.055338,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 71.569624,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 71.741052,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 71.912481,
@@ -1326,11 +1231,6 @@
 			"direction": 4
 		},
 		{
-			"time": 92.141052,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
 			"time": 92.483909,
 			"type": "normal",
 			"direction": 8
@@ -1571,16 +1471,6 @@
 			"direction": 4
 		},
 		{
-			"time": 109.969624,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 110.141052,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 110.312481,
 			"type": "normal",
 			"direction": 9
@@ -1711,16 +1601,6 @@
 			"direction": 6
 		},
 		{
-			"time": 119.655338,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 119.741052,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 120.255338,
 			"type": "reverse",
 			"direction": 1
@@ -1806,11 +1686,6 @@
 			"direction": 2
 		},
 		{
-			"time": 125.055338,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 125.398195,
 			"type": "normal",
 			"direction": 4
@@ -1829,11 +1704,6 @@
 			"time": 126.083909,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 126.169624,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 126.426767,
@@ -1864,11 +1734,6 @@
 			"time": 127.798195,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 127.883909,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 128.141052,
@@ -2181,11 +2046,6 @@
 			"direction": 1
 		},
 		{
-			"time": 146.998195,
-			"type": "reverse",
-			"direction": 6
-		},
-		{
 			"time": 147.341052,
 			"type": "normal",
 			"direction": 8
@@ -2456,11 +2316,6 @@
 			"direction": 6
 		},
 		{
-			"time": 163.455338,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
 			"time": 163.798195,
 			"type": "normal",
 			"direction": 9
@@ -2474,51 +2329,6 @@
 			"time": 164.483909,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 164.826767,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 165.855338,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 166.198195,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 167.226767,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 167.569624,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 167.912481,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 168.941052,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 169.626767,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 170.141052,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 170.312481,
@@ -2639,11 +2449,6 @@
 			"time": 180.598195,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 181.283909,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 182.312481,
@@ -2864,7 +2669,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 64
+		"reverse": 59
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2893,8 +2698,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 536,
-		"reverse_count": 64,
+		"note_count": 497,
+		"reverse_count": 59,
 		"space_count": 11,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2963,5 +2768,63 @@
 		"analysis_master_original_name": "Feint - Tower Of Heaven (You Are Slaves) [z-sAl3S5qB8].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				44.141052,
+				49.626766
+			],
+			[
+				164.826767,
+				170.312481
+			]
+		],
+		"before": {
+			"song_id": "tower_of_heaven",
+			"difficulty": "hard",
+			"bpm": 175.0,
+			"duration": 188.371927,
+			"notes": 536,
+			"spaces": 11,
+			"average_inputs_per_second": 2.904,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 9,
+			"arrows_within_250ms_of_space": 14,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 184.457
+		},
+		"after": {
+			"song_id": "tower_of_heaven",
+			"difficulty": "hard",
+			"bpm": 175.0,
+			"duration": 188.371927,
+			"notes": 497,
+			"spaces": 11,
+			"average_inputs_per_second": 2.697,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 3,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					43.798195,
+					49.626767
+				],
+				[
+					164.483909,
+					170.312481
+				]
+			],
+			"longest_active_run_seconds": 114.857
+		},
+		"subdivision_notes_removed": 5,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

@@ -6,9 +6,22 @@ func check(ok: bool, message: String) -> void:
 	if not ok:
 		failures += 1
 		push_error(message)
+
+func control_tree_contains_text(root_control: Node, needle: String) -> bool:
+	if root_control == null:
+		return false
+	if root_control is Label and (root_control as Label).text.contains(needle):
+		return true
+	if root_control is BaseButton and (root_control as BaseButton).text.contains(needle):
+		return true
+	for child in root_control.get_children():
+		if child is Node and control_tree_contains_text(child as Node, needle):
+			return true
+	return false
 func _initialize() -> void:
 	call_deferred("run")
 func run() -> void:
+	var baseline_orphans: Array[int] = Node.get_orphan_node_ids()
 	Settings.set_input_style("8_direction")
 	root.get_node("AppSessionState").mark_splash_seen()
 	var shell: Control = load("res://scenes/app_shell.tscn").instantiate()
@@ -20,8 +33,7 @@ func run() -> void:
 	var game: Control = shell.gameplay_screen
 	selection._select_difficulty("hard")
 	var request := {"song_id": "big_daddy", "difficulty_id": "hard", "random_mode": false}
-	shell.launch_gameplay(request, {})
-	await create_timer(1.5).timeout
+	await shell.launch_gameplay(request, {})
 	check(shell.get_active_route() == "gameplay", "Gameplay launch completes")
 	game._auto_pause_on_focus_loss()
 	check(game.game_paused, "Focus loss pauses gameplay")
@@ -48,11 +60,11 @@ func run() -> void:
 	await create_timer(0.5).timeout
 	check(shell.get_active_route() == "song_library", "Result Back returns to resident library")
 	check(library.best_stats_store.has(key), "Visible library receives score without restart")
-	check(selection.ranking_list.get_child_count() > 0 and selection.ranking_list.get_child(0).text.contains("123,456"), "Visible personal best displays new score")
+	check(selection.album_flow_best_score_value != null and selection.album_flow_best_score_value.text == "123,456", "Visible Best Record component displays new score")
+	check(selection.ranking_list.get_child_count() > 0 and control_tree_contains_text(selection.ranking_list.get_child(0), "123,456"), "Local run history displays new score")
 	check(selection._progress_entry("big_daddy", "hard").get("score", 0) == 123456, "Progress lookup receives new record")
 	# Subsequent lower-score run must update plays, while retaining the best.
-	shell.launch_gameplay(request, {})
-	await create_timer(1.5).timeout
+	await shell.launch_gameplay(request, {})
 	check(shell.get_active_route() == "gameplay", "Gameplay launch completes")
 	game.fight_over = true
 	game.music.stop()
@@ -70,12 +82,17 @@ func run() -> void:
 	check(selection._progress_entry("big_daddy", "hard").get("score", 0) == 123456, "Lower run preserves best")
 	check(float(selection.record_rows[0].accuracy) < 100.0, "Ranking uses accuracy from best-score run")
 	check(selection.record_rows.size() == 2, "Both completed runs appear in ranking")
-	selection.ranking_list.get_child(1).pressed.emit()
-	var run_dialog: AcceptDialog = selection.get_child(selection.get_child_count() - 1) as AcceptDialog
-	check(run_dialog != null and run_dialog.dialog_text.contains("Score 100 ·") and run_dialog.dialog_text.contains("100.00%"), "Selecting lower-score run displays its coherent metrics")
+	var lower_run_button := selection.ranking_list.get_child(1) as Button
+	check(lower_run_button != null, "Lower-score run row is not interactive.")
+	if lower_run_button != null:
+		lower_run_button.pressed.emit()
+		await process_frame
+	var run_dialog := selection.get_child(selection.get_child_count() - 1) as Control
+	check(run_dialog != null and run_dialog.get_script() == preload("res://scripts/ui/beat_message_dialog.gd"), "Selecting a run did not open the current Beat Message dialog.")
+	check(run_dialog != null and control_tree_contains_text(run_dialog, "Score 100 ·") and control_tree_contains_text(run_dialog, "100.00%"), "Selecting lower-score run displays its coherent metrics")
 	if run_dialog != null:
-		run_dialog.hide()
 		run_dialog.queue_free()
+		await process_frame
 	var result_data: Dictionary = game._build_result_snapshot(100.0, false)
 	check(result_data.previous_best.score == 123456, "Result comparison retains pre-commit best")
 	var export: Dictionary = preload("res://scripts/playtest_export.gd").export_zip()
@@ -88,7 +105,11 @@ func run() -> void:
 	check(selection._progress_entry("big_daddy", "hard").is_empty(), "4K remains separate")
 	selection._on_mode_8_selected()
 	check(selection._progress_entry("big_daddy", "hard").get("score", 0) == 123456, "8K record survives mode switch")
-	print("LIVE_LIBRARY_RECORDS: ", "PASS" if failures == 0 else "FAIL", " (", failures, " failures)")
 	shell.queue_free()
 	await create_timer(0.3).timeout
+	for instance_id: int in Node.get_orphan_node_ids():
+		if instance_id not in baseline_orphans:
+			var orphan := instance_from_id(instance_id) as Node
+			check(false, "Resident records lifecycle leaked node: %s" % orphan.name)
+	print("LIVE_LIBRARY_RECORDS: ", "PASS" if failures == 0 else "FAIL", " (", failures, " failures)")
 	quit(1 if failures else 0)

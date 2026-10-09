@@ -12,16 +12,16 @@ var transitioning: bool = false
 var transition_tween: Tween
 var scene_cache: Dictionary = {}
 var preload_requests: Dictionary = {}
+var preparing_gameplay := false
 
 # Menu scenes are warmed while the player is still looking at the current page.
-# Gameplay launches use a separate visual-continuity handoff: resources can keep
-# loading, but the player never sees a loading page, spinner, percentage, or bar.
-const QUICK_PRELOAD_SCENES := [
-	# v17.4.24: Main Menu, Song Library and gameplay are already resident under
-	# AppShell. Only truly external destinations need a resource warm-up.
-	"res://scenes/chart_editor.tscn",
-	"res://scenes/app_shell.tscn",
-]
+# Gameplay launches show chart identity and indeterminate preparation feedback.
+# Readiness, not the loading animation's duration, owns the reveal.
+const QUICK_PRELOAD_SCENES: Array[String] = []
+# Boot owns AppShell preparation. Starting the same warm-up in this autoload
+# also races standalone/test scene loading and shutdown, where ClassDB may be
+# torn down while a loader thread is still registering those scripts. Resident
+# routes need no speculative scene load; external callers use preload_scene.
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -33,6 +33,20 @@ func _ready() -> void:
 	set_process(true)
 	for raw_path in QUICK_PRELOAD_SCENES:
 		preload_scene(str(raw_path))
+
+func _exit_tree() -> void:
+	# ResourceLoader has no cancellation API. Join warm-ups owned by this
+	# autoload before engine shutdown tears down script/class registration.
+	# This may wait at exit only; navigation and the frame loop stay asynchronous.
+	for raw_path: Variant in preload_requests.keys():
+		var scene_path := str(raw_path)
+		var status := ResourceLoader.load_threaded_get_status(scene_path)
+		if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS or status == ResourceLoader.THREAD_LOAD_LOADED:
+			ResourceLoader.load_threaded_get(scene_path)
+	preload_requests.clear()
+	scene_cache.clear()
+	if transition_tween != null:
+		transition_tween.kill()
 
 # Transitions are atomic. A key pressed while the visual handoff owns the screen
 # must not leak into the destination scene after a scene swap.
@@ -73,10 +87,8 @@ func is_scene_cached(scene_path: String) -> bool:
 func change_scene(scene_path: String, _status: String = "") -> void:
 	await change_scene_quick(scene_path)
 
-# v17.4.23: gameplay loading is masked by visual continuity instead of a
-# loading screen. The selected artwork becomes the handoff layer, the song
-# information performs a short launch animation and then leaves, and resource
-# work continues behind the artwork until gameplay is genuinely ready.
+# Standalone gameplay also uses the persistent loading presentation. Song
+# identity remains visible while the scene and gameplay state are prepared.
 func change_scene_to_gameplay(scene_path: String, visual_payload: Dictionary) -> void:
 	if transitioning:
 		return
@@ -105,9 +117,7 @@ func change_scene_to_gameplay(scene_path: String, visual_payload: Dictionary) ->
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# main.tscn prepares the selected chart/audio behind the persistent artwork.
-	# There is deliberately no visible progress state. If preparation takes a
-	# little longer, the artwork simply remains as part of the launch animation.
+	# main.tscn prepares chart/audio behind the visible loading presentation.
 	var readiness_deadline: float = _clock_seconds() + 10.0
 	while _clock_seconds() < readiness_deadline:
 		var current_scene: Node = get_tree().current_scene
@@ -127,7 +137,7 @@ func _resolve_global_song_visual_payload(payload: Dictionary) -> Dictionary:
 		var selection_value: Variant = selection_state.call("get_state")
 		if selection_value is Dictionary:
 			var selection: Dictionary = selection_value as Dictionary
-			for key_name in ["title", "artist", "bpm", "difficulty", "star_rating"]:
+			for key_name in ["song_id", "title", "artist", "bpm", "difficulty", "star_rating"]:
 				if not resolved.has(key_name) or str(resolved.get(key_name, "")).is_empty():
 					resolved[key_name] = selection.get(key_name, resolved.get(key_name, ""))
 	var background_session: Node = get_node_or_null("/root/BackgroundSession")
@@ -136,18 +146,21 @@ func _resolve_global_song_visual_payload(payload: Dictionary) -> Dictionary:
 	return resolved
 
 func transition_action_to_gameplay(action: Callable, visual_payload: Dictionary) -> void:
-	if transitioning:
+	var covered := preparing_gameplay
+	if transitioning and not covered:
 		return
+	preparing_gameplay = false
 	transitioning = true
 	visible = true
 	_set_song_launch_mode(true)
 	transition_root.modulate.a = 1.0
-	song_launch_visual.configure(_resolve_global_song_visual_payload(visual_payload))
-	transition_started.emit("GAMEPLAY HANDOFF")
-	await song_launch_visual.animate_cover()
+	song_launch_visual.configure(_resolve_global_song_visual_payload(visual_payload), covered)
+	song_launch_visual.loading_status = "BUILDING GAMEPLAY"
+	if not covered:
+		transition_started.emit("GAMEPLAY HANDOFF")
+		await song_launch_visual.animate_cover()
 
-	# Retry and in-main Song Select do not need a scene reload. The same visual
-	# continuity layer stays alive while start_level() rebuilds chart/audio state.
+	# Retry and in-main Song Select use the same loading layer without a reload.
 	action.call()
 	await get_tree().process_frame
 	var readiness_deadline: float = _clock_seconds() + 6.0
@@ -285,10 +298,29 @@ func _cancel_song_handoff(scene_path: String) -> void:
 	_finish_song_handoff()
 
 func _finish_song_handoff() -> void:
+	preparing_gameplay = false
 	_set_song_launch_mode(false)
 	visible = false
 	transitioning = false
 	transition_finished.emit()
+
+func begin_gameplay_preparation(payload: Dictionary) -> void:
+	preparing_gameplay = true
+	transitioning = true
+	visible = true
+	_set_song_launch_mode(true)
+	transition_root.modulate.a = 1.0
+	song_launch_visual.configure(_resolve_global_song_visual_payload(payload))
+	song_launch_visual.loading_status = "PREPARING CHART"
+	transition_started.emit("PREPARING CHART")
+	await song_launch_visual.animate_cover()
+	# Guarantee a rendered loading state before synchronous catalog validation.
+	await get_tree().process_frame
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+
+func cancel_gameplay_preparation() -> void:
+	_finish_song_handoff()
 
 func _clock_seconds() -> float:
 	return float(Time.get_ticks_usec()) / 1000000.0

@@ -13,7 +13,7 @@
 	"beat_offset": 0.11025,
 	"duration": 192.22644,
 	"seed": 1744314.0,
-	"recommended": "MASTER • 8★ • 465 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 8★ • 442 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 14.03025,
@@ -54,11 +54,6 @@
 			"time": 18.35025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 19.31025,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 20.27025,
@@ -146,31 +141,6 @@
 			"direction": 8
 		},
 		{
-			"time": 30.83025,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 31.31025,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 32.03025,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 32.75025,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 33.71025,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 34.67025,
 			"type": "normal",
 			"direction": 2
@@ -229,11 +199,6 @@
 			"time": 39.95025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 40.43025,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 41.39025,
@@ -374,11 +339,6 @@
 			"time": 55.07025,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 55.79025,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 56.27025,
@@ -614,16 +574,6 @@
 			"time": 74.51025,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 74.87025,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 74.99025,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 75.23025,
@@ -919,11 +869,6 @@
 			"time": 89.87025,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 90.35025,
-			"type": "reverse",
-			"direction": 9
 		},
 		{
 			"time": 90.83025,
@@ -1226,11 +1171,6 @@
 			"direction": 7
 		},
 		{
-			"time": 105.71025,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 106.19025,
 			"type": "normal",
 			"direction": 2
@@ -1364,11 +1304,6 @@
 			"time": 120.11025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 121.07025,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 121.31025,
@@ -1569,16 +1504,6 @@
 			"time": 135.95025,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 136.31025,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 136.43025,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 136.67025,
@@ -1874,11 +1799,6 @@
 			"time": 151.31025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 151.79025,
-			"type": "reverse",
-			"direction": 7
 		},
 		{
 			"time": 152.03025,
@@ -2191,11 +2111,6 @@
 			"direction": 2
 		},
 		{
-			"time": 168.11025,
-			"type": "reverse",
-			"direction": 4
-		},
-		{
 			"time": 168.59025,
 			"type": "normal",
 			"direction": 3
@@ -2269,36 +2184,6 @@
 			"time": 176.27025,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 177.47025,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 177.71025,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 178.67025,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 179.15025,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 179.63025,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 180.11025,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 180.59025,
@@ -2487,7 +2372,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 84
+		"reverse": 80
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2516,8 +2401,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 465,
-		"reverse_count": 84,
+		"note_count": 442,
+		"reverse_count": 80,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2586,5 +2471,63 @@
 		"analysis_master_original_name": "Noisestorm - Crab Rave (Official Music Video) [cE0wfjsybIQ].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				30.83025,
+				34.67025
+			],
+			[
+				176.75025,
+				180.59025
+			]
+		],
+		"before": {
+			"song_id": "crab_rave",
+			"difficulty": "master",
+			"bpm": 125.0,
+			"duration": 192.22644,
+			"notes": 465,
+			"spaces": 10,
+			"average_inputs_per_second": 2.471,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 25,
+			"fast_direction_changes_under_170ms": 99,
+			"arrows_within_250ms_of_space": 17,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 170.4
+		},
+		"after": {
+			"song_id": "crab_rave",
+			"difficulty": "master",
+			"bpm": 125.0,
+			"duration": 192.22644,
+			"notes": 442,
+			"spaces": 10,
+			"average_inputs_per_second": 2.351,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 25,
+			"fast_direction_changes_under_170ms": 97,
+			"arrows_within_250ms_of_space": 5,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					30.35025,
+					34.67025
+				],
+				[
+					176.27025,
+					180.59025
+				]
+			],
+			"longest_active_run_seconds": 141.6
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

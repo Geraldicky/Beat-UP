@@ -8,7 +8,6 @@ signal navigation_completed(result: Dictionary)
 const ROUTE_MAIN_MENU := "main_menu"
 const ROUTE_SONG_LIBRARY := "song_library"
 const ROUTE_GAMEPLAY := "gameplay"
-const ROUTE_CHART_STUDIO := "chart_studio"
 
 var _shell: Node = null
 var _navigating: bool = false
@@ -47,9 +46,6 @@ func request_main_menu(focus_index: int = 0) -> Dictionary:
 
 func request_song_library(selected_song_id: String = "", refresh_data: bool = false) -> Dictionary:
 	return await _request_shell_navigation("show_song_library", [selected_song_id, refresh_data], ROUTE_SONG_LIBRARY)
-
-func request_chart_studio() -> Dictionary:
-	return await _request_shell_navigation("show_chart_studio", [], ROUTE_CHART_STUDIO)
 
 func request_gameplay(request: Dictionary, visual_payload: Dictionary) -> Dictionary:
 	return await _request_shell_navigation("launch_gameplay", [request, visual_payload], ROUTE_GAMEPLAY)

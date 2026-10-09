@@ -46,6 +46,15 @@ func _process(delta: float) -> void:
 			rank_fill_elapsed -= rank_fill_interval
 			_play_rank_fill_tick()
 
+func _exit_tree() -> void:
+	# Stop generator voices before audio-server teardown releases their playback.
+	rank_fill_active = false
+	for player in players:
+		if is_instance_valid(player):
+			player.stop()
+			player.stream = null
+	players.clear()
+
 func _scan_current_scene() -> void:
 	var scene := get_tree().current_scene
 	if scene == null:

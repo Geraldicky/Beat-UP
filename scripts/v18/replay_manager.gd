@@ -29,6 +29,7 @@ func begin_recording(level_data: Dictionary, input_style: String, random_mode: b
 		"input_style": input_style,
 		"random_mode": random_mode,
 		"random_seed": random_seed,
+		"note_travel_time": float(level_data.get("_note_travel_time", 1.5)),
 		"created_unix_ms": int(round(Time.get_unix_time_from_system() * 1000.0)),
 		"inputs": [],
 		"result": {},
@@ -131,6 +132,8 @@ func _path_for_identity(identity: Dictionary) -> String:
 	return "%s/%s.json" % [STORAGE_ROOT, token]
 
 func _identity_matches(a: Dictionary, b: Dictionary) -> bool:
+	if int(a.get("reverse_percent", 0)) != int(b.get("reverse_percent", 0)) or str(a.get("reverse_version", "")) != str(b.get("reverse_version", "")):
+		return false
 	for key: String in ["song_id", "difficulty", "input_style", "random_mode", "chart_hash", "rules_hash"]:
 		if a.get(key, null) != b.get(key, null):
 			return false

@@ -886,13 +886,6 @@ custom_minimum_size = Vector2(96, 42)
 layout_mode = 2
 text = "REFRESH"
 
-[node name="EditorButton" type="Button" parent="MainMargin/RootVBox/FooterPanel/Footer"]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(132, 42)
-layout_mode = 2
-text = "CHART EDITOR"
-
 [node name="PackExportButton" type="Button" parent="MainMargin/RootVBox/FooterPanel/Footer"]
 unique_name_in_owner = true
 visible = false

@@ -13,7 +13,7 @@
 	"beat_offset": 2.594868,
 	"duration": 122.044127,
 	"seed": 174214.0,
-	"recommended": "HARD • 7★ • 362 notes • 7 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 7★ • 343 notes • 7 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.858026,
@@ -206,11 +206,6 @@
 			"direction": 3
 		},
 		{
-			"time": 15.542236,
-			"type": "reverse",
-			"direction": 4
-		},
-		{
 			"time": 15.858026,
 			"type": "normal",
 			"direction": 6
@@ -311,46 +306,6 @@
 			"direction": 8
 		},
 		{
-			"time": 22.805394,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 23.121184,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 23.752763,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 24.542236,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 25.33171,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 25.963289,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 26.594868,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 27.542236,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 27.858026,
 			"type": "normal",
 			"direction": 9
@@ -374,11 +329,6 @@
 			"time": 30.068552,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 30.384342,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 31.33171,
@@ -584,11 +534,6 @@
 			"time": 43.963289,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 44.279079,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 44.594868,
@@ -846,16 +791,6 @@
 			"direction": 1
 		},
 		{
-			"time": 58.015921,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 58.173815,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 58.489605,
 			"type": "reverse",
 			"direction": 3
@@ -944,11 +879,6 @@
 			"time": 62.752763,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 62.83171,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 63.226447,
@@ -1154,11 +1084,6 @@
 			"time": 80.594868,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 80.910657,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 81.384342,
@@ -1374,16 +1299,6 @@
 			"time": 94.33171,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 94.6475,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 94.805394,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 95.121184,
@@ -1654,16 +1569,6 @@
 			"time": 108.384342,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 108.542236,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 108.700131,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 109.015921,
@@ -1964,7 +1869,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 43
+		"reverse": 41
 	},
 	"generator_diagnostics": {
 		"version": "17.4.19",
@@ -2002,8 +1907,8 @@
 		"longest_sub_170ms_chain_notes": 6
 	},
 	"difficulty_profile": {
-		"note_count": 362,
-		"reverse_count": 43,
+		"note_count": 343,
+		"reverse_count": 41,
 		"space_count": 7,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2086,5 +1991,55 @@
 		"retained_direction_changes": false,
 		"space_events_changed": false,
 		"policy": "stable pressure; dense sections remain musical but no sudden unreadable wall"
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				22.805394,
+				27.858026
+			]
+		],
+		"before": {
+			"song_id": "oshama_scramble",
+			"difficulty": "hard",
+			"bpm": 190.0,
+			"duration": 122.044127,
+			"notes": 362,
+			"spaces": 7,
+			"average_inputs_per_second": 3.023,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 24,
+			"fast_direction_changes_under_170ms": 123,
+			"arrows_within_250ms_of_space": 10,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 117.158
+		},
+		"after": {
+			"song_id": "oshama_scramble",
+			"difficulty": "hard",
+			"bpm": 190.0,
+			"duration": 122.044127,
+			"notes": 343,
+			"spaces": 7,
+			"average_inputs_per_second": 2.868,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 117,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					22.489605,
+					27.858026
+				]
+			],
+			"longest_active_run_seconds": 93.158
+		},
+		"subdivision_notes_removed": 1,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

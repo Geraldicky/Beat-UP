@@ -5,6 +5,7 @@ const LayoutConfigScript = preload("res://config/ui_layout_config.gd")
 const ResultConfigScript = preload("res://config/result_config.gd")
 const MinimalThemeScript = preload("res://scripts/ui/minimal_theme.gd")
 const InteractionPolishScript = preload("res://scripts/ui/interaction_polish.gd")
+const GraphScript = preload("res://scripts/ui/result_run_graph.gd")
 
 signal back_requested
 signal replay_requested
@@ -21,9 +22,13 @@ signal replay_requested
 @onready var page_title: Label = %PageTitle
 @onready var song_title: Label = %SongTitle
 @onready var song_meta: Label = %SongMeta
+@onready var song_artwork: TextureRect = %SongArtwork
+@onready var song_column: HBoxContainer = %SongColumn
+@onready var jacket_area: AspectRatioContainer = %JacketArea
+@onready var rank_area: AspectRatioContainer = %RankArea
 @onready var best_plate: PanelContainer = %BestPlate
 @onready var new_best: Label = %NewBest
-@onready var content: HBoxContainer = %Content
+@onready var content: Control = %Content
 @onready var rank_panel: PanelContainer = %RankPanel
 @onready var rank_column: VBoxContainer = %RankColumn
 @onready var rank_stack: Control = %RankStack
@@ -31,6 +36,7 @@ signal replay_requested
 @onready var rank_value: Label = %RankValue
 @onready var rank_sub: Label = %RankSub
 @onready var stats_column: VBoxContainer = %StatsColumn
+@onready var details: VBoxContainer = %Details
 @onready var score_panel: PanelContainer = %ScorePanel
 @onready var score_vbox: VBoxContainer = %ScoreVBox
 @onready var score_status: Label = %ScoreStatus
@@ -55,7 +61,7 @@ signal replay_requested
 @onready var good_value: Label = %GoodValue
 @onready var miss_value: Label = %MissValue
 @onready var special_panel: PanelContainer = %SpecialPanel
-@onready var special_row: HBoxContainer = %SpecialRow
+@onready var special_row: VBoxContainer = %SpecialRow
 @onready var space_value: Label = %SpaceValue
 @onready var space_meta: Label = %SpaceMeta
 @onready var reverse_value: Label = %ReverseValue
@@ -96,12 +102,22 @@ func _ready() -> void:
 	back_button.pressed.connect(_on_back_button_pressed)
 	replay_button.pressed.connect(_on_replay_button_pressed)
 	_wire_action_focus()
+	bottom_bar.move_child(replay_button, 0)
+	best_plate.reparent(rank_column)
+	combo_card.reparent(primary_stats)
+	var grid := perfect_title.get_parent() as GridContainer
+	grid.columns = 4
+	var metrics := [perfect_title, great_title, good_title, miss_title, perfect_value, great_value, good_value, miss_value]
+	for index in metrics.size():
+		grid.move_child(metrics[index], index)
 	_set_actions_enabled(false)
 	visibility_changed.connect(_on_visibility_changed)
 	if not resized.is_connected(_on_resized):
 		resized.connect(_on_resized)
 	_apply_layout_config()
 	_apply_theme_config()
+	_apply_layout_config()
+	content.resized.connect(_on_resized)
 	_apply_scene_effects()
 	InteractionPolishScript.install_buttons([back_button, replay_button])
 	call_deferred("_update_animation_pivots")
@@ -142,47 +158,131 @@ func _apply_scene_effects() -> void:
 	backdrop.set("accent_color", Color(theme_config.accent_primary, 0.13))
 	backdrop.queue_redraw()
 	judgement_bar.call("set_palette", theme_config.perfect_color, theme_config.great_color, theme_config.good_color, theme_config.miss_color)
-	rank_meter.call("set_thresholds",
-		result_config.c_accuracy,
-		result_config.b_accuracy,
-		result_config.a_accuracy,
-		result_config.s_accuracy
-	)
-	rank_meter.call("set_palette",
-		theme_config.danger,
-		theme_config.space_accent,
-		theme_config.success,
-		theme_config.accent_secondary,
-		theme_config.accent_primary
-	)
 
 func _apply_layout_config() -> void:
-	if layout_config == null:
+	if layout_config == null or not is_node_ready():
 		return
-	for side in ["margin_left", "margin_top", "margin_right", "margin_bottom"]:
-		main_margin.add_theme_constant_override(side, layout_config.screen_margin)
-	root_vbox.add_theme_constant_override("separation", layout_config.item_gap)
-	header_bar.add_theme_constant_override("separation", layout_config.section_gap)
-	content.add_theme_constant_override("separation", layout_config.section_gap)
-	rank_column.add_theme_constant_override("separation", layout_config.compact_gap)
-	stats_column.add_theme_constant_override("separation", layout_config.item_gap)
-	score_vbox.add_theme_constant_override("separation", layout_config.compact_gap)
-	primary_stats.add_theme_constant_override("separation", layout_config.item_gap)
-	special_row.add_theme_constant_override("separation", layout_config.compact_gap)
-	bottom_bar.add_theme_constant_override("separation", layout_config.item_gap)
-	rank_panel.size_flags_stretch_ratio = layout_config.result_rank_ratio
-	stats_column.size_flags_stretch_ratio = layout_config.result_left_ratio
-	rank_panel.custom_minimum_size.x = layout_config.result_rank_min_width
-	score_panel.custom_minimum_size.y = layout_config.result_score_panel_min_height
-	breakdown_panel.custom_minimum_size.y = layout_config.result_breakdown_min_height
-	special_panel.custom_minimum_size.y = layout_config.result_special_panel_min_height
+	var s := clampf(size.y / 1080.0, 0.66, 1.0)
+	for side in ["margin_left", "margin_right"]:
+		main_margin.add_theme_constant_override(side, roundi(90.0 * s))
+	for side in ["margin_top", "margin_bottom"]:
+		main_margin.add_theme_constant_override(side, roundi(32.0 * s))
+	root_vbox.add_theme_constant_override("separation", roundi(18.0 * s))
+	header_bar.custom_minimum_size.y = 36.0 * s
+	%OutcomeBreathingRoom.custom_minimum_size.y = 8.0 * s
+	var w := content.size.x
+	var h := content.size.y
+	# Mockup proportions: song header, outcome band, analysis band.
+	_place(song_column, Rect2(0, 0, w * 0.85, 180.0 * s))
+	var outcome_y := maxf(h * 0.24, 204.0 * s)
+	_place(rank_panel, Rect2(0, outcome_y, w * 0.23, h * 0.45))
+	_place(stats_column, Rect2(w * 0.265, outcome_y + 16.0 * s, w * 0.38, h * 0.41))
+	_place(details, Rect2(0, h * 0.77, w * 0.68, h * 0.21))
+	%TimingGraph.hide()
+	%ProgressPanel.hide()
+	_place(%ModsPanel, Rect2(w * 0.73, outcome_y + 16.0 * s, w * 0.27, 220.0 * s))
+	song_column.custom_minimum_size = Vector2.ZERO
+	song_column.add_theme_constant_override("separation", roundi(28.0 * s))
+	jacket_area.custom_minimum_size = Vector2.ONE * 180.0 * s
+	jacket_area.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	jacket_area.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	song_artwork.custom_minimum_size = Vector2.ZERO
+	song_meta.custom_minimum_size.y = 0
+	song_column.get_node("SongInfo").size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	song_column.get_node("SongInfo").custom_minimum_size.y = 180.0 * s
+	song_column.get_node("SongInfo").add_theme_constant_override("separation", roundi(8 * s))
+	for tag: Control in song_column.get_node("SongInfo/SongTags").get_children():
+		(tag.get_child(0) as Label).add_theme_font_size_override("font_size", roundi(15 * s))
+	rank_panel.custom_minimum_size = Vector2.ZERO
+	rank_panel.add_theme_stylebox_override("panel", _glass_panel())
+	breakdown_panel.add_theme_stylebox_override("panel", _ruled_section())
+	%ModsPanel.add_theme_stylebox_override("panel", _glass_panel())
+	new_best.add_theme_font_size_override("font_size", roundi(20 * s))
+	rank_area.custom_minimum_size = Vector2.ONE * 280.0 * s
+	stats_column.add_theme_constant_override("separation", roundi(18.0 * s))
+	score_panel.custom_minimum_size.y = 0
+	score_vbox.add_theme_constant_override("separation", roundi(12.0 * s))
+	score_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	score_status.add_theme_font_size_override("font_size", maxi(12, roundi(14.0 * s)))
+	score_vbox.move_child(score_status, score_value.get_index() + 1)
+	primary_stats.custom_minimum_size.y = 0
+	combo_card.visible = true
+	%ProgressGraph.max_combo = _combo_target
 	for card in [accuracy_card, combo_card, perfect_rate_card]:
-		card.custom_minimum_size.y = layout_config.result_card_min_height
+		card.custom_minimum_size.y = 0
+	details.custom_minimum_size = Vector2.ZERO
+	breakdown_panel.custom_minimum_size.y = 0
+	var grid := perfect_title.get_parent() as GridContainer
+	grid.add_theme_constant_override("v_separation", roundi(8.0 * s))
+	for label in [perfect_value, great_value, good_value, miss_value]:
+		label.custom_minimum_size = Vector2(100.0, 42.0) * s
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	special_panel.custom_minimum_size.y = 0
+	special_row.add_theme_constant_override("separation", roundi(8.0 * s))
+	for metric in special_row.get_children():
+		metric.add_theme_constant_override("separation", roundi(8.0 * s))
+	bottom_bar.alignment = BoxContainer.ALIGNMENT_END
+	bottom_bar.add_theme_constant_override("separation", roundi(28.0 * s))
 	for button in [back_button, replay_button]:
-		button.custom_minimum_size = Vector2(
-			layout_config.result_button_min_width,
-			layout_config.result_button_min_height
-		)
+		button.custom_minimum_size = Vector2(300.0, 72.0) * s
+	_apply_presentation_type(s)
+	_layout_special_metrics(s)
+
+func _place(control: Control, rect: Rect2) -> void:
+	control.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	control.position = rect.position
+	control.size = rect.size
+
+func _layout_special_metrics(presentation_scale: float) -> void:
+	# RollingValueLabel draws child reels, so its empty native text cannot
+	# reserve width in this compact inline layout. Size for the final value.
+	for metric in [[space_value, _space_target, _space_total_target], [reverse_value, _reverse_target, _reverse_total_target]]:
+		var label: Label = metric[0]
+		var display := "%d/%d" % [metric[1], metric[2]]
+		var font_size := roundi(18.0 * presentation_scale)
+		label.add_theme_font_size_override("font_size", font_size)
+		var width := label.get_theme_font("font").get_string_size(display, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		label.custom_minimum_size = Vector2(ceilf(width) + display.length() * 2.0, 28.0 * presentation_scale)
+		label.call("refresh_style")
+
+func _apply_presentation_type(presentation_scale: float) -> void:
+	for caption in [rank_column.get_node("RankCaption"), score_vbox.get_node("ScoreHeader/ScoreCaption")]:
+		caption.add_theme_font_size_override("font_size", roundi(20.0 * presentation_scale))
+		caption.add_theme_font_override("font", MinimalThemeScript.semibold_font())
+	song_title.add_theme_font_size_override("font_size", roundi(34.0 * presentation_scale))
+	var title_font := FontVariation.new()
+	title_font.base_font = MinimalThemeScript.body_font()
+	title_font.spacing_glyph = roundi(2 * presentation_scale)
+	song_title.add_theme_font_override("font", title_font)
+	song_meta.add_theme_font_size_override("font_size", roundi(18.0 * presentation_scale))
+	song_meta.add_theme_font_override("font", MinimalThemeScript.body_font())
+	song_column.get_node("SongInfo/NowPlayed").add_theme_font_size_override("font_size", roundi(14.0 * presentation_scale))
+	score_value.add_theme_font_size_override("font_size", roundi(88.0 * presentation_scale))
+	var digit_font := FontVariation.new()
+	digit_font.base_font = preload("res://assets/fonts/Rajdhani-Medium.ttf")
+	digit_font.spacing_glyph = roundi(4.0 * presentation_scale)
+	score_value.add_theme_font_override("font", digit_font)
+	score_value.add_theme_color_override("font_color", Color.TRANSPARENT)
+	accuracy_value.add_theme_font_override("font", digit_font)
+	combo_value.add_theme_font_override("font", digit_font)
+	rank_value.add_theme_font_size_override("font_size", roundi(150.0 * presentation_scale))
+	accuracy_value.add_theme_font_size_override("font_size", roundi(56.0 * presentation_scale))
+	score_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	accuracy_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	combo_value.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	accuracy_card.get_node("VBox/Title").horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	combo_card.get_node("VBox/Title").horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	score_vbox.get_node("ScoreHeader").alignment = BoxContainer.ALIGNMENT_BEGIN
+	rank_column.get_node("RankCaption").visible = false
+	song_column.get_node("SongInfo/NowPlayed").add_theme_color_override("font_color", GraphScript.COLORS.PERFECT)
+	for label in [combo_value, perfect_rate_value]:
+		label.add_theme_font_size_override("font_size", roundi(28.0 * presentation_scale))
+	for label in [perfect_value, great_value, good_value, miss_value]:
+		label.add_theme_font_size_override("font_size", roundi(36.0 * presentation_scale))
+	for button in [back_button, replay_button]:
+		button.add_theme_font_size_override("font_size", roundi(20.0 * presentation_scale))
+	for label in _rolling_labels():
+		label.call("refresh_style")
 
 func _apply_theme_config() -> void:
 	if theme_config == null:
@@ -227,28 +327,59 @@ func _apply_theme_config() -> void:
 		meta_label.add_theme_color_override("font_color", theme_config.text_secondary)
 		MinimalThemeScript.apply_mono(meta_label, 10, MinimalThemeScript.MUTED)
 
-	perfect_title.add_theme_color_override("font_color", theme_config.perfect_color)
-	perfect_value.add_theme_color_override("font_color", theme_config.perfect_color)
-	great_title.add_theme_color_override("font_color", theme_config.great_color)
-	great_value.add_theme_color_override("font_color", theme_config.great_color)
-	good_title.add_theme_color_override("font_color", theme_config.good_color)
-	good_value.add_theme_color_override("font_color", theme_config.good_color)
-	miss_title.add_theme_color_override("font_color", theme_config.miss_color)
-	miss_value.add_theme_color_override("font_color", theme_config.miss_color)
+	for pair in [[perfect_title, perfect_value, "PERFECT"], [great_title, great_value, "GREAT"], [good_title, good_value, "GOOD"], [miss_title, miss_value, "MISS"]]:
+		pair[0].add_theme_color_override("font_color", GraphScript.COLORS[pair[2]])
+		pair[1].add_theme_color_override("font_color", GraphScript.COLORS[pair[2]])
 	for label in _rolling_labels():
 		label.call("refresh_style")
 
 	# Album Flow keeps the result hierarchy typographic. Containment appears only
 	# where it improves scanning instead of turning every metric into a card.
-	rank_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s0(12.0))
-	score_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s1(16.0, theme_config.accent_primary))
+	rank_panel.add_theme_stylebox_override("panel", _glass_panel())
+	score_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	for panel in [accuracy_card, combo_card, perfect_rate_card]:
-		panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s0(10.0))
-	breakdown_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s1(14.0))
-	special_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s0(10.0))
-	best_plate.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(theme_config.accent_primary, 0.08), MinimalThemeScript.RADIUS_SM, Color(theme_config.accent_primary, 0.42), 1, 12.0))
+		panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	breakdown_panel.add_theme_stylebox_override("panel", _ruled_section())
+	special_panel.add_theme_stylebox_override("panel", _ruled_section())
+	best_plate.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	new_best.text = "NEW BEST!"
+	new_best.add_theme_color_override("font_color", MinimalThemeScript.GOLD)
+	new_best.add_theme_font_size_override("font_size", 20)
 	MinimalThemeScript.style_tertiary(back_button, MinimalThemeScript.ACCENT)
 	MinimalThemeScript.style_primary(replay_button)
+	for state in ["normal", "hover", "pressed", "focus"]:
+		var fill := Color("eeefff") if state != "pressed" else Color("c8cee8")
+		replay_button.add_theme_stylebox_override(state, MinimalThemeScript.panel_style(fill, 16, Color("f4f6ff"), 1, 24.0))
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "icon_normal_color", "icon_hover_color", "icon_pressed_color", "icon_focus_color"]:
+		replay_button.add_theme_color_override(state, Color("151b2b"))
+	back_button.text = "BACK TO LIBRARY"
+	back_button.icon = preload("res://assets/ui/icons/pause_library.svg")
+	replay_button.icon = preload("res://assets/ui/icons/pause_retry.svg")
+	for button in [back_button, replay_button]:
+		button.expand_icon = true
+		button.add_theme_constant_override("icon_max_width", 22)
+		button.tooltip_text = ""
+
+func _glass_panel() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.025, 0.035, 0.05, 0.72)
+	style.border_color = Color(0.7, 0.78, 0.87, 0.4)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(roundi(14.0 * clampf(size.y / 1080.0, 0.66, 1.0)))
+	var padding := 20.0 * clampf(size.y / 1080.0, 0.66, 1.0)
+	style.content_margin_left = padding
+	style.content_margin_right = padding
+	style.content_margin_top = padding
+	style.content_margin_bottom = padding
+	return style
+
+func _ruled_section() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.TRANSPARENT
+	style.border_color = Color(MinimalThemeScript.BORDER, 0.65)
+	style.border_width_top = 1
+	style.content_margin_top = 16.0
+	return style
 
 func set_result(data: Dictionary) -> void:
 	_last_result_data = data.duplicate(true)
@@ -256,8 +387,13 @@ func set_result(data: Dictionary) -> void:
 	_result_generation += 1
 	_rank_fill_finished = false
 	_set_actions_enabled(false)
-	song_title.text = str(data.get("title", "SONG"))
-	song_meta.text = str(data.get("meta", ""))
+	song_title.text = str(data.get("title", "SONG")).to_upper()
+	_update_song_identity(data)
+	# Same managed thumbnail source as gameplay; never used as fullscreen art.
+	var jacket_path := "res://assets/song_thumbnails/%s.png" % str(data.get("song_id", ""))
+	song_artwork.texture = load(jacket_path) as Texture2D if ResourceLoader.exists(jacket_path) else null
+	song_artwork.visible = song_artwork.texture != null
+	jacket_area.visible = song_artwork.visible
 	_score_target = maxi(0, int(data.get("score", _parse_result_number(str(data.get("score_text", "0"))))))
 	_combo_target = maxi(0, int(data.get("max_combo", _parse_first_integer(str(data.get("combo_text", "0"))))))
 	_perfect_target = maxi(0, int(data.get("perfect", 0)))
@@ -288,17 +424,35 @@ func set_result(data: Dictionary) -> void:
 
 	var is_new_best: bool = bool(data.get("new_best", false))
 	best_plate.visible = is_new_best
+	%TimingGraph.set_events(data.get("judgement_events", []), float(data.get("song_duration_s", data.get("run_duration_s", 0.0))))
+	%ProgressGraph.set_events(data.get("judgement_events", []), float(data.get("song_duration_s", data.get("run_duration_s", 0.0))))
+	%ProgressGraph.max_combo = _combo_target
+	%ProgressGraph.queue_redraw()
+	var mods: PackedStringArray = []
+	if bool(data.get("random_mode", str(data.get("meta", "")).contains("RANDOM"))):
+		mods.append("RANDOM")
+	if int(data.get("reverse_percent", 0)) > 0:
+		mods.append("REVERSE %d%%" % int(data.reverse_percent))
+	%ModsText.text = "MODS\n\n" + (" · ".join(mods) if not mods.is_empty() else "No mods active")
 	var previous: Dictionary = data.get("previous_best", {})
 	score_status.text = ""
 	if is_new_best and not previous.is_empty():
-		score_status.text = "SCORE %+d  ·  ACC %+.2f pp" % [int(data.get("score", 0)) - int(previous.get("score", 0)), supplied_accuracy - float(previous.get("accuracy", 0.0))]
+		score_status.text = "SCORE %+d  ·  ACC %+.2f pp" % [_score_target - int(previous.get("score", 0)), _accuracy_target - float(previous.get("accuracy", 0.0))]
+	elif not previous.is_empty():
+		score_status.text = "PREVIOUS BEST  %s  /  %.2f%%" % [_format_number(int(previous.get("score", 0))), float(previous.get("accuracy", 0.0))]
 	if bool(data.get("record_save_failed", false)):
 		score_status.text = "RECORD SAVE FAILED · CHECK DISK SPACE / PERMISSIONS"
 	score_status.visible = not score_status.text.is_empty()
+	score_status.add_theme_color_override("font_color", Color("ff8793") if bool(data.get("record_save_failed", false)) else MinimalThemeScript.ACCENT_LIGHT)
 	judged_value.text = "%d NOTES" % judged
-	space_meta.text = "%d TOTAL  ·  %d MISS" % [_space_total_target, space_misses]
-	reverse_meta.text = "%d TOTAL  ·  %d MISS" % [_reverse_total_target, _reverse_miss_target]
+	space_value.set("suffix", "/%d" % _space_total_target)
+	reverse_value.set("suffix", "/%d" % _reverse_total_target)
+	space_meta.text = "%d MISS" % space_misses
+	reverse_meta.text = "%d MISS" % _reverse_miss_target
+	_layout_special_metrics(clampf(size.y / 1080.0, 0.66, 1.0))
 	special_panel.visible = _space_total_target > 0 or _reverse_total_target > 0
+	space_value.get_parent().visible = _space_total_target > 0
+	reverse_value.get_parent().visible = _reverse_total_target > 0
 	judgement_bar.call("set_counts", _perfect_target, _great_target, _good_target, _miss_target)
 	judgement_bar.call("set_reveal", 0.0)
 
@@ -316,7 +470,51 @@ func set_result(data: Dictionary) -> void:
 	rank_meter.set("value", 0.0)
 	accuracy_bar.value = 0.0
 	_apply_rank_color("D")
+	call_deferred("_settle_layout")
 	call_deferred("_play_reveal", _result_generation)
+
+func _settle_layout() -> void:
+	# Wrapped song metadata needs a container sort before its minimum height
+	# settles, especially on the first 720p reveal.
+	for pass_index in range(2):
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+		_apply_layout_config()
+
+func _update_song_identity(data: Dictionary) -> void:
+	var tags := song_column.get_node("SongInfo/SongTags")
+	for child in tags.get_children():
+		child.free()
+	var lines := _display_metadata(data).split("\n")
+	song_meta.text = lines[0]
+	var values: PackedStringArray = lines[1].split("·") if lines.size() > 1 else []
+	var duration := float(data.get("song_duration_s", data.get("run_duration_s", 0.0)))
+	if duration > 0:
+		values.append("%d:%02d" % [int(duration) / 60, int(duration) % 60])
+	for index in values.size():
+		var panel := PanelContainer.new()
+		var label := Label.new()
+		var tag_text := values[index].strip_edges()
+		label.text = "Lv. " + tag_text.trim_suffix("★") if tag_text.ends_with("★") else tag_text
+		var accent := _difficulty_accent(str(data.get("difficulty_id", "normal"))) if index == 0 else MinimalThemeScript.MUTED
+		panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(accent, 0.14) if index == 0 else Color(0.07, 0.09, 0.12, 0.75), 4, Color(accent, 0.3), 1, 8.0))
+		label.add_theme_font_override("font", preload("res://assets/fonts/Rajdhani-Medium.ttf"))
+		label.add_theme_color_override("font_color", accent if index == 0 else MinimalThemeScript.TEXT)
+		tags.add_child(panel)
+		panel.add_child(label)
+
+func _display_metadata(data: Dictionary) -> String:
+	# Presentation only: retain the unmodified run snapshot for records/retry.
+	var parts := str(data.get("meta", "")).replace("•", "·").split("·")
+	var artist := parts[0].strip_edges()
+	var context: PackedStringArray = []
+	for index in range(1, parts.size()):
+		var item := parts[index].strip_edges()
+		if item.is_empty() or item == "AUTHORED" or item == "RANDOM" or item.begins_with("REV "):
+			continue
+		context.append(item.replace("8-DIR", "8K").replace("4-ARROW", "4K"))
+	return artist + ("\n" + " · ".join(context) if not context.is_empty() else "")
 
 func _calculate_accuracy_from_targets() -> float:
 	return preload("res://scripts/score_processor.gd").accuracy(_perfect_target, _great_target, _good_target, _miss_target, result_config)
@@ -338,8 +536,10 @@ func _play_reveal(generation: int) -> void:
 	MenuSFX.cancel_rank_fill()
 	_update_animation_pivots()
 	header_bar.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	song_column.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	rank_panel.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	stats_column.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	details.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	bottom_bar.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	rank_stack.scale = Vector2.ONE * result_config.rank_pop_start_scale
 	score_value.text = "0"
@@ -352,10 +552,12 @@ func _play_reveal(generation: int) -> void:
 	_reveal_tween = create_tween()
 	_reveal_tween.set_parallel(true)
 	_reveal_tween.tween_property(header_bar, "modulate:a", 1.0, result_config.header_reveal_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_reveal_tween.tween_property(song_column, "modulate:a", 1.0, result_config.header_reveal_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_reveal_tween.tween_property(rank_panel, "modulate:a", 1.0, result_config.rank_reveal_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_reveal_tween.tween_property(rank_stack, "scale", Vector2.ONE, result_config.rank_reveal_duration).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	_reveal_tween.chain().tween_callback(Callable(self, "_start_metric_rolls"))
 	_reveal_tween.parallel().tween_property(stats_column, "modulate:a", 1.0, result_config.stats_reveal_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_reveal_tween.parallel().tween_property(details, "modulate:a", 1.0, result_config.stats_reveal_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_reveal_tween.parallel().tween_method(Callable(self, "_set_animated_score"), 0.0, float(_score_target), result_config.score_count_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	_reveal_tween.parallel().tween_property(accuracy_bar, "value", _accuracy_target, result_config.score_count_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	_reveal_tween.parallel().tween_method(Callable(self, "_set_rank_progress"), 0.0, _accuracy_target, result_config.score_count_duration).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
@@ -437,6 +639,7 @@ func _on_visibility_changed() -> void:
 
 func _set_animated_score(value: float) -> void:
 	score_value.text = _format_number(int(round(value)))
+	score_value.queue_redraw()
 
 func _format_number(value: int) -> String:
 	var digits := str(maxi(0, value))
@@ -467,9 +670,12 @@ func _parse_first_integer(value: String) -> int:
 
 func _apply_rank_color(rank: String) -> void:
 	var color := _rank_color(rank)
+	rank_meter.set_rank(rank)
+	# Native text is only a fallback for an unsupported/missing glyph.
+	rank_value.visible = rank_meter.get_rank_texture() == null
 	rank_value.add_theme_color_override("font_color", color)
 	rank_sub.add_theme_color_override("font_color", color)
-	rank_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.SURFACE, 0.70), 8, Color(color, 0.52), 1, 20.0))
+	rank_meter.set("rank_tint", color)
 
 func _rank_for_accuracy(accuracy: float) -> String:
 	if accuracy >= result_config.ss_accuracy:
@@ -485,12 +691,7 @@ func _rank_for_accuracy(accuracy: float) -> String:
 	return "D"
 
 func _rank_color(rank: String) -> Color:
-	match rank:
-		"SS", "S": return theme_config.accent_primary
-		"A": return theme_config.accent_secondary
-		"B": return theme_config.success
-		"C": return theme_config.space_accent
-		_: return theme_config.danger
+	return rank_meter.GRADE_COLORS.get(rank, Color.WHITE)
 
 func _difficulty_accent(difficulty_id: String) -> Color:
 	match difficulty_id:

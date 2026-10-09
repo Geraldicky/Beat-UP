@@ -17,36 +17,35 @@ const BOOT_SPLASH_META := "beat_up_boot_splash_completed"
 
 const MENU_ITEMS := [
 	{"label": "PLAY", "title": "PLAY", "description": "Pick a song. Hit the beat."},
-	{"label": "CHART STUDIO", "title": "CHART STUDIO", "description": "Import OGG + FLAC, generate charts, and edit the timeline."},
-	{"label": "HOW TO PLAY", "title": "HOW TO PLAY", "description": "Controls, timing, note rules, and practice."},
-	{"label": "CALIBRATION", "title": "CALIBRATION", "description": "Sync input and audio timing."},
 	{"label": "SETTINGS", "title": "SETTINGS", "description": "Display, input, audio, and timing."},
+	{"label": "QUIT", "title": "EXIT", "description": "Close Beat UP!."},
+	{"label": "HOW TO PLAY", "title": "HOW TO PLAY", "description": "Controls, timing, and note rules."},
+	{"label": "CALIBRATE", "title": "CALIBRATION", "description": "Sync input and audio timing."},
 	{"label": "CREDITS", "title": "CREDITS", "description": "Project credits and acknowledgements."},
-	{"label": "EXIT", "title": "EXIT", "description": "Close Beat UP!."},
 ]
 
 const MENU_BACKGROUND_CANDIDATES := [
-	{"path": "res://assets/song_backgrounds/aleph_0.png", "title": "Aleph-0", "artist": "LeaF", "audio": "res://music/imported/aleph_0.ogg"},
-	{"path": "res://assets/song_backgrounds/aresenes_bazaar.png", "title": "Aresene's Bazaar", "artist": "James Landino", "audio": "res://music/imported/aresenes_bazaar.ogg"},
-	{"path": "res://assets/song_backgrounds/bad_apple.png", "title": "Bad Apple!!", "artist": "Alstroemeria Records feat. nomico", "audio": "res://music/imported/bad_apple.ogg"},
-	{"path": "res://assets/song_backgrounds/big_daddy.png", "title": "Big Daddy", "artist": "USAO", "audio": "res://music/imported/big_daddy.ogg"},
-	{"path": "res://assets/song_backgrounds/blue_zenith.png", "title": "Blue Zenith", "artist": "xi", "audio": "res://music/imported/blue_zenith.ogg"},
-	{"path": "res://assets/song_backgrounds/diana_boncheva_feat_banya_beethoven_virus_full_version.png", "title": "Beethoven Virus (Full Version)", "artist": "Diana Boncheva feat. BanYa", "audio": "res://music/imported/diana_boncheva_feat_banya_beethoven_virus_full_version.ogg"},
-	{"path": "res://assets/song_backgrounds/exit_this_earths_atomosphere.png", "title": "Exit This Earth's Atomosphere", "artist": "Camellia", "audio": "res://music/imported/exit_this_earths_atomosphere.ogg"},
-	{"path": "res://assets/song_backgrounds/freedom_dive.png", "title": "FREEDOM DiVE↓", "artist": "xi", "audio": "res://music/imported/freedom_dive.ogg"},
-	{"path": "res://assets/song_backgrounds/moonlight_sonata_3rd_movement_meganeko_remix.png", "title": "Moonlight Sonata 3rd Movement (meganeko Remix)", "artist": "meganeko", "audio": "res://music/imported/moonlight_sonata_3rd_movement_meganeko_remix.ogg"},
-	{"path": "res://assets/song_backgrounds/necrofantasia.png", "title": "Necrofantasia", "artist": "ZUN", "audio": "res://music/imported/necrofantasia.ogg"},
-	{"path": "res://assets/song_backgrounds/night_of_nights.png", "title": "Night of Nights", "artist": "COOL&CREATE / beatMARIO", "audio": "res://music/imported/night_of_nights.ogg"},
-	{"path": "res://assets/song_backgrounds/oshama_scramble.png", "title": "Oshama Scramble!", "artist": "t+pazolite", "audio": "res://music/imported/oshama_scramble.ogg"},
-	{"path": "res://assets/song_backgrounds/septette_for_the_dead_princess.png", "title": "Septette for the Dead Princess", "artist": "ZUN", "audio": "res://music/imported/septette_for_the_dead_princess.ogg"},
-	{"path": "res://assets/song_backgrounds/un_owen_was_her.png", "title": "U.N. Owen Was Her? & Flowering Night (Koa Remix)", "artist": "Koa / ZUN", "audio": "res://music/imported/un_owen_was_her.ogg"},
+	{"title": "Aleph-0", "artist": "LeaF", "audio": "res://music/imported/aleph_0.ogg"},
+	{"title": "Aresene's Bazaar", "artist": "James Landino", "audio": "res://music/imported/aresenes_bazaar.ogg"},
+	{"title": "Bad Apple!!", "artist": "Alstroemeria Records feat. nomico", "audio": "res://music/imported/bad_apple.ogg"},
+	{"title": "Big Daddy", "artist": "USAO", "audio": "res://music/imported/big_daddy.ogg"},
+	{"title": "Blue Zenith", "artist": "xi", "audio": "res://music/imported/blue_zenith.ogg"},
+	{"title": "Beethoven Virus (Full Version)", "artist": "Diana Boncheva feat. BanYa", "audio": "res://music/imported/diana_boncheva_feat_banya_beethoven_virus_full_version.ogg"},
+	{"title": "Exit This Earth's Atomosphere", "artist": "Camellia", "audio": "res://music/imported/exit_this_earths_atomosphere.ogg"},
+	{"title": "FREEDOM DiVE↓", "artist": "xi", "audio": "res://music/imported/freedom_dive.ogg"},
+	{"title": "Moonlight Sonata 3rd Movement (meganeko Remix)", "artist": "meganeko", "audio": "res://music/imported/moonlight_sonata_3rd_movement_meganeko_remix.ogg"},
+	{"title": "Necrofantasia", "artist": "ZUN", "audio": "res://music/imported/necrofantasia.ogg"},
+	{"title": "Night of Nights", "artist": "COOL&CREATE / beatMARIO", "audio": "res://music/imported/night_of_nights.ogg"},
+	{"title": "Oshama Scramble!", "artist": "t+pazolite", "audio": "res://music/imported/oshama_scramble.ogg"},
+	{"title": "Septette for the Dead Princess", "artist": "ZUN", "audio": "res://music/imported/septette_for_the_dead_princess.ogg"},
+	{"title": "U.N. Owen Was Her? & Flowering Night (Koa Remix)", "artist": "Koa / ZUN", "audio": "res://music/imported/un_owen_was_her.ogg"},
 ]
 
 const TUTORIAL_STEPS := [
 	{
 		"kicker": "INPUT",
 		"title": "Match the direction.",
-		"body": "Use 8K Numpad or the 4K Arrow fallback. Try the highlighted input on the practice lane.",
+		"body": "Use 8K Numpad or the 4K Arrow fallback. Try the highlighted input on the demonstration lane.",
 		"tip": "TRY IT · press a direction key",
 	},
 	{
@@ -57,15 +56,9 @@ const TUTORIAL_STEPS := [
 	},
 	{
 		"kicker": "SPECIALS",
-		"title": "Read color before shape.",
-		"body": "Red Reverse means press the opposite direction. Gold means SPACE. Orange diagonals only appear in 8K.",
+		"title": "Follow the arrow. Check the outline.",
+		"body": "Follow the arrow for normal notes. With Reverse mod enabled, a red outline means the opposite input. Gold means SPACE; orange diagonals appear only in 8K.",
 		"tip": "TRY IT · Reverse + SPACE",
-	},
-	{
-		"kicker": "PRACTICE",
-		"title": "Finish one short phrase.",
-		"body": "Play a mixed training phrase with the same timing rules used in gameplay. No record is saved.",
-		"tip": "CLEAR THE PHRASE · then start a song",
 	},
 ]
 
@@ -112,6 +105,7 @@ const TUTORIAL_STEPS := [
 @onready var orb_fill: Control = %OrbFill
 @onready var main_logo: Label = %MainLogo
 @onready var menu_stack: VBoxContainer = %MenuStack
+@onready var utility_row: HBoxContainer = %UtilityRow
 @onready var menu_title: Control = %MenuTitle
 @onready var menu_rule: ColorRect = %MenuRule
 @onready var main_footer: Label = %MainFooter
@@ -154,7 +148,6 @@ const TUTORIAL_STEPS := [
 @onready var audio_offset_label: Label = %AudioOffsetLabel
 @onready var settings_hint: Label = %SettingsHint
 @onready var play_button: Button = %PlayButton
-@onready var chart_studio_button: Button = %ChartStudioButton
 @onready var settings_button: Button = %SettingsButton
 @onready var exit_button: Button = %ExitButton
 @onready var help_button: Button = %HelpButton
@@ -194,7 +187,6 @@ const TUTORIAL_STEPS := [
 @onready var tutorial_controls_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialControlsTab
 @onready var tutorial_timing_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialTimingTab
 @onready var tutorial_notes_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialNotesTab
-@onready var tutorial_practice_tab: Button = $HelpScreen/HelpMargin/HelpVBox/TutorialTabs/TutorialPracticeTab
 @onready var tutorial_previous_button: Button = $HelpScreen/HelpMargin/HelpVBox/HelpActions/TutorialPreviousButton
 @onready var credits_screen: Control = %CreditsScreen
 @onready var credits_margin: MarginContainer = $CreditsScreen/CreditsMargin
@@ -231,6 +223,9 @@ var exit_dialog_tween: Tween
 var settings_tabs: Array[Button] = []
 var settings_tab_index := 0
 var v18_effect_intensity_slider: HSlider
+var note_speed_slider: HSlider
+var note_speed_value: Label
+var note_speed_preview: Control
 var v18_effect_intensity_value: Label
 var v18_binding_buttons: Dictionary = {}
 var v18_binding_capture_action: String = ""
@@ -261,8 +256,8 @@ func _ready() -> void:
 	var display_applied: bool = UserSettingsScript.apply_display_preferences()
 	_setup_display_controls()
 	_build_v18_settings_controls()
-	menu_buttons = [play_button, chart_studio_button, help_button, quick_calibration_button, settings_button, credits_button, exit_button]
-	tutorial_tabs = [tutorial_controls_tab, tutorial_timing_tab, tutorial_notes_tab, tutorial_practice_tab]
+	menu_buttons = [play_button, settings_button, exit_button, help_button, quick_calibration_button, credits_button]
+	tutorial_tabs = [tutorial_controls_tab, tutorial_timing_tab, tutorial_notes_tab]
 	settings_tabs = [display_tab, audio_tab, timing_tab]
 	_setup_main_menu_controllers()
 	for index in range(menu_buttons.size()):
@@ -291,7 +286,6 @@ func _ready() -> void:
 	splash.modulate.a = 1.0
 	transition_overlay.modulate.a = 0.0
 	play_button.pressed.connect(_on_play_pressed)
-	chart_studio_button.pressed.connect(_on_chart_studio_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	help_button.pressed.connect(_on_help_pressed)
 	quick_calibration_button.pressed.connect(_on_quick_calibration_pressed)
@@ -307,10 +301,6 @@ func _ready() -> void:
 	tutorial_arrow_button.pressed.connect(_on_tutorial_input_style_selected.bind("4_arrow"))
 	for tab_index in range(tutorial_tabs.size()):
 		tutorial_tabs[tab_index].pressed.connect(_set_tutorial_step.bind(tab_index))
-	if tutorial_visual.has_signal("practice_updated"):
-		tutorial_visual.practice_updated.connect(_on_tutorial_practice_updated)
-	if tutorial_visual.has_signal("practice_completed"):
-		tutorial_visual.practice_completed.connect(_on_tutorial_practice_completed)
 	credits_back_button.pressed.connect(_return_to_main_menu)
 	exit_confirm_button.pressed.connect(_confirm_exit)
 	exit_cancel_button.pressed.connect(_cancel_exit)
@@ -498,11 +488,11 @@ func _on_play_pause_track_pressed() -> void:
 	now_playing_controller.call("toggle_pause")
 
 func _process(delta: float) -> void:
-	if now_playing_controller != null and main_menu.visible and not settings_menu.visible:
+	if now_playing_controller != null and main_menu.is_visible_in_tree() and not settings_menu.visible:
 		now_playing_controller.call("update_progress")
 	if main_menu_controller != null:
 		var levels: PackedFloat32Array = menu_bgm.get_latest_levels() if menu_bgm != null else PackedFloat32Array()
-		main_menu_controller.call("process_visual", delta, main_menu.visible and not settings_menu.visible, levels)
+		main_menu_controller.call("process_visual", delta, main_menu.is_visible_in_tree() and not settings_menu.visible, levels)
 
 func _apply_main_menu_live_pulse(energy: float, delta: float) -> void:
 	if main_menu_controller != null:
@@ -534,56 +524,79 @@ func _apply_layout_config() -> void:
 	var reference_scale: float = minf(viewport_size.x / 1600.0, viewport_size.y / 900.0)
 	var margin: float = clampf(viewport_size.x * 0.055, 42.0, 92.0)
 
-	# Song artwork owns the canvas. Identity and navigation sit on a quiet left
-	# editorial rail while Now Playing remains integrated into the top chrome.
+	# Current-song artwork remains full-bleed atmosphere. The foreground anchor is
+	# now exclusively Beat UP! branding, positioned left of the primary actions.
+	var hero_radius: float = clampf(minf(viewport_size.x * 0.145, viewport_size.y * 0.25), 164.0, 270.0)
+	var hero_center := Vector2(viewport_size.x * 0.36, viewport_size.y * 0.52)
 	orb_cluster.visible = false
-	orb_cluster.size = Vector2.ZERO
 	orb_cluster.position = Vector2.ZERO
+	orb_cluster.size = Vector2.ZERO
+	orb_ring.visible = false
+	orb_fill.visible = false
+	main_logo.visible = false
+	selection_index.visible = false
 
-	# Keep the wordmark strong, but give the artwork enough room to become the
-	# second focal point. The previous 31% width made the logo compete with the
-	# entire composition at 1080p.
-	var title_width: float = clampf(viewport_size.x * 0.25, 280.0, 460.0)
-	var title_height: float = clampf(98.0 * reference_scale, 78.0, 112.0)
-	menu_title.position = Vector2(margin, clampf(viewport_size.y * 0.105, 70.0, 112.0))
+	# Wordmark is integrated into the rounded diamond panel drawn by MenuVisual.
+	var title_width: float = hero_radius * 1.12
+	var title_height: float = clampf(hero_radius * 0.34, 58.0, 92.0)
+	menu_title.position = hero_center - Vector2(title_width * 0.5, title_height * 0.5)
 	menu_title.size = Vector2(title_width, title_height)
 	menu_title.pivot_offset = menu_title.size * 0.5
 
-	# Text-first editorial rail. Keep the hit target generous while avoiding the
-	# long full-width selection slab from the first Album Flow pass.
-	var rail_width: float = clampf(viewport_size.x * 0.205, 286.0, 360.0)
-	var item_height: float = clampf(48.0 * reference_scale, float(MinimalThemeScript.MIN_ACTION_HEIGHT), 52.0)
-	var play_height: float = clampf(62.0 * reference_scale, 56.0, 68.0)
-	var item_gap: int = roundi(clampf(7.0 * reference_scale, 5.0, 9.0))
-	var rail_x: float = margin
-	var rail_y: float = clampf(viewport_size.y * 0.315, 220.0, 340.0)
-	var rail_height: float = play_height + item_height * float(menu_buttons.size() - 1) + float(item_gap) * float(menu_buttons.size() - 1)
+	# Four primary actions form a tight right-side column. Legacy utility actions
+	# remain reachable as low-emphasis footer links below it.
+	var rail_width: float = clampf(viewport_size.x * 0.19, 276.0, 348.0)
+	var item_height: float = clampf(47.0 * reference_scale, float(MinimalThemeScript.MIN_ACTION_HEIGHT), 52.0)
+	var play_height: float = clampf(64.0 * reference_scale, 58.0, 70.0)
+	var item_gap: int = roundi(clampf(9.0 * reference_scale, 7.0, 11.0))
+	var rail_x: float = clampf(viewport_size.x * 0.70, hero_center.x + hero_radius + 72.0, viewport_size.x - margin - rail_width)
+	var rail_y: float = clampf(viewport_size.y * 0.32, 220.0, 350.0)
+	var primary_buttons: Array[Button] = [play_button, settings_button, exit_button]
+	var rail_height: float = play_height + item_height * 3.0 + float(item_gap) * 3.0
 	menu_stack.custom_minimum_size = Vector2(rail_width, 0.0)
 	menu_stack.size = Vector2(rail_width, rail_height)
 	menu_stack.position = Vector2(rail_x, rail_y)
 	menu_stack.add_theme_constant_override("separation", item_gap)
-	for index in range(menu_buttons.size()):
-		var button := menu_buttons[index]
+	for index in range(primary_buttons.size()):
+		var button := primary_buttons[index]
 		button.custom_minimum_size = Vector2(rail_width, play_height if index == 0 else item_height)
 		_set_button_pivot(button)
 
-	# The rule is a moving selection marker rather than a permanent sidebar.
-	menu_rule.position = Vector2(rail_x - 14.0, rail_y + (play_height - 32.0) * 0.5)
-	menu_rule.size = Vector2(3.0, 32.0)
+	var utility_height := clampf(32.0 * reference_scale, 30.0, 34.0)
+	utility_row.position = Vector2(rail_x, rail_y + rail_height + 24.0)
+	utility_row.size = Vector2(rail_width, utility_height)
+	utility_row.add_theme_constant_override("separation", 6)
+	for button in [help_button, quick_calibration_button, credits_button]:
+		button.custom_minimum_size = Vector2(0.0, utility_height)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_set_button_pivot(button)
 
-	# Now Playing shares the top chrome with the wordmark. This keeps transport
-	# controls persistent without consuming the menu's lower composition.
-	var now_playing_height: float = clampf(64.0 * reference_scale, 58.0, 70.0)
-	var now_playing_width: float = clampf(viewport_size.x * 0.48, 800.0, 860.0)
-	now_playing_card.position = Vector2(viewport_size.x - margin - now_playing_width, clampf(margin * 0.62, 30.0, 56.0))
+	# A compact rotated marker carries focus without turning actions into cards.
+	menu_rule.position = Vector2(rail_x - 17.0, rail_y + (play_height - 8.0) * 0.5)
+	menu_rule.size = Vector2(8.0, 8.0)
+	menu_rule.pivot_offset = menu_rule.size * 0.5
+	menu_rule.rotation = PI * 0.25
+
+	# Persistent MusicSession controls remain a top horizontal rail.
+	var now_playing_height: float = clampf(68.0 * reference_scale, 62.0, 74.0)
+	var now_playing_width: float = viewport_size.x - margin * 2.0
+	now_playing_card.position = Vector2(margin, clampf(viewport_size.y * 0.038, 26.0, 42.0))
 	now_playing_card.size = Vector2(now_playing_width, now_playing_height)
 	now_playing_card.pivot_offset = now_playing_card.size * 0.5
+	# Let the title absorb spare space, not push the transport out of the rail.
+	var compact_rail := viewport_size.x < 1550.0
+	now_playing_title.custom_minimum_size.x = 160.0 if compact_rail else 280.0
+	now_playing_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	now_playing_artist.custom_minimum_size.x = 120.0 if compact_rail else 200.0
 	if track_progress_bar != null:
-		track_progress_bar.custom_minimum_size = Vector2(clampf(now_playing_width * 0.25, 148.0, 220.0), 3.0)
+		track_progress_bar.custom_minimum_size = Vector2(120.0 if compact_rail else 260.0, 3.0)
 	if duration_value != null:
-		duration_value.custom_minimum_size = Vector2(102.0, 0.0)
+		duration_value.custom_minimum_size = Vector2(112.0, 0.0)
+	var rail_content := now_playing_card.get_node("CardMargin/CardContent") as HBoxContainer
+	rail_content.alignment = BoxContainer.ALIGNMENT_BEGIN
+	rail_content.get_node("TrackControls").add_theme_constant_override("separation", 8 if compact_rail else 12)
 
-	menu_version.position = Vector2(viewport_size.x - margin - 130.0, viewport_size.y - margin * 0.72 - 24.0)
+	menu_version.position = Vector2(viewport_size.x - margin - 130.0, viewport_size.y - clampf(margin * 0.62, 30.0, 54.0))
 	menu_version.size = Vector2(130.0, 24.0)
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	selection_description.position = Vector2.ZERO
@@ -670,22 +683,21 @@ func _apply_theme() -> void:
 	menu_version.add_theme_font_size_override("font_size", 11)
 	menu_version.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.54))
 	menu_version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.SURFACE, 0.66), 14, Color(MinimalThemeScript.ACCENT, 0.20), 1, 0.0))
-	MinimalThemeScript.apply_mono(now_playing_kicker, 9, Color(MinimalThemeScript.ACCENT, 0.92))
-	now_playing_kicker.add_theme_font_size_override("font_size", 9)
-	MinimalThemeScript.apply_heading(now_playing_title, 16, MinimalThemeScript.TEXT)
-	now_playing_title.add_theme_font_size_override("font_size", 16)
+	now_playing_card.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.82), 6, Color(MinimalThemeScript.ACCENT_LIGHT, 0.20), 1, 0.0))
+	MinimalThemeScript.apply_mono(now_playing_kicker, 12, Color(MinimalThemeScript.ACCENT, 0.92))
+	now_playing_kicker.visible = true
+	now_playing_kicker.text = "NOW PLAYING"
+	MinimalThemeScript.apply_heading(now_playing_title, 18, MinimalThemeScript.TEXT)
 	now_playing_title.clip_text = true
 	now_playing_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_title.custom_minimum_size.x = 132.0
-	MinimalThemeScript.apply_body(now_playing_artist, 11, Color(1.0, 1.0, 1.0, 0.72))
+	MinimalThemeScript.apply_body(now_playing_artist, 14, Color(1.0, 1.0, 1.0, 0.72))
 	now_playing_artist.add_theme_font_override("font", MinimalThemeScript.medium_font())
 	now_playing_artist.clip_text = true
 	now_playing_artist.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	now_playing_artist.custom_minimum_size.x = 92.0
-	MinimalThemeScript.apply_mono(duration_value, 10, Color(1.0, 1.0, 1.0, 0.74))
-	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.10), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
-	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.86), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
+	now_playing_artist.custom_minimum_size.x = 132.0
+	MinimalThemeScript.apply_mono(duration_value, 12, Color(1.0, 1.0, 1.0, 0.74))
+	track_progress_bar.add_theme_stylebox_override("background", MinimalThemeScript.panel_style(Color(1.0, 1.0, 1.0, 0.14), 2, Color(1.0, 1.0, 1.0, 0.0), 0, 0.0))
+	track_progress_bar.add_theme_stylebox_override("fill", MinimalThemeScript.panel_style(Color(MinimalThemeScript.ACCENT, 0.94), 2, Color(MinimalThemeScript.ACCENT, 0.0), 0, 0.0))
 	for transport_button in [prev_track_button, play_pause_track_button, next_track_button]:
 		transport_button.focus_mode = Control.FOCUS_ALL
 		transport_button.flat = true
@@ -742,7 +754,8 @@ func _apply_theme() -> void:
 	MinimalThemeScript.apply_heading(tutorial_heading, tutorial_heading.get_theme_font_size("font_size"), MinimalThemeScript.TEXT)
 	_refresh_tutorial_input_style_controls()
 	_style_tutorial_tabs()
-	settings_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s3(26.0))
+	settings_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color("0e1219"), 6, Color(MinimalThemeScript.BORDER, 0.85), 1, 24.0))
+	_install_settings_footer()
 	credits_info_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s2(30.0))
 	credits_visual_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(MinimalThemeScript.BG, 0.90), MinimalThemeScript.RADIUS_LG, Color(MinimalThemeScript.ACCENT, 0.18), 1, 0.0))
 	credits_title.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
@@ -753,7 +766,27 @@ func _apply_theme() -> void:
 		tab.add_theme_font_override("font", MinimalThemeScript.medium_font())
 		tab.add_theme_font_size_override("font_size", 12)
 	_style_settings_tabs()
-	exit_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s3(22.0))
+	exit_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color("0e1219"), 6, MinimalThemeScript.BORDER, 1, 24.0))
+	exit_confirm_button.add_theme_color_override("font_color", Color("ff8793"))
+	exit_confirm_button.add_theme_stylebox_override("normal", MinimalThemeScript.button_style(Color(MinimalThemeScript.DANGER, 0.12), Color(MinimalThemeScript.DANGER, 0.65), 4))
+	_apply_layout_config()
+
+func _install_settings_footer() -> void:
+	# Keep the existing controls/signals, but only the settings body scrolls.
+	if settings_panel.has_node("SettingsFrame"):
+		return
+	var scroll := settings_panel.get_node("SettingsScroll") as ScrollContainer
+	var actions := settings_vbox.get_node("SettingsActions") as HBoxContainer
+	var frame := VBoxContainer.new()
+	frame.name = "SettingsFrame"
+	frame.add_theme_constant_override("separation", 16)
+	settings_panel.add_child(frame)
+	scroll.reparent(frame)
+	scroll.custom_minimum_size.y = 0
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	actions.reparent(frame)
+	for button in [back_button, reset_defaults_button]:
+		button.custom_minimum_size.y = 44
 
 func _style_settings_tabs() -> void:
 	for index in range(settings_tabs.size()):
@@ -795,54 +828,140 @@ func _style_tutorial_tabs() -> void:
 		for color_name in ["font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
 			tab.add_theme_color_override(color_name, MinimalThemeScript.TEXT)
 
-func _style_main_menu_button(button: Button, index: int) -> void:
-	var accent: Color = MinimalThemeScript.ACCENT
-	if index == 0:
-		accent = MinimalThemeScript.ACCENT_LIGHT
-		button.text = "PLAY  ◆"
-	elif index == menu_buttons.size() - 1:
+func _style_main_menu_button(button: Button, _index: int) -> void:
+	var is_primary := button == play_button
+	var is_exit := button == exit_button
+	var is_utility := button == help_button or button == quick_calibration_button or button == credits_button
+	var accent: Color = MinimalThemeScript.ACCENT_LIGHT if is_primary else MinimalThemeScript.ACCENT
+	if is_exit:
 		accent = MinimalThemeScript.DANGER
 
-	button.add_theme_font_override("font", MinimalThemeScript.medium_font())
-	var size_boost := 6 if index == 0 else (1 if index <= 2 else 0)
-	button.add_theme_font_size_override("font_size", theme_config.button_size + size_boost)
+	button.add_theme_font_override("font", MinimalThemeScript.mono_font() if is_utility else MinimalThemeScript.medium_font())
+	button.add_theme_font_size_override("font_size", 12 if is_utility else theme_config.button_size + (6 if is_primary else 1))
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT if not is_utility else HORIZONTAL_ALIGNMENT_CENTER
 
-	# At rest, navigation is typography on the composition (S0). A restrained
-	# surface appears only as interaction feedback; the moving rule carries the
-	# persistent selection identity.
 	var normal_style := StyleBoxFlat.new()
-	normal_style.bg_color = Color(MinimalThemeScript.ACCENT, 0.075) if index == 0 else Color(0.0, 0.0, 0.0, 0.0)
-	normal_style.set_border_width_all(0)
-	if index == 0:
-		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.44)
-		normal_style.border_width_left = 2
-	normal_style.corner_radius_top_right = 7
-	normal_style.corner_radius_bottom_right = 7
-	normal_style.content_margin_left = 18.0
-	normal_style.content_margin_right = 14.0
+	var hover_style := StyleBoxFlat.new()
+	var pressed_style := StyleBoxFlat.new()
+	var focus_style := StyleBoxFlat.new()
 
-	var hover_style: StyleBoxFlat = normal_style.duplicate() as StyleBoxFlat
-	hover_style.bg_color = Color(MinimalThemeScript.SURFACE, 0.32 if index == 0 else 0.24)
-	var pressed_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	pressed_style.bg_color = Color(accent, 0.10)
-	var focus_style: StyleBoxFlat = hover_style.duplicate() as StyleBoxFlat
-	focus_style.bg_color = Color(MinimalThemeScript.SURFACE, 0.38 if index == 0 else 0.28)
+	if is_primary:
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.set_corner_radius_all(12)
+			style.content_margin_left = 54.0
+			style.content_margin_right = 46.0
+			style.set_border_width_all(1)
+		normal_style.bg_color = Color(MinimalThemeScript.BG, 0.78)
+		normal_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.72)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.88)
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.96)
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.94)
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 1.0)
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.88)
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 1.0)
+		button.text = "PLAY"
+	elif is_utility:
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+			style.set_border_width_all(0)
+			style.content_margin_left = 8.0
+			style.content_margin_right = 8.0
+		hover_style.border_width_bottom = 1
+		hover_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.52)
+		pressed_style.border_width_bottom = 1
+		pressed_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.78)
+		focus_style.border_width_bottom = 1
+		focus_style.border_color = Color(MinimalThemeScript.ACCENT_LIGHT, 0.78)
+	else:
+		# Secondary actions are text-first rails, not stacked cards.
+		for style in [normal_style, hover_style, pressed_style, focus_style]:
+			style.set_corner_radius_all(4)
+			style.content_margin_left = 10.0
+			style.content_margin_right = 42.0
+			style.border_width_bottom = 1
+		normal_style.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+		normal_style.border_color = Color(MinimalThemeScript.TEXT, 0.16)
+		hover_style.bg_color = Color(MinimalThemeScript.BG, 0.14)
+		hover_style.border_color = Color(accent, 0.72)
+		hover_style.border_width_bottom = 1
+		pressed_style.bg_color = Color(MinimalThemeScript.BG, 0.22)
+		pressed_style.border_color = Color(accent, 0.84)
+		pressed_style.border_width_bottom = 2
+		focus_style.bg_color = Color(MinimalThemeScript.BG, 0.18)
+		focus_style.border_color = Color(accent, 0.90)
+		focus_style.border_width_bottom = 2
 
 	button.add_theme_stylebox_override("normal", normal_style)
 	button.add_theme_stylebox_override("hover", hover_style)
 	button.add_theme_stylebox_override("pressed", pressed_style)
 	button.add_theme_stylebox_override("focus", focus_style)
 
-	var base_color := Color(MinimalThemeScript.TEXT, 0.92)
-	if index >= 3 and index < menu_buttons.size() - 1:
-		base_color = Color(MinimalThemeScript.TEXT, 0.72)
-	if index == menu_buttons.size() - 1:
-		base_color = Color(MinimalThemeScript.DANGER, 0.96)
-	button.add_theme_color_override("font_color", base_color)
-	button.add_theme_color_override("font_hover_color", MinimalThemeScript.TEXT if index != menu_buttons.size() - 1 else MinimalThemeScript.DANGER)
-	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.TEXT)
-	button.add_theme_color_override("font_focus_color", MinimalThemeScript.TEXT if index != menu_buttons.size() - 1 else MinimalThemeScript.DANGER)
-	button.add_theme_color_override("font_hover_pressed_color", MinimalThemeScript.TEXT)
+	var normal_color := Color(MinimalThemeScript.TEXT, 0.98 if is_primary else (0.88 if is_utility else 0.92))
+	if is_exit:
+		normal_color = Color(MinimalThemeScript.TEXT, 0.86)
+	button.add_theme_color_override("font_color", normal_color)
+	button.add_theme_color_override("font_hover_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_focus_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+	button.add_theme_color_override("font_hover_pressed_color", MinimalThemeScript.DANGER if is_exit else MinimalThemeScript.TEXT)
+
+	_ensure_main_menu_action_decorations(button, is_primary, is_utility)
+
+func _ensure_main_menu_action_decorations(button: Button, is_primary: bool, is_utility: bool) -> void:
+	var glyph := button.get_node_or_null("ActionGlyph") as Label
+	var chevron := button.get_node_or_null("ActionChevron") as Label
+
+	if is_utility:
+		if glyph != null:
+			glyph.visible = false
+		if chevron != null:
+			chevron.visible = false
+		return
+
+	if chevron == null:
+		chevron = Label.new()
+		chevron.name = "ActionChevron"
+		chevron.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(chevron)
+	chevron.visible = true
+	chevron.text = "›"
+	chevron.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	chevron.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	chevron.anchor_left = 1.0
+	chevron.anchor_right = 1.0
+	chevron.anchor_top = 0.5
+	chevron.anchor_bottom = 0.5
+	chevron.offset_left = -34.0
+	chevron.offset_right = -12.0
+	chevron.offset_top = -14.0
+	chevron.offset_bottom = 14.0
+	chevron.add_theme_font_override("font", MinimalThemeScript.medium_font())
+	chevron.add_theme_font_size_override("font_size", 22 if is_primary else 18)
+	chevron.add_theme_color_override("font_color", Color(MinimalThemeScript.TEXT, 0.88 if is_primary else 0.70))
+
+	if is_primary:
+		if glyph == null:
+			glyph = Label.new()
+			glyph.name = "ActionGlyph"
+			glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			button.add_child(glyph)
+		glyph.visible = true
+		glyph.text = "◆"
+		glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		glyph.anchor_left = 0.0
+		glyph.anchor_right = 0.0
+		glyph.anchor_top = 0.5
+		glyph.anchor_bottom = 0.5
+		glyph.offset_left = 18.0
+		glyph.offset_right = 38.0
+		glyph.offset_top = -12.0
+		glyph.offset_bottom = 12.0
+		glyph.add_theme_font_override("font", MinimalThemeScript.medium_font())
+		glyph.add_theme_font_size_override("font_size", 13)
+		glyph.add_theme_color_override("font_color", Color(MinimalThemeScript.ACCENT_LIGHT, 0.98))
+	elif glyph != null:
+		glyph.visible = false
 
 func _setup_display_controls() -> void:
 	resolution_values.clear()
@@ -925,6 +1044,7 @@ func _on_resolution_selected(_index: int) -> void:
 
 func _on_input_style_selected(index: int) -> void:
 	UserSettingsScript.set_input_style("4_arrow" if index == 1 else "8_direction")
+	_refresh_note_speed(UserSettingsScript.get_note_travel_time())
 	_refresh_tutorial_input_style_controls()
 	if tutorial_visual != null:
 		tutorial_visual.queue_redraw()
@@ -978,6 +1098,9 @@ func _set_splash_logo_reveal(width: float) -> void:
 	if splash_logo_frame == null or splash_logo_window == null:
 		return
 	var reveal_width: float = clampf(width, 0.0, splash_logo_frame.size.x)
+	# Fixed wordmark geometry: animate only its clipping window.
+	splash_logo.size = splash_logo_frame.size
+	splash_logo.position = Vector2.ZERO
 	splash_logo_window.position = Vector2.ZERO
 	splash_logo_window.size = Vector2(reveal_width, splash_logo_frame.size.y)
 
@@ -996,6 +1119,8 @@ func _launch_logo_stage() -> void:
 	logo_tween.tween_property(splash_logo_frame, "scale", Vector2.ONE, 0.42).set_delay(0.06).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 
 func _begin_main_menu_under_splash() -> void:
+	if splash_finished:
+		return
 	# Reveal the destination behind the launch logo so there is no black cut.
 	settings_menu.visible = false
 	calibration_screen.visible = false
@@ -1067,7 +1192,9 @@ func _animate_main_menu_background_visit() -> void:
 	if main_menu_background_controller != null:
 		main_menu_background_controller.call("animate_visit")
 
-func _show_main_menu_immediate() -> void:
+func _show_main_menu_immediate(preserve_music_state: bool = false, preparing_route: bool = false) -> void:
+	if not preparing_route and not is_visible_in_tree():
+		return
 	splash.visible = false
 	settings_menu.visible = false
 	calibration_screen.visible = false
@@ -1075,7 +1202,8 @@ func _show_main_menu_immediate() -> void:
 	credits_screen.visible = false
 	exit_dialog.visible = false
 	main_menu.visible = true
-	_ensure_main_menu_music_ready(0.18)
+	if not preserve_music_state:
+		_ensure_main_menu_music_ready(0.18)
 	_update_now_playing_card()
 	_refresh_pivots()
 	var restored_button: Button = _main_menu_button_for_index(_get_main_menu_focus_index())
@@ -1096,7 +1224,8 @@ func _show_main_menu_immediate() -> void:
 		button.disabled = false
 		button.modulate.a = 1.0
 		button.scale = Vector2.ONE
-	call_deferred("_after_main_menu_reveal")
+	if not preparing_route:
+		call_deferred("_after_main_menu_reveal")
 
 func _show_main_menu() -> void:
 	var session_state: Dictionary = menu_bgm.get_music_state()
@@ -1157,6 +1286,8 @@ func _show_main_menu() -> void:
 	active_tween.chain().tween_callback(Callable(self, "_after_main_menu_reveal"))
 
 func _after_main_menu_reveal() -> void:
+	if not is_visible_in_tree() or in_transition:
+		return
 	if first_run_tutorial_pending:
 		first_run_tutorial_pending = false
 		_open_tutorial(true)
@@ -1310,10 +1441,6 @@ func _on_play_pressed() -> void:
 	# instantiated after PLAY SONG.
 	_transition_to_scene("res://scenes/song_library.tscn")
 
-func _on_chart_studio_pressed() -> void:
-	_remember_main_menu_focus(chart_studio_button)
-	_transition_to_scene("res://scenes/chart_editor.tscn", "OPENING CHART STUDIO")
-
 func _on_settings_pressed() -> void:
 	_remember_main_menu_focus(settings_button)
 	_show_settings()
@@ -1356,8 +1483,6 @@ func _on_tutorial_input_style_selected(style: String) -> void:
 	input_style_option.select(1 if style == "4_arrow" else 0)
 	_refresh_tutorial_input_style_controls()
 	if tutorial_visual != null:
-		if tutorial_visual.get_step() == TUTORIAL_STEPS.size() - 1:
-			tutorial_visual.reset_practice()
 		tutorial_visual.queue_redraw()
 
 func _refresh_tutorial_input_style_controls() -> void:
@@ -1383,9 +1508,6 @@ func _apply_tutorial_input_button_style(button: Button, selected: bool) -> void:
 	for color_name in ["font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
 		button.add_theme_color_override(color_name, MinimalThemeScript.TEXT)
 
-func _tutorial_practice_tip() -> String:
-	return "PRACTICE · Read each cue. Red = opposite direction. Gold = Space."
-
 func _set_tutorial_step(index: int, animate := true) -> void:
 	tutorial_step_index = clampi(index, 0, TUTORIAL_STEPS.size() - 1)
 	var step_data: Dictionary = TUTORIAL_STEPS[tutorial_step_index]
@@ -1398,7 +1520,7 @@ func _set_tutorial_step(index: int, animate := true) -> void:
 		dot_parts.append("●" if dot_index == tutorial_step_index else "○")
 	tutorial_step_dots.text = "  ".join(dot_parts)
 	tutorial_previous_button.disabled = tutorial_step_index == 0
-	tutorial_button.text = "Next →" if tutorial_step_index < TUTORIAL_STEPS.size() - 1 else "Restart practice"
+	tutorial_button.text = "Next →" if tutorial_step_index < TUTORIAL_STEPS.size() - 1 else "Play a song →"
 	tutorial_input_style_block.visible = tutorial_step_index == 0
 	tutorial_visual.set_step(tutorial_step_index)
 	_refresh_tutorial_input_style_controls()
@@ -1424,26 +1546,7 @@ func _on_tutorial_next_pressed() -> void:
 	if tutorial_step_index < TUTORIAL_STEPS.size() - 1:
 		_set_tutorial_step(tutorial_step_index + 1)
 		return
-	var progress := tutorial_visual.get_practice_progress()
-	if bool(progress.get("finished", false)):
-		_on_play_pressed()
-	else:
-		tutorial_visual.reset_practice()
-		tutorial_tip.text = _tutorial_practice_tip()
-
-func _on_tutorial_practice_updated(hits: int, total: int, judgement: String) -> void:
-	if tutorial_step_index != TUTORIAL_STEPS.size() - 1:
-		return
-	tutorial_tip.text = "PRACTICE · %02d / %02d HITS · %s · RED=OPPOSITE · GOLD=SPACE" % [hits, total, judgement]
-	if not bool(tutorial_visual.get_practice_progress().get("finished", false)):
-		tutorial_button.text = "Restart practice"
-
-func _on_tutorial_practice_completed(hits: int, total: int) -> void:
-	if tutorial_step_index != TUTORIAL_STEPS.size() - 1:
-		return
-	tutorial_tip.text = "COMPLETE · %02d / %02d HITS · READY FOR A SONG" % [hits, total]
-	tutorial_button.text = "Play a song →"
-	tutorial_button.grab_focus()
+	_on_play_pressed()
 
 func _on_credits_pressed() -> void:
 	_remember_main_menu_focus(credits_button)
@@ -1576,13 +1679,52 @@ func _on_audio_offset_changed(value: float) -> void:
 func _build_v18_settings_controls() -> void:
 	if timing_settings_group == null or v18_effect_intensity_slider != null:
 		return
+	var speed_group := VBoxContainer.new()
+	speed_group.name = "NoteSpeedSettings"
+	speed_group.add_theme_constant_override("separation", 8)
+	timing_settings_group.add_child(speed_group)
+	timing_settings_group.move_child(speed_group, 0)
+	var speed_title := Label.new()
+	speed_title.text = "NOTE SPEED · LIVE PREVIEW"
+	MinimalThemeScript.apply_mono(speed_title, 11, MinimalThemeScript.CYAN)
+	speed_group.add_child(speed_title)
+	note_speed_preview = preload("res://scripts/ui/note_speed_preview.gd").new()
+	speed_group.add_child(note_speed_preview)
+	var speed_row := HBoxContainer.new()
+	speed_row.add_theme_constant_override("separation", 12)
+	speed_group.add_child(speed_row)
+	note_speed_slider = HSlider.new()
+	note_speed_slider.min_value = UserSettingsScript.MIN_NOTE_TRAVEL_TIME
+	note_speed_slider.max_value = UserSettingsScript.MAX_NOTE_TRAVEL_TIME
+	note_speed_slider.step = 0.1
+	note_speed_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	note_speed_slider.value_changed.connect(_on_note_speed_changed)
+	speed_row.add_child(note_speed_slider)
+	note_speed_value = Label.new()
+	note_speed_value.custom_minimum_size.x = 170
+	speed_row.add_child(note_speed_value)
+	var presets := HBoxContainer.new()
+	speed_group.add_child(presets)
+	for preset: Dictionary in [{"text": "FAST · 1.2s", "time": 1.2}, {"text": "STANDARD · 1.5s", "time": 1.5}, {"text": "RELAXED · 1.8s", "time": 1.8}]:
+		var button := Button.new()
+		button.text = preset.text
+		button.pressed.connect(func(): note_speed_slider.value = float(preset.time))
+		presets.add_child(button)
+	var preview_tempo := Button.new()
+	preview_tempo.text = "PREVIEW: 140 / 220 BPM"
+	preview_tempo.pressed.connect(func(): note_speed_preview.demo_bpm = 220.0 if note_speed_preview.demo_bpm == 140.0 else 140.0)
+	presets.add_child(preview_tempo)
+	var speed_hint := Label.new()
+	speed_hint.text = "Visual only · Applies next run · Audio, judgement and score do not change."
+	speed_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	MinimalThemeScript.apply_mono(speed_hint, 11, MinimalThemeScript.MUTED)
+	speed_group.add_child(speed_hint)
 	var separator := HSeparator.new()
 	separator.custom_minimum_size = Vector2(0.0, 8.0)
 	timing_settings_group.add_child(separator)
 
 	var effects_title := Label.new()
 	effects_title.text = "GAMEPLAY FEEDBACK"
-	effects_title.tooltip_text = "Adjust visual hit-feedback intensity. Timing windows and scoring are never changed."
 	MinimalThemeScript.apply_mono(effects_title, 11, MinimalThemeScript.CYAN)
 	timing_settings_group.add_child(effects_title)
 
@@ -1592,14 +1734,12 @@ func _build_v18_settings_controls() -> void:
 	var effects_label := Label.new()
 	effects_label.text = "Effect Intensity"
 	effects_label.custom_minimum_size = Vector2(180.0, 0.0)
-	effects_label.tooltip_text = "Scales hit burst, pulse, and receptor animation. Judgement text remains readable at 0%."
 	effects_row.add_child(effects_label)
 	v18_effect_intensity_slider = HSlider.new()
 	v18_effect_intensity_slider.min_value = 0.0
 	v18_effect_intensity_slider.max_value = 100.0
 	v18_effect_intensity_slider.step = 5.0
 	v18_effect_intensity_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	v18_effect_intensity_slider.tooltip_text = effects_label.tooltip_text
 	v18_effect_intensity_slider.value_changed.connect(_on_v18_effect_intensity_changed)
 	effects_row.add_child(v18_effect_intensity_slider)
 	v18_effect_intensity_value = Label.new()
@@ -1609,11 +1749,10 @@ func _build_v18_settings_controls() -> void:
 
 	var controls_title := Label.new()
 	controls_title.text = "CUSTOM GAMEPLAY KEYS"
-	controls_title.tooltip_text = "Click a binding, then press a new key. Duplicate gameplay keys are rejected."
 	MinimalThemeScript.apply_mono(controls_title, 11, MinimalThemeScript.CYAN)
 	timing_settings_group.add_child(controls_title)
 	v18_binding_hint = Label.new()
-	v18_binding_hint.text = "Bindings are shared by gameplay, Practice, and Replay validation."
+	v18_binding_hint.text = "Bindings are shared by gameplay and Replay validation."
 	v18_binding_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v18_binding_hint.add_theme_color_override("font_color", MinimalThemeScript.MUTED)
 	timing_settings_group.add_child(v18_binding_hint)
@@ -1645,14 +1784,12 @@ func _build_v18_settings_controls() -> void:
 		grid.add_child(label)
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(180.0, 32.0)
-		button.tooltip_text = "Click, then press the key you want to assign."
 		button.pressed.connect(_begin_v18_binding_capture.bind(action))
 		grid.add_child(button)
 		v18_binding_buttons[action] = button
 
 	var reset_bindings := Button.new()
 	reset_bindings.text = "RESET KEY BINDINGS"
-	reset_bindings.tooltip_text = "Restore default Numpad, Arrow, and Space controls."
 	reset_bindings.pressed.connect(_reset_v18_bindings)
 	timing_settings_group.add_child(reset_bindings)
 
@@ -1660,6 +1797,17 @@ func _on_v18_effect_intensity_changed(value: float) -> void:
 	UserSettingsScript.set_effect_intensity(value)
 	if v18_effect_intensity_value != null:
 		v18_effect_intensity_value.text = "%d%%" % roundi(value)
+
+func _on_note_speed_changed(value: float) -> void:
+	UserSettingsScript.set_note_travel_time(value)
+	_refresh_note_speed(value)
+
+func _refresh_note_speed(value: float) -> void:
+	if note_speed_preview != null:
+		note_speed_preview.input_style = UserSettingsScript.get_input_style()
+		note_speed_preview.set_read_time(value)
+	if note_speed_value != null:
+		note_speed_value.text = "%.2f s · READ TIME" % value
 
 func _begin_v18_binding_capture(action: String) -> void:
 	v18_binding_capture_action = action
@@ -1701,6 +1849,10 @@ func _reset_v18_bindings() -> void:
 		v18_binding_hint.text = "Default gameplay bindings restored."
 
 func _load_settings() -> void:
+	var read_time := UserSettingsScript.get_note_travel_time()
+	if note_speed_slider != null:
+		note_speed_slider.set_value_no_signal(read_time)
+	_refresh_note_speed(read_time)
 	var master_volume := UserSettingsScript.get_master_volume()
 	var sfx_value := UserSettingsScript.get_menu_sfx_volume()
 	var sfx_enabled := UserSettingsScript.get_menu_sfx_enabled()
@@ -1766,12 +1918,6 @@ func _transition_to_scene(path: String, _loading_label: String = "LOADING SONG L
 			var result: Variant = await navigation.call("request_song_library")
 			_release_navigation_lock_after_result(result)
 			return
-	if path == "res://scenes/chart_editor.tscn":
-		var chart_navigation: Node = _resident_navigation_controller()
-		if chart_navigation != null and chart_navigation.has_method("request_chart_studio"):
-			var result: Variant = await chart_navigation.call("request_chart_studio")
-			_release_navigation_lock_after_result(result)
-			return
 	menu_bgm.fade_out(0.12)
 	SceneTransition.change_scene_quick(path)
 
@@ -1792,13 +1938,15 @@ func _release_navigation_lock_after_result(result: Variant) -> void:
 		button.disabled = false
 	call_deferred("_focus_default_menu_button")
 
-func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}) -> void:
+func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}, preserve_music_state: bool = false) -> void:
+	_cancel_pending_main_menu_reveal()
 	_set_main_menu_focus_index(clampi(focus_index, 0, maxi(0, menu_buttons.size() - 1)))
-	var resumed_library_audio: bool = _sync_main_menu_from_music_session()
-	if not resumed_library_audio:
-		resumed_library_audio = _apply_library_audio_handoff(audio_handoff)
-	if not resumed_library_audio:
-		_randomize_main_menu_background(false)
+	if not preserve_music_state:
+		var resumed_library_audio: bool = _sync_main_menu_from_music_session()
+		if not resumed_library_audio:
+			resumed_library_audio = _apply_library_audio_handoff(audio_handoff)
+		if not resumed_library_audio:
+			_randomize_main_menu_background(false)
 	if get_tree().has_meta(RETURN_TO_MENU_META):
 		get_tree().remove_meta(RETURN_TO_MENU_META)
 	if get_tree().has_meta(RETURN_TO_MENU_FOCUS_META):
@@ -1806,19 +1954,46 @@ func activate_from_shell(focus_index: int = 0, audio_handoff: Dictionary = {}) -
 	in_transition = false
 	for button in menu_buttons:
 		button.disabled = false
-	_show_main_menu_immediate()
+	_show_main_menu_immediate(preserve_music_state)
+
+func _cancel_pending_main_menu_reveal() -> void:
+	# Boot/reveal tweens process even while the resident screen is suspended.
+	# Retire their callbacks before they can resume music or steal route focus.
+	if active_tween != null:
+		active_tween.kill()
+		active_tween = null
+	if launch_menu_tween != null:
+		launch_menu_tween.kill()
+		launch_menu_tween = null
+	splash_finished = true
+	_mark_launch_splash_seen()
+	splash.visible = false
 
 
 # AppShell lifecycle hooks. Main Menu activation remains centralized here, while
 # the shell owns route transitions and input locking.
+func shell_prepare_resume(context: Dictionary) -> void:
+	if bool(context.get("background_prepared", false)):
+		_cancel_pending_main_menu_reveal()
+		main_menu_background_controller.set("background_randomization_suppressed", true)
+		_show_main_menu_immediate(true, true)
+
+func shell_apply_prepared_background() -> void:
+	main_menu_background_controller.call("apply_global_state", get_node("/root/BackgroundSession").call("get_state"), false)
+
+func shell_background_items() -> Array:
+	return [get_node("Background"), menu_background, menu_dim]
+
 func shell_will_resume(context: Dictionary) -> void:
 	var focus_index: int = int(context.get("focus_index", _get_main_menu_focus_index()))
-	activate_from_shell(focus_index)
+	activate_from_shell(focus_index, {}, bool(context.get("preserve_music_state", false)))
+	main_menu_background_controller.set("background_randomization_suppressed", false)
 
 func shell_did_resume(_context: Dictionary) -> void:
 	call_deferred("_focus_default_menu_button")
 
 func shell_will_suspend(_context: Dictionary) -> void:
+	_cancel_pending_main_menu_reveal()
 	in_transition = true
 
 func shell_did_suspend(_context: Dictionary) -> void:

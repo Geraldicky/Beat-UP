@@ -6,7 +6,7 @@ func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
 	if not args.is_empty():
 		capture_name = args[0]
-	root.size = Vector2i(960, 540) if capture_name == "chart_editor_small" else Vector2i(1440, 900)
+	root.size = Vector2i(1440, 900)
 	call_deferred("_run_capture")
 
 func _run_capture() -> void:
@@ -19,8 +19,6 @@ func _run_capture() -> void:
 			await _validate_song_select_back_to_menu()
 		"loading_transition":
 			await _validate_transition_layer_without_loading_ui()
-		"chart_editor", "chart_editor_small":
-			await _capture_scene("res://scenes/chart_editor.tscn")
 		_:
 			await _capture_startup_scene()
 	for child in root.get_children():
@@ -183,9 +181,11 @@ func _capture_main_scene() -> void:
 		await _validate_judgment_motion(instance)
 	elif capture_name == "countdown":
 		instance.call("start_level", 0)
+		instance.call("show_pause_overlay")
+		instance.call("resume_gameplay")
 		await process_frame
 		_validate_gameplay_countdown(instance, true)
-		instance.call("_update_gameplay_countdown", 3.2)
+		instance.call("_update_resume_countdown", 3.2)
 		await process_frame
 		_validate_gameplay_countdown(instance, false)
 	elif capture_name == "pause":
@@ -243,8 +243,6 @@ func _capture_scene(scene_path: String) -> void:
 	root.add_child(instance)
 	await process_frame
 	await process_frame
-	if capture_name in ["chart_editor", "chart_editor_small"]:
-		_validate_chart_editor_history(instance)
 	_validate_interactive_layout(instance)
 	_save_viewport(capture_name)
 
@@ -338,86 +336,6 @@ func _validate_calibration_feedback(instance: Control) -> void:
 	if "TIMING QUALITY" not in quality.text:
 		push_error("Calibration quality readout is missing")
 
-func _validate_chart_editor_history(instance: Control) -> void:
-	var song_dropdown := instance.get_node_or_null("TopBar/SongSelect")
-	var level_dropdown := instance.get_node_or_null("TopBar/DifficultySelect")
-	var analysis_button := instance.get_node_or_null("AutoPanel/AnalysisSource") as Button
-	var import_button := instance.get_node_or_null("AutoPanel/BrowseWav") as Button
-	var bulk_import_button := instance.get_node_or_null("AutoPanel/BrowseFolder") as Button
-	var tempo_mode := instance.get_node_or_null("AutoPanel/TempoMode")
-	var tempo_bpm := instance.get_node_or_null("AutoPanel/TempoBpm") as LineEdit
-	var generate_button := instance.get_node_or_null("AutoPanel/GenerateAll") as Button
-	var generator_status := instance.get_node_or_null("AutoPanel/GeneratorProgressText") as Label
-	var single_dialog := instance.get_node_or_null("WavFileDialog") as FileDialog
-	var bulk_dialog := instance.get_node_or_null("BulkFolderDialog") as FileDialog
-	var analysis_dialog := instance.get_node_or_null("AnalysisSourceDialog") as FileDialog
-	if song_dropdown == null or level_dropdown == null:
-		push_error("Chart Editor is missing its song/level dropdown workflow")
-	if import_button == null or import_button.text != "IMPORT OGG":
-		push_error("Chart Editor is missing single OGG import")
-	if bulk_import_button == null or bulk_import_button.text != "BULK IMPORT":
-		push_error("Chart Editor is missing multi-song OGG import")
-	if analysis_button == null or analysis_button.text != "SOURCE":
-		push_error("Chart Editor is missing the OGG/WAV analysis source action")
-	if generate_button == null or generate_button.text != "GENERATE SELECTED":
-		push_error("Chart Editor must generate only the selected song")
-	if generator_status == null or "BUP-CG-01620" not in generator_status.text:
-		push_error("Chart Editor is not exposing Generator V16.2")
-	if tempo_mode == null or tempo_mode.item_count != 5:
-		push_error("Chart Editor is missing AUTO / half / original / double / custom tempo modes")
-	elif [tempo_mode.get_item_text(0), tempo_mode.get_item_text(1), tempo_mode.get_item_text(2), tempo_mode.get_item_text(3), tempo_mode.get_item_text(4)] != ["AUTO", "½×", "1×", "2×", "CUSTOM"]:
-		push_error("Chart Editor tempo mode labels are incomplete")
-	if tempo_bpm == null or tempo_bpm.editable:
-		push_error("Custom BPM input must exist and stay locked outside CUSTOM mode")
-	if instance.get_node_or_null("AutoPanel/BulkGenerate") != null:
-		push_error("Legacy Generate All Songs action still exists")
-	if single_dialog == null or single_dialog.filters.is_empty() or "*.ogg" not in single_dialog.filters[0]:
-		push_error("Single import dialog does not accept OGG")
-	if bulk_dialog == null or bulk_dialog.file_mode != FileDialog.FILE_MODE_OPEN_FILES or bulk_dialog.filters.is_empty() or "*.ogg" not in bulk_dialog.filters[0]:
-		push_error("Bulk import dialog is not configured for multiple OGG files")
-	if analysis_dialog == null or analysis_dialog.filters.is_empty() or "*.ogg" not in analysis_dialog.filters[0] or "*.wav" not in analysis_dialog.filters[0]:
-		push_error("Chart generation source dialog must accept both OGG and WAV")
-	if not bool(instance.call("_is_supported_analysis_source", "reference.ogg")) or not bool(instance.call("_is_supported_analysis_source", "reference.wav")) or bool(instance.call("_is_supported_analysis_source", "reference.mp3")):
-		push_error("Chart analysis format validation is not restricted to OGG/WAV")
-	var beethoven_path := ProjectSettings.globalize_path("res://music/imported/diana_boncheva_feat_banya_beethoven_virus_full_version.ogg")
-	if FileAccess.file_exists(beethoven_path) and str(instance.call("_detect_ogg_codec", beethoven_path)) != "vorbis":
-		push_error("Beethoven Virus gameplay audio was not normalized to Ogg Vorbis")
-	var source_row: Array[Control] = [
-		instance.get_node("AutoPanel/WavPath") as Control,
-		analysis_button,
-		import_button,
-		bulk_import_button,
-		tempo_mode,
-		tempo_bpm,
-		generate_button,
-	]
-	var source_panel := instance.get_node("AutoPanel") as Control
-	for control in source_row:
-		if control == null or not control.visible:
-			continue
-		if not source_panel.get_global_rect().encloses(control.get_global_rect()):
-			push_error("Chart Editor source control escaped its panel: %s" % control.name)
-	for left_index in range(source_row.size()):
-		for right_index in range(left_index + 1, source_row.size()):
-			if source_row[left_index] == null or source_row[right_index] == null or not source_row[left_index].visible or not source_row[right_index].visible:
-				continue
-			if source_row[left_index].get_global_rect().intersects(source_row[right_index].get_global_rect()):
-				push_error("Chart Editor source controls overlap: %s %s / %s %s" % [source_row[left_index].name, source_row[left_index].get_global_rect(), source_row[right_index].name, source_row[right_index].get_global_rect()])
-	var initial_count: int = (instance.get("events") as Array).size()
-	instance.call("add_event", "normal")
-	var edited_count: int = (instance.get("events") as Array).size()
-	if edited_count < initial_count:
-		push_error("Chart Editor add action unexpectedly reduced note count")
-	instance.call("undo_edit")
-	if (instance.get("events") as Array).size() != initial_count:
-		push_error("Chart Editor undo did not restore the chart")
-	instance.call("redo_edit")
-	if (instance.get("events") as Array).size() != edited_count:
-		push_error("Chart Editor redo did not restore the edit")
-	var undo_button := instance.get_node("TopBar/UndoButton") as Button
-	if undo_button == null:
-		push_error("Chart Editor history controls are missing")
-
 func _validate_exit_dialog(instance: Control) -> void:
 	var dialog := instance.get_node("ExitDialog") as Control
 	var panel := instance.get_node("ExitDialog/Center/Panel") as PanelContainer
@@ -448,59 +366,45 @@ func _validate_pause_menu(instance: Control) -> void:
 	var pause := instance.get_node("PauseOverlay") as Control
 	var panel := pause.get_node("Center/MainPanel") as PanelContainer
 	var notes := instance.get_node("Battle/Track/Notes") as Control
-	var resume_icon := pause.get_node("Center/MainPanel/MainVBox/PauseButtons/ResumeButton/Icon") as BeatUpActionIcon
-	var retry_icon := pause.get_node("Center/MainPanel/MainVBox/PauseButtons/RetryButton/Icon") as BeatUpActionIcon
-	var settings_icon := pause.get_node("Center/MainPanel/MainVBox/PauseButtons/SettingsButton/Icon") as BeatUpActionIcon
-	var song_list_button := pause.get_node("Center/MainPanel/MainVBox/PauseButtons/SongListButton") as Button
-	var song_list_icon := song_list_button.get_node("Icon") as BeatUpActionIcon
-	var action_buttons: Array[Button] = [
-		song_list_button,
-		pause.get_node("Center/MainPanel/MainVBox/PauseButtons/RetryButton") as Button,
-		pause.get_node("Center/MainPanel/MainVBox/PauseButtons/SettingsButton") as Button,
-		pause.get_node("Center/MainPanel/MainVBox/PauseButtons/ResumeButton") as Button,
-	]
+	var actions := pause.get_node("Center/MainPanel/MainVBox/PauseButtons") as VBoxContainer
 	if not pause.visible or not bool(instance.get("game_paused")):
 		push_error("Pause menu did not freeze gameplay")
 	if pause.z_index <= notes.z_index:
 		push_error("Pause menu must render above every gameplay note")
-	if panel.size.x < 800.0 or panel.size.y < 320.0:
-		push_error("Icon-only pause panel is too small for four clear actions")
-	if resume_icon.icon_type != "resume" or retry_icon.icon_type != "retry" or settings_icon.icon_type != "settings" or song_list_icon.icon_type != "exit":
-		push_error("Pause actions are missing their code-native icons")
-	for button in action_buttons:
-		if not button.text.is_empty() or not button.find_children("*", "Label", true, false).is_empty():
-			push_error("Pause action buttons must remain icon-only")
-		var icon := button.get_node("Icon") as BeatUpActionIcon
-		if icon.frame_shape != "hexagon":
-			push_error("Pause action icon is missing its hexagonal frame")
-		if not button.get_global_rect().encloses(icon.get_global_rect()):
-			push_error("Pause icon falls outside its interaction target")
-	for index in range(action_buttons.size() - 1):
-		if action_buttons[index].get_global_rect().intersects(action_buttons[index + 1].get_global_rect()):
-			push_error("Pause icon actions overlap")
+	if not Rect2(Vector2.ZERO, instance.size).encloses(panel.get_global_rect()):
+		push_error("Pause action panel is clipped")
+	var previous: Button
+	for node in actions.get_children():
+		var button := node as Button
+		if button.text.is_empty() or button.icon == null:
+			push_error("Pause action is missing its persistent label or SVG icon")
+		if not panel.get_global_rect().encloses(button.get_global_rect()):
+			push_error("Pause action falls outside its panel")
+		if previous != null and previous.get_global_rect().intersects(button.get_global_rect()):
+			push_error("Pause actions overlap")
+		previous = button
+	if actions.get_child(0).name != "ResumeButton":
+		push_error("Resume must be the primary pause action")
 	if not pause.has_signal("song_list_requested"):
-		push_error("Pause menu is missing its Song List action")
+		push_error("Pause menu is missing its Song Library action")
 	if not pause.has_signal("retry_requested") or pause.get_signal_connection_list("retry_requested").is_empty():
 		push_error("Pause menu retry action is not connected to gameplay")
 
 func _validate_gameplay_countdown(instance: Control, expected_preparing: bool) -> void:
 	var overlay := instance.get_node("CountdownOverlay") as Control
 	var music := instance.get_node("Audio/Music") as AudioStreamPlayer
-	var notes := instance.get_node("Battle/Track/Notes") as Control
-	var number := instance.get_node("CountdownOverlay/Center/Stack/Number") as Label
-	if bool(instance.get("gameplay_preparing")) != expected_preparing:
-		push_error("Gameplay preparation state did not match the countdown")
+	var number := instance.get_node("CountdownOverlay/Center/Stack/Number") as TextureRect
+	if bool(instance.get("resume_countdown_active")) != expected_preparing:
+		push_error("Gameplay resume state did not match the countdown")
 	if expected_preparing:
-		if not overlay.visible or number.text != "3":
-			push_error("Three-second preparation countdown did not appear")
-		if music.playing or float(instance.get("fight_time")) != 0.0:
-			push_error("Song timer/audio started before the preparation countdown ended")
-		if not notes.get_children().is_empty():
-			push_error("Notes spawned before the preparation countdown ended")
+		if not overlay.visible or number.texture == null or int(instance.get("countdown_displayed_second")) != 3:
+			push_error("Three-second resume countdown did not appear")
+		if not music.stream_paused or not bool(instance.get("game_paused")):
+			push_error("Song audio/gameplay resumed before the countdown ended")
 	else:
-		if not music.playing:
-			push_error("Song audio did not start after the preparation countdown")
-		if number.text != "1":
+		if not music.playing or music.stream_paused or bool(instance.get("game_paused")):
+			push_error("Song audio did not resume after the countdown")
+		if int(instance.get("countdown_displayed_second")) != 1:
 			push_error("Countdown should release directly from 1 without a GO state")
 
 func _validate_pause_retry(instance: Control) -> void:
@@ -618,22 +522,21 @@ func _validate_how_to_play_layout(instance: Control) -> void:
 	var visual_panel := instance.get_node("HelpScreen/HelpMargin/HelpVBox/HelpBody/TutorialVisualPanel") as PanelContainer
 	var tutorial_visual := instance.get_node("HelpScreen/HelpMargin/HelpVBox/HelpBody/TutorialVisualPanel/TutorialVisual") as HowToPlayVisual
 	var heading := instance.get_node("HelpScreen/HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/TutorialHeading") as Label
-	var tip := instance.get_node("HelpScreen/HelpMargin/HelpVBox/HelpBody/TutorialCopyPanel/TutorialCopy/TutorialTipPanel/TutorialTip") as Label
 	var tabs := instance.get_node("HelpScreen/HelpMargin/HelpVBox/TutorialTabs") as HBoxContainer
 	var previous_button := instance.get_node("HelpScreen/HelpMargin/HelpVBox/HelpActions/TutorialPreviousButton") as Button
 	var next_button := instance.get_node("HelpScreen/HelpMargin/HelpVBox/HelpActions/TutorialButton") as Button
 	var step_counter := instance.get_node("HelpScreen/HelpMargin/HelpVBox/HelpActions/TutorialStepDots") as Label
 	if not help_screen.visible:
 		push_error("How To Play screen did not open")
-	if tabs.get_child_count() != 4:
-		push_error("How To Play must expose four tutorial steps")
+	if tabs.get_child_count() != 3:
+		push_error("How To Play must expose three tutorial steps")
 	if help_body.get_global_rect().intersects(Rect2()):
 		push_error("How To Play body produced an invalid rectangle")
 	if copy_panel.get_global_rect().intersects(visual_panel.get_global_rect()):
 		push_error("How To Play copy and visual panels overlap")
 	if not help_screen.get_global_rect().encloses(copy_panel.get_global_rect()) or not help_screen.get_global_rect().encloses(visual_panel.get_global_rect()):
 		push_error("How To Play panels extend outside the viewport")
-	if heading.text != "Own the eight directions.":
+	if heading.text != "Match the direction.":
 		push_error("How To Play did not initialize on the Controls step")
 	if not previous_button.disabled or not next_button.has_focus():
 		push_error("How To Play initial navigation state is incorrect")
@@ -641,43 +544,13 @@ func _validate_how_to_play_layout(instance: Control) -> void:
 		if help_screen.find_child(removed_name, true, false) != null:
 			push_error("Legacy tutorial node still exists: %s" % removed_name)
 	instance.call("_set_tutorial_step", 1, false)
-	if tutorial_visual.get_step() != 1 or step_counter.text != "○  ●  ○  ○" or heading.text != "Strike on the center.":
+	if tutorial_visual.get_step() != 1 or step_counter.text != "○  ●  ○" or heading.text != "Hit the diamond on beat.":
 		push_error("Timing tutorial step did not synchronize its copy and visual")
 	instance.call("_set_tutorial_step", 2, false)
-	if tutorial_visual.get_step() != 2 or heading.text != "Read the outline first.":
+	if tutorial_visual.get_step() != 2 or heading.text != "Read color before shape.":
 		push_error("Note Types tutorial step did not synchronize its copy and visual")
-	instance.call("_set_tutorial_step", 3, false)
-	if tutorial_visual.get_step() != 3 or next_button.text != "Restart practice":
-		push_error("Practice tutorial step did not initialize")
-	tutorial_visual.set("practice_clock", 2.0)
-	var practice_event := InputEventKey.new()
-	practice_event.keycode = KEY_KP_8
-	practice_event.physical_keycode = KEY_KP_8
-	practice_event.pressed = true
-	if not tutorial_visual.handle_input(practice_event):
-		push_error("Practice tutorial did not consume numpad input")
-	var progress := tutorial_visual.get_practice_progress()
-	if int(progress.get("hits", 0)) != 1 or str(progress.get("judgement", "")) != "PERFECT":
-		push_error("Practice tutorial did not judge the expected numpad input")
-	if not tip.text.contains("01 / 08 HITS"):
-		push_error("Practice progress copy did not react to the judgement")
-	for practice_key in [KEY_KP_6, KEY_KP_2, KEY_KP_4, KEY_KP_9, KEY_KP_1, KEY_KP_3, KEY_KP_7]:
-		tutorial_visual.call("_advance_practice_note")
-		tutorial_visual.set("practice_clock", 2.0)
-		practice_event.keycode = practice_key
-		practice_event.physical_keycode = practice_key
-		tutorial_visual.handle_input(practice_event)
-	tutorial_visual.call("_advance_practice_note")
-	progress = tutorial_visual.get_practice_progress()
-	if not bool(progress.get("finished", false)) or int(progress.get("hits", 0)) != 8:
-		push_error("Practice tutorial could not complete its eight-note phrase")
-	if next_button.text != "Play a song →" or not tip.text.contains("READY FOR A SONG"):
-		push_error("Completed practice did not unlock the song-select action")
-	var retry_event := InputEventKey.new()
-	retry_event.keycode = KEY_R
-	retry_event.pressed = true
-	if not tutorial_visual.handle_input(retry_event) or bool(tutorial_visual.get_practice_progress().get("finished", true)):
-		push_error("Practice retry shortcut did not reset the phrase")
+	if next_button.text != "Play a song →" or tutorial_visual.has_method("reset_practice"):
+		push_error("Final tutorial page must launch a full song, not Practice")
 	var original_viewport_size := root.size
 	root.size = Vector2i(960, 540)
 	await process_frame
@@ -940,13 +813,16 @@ func _validate_result_layout(instance: Control) -> void:
 	var rank_meter := result.get_node("MainMargin/RootVBox/Content/RankPanel/RankColumn/RankArea/RankStack/RankMeter") as Control
 	var accuracy_bar := result.get_node("MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/AccuracyCard/VBox/AccuracyBar") as ProgressBar
 	var accuracy_value := result.get_node("MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/AccuracyCard/VBox/AccuracyValue") as Label
-	var combo_value := result.get_node("MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/ComboCard/VBox/ComboValue") as Label
+	var combo_value := result.get_node("%ComboValue") as Label
 	var perfect_rate_value := result.get_node("MainMargin/RootVBox/Content/StatsColumn/PrimaryStats/PerfectRateCard/VBox/PerfectRateValue") as Label
 	var bottom_bar := result.get_node("MainMargin/RootVBox/BottomBar") as Control
 	if not result.visible:
 		push_error("Result screen must be visible after the fight ends")
 	if rank_panel.get_global_rect().intersects(stats_column.get_global_rect()):
-		push_error("Result rank and statistics columns overlap")
+		push_error("Result rank and score overlap")
+	var rank_area := result.get_node("%RankArea") as Control
+	if rank_area.get_global_rect().intersects(stats_column.get_global_rect()):
+		push_error("Result glyph and score/accuracy overlap")
 	if not result.get_global_rect().encloses(bottom_bar.get_global_rect()):
 		push_error("Result action bar is outside the viewport")
 	if score_value.text != "128,450":

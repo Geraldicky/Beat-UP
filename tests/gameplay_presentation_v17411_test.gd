@@ -20,15 +20,15 @@ func _run() -> void:
 	root.add_child(background)
 	await process_frame
 	_check(background.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_COVERED, "Gameplay background must use aspect-cover scaling.")
-	_check(bool(background.call("set_song_background", "res://assets/song_backgrounds/big_daddy.png", "big_daddy")), "Known song background did not load.")
-	_check(background.texture != null, "Known song background produced no texture.")
-	_check(str(background.call("get_current_background_path")) == "res://assets/song_backgrounds/big_daddy.png", "Gameplay background path tracking is incorrect.")
+	_check(bool(background.call("set_song_background", "res://assets/backgrounds/background_01.png", "")), "Randomized gameplay background did not load.")
+	_check(background.texture != null, "Randomized gameplay background produced no texture.")
+	_check(str(background.call("get_current_background_path")) == "res://assets/backgrounds/background_01.png", "Gameplay background path tracking is incorrect.")
 	background.queue_free()
 	await process_frame
 
 	var original_opacity: float = UserSettingsScript.get_background_opacity()
 	UserSettingsScript.set_background_opacity(31.0)
-	_check(is_equal_approx(UserSettingsScript.get_background_opacity(), 31.0), "Song background opacity did not persist.")
+	_check(is_equal_approx(UserSettingsScript.get_background_opacity(), 31.0), "Gameplay background opacity did not persist.")
 	UserSettingsScript.set_background_opacity(original_opacity)
 
 	var note_scene := load("res://scenes/note.tscn") as PackedScene
@@ -54,7 +54,7 @@ func _run() -> void:
 	var stats_panel := game.get_node("HUD/BattleStatsPanel") as Control
 	var song_panel := game.get_node("HUD/SongInfoPanel") as Control
 	var pause_button := game.get_node("HUD/PauseButton") as Control
-	_check(stats_panel.position.x < song_panel.position.x, "Score/HUD stats panel is not on the left of song context.")
+	_check(song_panel.get_global_rect().end.x < stats_panel.position.x, "Song context is not left of the score/accuracy HUD.")
 	_check(song_panel.position.x + song_panel.size.x <= pause_button.position.x + 1.0, "Song context overlaps the Pause area.")
 	game.queue_free()
 	await process_frame

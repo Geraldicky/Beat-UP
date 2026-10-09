@@ -4,7 +4,6 @@ ROOT = Path(__file__).resolve().parents[1]
 project = (ROOT / "project.godot").read_text(encoding="utf-8")
 export = (ROOT / "export_presets.cfg").read_text(encoding="utf-8")
 startup = (ROOT / "scenes/startup.tscn").read_text(encoding="utf-8")
-editor = (ROOT / "scripts/chart_editor.gd").read_text(encoding="utf-8")
 note = (ROOT / "scripts/note.gd").read_text(encoding="utf-8")
 gameplay = (ROOT / "config/gameplay_config.gd").read_text(encoding="utf-8")
 result = (ROOT / "config/result_config.gd").read_text(encoding="utf-8")
@@ -16,20 +15,11 @@ assert 'application/file_version="18.7.0.1"' in export
 assert 'application/product_version="18.7.0.1"' in export
 assert 'SYSTEM 18.7.0.1' in startup
 
-# Player Creator stays enabled, while automatic chart generation defaults to
-# developer-only. The Godot editor or an explicit developer project setting may
-# re-enable it, but normal player exports must not surface Generate All.
-assert 'player_creator_enabled=true' in project
+# Chart Studio is retired; chart import/export and persisted sources survive.
+assert not (ROOT / "scripts/chart_editor.gd").exists()
+assert not (ROOT / "scenes/chart_editor.tscn").exists()
+assert 'run/main_scene="res://scenes/boot.tscn"' in project
 assert 'creator_tools_enabled=false' in project
-assert 'func _developer_generator_enabled() -> bool:' in editor
-assert 'OS.has_feature("editor")' in editor
-assert 'ProjectSettings.get_setting("beat_up/creator_tools_enabled", false)' in editor
-assert 'generate_all_button.visible = developer_generator' in editor
-assert 'Automatic chart generation is developer-only.' in editor
-assert 'manual_draft' in editor
-assert 'Blank NORMAL / HARD / MASTER drafts are ready for manual charting.' in editor
-assert '$TopBar/UndoButton.visible = true' in editor
-assert '$TopBar/RedoButton.visible = true' in editor
 
 # Reverse presentation contract: identical Normal geometry, red outline only.
 assert 'Reverse intentionally keeps the exact Normal-note geometry' in note

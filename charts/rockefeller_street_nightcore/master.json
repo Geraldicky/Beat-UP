@@ -13,7 +13,7 @@
 	"beat_offset": 0.124038,
 	"duration": 166.011111,
 	"seed": 1744313.0,
-	"recommended": "MASTER • 9★ • 513 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 9★ • 479 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 1.621698,
@@ -121,11 +121,6 @@
 			"direction": 9
 		},
 		{
-			"time": 11.91811,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 12.198921,
 			"type": "normal",
 			"direction": 4
@@ -171,11 +166,6 @@
 			"direction": 3
 		},
 		{
-			"time": 16.598297,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 16.972712,
 			"type": "normal",
 			"direction": 4
@@ -189,66 +179,6 @@
 			"time": 17.721542,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 18.095957,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 18.470372,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 18.844787,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 19.593617,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 19.968032,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 20.716862,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 21.091277,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 21.465692,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 22.401729,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 22.588937,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 22.963352,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 23.712182,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 24.086597,
@@ -304,11 +234,6 @@
 			"time": 28.953991,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 29.328406,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 30.077236,
@@ -454,11 +379,6 @@
 			"time": 41.6841,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 42.058515,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 42.43293,
@@ -619,11 +539,6 @@
 			"time": 53.66538,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 54.039795,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 54.41421,
@@ -866,11 +781,6 @@
 			"direction": 7
 		},
 		{
-			"time": 75.007033,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 75.381448,
 			"type": "normal",
 			"direction": 3
@@ -1046,11 +956,6 @@
 			"direction": 3
 		},
 		{
-			"time": 86.988313,
-			"type": "reverse",
-			"direction": 8
-		},
-		{
 			"time": 87.362728,
 			"type": "normal",
 			"direction": 7
@@ -1191,11 +1096,6 @@
 			"direction": 4
 		},
 		{
-			"time": 96.067876,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 96.348687,
 			"type": "normal",
 			"direction": 7
@@ -1266,16 +1166,6 @@
 			"direction": 8
 		},
 		{
-			"time": 100.280044,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 100.467252,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 100.841667,
 			"type": "normal",
 			"direction": 1
@@ -1289,11 +1179,6 @@
 			"time": 101.309685,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 101.403289,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 101.590497,
@@ -1466,11 +1351,6 @@
 			"direction": 6
 		},
 		{
-			"time": 108.142759,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 108.329966,
 			"type": "reverse",
 			"direction": 8
@@ -1566,11 +1446,6 @@
 			"direction": 7
 		},
 		{
-			"time": 112.448531,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 112.822946,
 			"type": "normal",
 			"direction": 8
@@ -1584,16 +1459,6 @@
 			"time": 113.197361,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 113.290965,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 113.384568,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 113.571776,
@@ -1856,16 +1721,6 @@
 			"direction": 9
 		},
 		{
-			"time": 124.42981,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 124.523414,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 124.710621,
 			"type": "normal",
 			"direction": 7
@@ -1989,11 +1844,6 @@
 			"time": 131.91811,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 132.011714,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 132.292525,
@@ -2181,11 +2031,6 @@
 			"direction": 7
 		},
 		{
-			"time": 141.18488,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 141.278484,
 			"type": "normal",
 			"direction": 1
@@ -2254,11 +2099,6 @@
 			"time": 143.992993,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 144.086597,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 144.273804,
@@ -2351,11 +2191,6 @@
 			"direction": 8
 		},
 		{
-			"time": 148.392369,
-			"type": "reverse",
-			"direction": 7
-		},
-		{
 			"time": 148.766784,
 			"type": "normal",
 			"direction": 9
@@ -2374,11 +2209,6 @@
 			"time": 149.234802,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 149.328406,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 149.515614,
@@ -2734,7 +2564,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 92
+		"reverse": 88
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2763,8 +2593,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 513,
-		"reverse_count": 92,
+		"note_count": 479,
+		"reverse_count": 88,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2833,5 +2663,55 @@
 		"analysis_master_original_name": "Nightcore Classics - Rockefeller Street [HD] [7UuHyBsUSB8].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				18.095957,
+				24.086597
+			]
+		],
+		"before": {
+			"song_id": "rockefeller_street_nightcore",
+			"difficulty": "master",
+			"bpm": 160.25,
+			"duration": 166.011111,
+			"notes": 513,
+			"spaces": 10,
+			"average_inputs_per_second": 3.15,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 9,
+			"peak_five_second_inputs": 29,
+			"fast_direction_changes_under_170ms": 60,
+			"arrows_within_250ms_of_space": 12,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 158.939
+		},
+		"after": {
+			"song_id": "rockefeller_street_nightcore",
+			"difficulty": "master",
+			"bpm": 160.25,
+			"duration": 166.011111,
+			"notes": 479,
+			"spaces": 10,
+			"average_inputs_per_second": 2.946,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 9,
+			"peak_five_second_inputs": 29,
+			"fast_direction_changes_under_170ms": 48,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					17.721542,
+					24.086597
+				]
+			],
+			"longest_active_run_seconds": 136.474
+		},
+		"subdivision_notes_removed": 10,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

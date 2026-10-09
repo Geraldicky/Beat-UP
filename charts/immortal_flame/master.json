@@ -13,7 +13,7 @@
 	"beat_offset": 0.202041,
 	"duration": 309.77746,
 	"seed": 1744315.0,
-	"recommended": "MASTER • 9★ • 712 notes • 14 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 9★ • 681 notes • 13 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 6.338405,
@@ -104,11 +104,6 @@
 			"time": 17.520223,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 18.747496,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 19.429314,
@@ -334,11 +329,6 @@
 			"time": 45.065677,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 45.474768,
-			"type": "reverse",
-			"direction": 1
 		},
 		{
 			"time": 45.747496,
@@ -606,16 +596,6 @@
 			"direction": 3
 		},
 		{
-			"time": 67.702041,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 67.838405,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 68.247496,
 			"type": "normal",
 			"direction": 9
@@ -854,11 +834,6 @@
 			"time": 84.747496,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 85.29295,
-			"type": "reverse",
-			"direction": 9
 		},
 		{
 			"time": 85.702041,
@@ -1261,11 +1236,6 @@
 			"direction": 4
 		},
 		{
-			"time": 111.474768,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
 			"time": 112.020223,
 			"type": "normal",
 			"direction": 7
@@ -1526,11 +1496,6 @@
 			"direction": 7
 		},
 		{
-			"time": 128.929314,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
 			"time": 129.474768,
 			"type": "normal",
 			"direction": 1
@@ -1761,46 +1726,6 @@
 			"direction": 6
 		},
 		{
-			"time": 148.565677,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 149.656586,
-			"type": "reverse",
-			"direction": 8
-		},
-		{
-			"time": 150.474768,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 151.020223,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 151.156586,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 151.29295,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 152.383859,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
-			"time": 152.79295,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 153.883859,
 			"type": "normal",
 			"direction": 4
@@ -1934,11 +1859,6 @@
 			"time": 167.383859,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 168.202041,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 168.747496,
@@ -2179,11 +2099,6 @@
 			"time": 187.565677,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 187.838405,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 188.383859,
@@ -2491,16 +2406,6 @@
 			"direction": 1
 		},
 		{
-			"time": 207.338405,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 207.474768,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 207.883859,
 			"type": "normal",
 			"direction": 8
@@ -2764,11 +2669,6 @@
 			"time": 224.383859,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 224.929314,
-			"type": "reverse",
-			"direction": 1
 		},
 		{
 			"time": 225.338405,
@@ -3066,11 +2966,6 @@
 			"direction": 6
 		},
 		{
-			"time": 244.020223,
-			"type": "reverse",
-			"direction": 4
-		},
-		{
 			"time": 244.565677,
 			"type": "normal",
 			"direction": 8
@@ -3216,46 +3111,6 @@
 			"direction": 4
 		},
 		{
-			"time": 253.29295,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 253.838405,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
-			"time": 254.247496,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 255.338405,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 255.474768,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 256.429314,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 256.565677,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 257.520223,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 257.79295,
 			"type": "normal",
 			"direction": 3
@@ -3354,11 +3209,6 @@
 			"time": 271.702041,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 272.929314,
-			"type": "reverse",
-			"direction": 8
 		},
 		{
 			"time": 273.883859,
@@ -3506,11 +3356,6 @@
 			"direction": 6
 		},
 		{
-			"time": 291.474768,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 292.156586,
 			"type": "normal",
 			"direction": 3
@@ -3583,7 +3428,6 @@
 		85.29295,
 		111.474768,
 		128.929314,
-		149.656586,
 		168.202041,
 		187.838405,
 		207.474768,
@@ -3740,7 +3584,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 128
+		"reverse": 116
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -3769,9 +3613,9 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 712,
-		"reverse_count": 128,
-		"space_count": 14,
+		"note_count": 681,
+		"reverse_count": 116,
+		"space_count": 13,
 		"analysis_driven": true,
 		"song_form_aware": true,
 		"local_intensity_priority": true,
@@ -3839,5 +3683,63 @@
 		"analysis_master_original_name": "Panda Eyes & Teminite - Immortal Flame (feat. Anna Yvette) [QnTYIBU7Ueg].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "pilot_2026_10_04",
+		"rest_intervals": [
+			[
+				148.565677,
+				152.929313
+			],
+			[
+				253.29295,
+				257.656586
+			]
+		],
+		"before": {
+			"song_id": "immortal_flame",
+			"difficulty": "master",
+			"bpm": 110.0,
+			"duration": 309.77746,
+			"notes": 712,
+			"spaces": 14,
+			"average_inputs_per_second": 2.344,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 214,
+			"arrows_within_250ms_of_space": 16,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 293.727
+		},
+		"after": {
+			"song_id": "immortal_flame",
+			"difficulty": "master",
+			"bpm": 110.0,
+			"duration": 309.77746,
+			"notes": 681,
+			"spaces": 13,
+			"average_inputs_per_second": 2.24,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 206,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					148.429314,
+					153.883859
+				],
+				[
+					253.156586,
+					257.79295
+				]
+			],
+			"longest_active_run_seconds": 142.091
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

@@ -39,5 +39,5 @@ for rel in [
 manifest_json = [p for p in ROOT.rglob("*.json") if "manifest" in p.name.lower()]
 assert not manifest_json, manifest_json
 assert len(list((ROOT / "charts").rglob("*.json"))) == 117
-assert len(list((ROOT / "assets/song_backgrounds").glob("*.png"))) == 39
+assert len(list((ROOT / "assets/backgrounds").glob("background_*.png"))) == 39
 print("v18.2.0 visual polish static gate: PASS")

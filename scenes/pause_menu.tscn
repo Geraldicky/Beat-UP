@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/pause_menu.gd" id="1_script"]
 [ext_resource type="Resource" path="res://config/theme_config.tres" id="2_theme"]
 [ext_resource type="Resource" path="res://config/ui_layout_config.tres" id="3_layout"]
-[ext_resource type="Script" path="res://scripts/ui/action_icon.gd" id="4_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/pause_resume.svg" id="4_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/pause_retry.svg" id="5_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/pause_settings.svg" id="6_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/pause_library.svg" id="7_icon"]
 
 [node name="PauseMenu" type="Control"]
 visible = false
@@ -38,7 +41,7 @@ grow_vertical = 2
 
 [node name="MainPanel" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(850, 360)
+custom_minimum_size = Vector2(440, 0)
 layout_mode = 2
 
 [node name="MainVBox" type="VBoxContainer" parent="Center/MainPanel"]
@@ -48,7 +51,7 @@ alignment = 1
 
 [node name="Eyebrow" type="Label" parent="Center/MainPanel/MainVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.956863, 0.964706, 0.984314, 1)
 theme_override_font_sizes/font_size = 30
@@ -59,111 +62,35 @@ vertical_alignment = 1
 [node name="Divider" type="HSeparator" parent="Center/MainPanel/MainVBox"]
 layout_mode = 2
 
-[node name="PauseButtons" type="HBoxContainer" parent="Center/MainPanel/MainVBox"]
+[node name="PauseButtons" type="VBoxContainer" parent="Center/MainPanel/MainVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 190)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 alignment = 1
 
 [node name="SongListButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(176, 184)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
-
-[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/SongListButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("4_icon")
-icon_type = "song_list"
-frame_shape = "none"
-icon_color = Color(0.956863, 0.964706, 0.984314, 1)
-accent_color = Color(0.717647, 0.423529, 0.458824, 1)
-badge_fill_color = Color(1, 0.439216, 0.301961, 0.11)
-badge_hover_fill_color = Color(1, 0.439216, 0.301961, 0.23)
+icon = ExtResource("7_icon")
 
 [node name="RetryButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(176, 184)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
-
-[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/RetryButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("4_icon")
-icon_type = "retry"
-frame_shape = "none"
-icon_color = Color(0.956863, 0.964706, 0.984314, 1)
-accent_color = Color(0.960784, 0.788235, 0.415686, 1)
-badge_fill_color = Color(0.960784, 0.788235, 0.415686, 0.11)
-badge_hover_fill_color = Color(0.960784, 0.788235, 0.415686, 0.23)
+icon = ExtResource("5_icon")
 
 [node name="SettingsButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(176, 184)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
-
-[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/SettingsButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("4_icon")
-icon_type = "settings"
-frame_shape = "none"
-icon_color = Color(0.956863, 0.964706, 0.984314, 1)
-accent_color = Color(0.662745, 0.721569, 1, 1)
-badge_fill_color = Color(0.662745, 0.721569, 1, 0.11)
-badge_hover_fill_color = Color(0.662745, 0.721569, 1, 0.23)
+icon = ExtResource("6_icon")
 
 [node name="ResumeButton" type="Button" parent="Center/MainPanel/MainVBox/PauseButtons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(176, 184)
+custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
-
-[node name="Icon" type="Control" parent="Center/MainPanel/MainVBox/PauseButtons/ResumeButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("4_icon")
-icon_type = "resume"
-frame_shape = "none"
-icon_color = Color(0.956863, 0.964706, 0.984314, 1)
-accent_color = Color(0.490196, 0.807843, 0.619608, 1)
-badge_fill_color = Color(0.603922, 0.847059, 0.470588, 0.11)
-badge_hover_fill_color = Color(0.603922, 0.847059, 0.470588, 0.23)
+icon = ExtResource("4_icon")
 
 [node name="SettingsPanel" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true

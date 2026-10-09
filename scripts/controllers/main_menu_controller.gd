@@ -86,13 +86,13 @@ func update_selection(button: Button) -> void:
 	main_logo.text = ""
 	selection_description.text = ""
 	var accent: Color = MinimalThemeScript.ACCENT_LIGHT if index == 0 else MinimalThemeScript.ACCENT
-	if index == menu_buttons.size() - 1:
+	if str((menu_items[index] as Dictionary).get("title", "")) == "EXIT":
 		accent = MinimalThemeScript.DANGER
 	selection_index.add_theme_color_override("font_color", accent)
 	orb_ring.set("accent", accent)
 	orb_ring.queue_redraw()
-	orb_fill.set("fill_color", Color(0.018, 0.024, 0.034, 0.66))
-	orb_fill.set("stroke_color", Color(accent, 0.90))
+	orb_fill.set("fill_color", Color(0.018, 0.024, 0.034, 0.44))
+	orb_fill.set("stroke_color", Color(accent, 0.78))
 	orb_fill.queue_redraw()
 	_move_selection_rule(button, accent)
 	if menu_visual != null and menu_visual.has_method("set_selection"):
@@ -120,7 +120,7 @@ func highlight(button: Button, in_transition: bool) -> void:
 	focus_tween.set_parallel(true)
 	for item in menu_buttons:
 		focus_tween.tween_property(item, "scale", Vector2(1.012, 1.0) if item == button else Vector2.ONE, 0.14).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		focus_tween.tween_property(item, "modulate:a", 1.0 if item == button else 0.74, 0.12)
+		focus_tween.tween_property(item, "modulate:a", 1.0, 0.12)
 	if orb_cluster != null and orb_cluster.visible:
 		focus_tween.tween_property(orb_cluster, "scale", Vector2.ONE * 1.012, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
@@ -158,9 +158,8 @@ func apply_live_pulse(energy: float, delta: float) -> void:
 	var beat_scale: float = 1.0 + energy * 0.018
 	for button in menu_buttons:
 		var target_scale: Vector2 = Vector2.ONE
-		var target_alpha: float = 0.74
+		var target_alpha: float = 1.0
 		if button == active_button:
 			target_scale = Vector2(1.012 * beat_scale, 1.0 + energy * 0.004)
-			target_alpha = 1.0
 		button.scale = button.scale.lerp(target_scale, minf(delta * 10.0, 1.0))
 		button.modulate.a = lerpf(button.modulate.a, target_alpha, minf(delta * 12.0, 1.0))

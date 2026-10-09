@@ -31,8 +31,8 @@ static func _canonical(value: Variant) -> Variant:
 		return result
 	return value
 
-static func identity(chart: Dictionary, input_style: String, random_mode: bool) -> Dictionary:
-	return {
+static func identity(chart: Dictionary, input_style: String, random_mode: bool, reverse_percent: int = -1) -> Dictionary:
+	var result := {
 		"song_id": str(chart.get("song_id", chart.get("id", ""))),
 		"difficulty": str(chart.get("chart_difficulty", chart.get("difficulty", "normal"))).to_lower(),
 		"input_style": input_style,
@@ -42,9 +42,18 @@ static func identity(chart: Dictionary, input_style: String, random_mode: bool) 
 		"rules_version": RULES_VERSION,
 		"rules_hash": str(chart["_rules_hash"]) if chart.has("_rules_hash") else rules_hash(),
 	}
+	var percent := int(chart.get("_reverse_mod_percent", 0)) if reverse_percent < 0 else reverse_percent
+	# Unchanged normal-only OFF charts retain their old keys. Authored reverse
+	# normalization changes gameplay, so keep historical PBs in their old scope.
+	if percent > 0:
+		result["reverse_percent"] = percent
+	var normalized_authored_reverse := bool(chart.get("_reverse_policy")) if chart.has("_reverse_policy") else preload("res://scripts/reverse_mod.gd").has_authored_reverse(chart)
+	if percent > 0 or normalized_authored_reverse:
+		result["reverse_version"] = preload("res://scripts/reverse_mod.gd").VERSION
+	return result
 
-static func key(chart: Dictionary, input_style: String, random_mode: bool) -> String:
-	return "v17441::" + JSON.stringify(identity(chart, input_style, random_mode)).sha256_text()
+static func key(chart: Dictionary, input_style: String, random_mode: bool, reverse_percent: int = -1) -> String:
+	return "v17441::" + JSON.stringify(identity(chart, input_style, random_mode, reverse_percent)).sha256_text()
 
 static func migrate_legacy(store: Dictionary) -> bool:
 	# Preserve old keys and every historical value. Never guess their mode/revision.

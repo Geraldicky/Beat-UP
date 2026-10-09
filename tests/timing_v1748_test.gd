@@ -30,6 +30,11 @@ func _run() -> void:
 	_check(_near(RhythmTimingScript.stabilize_monotonic_audio_time(12.001, 12.000, true), 12.001), "Forward audio time must advance.")
 	_check(_near(RhythmTimingScript.stabilize_monotonic_audio_time(11.999, 12.000, true), 12.000), "Backwards audio jitter must be clamped.")
 	_check(_near(RhythmTimingScript.stabilize_monotonic_audio_time(0.0, 99.0, false), 0.0), "A reset clock must accept the new song start.")
+	for offset: float in [-200.0, -50.0, 0.0, 50.0, 200.0]:
+		var compensated := RhythmTimingScript.get_gameplay_song_time_from_raw(20.0, offset)
+		_check(_near(compensated, 20.0 - offset / 1000.0), "Audio offset sweep must apply compensation exactly once.")
+		_check(_near(RhythmTimingScript.get_input_judgment_time(compensated, -offset), 20.0), "Independent input/audio compensation sign changed.")
+	_check(_near(RhythmTimingScript.stabilize_monotonic_audio_time(4.0, 99.0, false), 4.0), "Explicit backward seek must be accepted after resetting clock ownership.")
 
 	if failures == 0:
 		print("TIMING_V1748_REGRESSION_TEST: PASS")

@@ -13,7 +13,7 @@
 	"beat_offset": 0.152673,
 	"duration": 269.22381,
 	"seed": 174207.0,
-	"recommended": "NORMAL • 3★ • 478 notes • 11 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 3★ • 459 notes • 11 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.049225,
@@ -44,11 +44,6 @@
 			"time": 8.428535,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 9.669914,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 11.325087,
@@ -151,26 +146,6 @@
 			"direction": 9
 		},
 		{
-			"time": 26.635432,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 27.256121,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 28.911294,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 29.73888,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 29.945776,
 			"type": "normal",
 			"direction": 4
@@ -194,11 +169,6 @@
 			"time": 32.842328,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 33.256121,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 33.669914,
@@ -354,11 +324,6 @@
 			"time": 53.11819,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 53.531983,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 54.773363,
@@ -554,11 +519,6 @@
 			"time": 74.221639,
 			"type": "reverse",
 			"direction": 8
-		},
-		{
-			"time": 74.635432,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 74.842328,
@@ -816,11 +776,6 @@
 			"direction": 3
 		},
 		{
-			"time": 106.497501,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 106.704397,
 			"type": "normal",
 			"direction": 6
@@ -1066,11 +1021,6 @@
 			"direction": 1
 		},
 		{
-			"time": 129.256121,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 129.463018,
 			"type": "normal",
 			"direction": 4
@@ -1256,26 +1206,6 @@
 			"direction": 1
 		},
 		{
-			"time": 145.807845,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 146.221639,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 146.428535,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 147.876811,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 149.11819,
 			"type": "normal",
 			"direction": 2
@@ -1284,11 +1214,6 @@
 			"time": 149.325087,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 150.773363,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 151.600949,
@@ -1519,11 +1444,6 @@
 			"time": 177.049225,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 177.256121,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 177.669914,
@@ -1789,11 +1709,6 @@
 			"time": 203.945776,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 205.394052,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 205.807845,
@@ -2096,11 +2011,6 @@
 			"direction": 2
 		},
 		{
-			"time": 231.876811,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 232.290604,
 			"type": "normal",
 			"direction": 1
@@ -2351,11 +2261,6 @@
 			"direction": 1
 		},
 		{
-			"time": 255.463018,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 255.669914,
 			"type": "normal",
 			"direction": 7
@@ -2590,7 +2495,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 29
+		"reverse": 28
 	},
 	"generator_diagnostics": {
 		"version": "17.4.19",
@@ -2628,8 +2533,8 @@
 		"longest_sub_170ms_chain_notes": 1
 	},
 	"difficulty_profile": {
-		"note_count": 478,
-		"reverse_count": 29,
+		"note_count": 459,
+		"reverse_count": 28,
 		"space_count": 11,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2712,5 +2617,63 @@
 		"retained_direction_changes": false,
 		"space_events_changed": false,
 		"policy": "readability-first; short bursts; frequent recovery; Reverse remains introductory pressure"
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				26.635432,
+				29.945777
+			],
+			[
+				145.807845,
+				149.11819
+			]
+		],
+		"before": {
+			"song_id": "septette_for_the_dead_princess",
+			"difficulty": "normal",
+			"bpm": 145.0,
+			"duration": 269.22381,
+			"notes": 478,
+			"spaces": 11,
+			"average_inputs_per_second": 1.816,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 19,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 20,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 261.931
+		},
+		"after": {
+			"song_id": "septette_for_the_dead_princess",
+			"difficulty": "normal",
+			"bpm": 145.0,
+			"duration": 269.22381,
+			"notes": 459,
+			"spaces": 11,
+			"average_inputs_per_second": 1.746,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 18,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 9,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					26.428535,
+					29.945776
+				],
+				[
+					144.566466,
+					149.11819
+				]
+			],
+			"longest_active_run_seconds": 115.862
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

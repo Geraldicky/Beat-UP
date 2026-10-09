@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/track.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/note.tscn" id="2_note"]
@@ -6,7 +6,6 @@
 [ext_resource type="Resource" path="res://config/theme_config.tres" id="4_theme"]
 [ext_resource type="Script" path="res://scripts/ui/minimal_shape.gd" id="5_shape"]
 [ext_resource type="Script" path="res://scripts/ui/taiko_lane_visual.gd" id="6_lane"]
-[ext_resource type="Script" path="res://scripts/ui/numpad_compass_visual.gd" id="7_compass"]
 
 [node name="Track" type="Control"]
 layout_mode = 3
@@ -35,11 +34,6 @@ radius = 0.0
 layout_mode = 0
 mouse_filter = 2
 script = ExtResource("6_lane")
-
-[node name="InputCompass" type="Control" parent="Lane"]
-layout_mode = 0
-mouse_filter = 2
-script = ExtResource("7_compass")
 
 [node name="HitZone" type="Control" parent="."]
 z_index = 6
@@ -105,8 +99,8 @@ layout_mode = 0
 mouse_filter = 2
 script = ExtResource("5_shape")
 shape = "panel"
-fill_color = Color(0.960784, 0.788235, 0.415686, 1)
-stroke_color = Color(0.960784, 0.788235, 0.415686, 1)
+fill_color = Color(0.012, 0.018, 0.026, 0.94)
+stroke_color = Color(0.960784, 0.788235, 0.415686, 0.45)
 stroke_width = 1.0
 radius = 8.0
 
@@ -118,11 +112,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.0431373, 0.0509804, 0.0666667, 1)
+theme_override_colors/font_color = Color(0.960784, 0.788235, 0.415686, 1)
 theme_override_font_sizes/font_size = 12
 text = "SPACE"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="TargetDiamond" type="Control" parent="SpacePrompt"]
+mouse_filter = 2
+script = ExtResource("5_shape")
+shape = "diamond"
+fill_color = Color(0.960784, 0.788235, 0.415686, 0.06)
+stroke_color = Color(0.960784, 0.788235, 0.415686, 1)
+stroke_width = 3.0
 
 [node name="HitPoint" type="Marker2D" parent="."]
 

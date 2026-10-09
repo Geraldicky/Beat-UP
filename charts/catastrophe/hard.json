@@ -13,7 +13,7 @@
 	"beat_offset": 0.29625,
 	"duration": 179.072336,
 	"seed": 1744312.0,
-	"recommended": "HARD • 9★ • 590 notes • 11 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 9★ • 541 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 1.49625,
@@ -76,11 +76,6 @@
 			"direction": 2
 		},
 		{
-			"time": 7.49625,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 7.94625,
 			"type": "normal",
 			"direction": 3
@@ -104,11 +99,6 @@
 			"time": 9.89625,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 9.97125,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 10.79625,
@@ -159,11 +149,6 @@
 			"time": 14.69625,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 14.77125,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 15.29625,
@@ -221,16 +206,6 @@
 			"direction": 8
 		},
 		{
-			"time": 20.39625,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 20.54625,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 20.99625,
 			"type": "normal",
 			"direction": 9
@@ -254,11 +229,6 @@
 			"time": 21.89625,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 21.97125,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 22.49625,
@@ -476,16 +446,6 @@
 			"direction": 7
 		},
 		{
-			"time": 32.69625,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 32.84625,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 32.99625,
 			"type": "normal",
 			"direction": 6
@@ -584,11 +544,6 @@
 			"time": 38.24625,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 38.32125,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 38.39625,
@@ -776,16 +731,6 @@
 			"direction": 6
 		},
 		{
-			"time": 48.37125,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 48.44625,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 48.89625,
 			"type": "reverse",
 			"direction": 3
@@ -901,11 +846,6 @@
 			"direction": 8
 		},
 		{
-			"time": 54.82125,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 54.89625,
 			"type": "normal",
 			"direction": 3
@@ -914,11 +854,6 @@
 			"time": 55.19625,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 55.49625,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 55.79625,
@@ -1061,16 +996,6 @@
 			"direction": 3
 		},
 		{
-			"time": 67.42125,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 67.49625,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 68.39625,
 			"type": "normal",
 			"direction": 9
@@ -1131,11 +1056,6 @@
 			"direction": 3
 		},
 		{
-			"time": 72.37125,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 72.89625,
 			"type": "normal",
 			"direction": 1
@@ -1179,11 +1099,6 @@
 			"time": 75.14625,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 75.22125,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 75.29625,
@@ -1264,11 +1179,6 @@
 			"time": 79.19625,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 79.49625,
-			"type": "reverse",
-			"direction": 6
 		},
 		{
 			"time": 79.79625,
@@ -1571,16 +1481,6 @@
 			"direction": 8
 		},
 		{
-			"time": 93.74625,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 93.89625,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 94.34625,
 			"type": "normal",
 			"direction": 7
@@ -1821,11 +1721,6 @@
 			"direction": 6
 		},
 		{
-			"time": 105.37125,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 105.89625,
 			"type": "reverse",
 			"direction": 9
@@ -1874,16 +1769,6 @@
 			"time": 107.99625,
 			"type": "reverse",
 			"direction": 1
-		},
-		{
-			"time": 108.29625,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 108.44625,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 108.59625,
@@ -1936,11 +1821,6 @@
 			"direction": 6
 		},
 		{
-			"time": 111.22125,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 111.29625,
 			"type": "normal",
 			"direction": 9
@@ -1959,11 +1839,6 @@
 			"time": 112.34625,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 112.42125,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 112.49625,
@@ -2014,16 +1889,6 @@
 			"time": 115.19625,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 115.27125,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 115.34625,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 115.49625,
@@ -2201,16 +2066,6 @@
 			"direction": 2
 		},
 		{
-			"time": 125.17125,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 125.24625,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 125.54625,
 			"type": "normal",
 			"direction": 1
@@ -2326,11 +2181,6 @@
 			"direction": 3
 		},
 		{
-			"time": 131.62125,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 131.69625,
 			"type": "normal",
 			"direction": 1
@@ -2339,11 +2189,6 @@
 			"time": 131.99625,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 132.29625,
-			"type": "reverse",
-			"direction": 7
 		},
 		{
 			"time": 132.59625,
@@ -2456,11 +2301,6 @@
 			"direction": 4
 		},
 		{
-			"time": 138.82125,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 138.89625,
 			"type": "normal",
 			"direction": 2
@@ -2529,11 +2369,6 @@
 			"time": 141.89625,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 141.97125,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 142.19625,
@@ -2616,11 +2451,6 @@
 			"direction": 3
 		},
 		{
-			"time": 146.69625,
-			"type": "reverse",
-			"direction": 7
-		},
-		{
 			"time": 146.99625,
 			"type": "normal",
 			"direction": 1
@@ -2649,11 +2479,6 @@
 			"time": 148.34625,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 148.42125,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 148.49625,
@@ -2781,16 +2606,6 @@
 			"direction": 8
 		},
 		{
-			"time": 155.77125,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 155.84625,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 155.99625,
 			"type": "normal",
 			"direction": 1
@@ -2824,66 +2639,6 @@
 			"time": 158.39625,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 158.69625,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 159.44625,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 159.89625,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 160.64625,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 160.94625,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 161.09625,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 161.24625,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 161.54625,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 161.99625,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 162.29625,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 163.04625,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 163.34625,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 163.49625,
@@ -2976,8 +2731,7 @@
 		93.89625,
 		108.29625,
 		132.29625,
-		146.69625,
-		158.69625
+		146.69625
 	],
 	"import_meta": {
 		"source_name": "MuryokuP - Catastrophe [SFjnm6AwLz4].ogg",
@@ -3106,7 +2860,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 71
+		"reverse": 67
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -3135,9 +2889,9 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 590,
-		"reverse_count": 71,
-		"space_count": 11,
+		"note_count": 541,
+		"reverse_count": 67,
+		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
 		"local_intensity_priority": true,
@@ -3205,5 +2959,55 @@
 		"analysis_master_original_name": "MuryokuP - Catastrophe [SFjnm6AwLz4].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				158.69625,
+				163.49625
+			]
+		],
+		"before": {
+			"song_id": "catastrophe",
+			"difficulty": "hard",
+			"bpm": 200.0,
+			"duration": 179.072336,
+			"notes": 590,
+			"spaces": 11,
+			"average_inputs_per_second": 3.356,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 8,
+			"peak_five_second_inputs": 26,
+			"fast_direction_changes_under_170ms": 239,
+			"arrows_within_250ms_of_space": 16,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 167.7
+		},
+		"after": {
+			"song_id": "catastrophe",
+			"difficulty": "hard",
+			"bpm": 200.0,
+			"duration": 179.072336,
+			"notes": 541,
+			"spaces": 10,
+			"average_inputs_per_second": 3.077,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 25,
+			"fast_direction_changes_under_170ms": 204,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					158.39625,
+					163.49625
+				]
+			],
+			"longest_active_run_seconds": 156.9
+		},
+		"subdivision_notes_removed": 22,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

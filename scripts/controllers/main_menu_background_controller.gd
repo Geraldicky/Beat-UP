@@ -15,6 +15,7 @@ var current_background_path: String = ""
 var current_background_index: int = -1
 var visit_count: int = 0
 var track_override: Dictionary = {}
+var background_randomization_suppressed := false
 
 func configure(
 	owner: Control,
@@ -28,6 +29,7 @@ func configure(
 ) -> void:
 	host = owner
 	menu_background = background_view
+	preload("res://scripts/ui/procedural_background.gd").install(menu_background, "menu")
 	background_song = song_label
 	background_artist = artist_label
 	menu_bgm = bgm_controller
@@ -55,34 +57,24 @@ func randomize(force: bool = false) -> void:
 	if candidates.size() > 1:
 		for _attempt in range(12):
 			chosen_index = rng.randi_range(0, candidates.size() - 1)
-			var candidate: Dictionary = candidates[chosen_index] as Dictionary
-			var candidate_path: String = str(candidate.get("path", ""))
-			if force or candidate_path != current_background_path:
+			if force or chosen_index != current_background_index:
 				break
-	set_by_index(chosen_index, main_menu != null and main_menu.visible, true)
+	set_by_index(chosen_index, main_menu != null and main_menu.is_visible_in_tree(), true)
 
 func set_by_index(index: int, force_animation: bool = false, autoplay: bool = true) -> void:
 	if candidates.is_empty():
 		return
 	var safe_index: int = int(posmod(index, candidates.size()))
 	var chosen: Dictionary = candidates[safe_index] as Dictionary
-	var path: String = str(chosen.get("path", ""))
-	if path.is_empty():
-		return
 	current_background_index = safe_index
-	current_background_path = path
+	_randomize_ambient_background(chosen, false)
 	_publish_candidate_selection(chosen)
-	var applied_global_background: bool = apply_global_state(_global_background_state(), false)
-	if not applied_global_background and ResourceLoader.exists(path):
-		var loaded_resource: Resource = ResourceLoader.load(path)
-		if loaded_resource is Texture2D:
-			menu_background.texture = loaded_resource as Texture2D
 	background_song.text = str(chosen.get("title", "SONG LIBRARY")).to_upper()
 	background_artist.text = str(chosen.get("artist", ""))
 	visit_count += 1
 	_apply_background_audio(chosen, autoplay)
 	_refresh_now_playing()
-	if main_menu != null and main_menu.visible and force_animation:
+	if main_menu != null and main_menu.is_visible_in_tree() and force_animation:
 		animate_visit()
 
 func cycle(step: int) -> void:
@@ -117,7 +109,7 @@ func ensure_music_ready(fade_duration: float = 0.18) -> bool:
 		fallback_index = int(posmod(fallback_index, candidates.size()))
 		current_background_index = fallback_index
 		candidate = (candidates[fallback_index] as Dictionary).duplicate(true)
-		current_background_path = str(candidate.get("path", ""))
+		_randomize_ambient_background(candidate, false)
 	if candidate.is_empty():
 		return false
 
@@ -146,19 +138,8 @@ func sync_from_music_session() -> bool:
 		track_override[key] = global_song[key]
 	var matched_index: int = _find_candidate_index_by_audio(audio_path)
 	current_background_index = matched_index
-	if matched_index >= 0:
-		var candidate: Dictionary = candidates[matched_index] as Dictionary
-		current_background_path = str(candidate.get("path", ""))
-	var applied_background: bool = apply_global_state(_global_background_state(), false)
-	if not applied_background:
-		var background_path: String = str(track_override.get("background", ""))
-		if background_path.is_empty() and matched_index >= 0:
-			var fallback_candidate: Dictionary = candidates[matched_index] as Dictionary
-			background_path = str(fallback_candidate.get("path", ""))
-		if not background_path.is_empty() and ResourceLoader.exists(background_path):
-			var background_resource: Resource = ResourceLoader.load(background_path)
-			if background_resource is Texture2D:
-				menu_background.texture = background_resource as Texture2D
+	# Synchronising persistent music is not a new background visit.
+	apply_global_state(_global_background_state(), false)
 	var was_paused: bool = bool(state.get("paused", false))
 	if not was_paused and menu_bgm.has_method("start_menu_music"):
 		menu_bgm.call("start_menu_music", 0.18)
@@ -215,16 +196,24 @@ func apply_global_state(state: Dictionary, animate: bool = false) -> bool:
 		animate_visit()
 	return true
 
+func _randomize_ambient_background(metadata: Dictionary = {}, animate: bool = false) -> bool:
+	if background_randomization_suppressed:
+		return apply_global_state(_global_background_state(), false)
+	var background_session: Node = _background_session()
+	if background_session == null or not background_session.has_method("randomize_background"):
+		return false
+	var path := str(background_session.call("randomize_background", "main_menu", true, metadata))
+	if path.is_empty():
+		return false
+	return apply_global_state(background_session.call("get_state") as Dictionary, animate)
+
 func animate_visit() -> void:
-	if menu_background == null or host == null:
+	if menu_background == null or host == null or not host.is_visible_in_tree():
 		return
-	menu_background.modulate = Color(1.0, 1.0, 1.0, 0.0)
-	menu_background.scale = Vector2.ONE * 1.025
-	menu_background.pivot_offset = menu_background.size * 0.5
-	var tween: Tween = host.create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(menu_background, "modulate:a", 1.0, 0.28).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(menu_background, "scale", Vector2.ONE, 0.75).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	# The route owns the reveal; transport/background updates must not add a
+	# second fade or repeat-visit zoom (including on hidden resident screens).
+	menu_background.modulate = Color.WHITE
+	menu_background.scale = Vector2.ONE
 
 func get_track_override() -> Dictionary:
 	return track_override.duplicate(true)
@@ -270,7 +259,7 @@ func _publish_candidate_selection(candidate: Dictionary) -> void:
 		if existing_difficulty.is_empty():
 			existing_difficulty = "normal"
 	var metadata: Dictionary = candidate.duplicate(true)
-	metadata["background"] = str(candidate.get("path", ""))
+	metadata["background"] = current_background_path
 	metadata["source"] = "main_menu"
 	selection_state.call("set_selection", song_id, existing_difficulty, metadata)
 
@@ -285,7 +274,7 @@ func _on_global_selection_changed(_state: Dictionary) -> void:
 	_refresh_now_playing()
 
 func _on_global_background_changed(state: Dictionary) -> void:
-	apply_global_state(state, main_menu != null and main_menu.visible)
+	apply_global_state(state, main_menu != null and main_menu.is_visible_in_tree())
 
 func _song_selection_state() -> Node:
 	return host.get_node_or_null("/root/SongSelectionState") if host != null else null

@@ -45,15 +45,21 @@ func _run() -> void:
 		_check(bool(integrity.get("playable", false)), "Bundled chart failed integrity: %s" % str(chart.get("id", "unknown")))
 		_check(int(chart.get("star_rating", 0)) >= 1 and int(chart.get("star_rating", 0)) <= 12, "Estimated stars are outside 1..12.")
 
-	var ascend := {}
-	for raw: Variant in levels:
-		if raw is Dictionary and str((raw as Dictionary).get("song_id", "")) == "ascend" and str((raw as Dictionary).get("chart_difficulty", "")) == "normal":
-			ascend = raw as Dictionary
-			break
-	_check(not ascend.is_empty(), "Ascend NORMAL was not found.")
-	_check(float(ascend.get("duration", 0.0)) > 220.0, "Ascend duration was not repaired to the bundled audio length.")
-	var ascend_events: Array = ascend.get("events", [])
-	_check(not ascend_events.is_empty() and float((ascend_events[ascend_events.size() - 1] as Dictionary).get("time", 0.0)) > 215.0, "Ascend still has a missing final song segment.")
+	# Ascend was retired. Keep the live invariant, not a deleted content name:
+	# stale chart metadata must never truncate runtime audio or its final phrase.
+	var resolved := catalog.resolve_playable("bad_apple", "normal", true)
+	_check(bool(resolved.get("ok", false)), "Bundled duration fixture must resolve.")
+	var audio := resolved.get("audio_stream") as AudioStream
+	if audio != null:
+		main.get_node("Audio/Music").set("stream", audio)
+		main.set("level_data", {"duration": 10.0})
+		var duration := audio.get_length()
+		_check(duration > 220.0, "Duration fixture must exercise a long track.")
+		_check(absf(float(main.call("get_song_duration")) - duration) < 0.01, "Runtime duration must prefer audio over stale JSON metadata.")
+		var timeline := ChartTimeline.new()
+		timeline.load_events([{"time": duration - 1.0, "direction": 0}])
+		_check(not timeline.collect_upcoming(duration - 2.0, 2.0).is_empty(), "Final phrase must remain schedulable beyond stale metadata duration.")
+		timeline.free()
 
 	main.queue_free()
 	await process_frame

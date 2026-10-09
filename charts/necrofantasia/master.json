@@ -13,7 +13,7 @@
 	"beat_offset": 1.284787,
 	"duration": 329.038413,
 	"seed": 174212.0,
-	"recommended": "MASTER • 7★ • 1146 notes • 21 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 7★ • 1044 notes • 20 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.114055,
@@ -164,16 +164,6 @@
 			"time": 15.918933,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 16.284787,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 16.467714,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 16.833567,
@@ -361,11 +351,6 @@
 			"direction": 8
 		},
 		{
-			"time": 30.55308,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 30.918933,
 			"type": "normal",
 			"direction": 4
@@ -521,11 +506,6 @@
 			"direction": 1
 		},
 		{
-			"time": 45.187226,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 45.918933,
 			"type": "normal",
 			"direction": 2
@@ -554,66 +534,6 @@
 			"time": 47.748202,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 48.479909,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 49.028689,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 49.943324,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 50.492104,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 51.040885,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 51.223811,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 51.406738,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 51.955519,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 52.504299,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 53.236007,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 53.60186,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 53.784787,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 53.967714,
@@ -659,11 +579,6 @@
 			"time": 57.62625,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 58.357958,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 58.723811,
@@ -804,11 +719,6 @@
 			"time": 72.62625,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 72.992104,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 73.357958,
@@ -994,21 +904,6 @@
 			"time": 85.248202,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 85.614055,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 85.796982,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
-			"time": 85.979909,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 86.345763,
@@ -1206,11 +1101,6 @@
 			"direction": 4
 		},
 		{
-			"time": 94.760397,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 95.12625,
 			"type": "normal",
 			"direction": 4
@@ -1329,21 +1219,6 @@
 			"time": 100.065275,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 100.248202,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 100.431128,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
-			"time": 100.614055,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 100.796982,
@@ -1576,11 +1451,6 @@
 			"direction": 3
 		},
 		{
-			"time": 110.857958,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 111.223811,
 			"type": "normal",
 			"direction": 7
@@ -1651,11 +1521,6 @@
 			"direction": 1
 		},
 		{
-			"time": 113.784787,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 113.967714,
 			"type": "normal",
 			"direction": 2
@@ -1704,21 +1569,6 @@
 			"time": 116.162836,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 116.345763,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 116.528689,
-			"type": "reverse",
-			"direction": 7
-		},
-		{
-			"time": 116.711616,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 116.894543,
@@ -1876,11 +1726,6 @@
 			"direction": 7
 		},
 		{
-			"time": 123.662836,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 123.845763,
 			"type": "normal",
 			"direction": 3
@@ -1904,11 +1749,6 @@
 			"time": 124.30308,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 124.394543,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 124.760397,
@@ -1994,21 +1834,6 @@
 			"time": 128.236007,
 			"type": "reverse",
 			"direction": 9
-		},
-		{
-			"time": 128.418933,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 128.60186,
-			"type": "reverse",
-			"direction": 4
-		},
-		{
-			"time": 128.784787,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 129.150641,
@@ -2206,11 +2031,6 @@
 			"direction": 4
 		},
 		{
-			"time": 137.199421,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 137.382348,
 			"type": "reverse",
 			"direction": 1
@@ -2381,11 +2201,6 @@
 			"direction": 8
 		},
 		{
-			"time": 144.882348,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 145.065275,
 			"type": "normal",
 			"direction": 6
@@ -2409,16 +2224,6 @@
 			"time": 145.796982,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 146.162836,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
-			"time": 146.345763,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 146.711616,
@@ -2569,11 +2374,6 @@
 			"time": 153.205519,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 153.296982,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 153.479909,
@@ -2816,21 +2616,6 @@
 			"direction": 2
 		},
 		{
-			"time": 163.540885,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 163.723811,
-			"type": "reverse",
-			"direction": 4
-		},
-		{
-			"time": 163.906738,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 164.272592,
 			"type": "normal",
 			"direction": 1
@@ -2939,76 +2724,6 @@
 			"time": 170.492104,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 171.040885,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 171.406738,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 172.138446,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 172.687226,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 172.870153,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 173.418933,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 173.967714,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 174.150641,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 174.516494,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 174.699421,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 175.248202,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 175.431128,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 175.705519,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 176.345763,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 176.894543,
@@ -3159,16 +2874,6 @@
 			"time": 186.955519,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 187.504299,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 187.687226,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 188.05308,
@@ -3441,11 +3146,6 @@
 			"direction": 1
 		},
 		{
-			"time": 210.55308,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 211.284787,
 			"type": "normal",
 			"direction": 2
@@ -3454,61 +3154,6 @@
 			"time": 211.833567,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 212.199421,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 212.290885,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 213.114055,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 213.845763,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 214.394543,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 215.12625,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 215.309177,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 215.675031,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 216.406738,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 216.772592,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 217.321372,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 217.870153,
@@ -3629,11 +3274,6 @@
 			"time": 229.028689,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 229.57747,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 230.309177,
@@ -3769,16 +3409,6 @@
 			"time": 241.833567,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 242.199421,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 242.382348,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 242.748202,
@@ -4146,11 +3776,6 @@
 			"direction": 2
 		},
 		{
-			"time": 261.955519,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 262.138446,
 			"type": "reverse",
 			"direction": 3
@@ -4159,21 +3784,6 @@
 			"time": 262.321372,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 262.687226,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 262.870153,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
-			"time": 263.05308,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 263.418933,
@@ -4209,11 +3819,6 @@
 			"time": 264.425031,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 264.516494,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 264.699421,
@@ -4421,11 +4026,6 @@
 			"direction": 7
 		},
 		{
-			"time": 273.296982,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 273.662836,
 			"type": "normal",
 			"direction": 1
@@ -4541,26 +4141,6 @@
 			"direction": 7
 		},
 		{
-			"time": 278.784787,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 278.967714,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 279.059177,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 279.150641,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 279.333567,
 			"type": "normal",
 			"direction": 9
@@ -4644,11 +4224,6 @@
 			"time": 283.083567,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 283.175031,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 283.540885,
@@ -4801,11 +4376,6 @@
 			"direction": 1
 		},
 		{
-			"time": 289.394543,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 289.57747,
 			"type": "normal",
 			"direction": 2
@@ -4844,16 +4414,6 @@
 			"time": 290.766494,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 291.040885,
-			"type": "reverse",
-			"direction": 6
-		},
-		{
-			"time": 291.223811,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 291.406738,
@@ -5096,11 +4656,6 @@
 			"direction": 4
 		},
 		{
-			"time": 301.10186,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 301.284787,
 			"type": "reverse",
 			"direction": 8
@@ -5134,11 +4689,6 @@
 			"time": 302.473811,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 302.565275,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 302.748202,
@@ -5226,11 +4776,6 @@
 			"direction": 1
 		},
 		{
-			"time": 306.589665,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 306.772592,
 			"type": "normal",
 			"direction": 2
@@ -5239,11 +4784,6 @@
 			"time": 306.864055,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 306.955519,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 307.138446,
@@ -5264,11 +4804,6 @@
 			"time": 307.595763,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 307.687226,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 307.778689,
@@ -5351,16 +4886,6 @@
 			"direction": 4
 		},
 		{
-			"time": 311.528689,
-			"type": "reverse",
-			"direction": 8
-		},
-		{
-			"time": 311.711616,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 312.07747,
 			"type": "reverse",
 			"direction": 7
@@ -5379,11 +4904,6 @@
 			"time": 312.717714,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 312.809177,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 312.992104,
@@ -5491,11 +5011,6 @@
 			"direction": 9
 		},
 		{
-			"time": 317.199421,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 317.382348,
 			"type": "reverse",
 			"direction": 4
@@ -5524,11 +5039,6 @@
 			"time": 318.571372,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 318.662836,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 318.845763,
@@ -5596,11 +5106,6 @@
 			"direction": 8
 		},
 		{
-			"time": 321.589665,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 321.955519,
 			"type": "normal",
 			"direction": 3
@@ -5659,21 +5164,6 @@
 			"time": 324.425031,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 324.516494,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 324.699421,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 324.882348,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 325.248202,
@@ -5758,7 +5248,6 @@
 		128.60186,
 		146.162836,
 		163.723811,
-		175.431128,
 		187.504299,
 		210.55308,
 		229.57747,
@@ -5961,7 +5450,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 195
+		"reverse": 186
 	},
 	"generator_diagnostics": {
 		"version": "17.4.19",
@@ -5999,9 +5488,9 @@
 		"longest_sub_170ms_chain_notes": 4
 	},
 	"difficulty_profile": {
-		"note_count": 1146,
-		"reverse_count": 195,
-		"space_count": 21,
+		"note_count": 1044,
+		"reverse_count": 186,
+		"space_count": 20,
 		"analysis_driven": true,
 		"song_form_aware": true,
 		"local_intensity_priority": true,
@@ -6083,5 +5572,71 @@
 		"retained_direction_changes": false,
 		"space_events_changed": false,
 		"policy": "complexity plus sustained pressure; microbursts allowed but long unreadable chains are broken"
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				48.114055,
+				53.967714
+			],
+			[
+				171.040885,
+				176.894544
+			],
+			[
+				212.016494,
+				217.870153
+			]
+		],
+		"before": {
+			"song_id": "necrofantasia",
+			"difficulty": "master",
+			"bpm": 164.0,
+			"duration": 329.038413,
+			"notes": 1146,
+			"spaces": 21,
+			"average_inputs_per_second": 3.547,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 9,
+			"peak_five_second_inputs": 30,
+			"fast_direction_changes_under_170ms": 92,
+			"arrows_within_250ms_of_space": 45,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 325.518
+		},
+		"after": {
+			"song_id": "necrofantasia",
+			"difficulty": "master",
+			"bpm": 164.0,
+			"duration": 329.038413,
+			"notes": 1044,
+			"spaces": 20,
+			"average_inputs_per_second": 3.234,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 8,
+			"peak_five_second_inputs": 28,
+			"fast_direction_changes_under_170ms": 65,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					47.748202,
+					53.967714
+				],
+				[
+					170.492104,
+					176.894543
+				],
+				[
+					211.833567,
+					217.870153
+				]
+			],
+			"longest_active_run_seconds": 116.524
+		},
+		"subdivision_notes_removed": 22,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }
