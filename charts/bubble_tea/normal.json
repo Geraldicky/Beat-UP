@@ -13,7 +13,7 @@
 	"beat_offset": 0.23525,
 	"duration": 243.36839,
 	"seed": 1744323.0,
-	"recommended": "NORMAL • 4★ • 431 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 4★ • 355 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.48525,
@@ -59,11 +59,6 @@
 			"time": 8.48525,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 9.23525,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 9.98525,
@@ -156,11 +151,6 @@
 			"direction": 9
 		},
 		{
-			"time": 20.29775,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 20.86025,
 			"type": "normal",
 			"direction": 8
@@ -226,21 +216,6 @@
 			"direction": 8
 		},
 		{
-			"time": 28.17275,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 28.73525,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 28.92275,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 29.48525,
 			"type": "normal",
 			"direction": 7
@@ -249,11 +224,6 @@
 			"time": 29.86025,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 30.04775,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 30.23525,
@@ -274,11 +244,6 @@
 			"time": 31.73525,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 31.92275,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 32.48525,
@@ -304,41 +269,6 @@
 			"time": 35.86025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 36.23525,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 36.42275,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 36.61025,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 37.36025,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 38.48525,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 39.23525,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 40.73525,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 42.23525,
@@ -406,11 +336,6 @@
 			"direction": 8
 		},
 		{
-			"time": 51.04775,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 51.23525,
 			"type": "normal",
 			"direction": 9
@@ -446,11 +371,6 @@
 			"direction": 1
 		},
 		{
-			"time": 54.79775,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 55.17275,
 			"type": "normal",
 			"direction": 2
@@ -459,11 +379,6 @@
 			"time": 55.36025,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 55.54775,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 55.92275,
@@ -484,11 +399,6 @@
 			"time": 57.98525,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 58.36025,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 58.73525,
@@ -539,11 +449,6 @@
 			"time": 63.61025,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 63.79775,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 63.98525,
@@ -616,11 +521,6 @@
 			"direction": 6
 		},
 		{
-			"time": 72.04775,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 72.23525,
 			"type": "normal",
 			"direction": 3
@@ -629,11 +529,6 @@
 			"time": 72.61025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 72.79775,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 72.98525,
@@ -649,11 +544,6 @@
 			"time": 73.73525,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 73.92275,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 74.11025,
@@ -716,11 +606,6 @@
 			"direction": 8
 		},
 		{
-			"time": 79.92275,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 80.11025,
 			"type": "normal",
 			"direction": 4
@@ -731,19 +616,9 @@
 			"direction": 3
 		},
 		{
-			"time": 80.67275,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 80.86025,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 81.04775,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 81.23525,
@@ -771,19 +646,9 @@
 			"direction": 9
 		},
 		{
-			"time": 84.23525,
-			"type": "reverse",
-			"direction": 7
-		},
-		{
 			"time": 84.98525,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 85.17275,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 85.36025,
@@ -796,11 +661,6 @@
 			"direction": 6
 		},
 		{
-			"time": 85.92275,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 86.11025,
 			"type": "normal",
 			"direction": 2
@@ -809,11 +669,6 @@
 			"time": 86.86025,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 87.04775,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 87.23525,
@@ -836,29 +691,14 @@
 			"direction": 1
 		},
 		{
-			"time": 89.29775,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 89.48525,
 			"type": "normal",
 			"direction": 6
 		},
 		{
-			"time": 89.67275,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 90.61025,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 90.79775,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 90.98525,
@@ -876,11 +716,6 @@
 			"direction": 3
 		},
 		{
-			"time": 91.92275,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 92.11025,
 			"type": "normal",
 			"direction": 7
@@ -889,11 +724,6 @@
 			"time": 92.86025,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 93.04775,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 93.23525,
@@ -971,11 +801,6 @@
 			"direction": 4
 		},
 		{
-			"time": 102.04775,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 102.23525,
 			"type": "normal",
 			"direction": 9
@@ -1041,11 +866,6 @@
 			"direction": 6
 		},
 		{
-			"time": 109.54775,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 109.73525,
 			"type": "normal",
 			"direction": 8
@@ -1091,11 +911,6 @@
 			"direction": 3
 		},
 		{
-			"time": 114.23525,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 114.79775,
 			"type": "normal",
 			"direction": 4
@@ -1111,19 +926,9 @@
 			"direction": 7
 		},
 		{
-			"time": 115.54775,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 115.73525,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 115.92275,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 116.11025,
@@ -1256,11 +1061,6 @@
 			"direction": 7
 		},
 		{
-			"time": 133.73525,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 134.11025,
 			"type": "normal",
 			"direction": 2
@@ -1321,11 +1121,6 @@
 			"direction": 1
 		},
 		{
-			"time": 140.29775,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 140.48525,
 			"type": "normal",
 			"direction": 6
@@ -1346,41 +1141,6 @@
 			"direction": 4
 		},
 		{
-			"time": 144.23525,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 144.42275,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 144.61025,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 145.36025,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 145.73525,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 147.23525,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 148.73525,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 150.23525,
 			"type": "normal",
 			"direction": 4
@@ -1399,11 +1159,6 @@
 			"time": 152.29775,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 153.23525,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 153.98525,
@@ -1461,11 +1216,6 @@
 			"direction": 3
 		},
 		{
-			"time": 160.54775,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 160.73525,
 			"type": "normal",
 			"direction": 7
@@ -1481,11 +1231,6 @@
 			"direction": 4
 		},
 		{
-			"time": 162.79775,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 163.17275,
 			"type": "normal",
 			"direction": 7
@@ -1494,11 +1239,6 @@
 			"time": 163.36025,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 163.54775,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 163.92275,
@@ -1536,11 +1276,6 @@
 			"direction": 3
 		},
 		{
-			"time": 167.67275,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 168.23525,
 			"type": "normal",
 			"direction": 1
@@ -1571,19 +1306,9 @@
 			"direction": 7
 		},
 		{
-			"time": 171.23525,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
 			"time": 171.61025,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 171.79775,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 171.98525,
@@ -1616,11 +1341,6 @@
 			"direction": 9
 		},
 		{
-			"time": 174.79775,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 175.36025,
 			"type": "normal",
 			"direction": 3
@@ -1629,11 +1349,6 @@
 			"time": 175.73525,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 175.92275,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 176.48525,
@@ -1656,19 +1371,9 @@
 			"direction": 3
 		},
 		{
-			"time": 179.67275,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 179.86025,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 180.04775,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 180.23525,
@@ -1681,11 +1386,6 @@
 			"direction": 7
 		},
 		{
-			"time": 180.79775,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 181.36025,
 			"type": "reverse",
 			"direction": 4
@@ -1694,11 +1394,6 @@
 			"time": 181.73525,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 181.92275,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 182.11025,
@@ -1714,11 +1409,6 @@
 			"time": 182.86025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 183.04775,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 183.23525,
@@ -1756,11 +1446,6 @@
 			"direction": 1
 		},
 		{
-			"time": 186.79775,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 187.36025,
 			"type": "normal",
 			"direction": 2
@@ -1769,11 +1454,6 @@
 			"time": 187.73525,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 187.92275,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 188.48525,
@@ -1786,24 +1466,9 @@
 			"direction": 1
 		},
 		{
-			"time": 189.04775,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 189.23525,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 189.61025,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 189.79775,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 190.36025,
@@ -1819,11 +1484,6 @@
 			"time": 191.48525,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 191.67275,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 192.23525,
@@ -1844,11 +1504,6 @@
 			"time": 193.36025,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 193.54775,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 193.92275,
@@ -1876,19 +1531,9 @@
 			"direction": 8
 		},
 		{
-			"time": 195.79775,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 195.98525,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 196.17275,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 196.36025,
@@ -1916,11 +1561,6 @@
 			"direction": 4
 		},
 		{
-			"time": 198.79775,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 198.98525,
 			"type": "normal",
 			"direction": 1
@@ -1944,11 +1584,6 @@
 			"time": 200.86025,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 201.04775,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 201.23525,
@@ -2026,11 +1661,6 @@
 			"direction": 6
 		},
 		{
-			"time": 212.29775,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 212.86025,
 			"type": "normal",
 			"direction": 4
@@ -2064,11 +1694,6 @@
 			"time": 217.36025,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 217.73525,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 218.11025,
@@ -2109,11 +1734,6 @@
 			"time": 222.61025,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 222.79775,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 223.36025,
@@ -2394,7 +2014,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 26
+		"reverse": 22
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2423,8 +2043,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 431,
-		"reverse_count": 26,
+		"note_count": 355,
+		"reverse_count": 22,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2493,5 +2113,63 @@
 		"analysis_master_original_name": "dark cat - BUBBLE TEA (feat. juu & cinders) [7PYe57MwxPI].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				36.23525,
+				42.23525
+			],
+			[
+				144.23525,
+				150.23525
+			]
+		],
+		"before": {
+			"song_id": "bubble_tea",
+			"difficulty": "normal",
+			"bpm": 160.0,
+			"duration": 243.36839,
+			"notes": 431,
+			"spaces": 10,
+			"average_inputs_per_second": 1.812,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 17,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 12,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 228.0
+		},
+		"after": {
+			"song_id": "bubble_tea",
+			"difficulty": "normal",
+			"bpm": 160.0,
+			"duration": 243.36839,
+			"notes": 355,
+			"spaces": 10,
+			"average_inputs_per_second": 1.5,
+			"peak_half_second_inputs": 2,
+			"peak_one_second_inputs": 4,
+			"peak_five_second_inputs": 12,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					35.86025,
+					42.23525
+				],
+				[
+					143.86025,
+					150.23525
+				]
+			],
+			"longest_active_run_seconds": 101.625
+		},
+		"subdivision_notes_removed": 50,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

@@ -20,7 +20,7 @@ func _run() -> void:
 	startup.set_script(load("res://scripts/startup.gd"))
 	_check(not bool(startup.call("_has_registered_app_shell", navigation)), "Standalone Main Menu accepted NavigationController without a registered AppShell.")
 	var startup_source := FileAccess.get_file_as_string("res://scripts/startup.gd")
-	_check(startup_source.count("_resident_navigation_controller()") == 3, "Song Library and Chart Studio must both use the registered-shell routing guard.")
+	_check(startup_source.count("_resident_navigation_controller()") == 2, "Song Library must use the registered-shell routing guard.")
 	_check(startup_source.contains("SceneTransition.change_scene_quick(path)"), "Standalone Main Menu no longer retains its direct SceneTransition fallback.")
 	_check(not bool(navigation.call("is_navigating")), "Standalone routing guard unexpectedly began a navigation transaction.")
 

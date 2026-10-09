@@ -41,29 +41,19 @@ func _run() -> void:
 	_check("opposite" in description.text.to_lower(), "Reverse note opposite-input rule is missing.")
 	_check("gold" in description.text.to_lower() and "space" in description.text.to_lower(), "SPACE gold-cue rule is missing.")
 
-	startup.call("_set_tutorial_step", 3, false)
-	var sequence: Array = visual.call("_practice_sequence")
-	var has_reverse := false
-	var has_space := false
-	for raw in sequence:
-		if raw is Dictionary:
-			var cue_type := str((raw as Dictionary).get("type", "normal"))
-			has_reverse = has_reverse or cue_type == "reverse"
-			has_space = has_space or cue_type == "space"
-	_check(has_reverse, "Practice sequence contains no Reverse cue.")
-	_check(has_space, "Practice sequence contains no SPACE cue.")
+	_check(not visual.has_method("reset_practice"), "Retired tutorial Practice still exists.")
+	_check(help.find_child("TutorialPracticeTab", true, false) == null, "Retired Practice tab still exists.")
 
-	# Regression: in 4-Direction mode Left Arrow must be practice input, not a
-	# tutorial-page navigation shortcut.
+	# Direction keys on the final demonstration page must not navigate pages.
 	startup.call("_on_tutorial_input_style_selected", "4_arrow")
-	startup.call("_set_tutorial_step", 3, false)
+	startup.call("_set_tutorial_step", 2, false)
 	help.visible = true
 	var left_event := InputEventKey.new()
 	left_event.keycode = KEY_LEFT
 	left_event.physical_keycode = KEY_LEFT
 	left_event.pressed = true
 	startup.call("_input", left_event)
-	_check(int(startup.get("tutorial_step_index")) == 3, "Left Arrow navigated away from practice in 4-Direction mode.")
+	_check(int(startup.get("tutorial_step_index")) == 2, "Left Arrow navigated away from the demonstration in 4-Direction mode.")
 
 	UserSettingsScript.set_input_style(original_input_style)
 	startup.queue_free()

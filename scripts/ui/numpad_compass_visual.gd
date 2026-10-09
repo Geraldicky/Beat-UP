@@ -28,8 +28,28 @@ const ARROW_LAYOUT := [
 var _mono_font: Font
 var _active_key := KEY_NONE
 var _activity := 0.0
-var _phase := 0.0
 var _input_style := "8_direction"
+var _binding_labels: Dictionary = {}
+var _space_label := "SPACE"
+
+func set_binding_snapshot(snapshot: Dictionary) -> void:
+	# Presentation-only copy of the run snapshot; no live settings lookup.
+	_binding_labels.clear()
+	var bindings: Dictionary = snapshot.get("bindings", {})
+	for item in _active_layout():
+		var action := "8k_%s" % str(item["label"])
+		if _input_style == "4_arrow":
+			action = {KEY_UP: "4k_up", KEY_DOWN: "4k_down", KEY_LEFT: "4k_left", KEY_RIGHT: "4k_right"}[item["key"]]
+		var keycode := int(bindings.get(action, item["key"]))
+		_binding_labels[int(item["key"])] = OS.get_keycode_string(keycode).replace("Kp ", "").to_upper()
+	_space_label = OS.get_keycode_string(int(bindings.get("space", KEY_SPACE))).to_upper()
+	queue_redraw()
+
+func get_binding_label(keycode: int) -> String:
+	return str(_binding_labels.get(keycode, ""))
+
+func get_space_label() -> String:
+	return _space_label
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -39,7 +59,6 @@ func _ready() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	_phase = fmod(_phase + delta * 8.0, TAU)
 	if _activity > 0.0:
 		_activity = maxf(0.0, _activity - delta * 4.8)
 		if _activity <= 0.0:
@@ -48,6 +67,7 @@ func _process(delta: float) -> void:
 
 func set_input_style(style: String) -> void:
 	_input_style = "4_arrow" if style == "4_arrow" else "8_direction"
+	_binding_labels.clear()
 	reset_activity()
 	queue_redraw()
 
@@ -59,7 +79,6 @@ func flash_key(keycode: int) -> void:
 		return
 	_active_key = keycode
 	_activity = 1.0
-	_phase = 0.0
 	queue_redraw()
 
 func reset_activity() -> void:
@@ -85,7 +104,7 @@ func _draw() -> void:
 	var center := size * 0.5
 	var short_side := minf(size.x, size.y)
 	var spacing := short_side * 0.285
-	var cell_radius := clampf(short_side * 0.105, 7.0, 14.0)
+	var cell_radius := clampf(short_side * 0.12, 12.0, 21.0)
 	var font_size := clampi(roundi(short_side * 0.087), 9, 12)
 
 	# A faint radial scaffold makes the layout read as one compass rather than
@@ -99,27 +118,34 @@ func _draw() -> void:
 		var keycode := int(item["key"])
 		var key_position: Vector2 = center + (item["grid"] as Vector2) * spacing
 		var active := keycode == _active_key and _activity > 0.0
-		var pulse := 1.0 + (0.10 + sin(_phase) * 0.025) * _activity if active else 1.0
-		var radius := cell_radius * pulse
-		if active:
-			_draw_diamond(key_position, radius + 5.0 * _activity, Color(CYAN, 0.08 * _activity), Color(CYAN, 0.34 * _activity), 1.5)
-		_draw_diamond(
-			key_position,
-			radius,
-			Color(CYAN, 0.82) if active else Color(SURFACE, 0.74),
-			TEXT if active else Color(TEXT, 0.20),
-			2.0 if active else 1.0
-		)
-		var label_color := Color("0b0d11") if active else Color(TEXT, 0.46)
+		var radius := cell_radius
+		var rect := Rect2(key_position - Vector2.ONE * radius, Vector2.ONE * radius * 2.0)
+		draw_rect(rect, Color(CYAN, 0.16) if active else Color(SURFACE, 0.88))
+		draw_rect(rect, Color(CYAN, 0.95) if active else Color(TEXT, 0.28), false, 1.0)
+		var label_color := CYAN if active else Color(TEXT, 0.76)
+		var direction: Vector2 = (item["grid"] as Vector2).normalized()
+		var arrow_center := key_position + Vector2(0, radius * 0.40)
+		var tip := arrow_center + direction * radius * 0.22
+		draw_line(arrow_center - direction * radius * 0.22, tip, label_color, 1.5, true)
+		for sign_value: float in [-1.0, 1.0]:
+			draw_line(tip, tip - direction * radius * 0.18 + direction.orthogonal() * sign_value * radius * 0.15, label_color, 1.5, true)
+		var label := str(_binding_labels.get(keycode, item["label"]))
+		var label_size := font_size
+		while label_size > 7 and _mono_font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size).x > radius * 1.8:
+			label_size -= 1
+		if label.length() > 5:
+			label = label.substr(0, 4) + "…"
 		draw_string(
 			_mono_font,
-			Vector2(key_position.x - radius, key_position.y + float(font_size) * 0.36),
-			str(item["label"]),
+			Vector2(key_position.x - radius, key_position.y - radius * 0.1),
+			label,
 			HORIZONTAL_ALIGNMENT_CENTER,
 			radius * 2.0,
-			font_size,
+			label_size,
 			label_color
 		)
+	draw_string(_mono_font, Vector2(0, 12), "INPUT · %s" % ("4K" if _input_style == "4_arrow" else "8K"), HORIZONTAL_ALIGNMENT_LEFT, size.x, 10, Color(TEXT, 0.55))
+	draw_string(_mono_font, Vector2(0, size.y - 1), _space_label, HORIZONTAL_ALIGNMENT_CENTER, size.x, 10, Color("f6c96a"))
 
 func _draw_diamond(center: Vector2, radius: float, fill: Color, stroke: Color, width: float) -> void:
 	var points := PackedVector2Array([

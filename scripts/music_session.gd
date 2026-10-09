@@ -59,6 +59,17 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if volume_tween != null:
 		volume_tween.kill()
+	if is_instance_valid(player):
+		player.stop()
+		player.stream = null
+	for raw_path: Variant in audio_preload_requests.keys():
+		var path := str(raw_path)
+		var status := ResourceLoader.load_threaded_get_status(path)
+		if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS or status == ResourceLoader.THREAD_LOAD_LOADED:
+			ResourceLoader.load_threaded_get(path)
+	audio_preload_requests.clear()
+	audio_stream_cache.clear()
+	audio_cache_order.clear()
 	spectrum_instance = null
 	var current_bus_index: int = AudioServer.get_bus_index(BUS_NAME)
 	if current_bus_index < 0:
@@ -85,10 +96,11 @@ func play_track(audio_path: String, start_position: float = 0.0, metadata: Dicti
 	target_volume_db = target_db
 	if same_track and player.playing and not restart_if_same:
 		_apply_loop_to_stream(player.stream, loop)
-		# A caller asking to play the current track owns the audible state. This
-		# also restores previews/menu BGM after Chart Studio paused the session.
-		player.stream_paused = false
-		_set_target_volume(target_db, fade_duration)
+		# Refreshing metadata/volume for the current track must not override an
+		# explicit pause. Resume ownership belongs to set_paused(false) or
+		# explicit transport commands, not to an incidental preview refresh.
+		if not player.stream_paused:
+			_set_target_volume(target_db, fade_duration)
 		track_changed.emit(get_state())
 		playback_state_changed.emit(get_state())
 		return true
@@ -145,7 +157,11 @@ func update_metadata(metadata: Dictionary) -> void:
 	track_changed.emit(get_state())
 
 func ensure_playing(fade_duration: float = 0.18) -> void:
+	# Automatic keep-alive must not revoke a pause decision. Explicit Resume uses
+	# set_paused(false); selecting a different track uses play_track().
 	if player == null or player.stream == null:
+		return
+	if player.stream_paused:
 		return
 	var was_paused: bool = player.stream_paused
 	player.stream_paused = false
@@ -159,6 +175,13 @@ func set_paused(paused: bool) -> void:
 	if player == null or player.stream == null:
 		return
 	if paused:
+		# Pause is an explicit playback-state decision. Cancel any in-flight
+		# crossfade/track handoff so a delayed _begin_track() callback cannot
+		# resume or replace the stream after the pause was requested.
+		play_generation += 1
+		if volume_tween != null:
+			volume_tween.kill()
+			volume_tween = null
 		if player.playing:
 			last_known_position = maxf(player.get_playback_position(), 0.0)
 		player.stream_paused = true
@@ -167,6 +190,7 @@ func set_paused(paused: bool) -> void:
 		player.stream_paused = false
 		if was_paused and not player.playing:
 			player.play(last_known_position)
+		_set_target_volume(target_volume_db, 0.12)
 	playback_state_changed.emit(get_state())
 
 func is_paused() -> bool:

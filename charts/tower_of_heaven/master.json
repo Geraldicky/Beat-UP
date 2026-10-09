@@ -13,7 +13,7 @@
 	"beat_offset": 0.255338,
 	"duration": 188.371927,
 	"seed": 1744306.0,
-	"recommended": "MASTER • 10★ • 681 notes • 13 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 10★ • 618 notes • 13 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.312481,
@@ -44,11 +44,6 @@
 			"time": 4.712481,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 5.055338,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 5.741052,
@@ -154,11 +149,6 @@
 			"time": 16.026767,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 16.712481,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 17.055338,
@@ -294,16 +284,6 @@
 			"time": 27.341052,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 27.512481,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 27.683909,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 28.026767,
@@ -551,21 +531,6 @@
 			"direction": 4
 		},
 		{
-			"time": 38.483909,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 38.655338,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
-			"time": 38.826767,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 38.998195,
 			"type": "normal",
 			"direction": 8
@@ -671,76 +636,6 @@
 			"direction": 6
 		},
 		{
-			"time": 44.655338,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 45.169624,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 45.341052,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 45.512481,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 45.855338,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 46.198195,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 46.541052,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 46.798195,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 46.883909,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 47.226767,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 47.569624,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 48.255338,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 48.941052,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 49.283909,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 49.626767,
 			"type": "normal",
 			"direction": 2
@@ -806,11 +701,6 @@
 			"direction": 3
 		},
 		{
-			"time": 54.598195,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 54.683909,
 			"type": "normal",
 			"direction": 1
@@ -824,11 +714,6 @@
 			"time": 54.855338,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 54.941052,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 55.026767,
@@ -919,16 +804,6 @@
 			"time": 58.883909,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 59.226767,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
-			"time": 59.398195,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 59.569624,
@@ -1086,11 +961,6 @@
 			"direction": 6
 		},
 		{
-			"time": 66.255338,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 66.426767,
 			"type": "reverse",
 			"direction": 2
@@ -1104,11 +974,6 @@
 			"time": 66.855338,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 66.941052,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 67.112481,
@@ -1194,26 +1059,6 @@
 			"time": 71.226767,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 71.483909,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 71.569624,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 71.655338,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 71.741052,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 71.912481,
@@ -1496,11 +1341,6 @@
 			"direction": 4
 		},
 		{
-			"time": 84.083909,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 84.255338,
 			"type": "normal",
 			"direction": 1
@@ -1666,11 +1506,6 @@
 			"direction": 3
 		},
 		{
-			"time": 92.141052,
-			"type": "reverse",
-			"direction": 8
-		},
-		{
 			"time": 92.483909,
 			"type": "normal",
 			"direction": 9
@@ -1719,11 +1554,6 @@
 			"time": 94.283909,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 94.369624,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 94.541052,
@@ -2011,11 +1841,6 @@
 			"direction": 9
 		},
 		{
-			"time": 110.141052,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 110.312481,
 			"type": "normal",
 			"direction": 2
@@ -2059,11 +1884,6 @@
 			"time": 112.369624,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 112.712481,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 113.398195,
@@ -2166,11 +1986,6 @@
 			"direction": 7
 		},
 		{
-			"time": 119.741052,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 119.826767,
 			"type": "normal",
 			"direction": 6
@@ -2194,11 +2009,6 @@
 			"time": 120.683909,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 120.769624,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 120.855338,
@@ -2306,11 +2116,6 @@
 			"direction": 2
 		},
 		{
-			"time": 125.055338,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 125.398195,
 			"type": "normal",
 			"direction": 8
@@ -2346,11 +2151,6 @@
 			"direction": 1
 		},
 		{
-			"time": 126.598195,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 126.769624,
 			"type": "reverse",
 			"direction": 8
@@ -2384,11 +2184,6 @@
 			"time": 127.883909,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 127.969624,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 128.141052,
@@ -2691,11 +2486,6 @@
 			"direction": 8
 		},
 		{
-			"time": 142.712481,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 142.883909,
 			"type": "reverse",
 			"direction": 1
@@ -2776,16 +2566,6 @@
 			"direction": 2
 		},
 		{
-			"time": 146.912481,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 146.998195,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 147.341052,
 			"type": "reverse",
 			"direction": 3
@@ -2814,11 +2594,6 @@
 			"time": 148.112481,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 148.198195,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 148.369624,
@@ -3021,21 +2796,6 @@
 			"direction": 7
 		},
 		{
-			"time": 157.798195,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 157.969624,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
-			"time": 158.141052,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 158.312481,
 			"type": "normal",
 			"direction": 4
@@ -3161,76 +2921,6 @@
 			"direction": 7
 		},
 		{
-			"time": 164.826767,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 165.169624,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 165.855338,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 166.198195,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 166.883909,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 167.226767,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 167.569624,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 167.912481,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 168.426767,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 168.941052,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 169.626767,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 169.969624,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 170.141052,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 170.312481,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 170.826767,
 			"type": "normal",
 			"direction": 9
@@ -3349,11 +3039,6 @@
 			"time": 180.941052,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 181.283909,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 181.798195,
@@ -3591,7 +3276,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 123
+		"reverse": 118
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -3620,8 +3305,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 681,
-		"reverse_count": 123,
+		"note_count": 618,
+		"reverse_count": 118,
 		"space_count": 13,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -3690,5 +3375,63 @@
 		"analysis_master_original_name": "Feint - Tower Of Heaven (You Are Slaves) [z-sAl3S5qB8].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				44.141052,
+				49.626766
+			],
+			[
+				164.826767,
+				170.312481
+			]
+		],
+		"before": {
+			"song_id": "tower_of_heaven",
+			"difficulty": "master",
+			"bpm": 175.0,
+			"duration": 188.371927,
+			"notes": 681,
+			"spaces": 13,
+			"average_inputs_per_second": 3.684,
+			"peak_half_second_inputs": 6,
+			"peak_one_second_inputs": 9,
+			"peak_five_second_inputs": 28,
+			"fast_direction_changes_under_170ms": 82,
+			"arrows_within_250ms_of_space": 24,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 184.8
+		},
+		"after": {
+			"song_id": "tower_of_heaven",
+			"difficulty": "master",
+			"bpm": 175.0,
+			"duration": 188.371927,
+			"notes": 618,
+			"spaces": 13,
+			"average_inputs_per_second": 3.35,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 26,
+			"fast_direction_changes_under_170ms": 60,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					43.969624,
+					49.626767
+				],
+				[
+					164.569624,
+					170.312481
+				]
+			],
+			"longest_active_run_seconds": 114.943
+		},
+		"subdivision_notes_removed": 13,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

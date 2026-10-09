@@ -18,15 +18,14 @@ func _run() -> void:
 	var back_button := result.get_node("MainMargin/RootVBox/BottomBar/BackButton") as Button
 	var replay_button := result.get_node("MainMargin/RootVBox/BottomBar/ReplayButton") as Button
 	_check(back_button.visible and replay_button.visible, "The two remaining result actions are not visible")
-	_check(back_button.text == "SONG LIBRARY", "Back action is not labelled SONG LIBRARY")
+	_check(back_button.text == "BACK TO LIBRARY", "Back action is not labelled BACK TO LIBRARY")
 
 	var actions := {"back": 0, "replay": 0}
 	result.back_requested.connect(func(): actions["back"] = int(actions["back"]) + 1)
 	result.replay_requested.connect(func(): actions["replay"] = int(actions["replay"]) + 1)
 	back_button.pressed.emit()
 	replay_button.pressed.emit()
-	_check(int(actions["back"]) == 1, "Song Select action did not emit back_requested")
-	_check(int(actions["replay"]) == 1, "Retry action did not emit replay_requested")
+	_check(int(actions["back"]) == 0 and int(actions["replay"]) == 0, "Actions were enabled before a result reveal")
 
 	result.call("set_result", {
 		"title": "RESULT TEST",
@@ -52,7 +51,10 @@ func _run() -> void:
 	var final_state: Dictionary = sfx.call("get_rank_fill_debug_state")
 	_check(not bool(final_state.get("active", true)), "Rank charge SFX did not stop with the ring")
 	_check(int(final_state.get("locks", 0)) == 1, "Rank reveal did not produce exactly one lock cue")
-	_check(absf(float(final_state.get("value", 0.0)) - 92.5) < 0.05, "Rank SFX progress did not settle on the final accuracy")
+	_check(absf(float(final_state.get("value", 0.0)) - 92.9) < 0.05, "Rank SFX progress did not settle on count-derived accuracy")
+	back_button.pressed.emit()
+	replay_button.pressed.emit()
+	_check(int(actions["back"]) == 1 and int(actions["replay"]) == 0, "Action lock did not admit exactly one completed-result navigation")
 
 	result.queue_free()
 	await process_frame

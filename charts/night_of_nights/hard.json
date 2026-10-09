@@ -13,7 +13,7 @@
 	"beat_offset": 0.615611,
 	"duration": 191.251202,
 	"seed": 174210.0,
-	"recommended": "HARD • 6★ • 607 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 6★ • 571 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.282278,
@@ -184,21 +184,6 @@
 			"time": 16.282278,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 16.448944,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 16.615611,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 16.782278,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 16.948944,
@@ -456,16 +441,6 @@
 			"direction": 4
 		},
 		{
-			"time": 31.282278,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 31.448944,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 31.948944,
 			"type": "normal",
 			"direction": 3
@@ -701,16 +676,6 @@
 			"direction": 1
 		},
 		{
-			"time": 45.782278,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 45.948944,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 46.282278,
 			"type": "reverse",
 			"direction": 9
@@ -939,11 +904,6 @@
 			"time": 58.782278,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 59.282278,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 59.615611,
@@ -1276,21 +1236,6 @@
 			"direction": 9
 		},
 		{
-			"time": 79.115611,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 79.282278,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 79.448944,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 79.782278,
 			"type": "reverse",
 			"direction": 6
@@ -1576,16 +1521,6 @@
 			"direction": 8
 		},
 		{
-			"time": 95.282278,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 95.448944,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 95.782278,
 			"type": "reverse",
 			"direction": 7
@@ -1789,21 +1724,6 @@
 			"time": 107.948944,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 108.448944,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 108.615611,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 108.782278,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 109.115611,
@@ -2049,21 +1969,6 @@
 			"time": 122.948944,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 123.115611,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 123.282278,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 123.448944,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 123.615611,
@@ -2511,11 +2416,6 @@
 			"direction": 4
 		},
 		{
-			"time": 148.615611,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
 			"time": 148.948944,
 			"type": "normal",
 			"direction": 6
@@ -2796,21 +2696,6 @@
 			"direction": 8
 		},
 		{
-			"time": 164.448944,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 164.615611,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 164.782278,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 165.115611,
 			"type": "reverse",
 			"direction": 1
@@ -2914,71 +2799,6 @@
 			"time": 171.115611,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 171.282278,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 171.448944,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 172.282278,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 172.615611,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 173.115611,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 173.782278,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 174.448944,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 174.948944,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 175.282278,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 175.448944,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 175.782278,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 176.115611,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 176.448944,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 176.615611,
@@ -3143,7 +2963,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 73
+		"reverse": 71
 	},
 	"generator_diagnostics": {
 		"version": "17.4.19",
@@ -3181,8 +3001,8 @@
 		"longest_sub_170ms_chain_notes": 6
 	},
 	"difficulty_profile": {
-		"note_count": 607,
-		"reverse_count": 73,
+		"note_count": 571,
+		"reverse_count": 71,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -3265,5 +3085,55 @@
 		"retained_direction_changes": false,
 		"space_events_changed": false,
 		"policy": "stable pressure; dense sections remain musical but no sudden unreadable wall"
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				171.282278,
+				176.615611
+			]
+		],
+		"before": {
+			"song_id": "night_of_nights",
+			"difficulty": "hard",
+			"bpm": 180.0,
+			"duration": 191.251202,
+			"notes": 607,
+			"spaces": 10,
+			"average_inputs_per_second": 3.226,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 293,
+			"arrows_within_250ms_of_space": 23,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 178.5
+		},
+		"after": {
+			"song_id": "night_of_nights",
+			"difficulty": "hard",
+			"bpm": 180.0,
+			"duration": 191.251202,
+			"notes": 571,
+			"spaces": 10,
+			"average_inputs_per_second": 3.038,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 21,
+			"fast_direction_changes_under_170ms": 272,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					171.115611,
+					176.615611
+				]
+			],
+			"longest_active_run_seconds": 167.833
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

@@ -8,8 +8,16 @@ class_name ResultBackdrop
 
 var song_texture: Texture2D
 var song_texture_path := ""
+var _veil: GradientTexture2D
 
 func _ready() -> void:
+	preload("res://scripts/ui/procedural_background.gd").install(self, "result")
+	var gradient := Gradient.new()
+	gradient.colors = PackedColorArray([Color(0.025, 0.035, 0.055, 0.65), Color(0.025, 0.035, 0.055, 0.32)])
+	_veil = GradientTexture2D.new()
+	_veil.gradient = gradient
+	_veil.fill_from = Vector2.ZERO
+	_veil.fill_to = Vector2.RIGHT
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if not resized.is_connected(queue_redraw):
 		resized.connect(queue_redraw)
@@ -29,34 +37,29 @@ func set_song_background(path: String, accent: Color) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	if has_node("ProceduralAtmosphere"):
+		return
 	draw_rect(Rect2(Vector2.ZERO, size), background_color)
 	if song_texture != null:
 		_draw_song_art()
 
-	# Album Flow result backdrop: preserve the chosen song instead of replacing it
-	# with a technical grid. A strong left veil keeps metrics readable while the
-	# right side retains recognisable album context.
+	# Caller supplies the existing generic BackgroundSession pool selection.
+	# Jacket artwork is confined to the header, never fullscreen ambience.
 	_draw_readability_veil()
-	_draw_flow_line()
 
 func _draw_song_art() -> void:
 	var tex_size := song_texture.get_size()
 	if tex_size.x <= 0.0 or tex_size.y <= 0.0 or size.x <= 0.0 or size.y <= 0.0:
 		return
 	var crop := _cover_region(tex_size, size)
-	draw_texture_rect_region(song_texture, Rect2(Vector2.ZERO, size), crop, Color(0.88, 0.91, 0.97, 0.72))
+	draw_texture_rect_region(song_texture, Rect2(Vector2.ZERO, size), crop, Color(0.90, 0.94, 1.0, 0.90))
 	# Calm the art globally before metric-specific veils are added.
-	draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.028, 0.045, 0.40))
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.028, 0.045, 0.22))
 
 func _draw_readability_veil() -> void:
-	var strips := 48
-	for index in range(strips):
-		var t0 := float(index) / float(strips)
-		var t1 := float(index + 1) / float(strips)
-		var x0 := size.x * t0
-		var x1 := size.x * t1
-		var alpha := lerpf(0.86, 0.10, pow(t1, 1.28))
-		draw_rect(Rect2(Vector2(x0, 0.0), Vector2(x1 - x0 + 1.0, size.y)), Color(0.025, 0.035, 0.055, alpha))
+	# One continuous alpha gradient: overlapping strips made dark seams.
+	if _veil != null:
+		draw_texture_rect(_veil, Rect2(Vector2.ZERO, size), false)
 
 	# Top/bottom edge control gives the result screen a presentation frame without
 	# a literal card around the entire composition.
@@ -64,8 +67,8 @@ func _draw_readability_veil() -> void:
 		var t := float(index) / 12.0
 		var h := size.y * 0.018
 		var a := lerpf(0.20, 0.0, t)
-		draw_rect(Rect2(0, index * h, size.x, h + 1.0), Color(0.01, 0.015, 0.025, a))
-		draw_rect(Rect2(0, size.y - (index + 1) * h, size.x, h + 1.0), Color(0.01, 0.015, 0.025, a))
+		draw_rect(Rect2(0, index * h, size.x, h), Color(0.01, 0.015, 0.025, a))
+		draw_rect(Rect2(0, size.y - (index + 1) * h, size.x, h), Color(0.01, 0.015, 0.025, a))
 
 func _draw_flow_line() -> void:
 	var y := size.y * 0.885

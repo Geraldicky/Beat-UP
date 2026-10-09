@@ -7,8 +7,18 @@ const PACK := "user://level_packs/v1870_pack_test.beatup-pack"
 
 var failed := false
 
-func _init() -> void:
+func _initialize() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
 	_cleanup()
+	# This runtime suite uses the project's autoloads. Let their normal scene
+	# warm-up complete before shutting down ClassDB underneath ResourceLoader.
+	var transition := root.get_node("SceneTransition")
+	var deadline := Time.get_ticks_msec() + 10000
+	while not (transition.get("preload_requests") as Dictionary).is_empty() and Time.get_ticks_msec() < deadline:
+		await process_frame
+	_check((transition.get("preload_requests") as Dictionary).is_empty(), "Scene warm-up did not finish before level-pack QA teardown")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(ROOT))
 	var audio := FileAccess.open(ROOT.path_join("audio.ogg"), FileAccess.WRITE)
 	_check(audio != null, "Could not create test audio")

@@ -13,7 +13,7 @@
 	"beat_offset": 0.095504,
 	"duration": 222.64458,
 	"seed": 1744307.0,
-	"recommended": "HARD • 7★ • 632 notes • 13 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 7★ • 567 notes • 13 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.495504,
@@ -64,11 +64,6 @@
 			"time": 7.981218,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 9.00979,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 9.695504,
@@ -174,11 +169,6 @@
 			"time": 22.638361,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 23.40979,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 24.095504,
@@ -336,16 +326,6 @@
 			"direction": 8
 		},
 		{
-			"time": 38.495504,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 38.666933,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 39.352647,
 			"type": "normal",
 			"direction": 4
@@ -446,11 +426,6 @@
 			"direction": 3
 		},
 		{
-			"time": 47.495504,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 47.924075,
 			"type": "normal",
 			"direction": 4
@@ -521,16 +496,6 @@
 			"direction": 6
 		},
 		{
-			"time": 53.066933,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 53.238361,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 53.924075,
 			"type": "reverse",
 			"direction": 2
@@ -559,11 +524,6 @@
 			"time": 55.466933,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 55.552647,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 55.80979,
@@ -691,16 +651,6 @@
 			"direction": 1
 		},
 		{
-			"time": 64.638361,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 64.724075,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 64.80979,
 			"type": "normal",
 			"direction": 6
@@ -724,16 +674,6 @@
 			"time": 65.581218,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 65.666933,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 65.752647,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 65.838361,
@@ -769,16 +709,6 @@
 			"time": 66.952647,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 67.124075,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 67.295504,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 67.638361,
@@ -1086,11 +1016,6 @@
 			"direction": 7
 		},
 		{
-			"time": 85.124075,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
 			"time": 85.466933,
 			"type": "normal",
 			"direction": 1
@@ -1396,11 +1321,6 @@
 			"direction": 4
 		},
 		{
-			"time": 101.581218,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
 			"time": 101.924075,
 			"type": "normal",
 			"direction": 7
@@ -1409,11 +1329,6 @@
 			"time": 102.438361,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 102.524075,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 102.952647,
@@ -1541,81 +1456,6 @@
 			"direction": 6
 		},
 		{
-			"time": 109.80979,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 110.152647,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 110.495504,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 110.838361,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 111.00979,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 111.181218,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 112.124075,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 112.552647,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 112.895504,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 113.066933,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 113.324075,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 113.40979,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 114.438361,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 114.60979,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 114.952647,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 115.295504,
 			"type": "normal",
 			"direction": 3
@@ -1641,11 +1481,6 @@
 			"direction": 2
 		},
 		{
-			"time": 118.038361,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 118.381218,
 			"type": "normal",
 			"direction": 3
@@ -1664,11 +1499,6 @@
 			"time": 120.266933,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 120.352647,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 120.781218,
@@ -1749,11 +1579,6 @@
 			"time": 128.324075,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 128.40979,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 128.666933,
@@ -1849,11 +1674,6 @@
 			"time": 138.095504,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 138.60979,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 139.295504,
@@ -1996,94 +1816,9 @@
 			"direction": 6
 		},
 		{
-			"time": 152.324075,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 153.00979,
 			"type": "reverse",
 			"direction": 1
-		},
-		{
-			"time": 153.695504,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 153.866933,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 154.381218,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 154.552647,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 154.895504,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 155.066933,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 155.40979,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 155.581218,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 156.095504,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
-			"time": 156.781218,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 157.124075,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 157.295504,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 157.466933,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 157.981218,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 158.666933,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 158.838361,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 159.181218,
@@ -2296,24 +2031,9 @@
 			"direction": 1
 		},
 		{
-			"time": 174.438361,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 174.60979,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 174.695504,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 174.781218,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 174.952647,
@@ -2321,34 +2041,9 @@
 			"direction": 9
 		},
 		{
-			"time": 175.038361,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 175.295504,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 175.466933,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 175.552647,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 175.638361,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 175.80979,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 175.981218,
@@ -2606,11 +2301,6 @@
 			"direction": 2
 		},
 		{
-			"time": 189.352647,
-			"type": "reverse",
-			"direction": 4
-		},
-		{
 			"time": 189.695504,
 			"type": "normal",
 			"direction": 3
@@ -2781,11 +2471,6 @@
 			"direction": 3
 		},
 		{
-			"time": 198.352647,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 198.60979,
 			"type": "normal",
 			"direction": 6
@@ -2889,11 +2574,6 @@
 			"time": 204.095504,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 204.438361,
-			"type": "reverse",
-			"direction": 6
 		},
 		{
 			"time": 204.781218,
@@ -3039,11 +2719,6 @@
 			"time": 212.152647,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 212.238361,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 212.666933,
@@ -3297,7 +2972,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 76
+		"reverse": 71
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -3326,8 +3001,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 632,
-		"reverse_count": 76,
+		"note_count": 567,
+		"reverse_count": 71,
 		"space_count": 13,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -3396,5 +3071,63 @@
 		"analysis_master_original_name": "Feint - Vagrant (ft. Veela) [FTskgVFZUuQ].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				109.80979,
+				115.295504
+			],
+			[
+				153.695504,
+				159.181218
+			]
+		],
+		"before": {
+			"song_id": "vagrant",
+			"difficulty": "hard",
+			"bpm": 175.0,
+			"duration": 222.64458,
+			"notes": 632,
+			"spaces": 13,
+			"average_inputs_per_second": 2.897,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 9,
+			"peak_five_second_inputs": 29,
+			"fast_direction_changes_under_170ms": 35,
+			"arrows_within_250ms_of_space": 19,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 218.057
+		},
+		"after": {
+			"song_id": "vagrant",
+			"difficulty": "hard",
+			"bpm": 175.0,
+			"duration": 222.64458,
+			"notes": 567,
+			"spaces": 13,
+			"average_inputs_per_second": 2.605,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 23,
+			"fast_direction_changes_under_170ms": 15,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					109.638361,
+					115.295504
+				],
+				[
+					153.00979,
+					159.181218
+				]
+			],
+			"longest_active_run_seconds": 107.143
+		},
+		"subdivision_notes_removed": 15,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

@@ -43,10 +43,10 @@ func _run() -> void:
 	var retry_button := pause_menu.get_node("Center/MainPanel/MainVBox/PauseButtons/RetryButton") as Button
 	var settings_button := pause_menu.get_node("Center/MainPanel/MainVBox/PauseButtons/SettingsButton") as Button
 	var resume_button := pause_menu.get_node("Center/MainPanel/MainVBox/PauseButtons/ResumeButton") as Button
-	_check(song_list_button.focus_neighbor_right == song_list_button.get_path_to(retry_button), "Pause Song Library → Retry focus neighbor missing.")
-	_check(retry_button.focus_neighbor_right == retry_button.get_path_to(settings_button), "Pause Retry → Settings focus neighbor missing.")
-	_check(settings_button.focus_neighbor_right == settings_button.get_path_to(resume_button), "Pause Settings → Resume focus neighbor missing.")
-	_check(resume_button.focus_neighbor_right == resume_button.get_path_to(song_list_button), "Pause Resume → Song Library circular focus neighbor missing.")
+	_check(resume_button.focus_neighbor_bottom == resume_button.get_path_to(retry_button), "Pause Resume → Retry focus neighbor missing.")
+	_check(retry_button.focus_neighbor_bottom == retry_button.get_path_to(settings_button), "Pause Retry → Settings focus neighbor missing.")
+	_check(settings_button.focus_neighbor_bottom == settings_button.get_path_to(song_list_button), "Pause Settings → Song Library focus neighbor missing.")
+	_check(song_list_button.focus_neighbor_bottom == song_list_button.get_path_to(resume_button), "Pause Song Library → Resume circular focus neighbor missing.")
 	pause_menu.queue_free()
 	await process_frame
 

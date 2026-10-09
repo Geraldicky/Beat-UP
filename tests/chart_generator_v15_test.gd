@@ -31,7 +31,7 @@ func _run() -> void:
 		var chart: Dictionary = analyzer.generate_chart(base_chart, analysis, difficulty_id)
 		generated_set.append(chart)
 		var generator_meta: Dictionary = chart.get("generator_meta", {}) as Dictionary
-		_check(str(generator_meta.get("code", "")) == "BUP-CG-01870", "%s did not stamp the V18.7 generator code" % difficulty_id)
+		_check(str(generator_meta.get("code", "")) == AnalyzerScript.CHART_GENERATOR_CODE, "%s did not stamp the current generator code" % difficulty_id)
 		_check(str(generator_meta.get("analysis_source_format", "")) == "wav", "%s lost the WAV analysis-source metadata" % difficulty_id)
 		var validation: Dictionary = analyzer.validate_generated_chart(chart)
 		_check(bool(validation.get("ok", false)), "%s validation: %s" % [difficulty_id, str(validation.get("error", "unknown"))])

@@ -3,207 +3,122 @@ class_name SongLaunchTransitionVisual
 
 const TEXT := Color("f4f6fb")
 const MUTED := Color("8b96a8")
-const CYAN := Color("7db4ce")
-const GOLD := Color("f5c96a")
-const PINK := Color("d3a4ff")
+const ACCENT := Color("92a7ff")
 
 @onready var artwork: TextureRect = %SongLaunchArtwork
-@onready var dim: ColorRect = %SongLaunchDim
-@onready var top_accent: ColorRect = %SongLaunchTopAccent
 @onready var info_rail: Control = %SongLaunchInfoRail
-@onready var info_accent: ColorRect = %SongLaunchInfoAccent
 @onready var title_label: Label = %SongLaunchTitle
 @onready var artist_label: Label = %SongLaunchArtist
 @onready var detail_label: Label = %SongLaunchDetail
-@onready var sweep: ColorRect = %SongLaunchSweep
 
-var accent: Color = CYAN
-var phase: float = 0.0
-var activity: float = 0.0
-var blur_amount: float = 0.0
+var phase := 0.0
+var activity := 0.0
 var active_tween: Tween
-var info_tween: Tween
-var shader_material: ShaderMaterial
-var handoff_generation: int = 0
+var handoff_generation := 0
+var loading_status := "PREPARING CHART"
+var rail := Rect2()
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	visible = false
 	set_process(false)
-	_setup_fonts()
-	_setup_artwork_shader()
-	resized.connect(Callable(self, "_update_artwork_pivot"))
-	call_deferred("_update_artwork_pivot")
+	title_label.add_theme_font_override("font", load("res://assets/fonts/Poppins-SemiBold.ttf") as Font)
+	artist_label.add_theme_font_override("font", load("res://assets/fonts/Poppins-Regular.ttf") as Font)
+	title_label.add_theme_color_override("font_color", TEXT)
+	artist_label.add_theme_color_override("font_color", MUTED)
+	detail_label.hide()
+	resized.connect(_layout_content)
+	call_deferred("_layout_content")
 
-func configure(payload: Dictionary) -> void:
+func configure(payload: Dictionary, keep_cover: bool = false) -> void:
 	handoff_generation += 1
-	var difficulty: String = str(payload.get("difficulty", "NORMAL")).to_upper()
-	accent = _difficulty_accent(difficulty)
-	title_label.text = str(payload.get("title", "UNTITLED")).to_upper()
-	artist_label.text = str(payload.get("artist", "UNKNOWN ARTIST"))
-	var bpm: float = float(payload.get("bpm", 0.0))
-	var star_rating: int = int(payload.get("star_rating", 0))
-	var random_mode: bool = bool(payload.get("random_mode", false))
-	var detail_parts: Array[String] = [difficulty]
-	if bpm > 0.0:
-		detail_parts.append("%d BPM" % roundi(bpm))
-	if star_rating > 0:
-		detail_parts.append("%d★" % star_rating)
-	if random_mode:
-		detail_parts.append("RANDOM")
-	detail_label.text = "  ·  ".join(PackedStringArray(detail_parts))
-	detail_label.add_theme_color_override("font_color", accent)
-	top_accent.color = Color(accent, 0.0)
-	info_accent.color = Color(accent, 0.72)
-	sweep.color = Color(accent, 0.0)
-	_load_artwork(str(payload.get("background", "")))
+	title_label.text = str(payload.get("title", "Untitled"))
+	artist_label.text = str(payload.get("artist", "Unknown Artist"))
+	# Album art is a jacket only, never a fullscreen song-art background.
+	artwork.texture = null
+	var song_id := str(payload.get("song_id", ""))
+	var path := "res://assets/song_thumbnails/%s.png" % song_id
+	if not song_id.is_empty() and song_id == song_id.validate_filename() and ResourceLoader.exists(path):
+		artwork.texture = load(path) as Texture2D
+	_layout_content()
+	if keep_cover:
+		return
 	set_progress(0.04)
-	set_blur_amount(0.0)
-	var dim_color: Color = dim.color
-	dim_color.a = 0.0
-	dim.color = dim_color
-	artwork.scale = Vector2.ONE
-	info_rail.scale = Vector2.ONE * 0.965
-	info_rail.modulate.a = 0.0
-	sweep.modulate.a = 0.0
+	phase = 0.0
+	info_rail.modulate.a = 1.0
 	modulate.a = 0.0
 	queue_redraw()
 
-# The cover is intentionally brief. Song information behaves like an intro
-# flourish, not a loading status: it enters, confirms the chosen chart, and then
-# leaves even if resource preparation is still continuing behind the artwork.
 func animate_cover() -> void:
 	if active_tween != null and active_tween.is_valid():
 		active_tween.kill()
-	if info_tween != null and info_tween.is_valid():
-		info_tween.kill()
 	visible = true
 	set_process(true)
 	modulate.a = 0.0
-	info_rail.modulate.a = 0.0
-	info_rail.scale = Vector2.ONE * 0.965
-	artwork.scale = Vector2.ONE
-	_update_artwork_pivot()
-
+	info_rail.modulate.a = 1.0
+	_layout_content()
 	active_tween = create_tween()
 	active_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	active_tween.set_parallel(true)
-	active_tween.tween_property(self, "modulate:a", 1.0, 0.11).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	active_tween.tween_method(Callable(self, "set_blur_amount"), 0.0, 0.0, 0.01)
-	active_tween.tween_property(dim, "color:a", 0.20, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	active_tween.tween_property(artwork, "scale", Vector2.ONE * 1.014, 0.34).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	active_tween.tween_property(info_rail, "modulate:a", 1.0, 0.13).set_delay(0.03).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	active_tween.tween_property(info_rail, "scale", Vector2.ONE, 0.20).set_delay(0.02).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-	active_tween.tween_property(top_accent, "color:a", 0.58, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	active_tween.tween_property(sweep, "modulate:a", 0.55, 0.08).set_delay(0.04)
+	active_tween.tween_property(self, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	await get_tree().create_timer(0.22, true, false, true).timeout
-
-	var generation: int = handoff_generation
-	call_deferred("_fade_intro_copy", generation)
-
-func _fade_intro_copy(generation: int) -> void:
-	await get_tree().create_timer(0.34, true, false, true).timeout
-	if generation != handoff_generation or not visible:
-		return
-	if info_tween != null and info_tween.is_valid():
-		info_tween.kill()
-	info_tween = create_tween()
-	info_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	info_tween.set_parallel(true)
-	info_tween.tween_property(info_rail, "modulate:a", 0.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	info_tween.tween_property(info_rail, "scale", Vector2.ONE * 1.018, 0.20).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	info_tween.tween_property(top_accent, "color:a", 0.20, 0.22)
-	info_tween.tween_property(sweep, "modulate:a", 0.0, 0.16)
 
 func animate_reveal() -> void:
 	handoff_generation += 1
 	if active_tween != null and active_tween.is_valid():
 		active_tween.kill()
-	if info_tween != null and info_tween.is_valid():
-		info_tween.kill()
-	info_rail.modulate.a = 0.0
+	var generation := handoff_generation
 	active_tween = create_tween()
 	active_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	active_tween.set_parallel(true)
-	active_tween.tween_method(Callable(self, "set_blur_amount"), blur_amount, 0.0, 0.01)
-	active_tween.tween_property(dim, "color:a", 0.0, 0.18).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	active_tween.tween_property(artwork, "scale", Vector2.ONE, 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	active_tween.tween_property(top_accent, "color:a", 0.0, 0.14)
 	active_tween.tween_property(self, "modulate:a", 0.0, 0.24).set_delay(0.06).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
-	
-	var generation = handoff_generation
 	await active_tween.finished
-	if handoff_generation != generation:
+	if generation != handoff_generation:
 		return
-		
 	visible = false
 	set_process(false)
 	modulate.a = 1.0
-	artwork.scale = Vector2.ONE
 
-# Loader progress is intentionally invisible. It only changes the very subtle
-# background motion speed so long preparation times still feel alive rather
-# than frozen, without exposing a loading-state metaphor to the player.
+# Preparation has no measurable percentage: show activity, not fake completion.
 func set_progress(value: float) -> void:
 	activity = clampf(value, 0.0, 1.0)
 
-func set_blur_amount(value: float) -> void:
-	blur_amount = maxf(0.0, value)
-	if shader_material != null:
-		shader_material.set_shader_parameter("blur_amount", blur_amount)
-
 func _process(delta: float) -> void:
-	phase = fmod(phase + delta * (0.55 + activity * 0.35), TAU)
+	phase = fmod(phase + delta * (1.5 + activity * 0.35), TAU)
+	queue_redraw()
+
+func _layout_content() -> void:
+	if not is_node_ready():
+		return
+	var ui_scale := clampf(size.y / 1080.0, 0.65, 1.0)
+	var jacket_side := 280.0 * ui_scale
+	var copy_width := minf(600.0 * ui_scale, size.x - 64.0)
+	var total_height := jacket_side + 146.0 * ui_scale
+	var top := (size.y - total_height) * 0.5
+	artwork.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	artwork.position = Vector2((size.x - jacket_side) * 0.5, top)
+	artwork.size = Vector2.ONE * jacket_side
+	info_rail.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	info_rail.position = Vector2((size.x - copy_width) * 0.5, top + jacket_side + 18.0 * ui_scale)
+	info_rail.size = Vector2(copy_width, 84.0 * ui_scale)
+	title_label.add_theme_font_size_override("font_size", roundi(32.0 * ui_scale))
+	artist_label.add_theme_font_size_override("font_size", roundi(18.0 * ui_scale))
+	var rail_width := minf(copy_width, 420.0 * ui_scale)
+	rail = Rect2((size.x - rail_width) * 0.5, top + total_height - 20.0 * ui_scale, rail_width, 4.0 * ui_scale)
 	queue_redraw()
 
 func _draw() -> void:
-	if size.x <= 2.0 or size.y <= 2.0:
+	if rail.size.x <= 0:
 		return
-	# Non-loading ambient motion: a restrained beat line near the bottom edge.
-	# It reads as song presentation rather than a spinner/progress indicator.
-	var y: float = size.y * 0.885
-	var width: float = minf(size.x * 0.24, 420.0)
-	var start_x: float = size.x * 0.07
-	var segments: int = 18
-	for index in range(segments):
-		var t: float = float(index) / float(segments - 1)
-		var x: float = start_x + width * t
-		var wave: float = 0.5 + 0.5 * sin(phase * 2.0 + float(index) * 0.72)
-		var h: float = 2.0 + wave * 5.0
-		draw_line(Vector2(x, y - h), Vector2(x, y + h), Color(accent, 0.12 + wave * 0.12), 1.0, true)
-
-func _load_artwork(path: String) -> void:
-	artwork.texture = null
-	if path.is_empty():
-		return
-	if ResourceLoader.exists(path):
-		var loaded: Resource = load(path)
-		if loaded is Texture2D:
-			artwork.texture = loaded as Texture2D
-
-func _difficulty_accent(difficulty: String) -> Color:
-	match difficulty:
-		"MASTER": return PINK
-		"HARD": return GOLD
-		_: return CYAN
-
-func _setup_fonts() -> void:
-	var display_font: Font = load("res://assets/fonts/Poppins-SemiBold.ttf") as Font
-	var body_font: Font = load("res://assets/fonts/Poppins-Regular.ttf") as Font
-	var mono_font: Font = load("res://assets/fonts/IBMPlexMono-Regular.ttf") as Font
-	title_label.add_theme_font_override("font", display_font)
-	artist_label.add_theme_font_override("font", body_font)
-	detail_label.add_theme_font_override("font", mono_font)
-	title_label.add_theme_color_override("font_color", TEXT)
-	artist_label.add_theme_color_override("font_color", Color(TEXT, 0.72))
-	detail_label.add_theme_color_override("font_color", accent)
-
-func _setup_artwork_shader() -> void:
-	# Album Flow baseline intentionally avoids mandatory realtime blur. The cover
-	# handoff remains alive through scale, dim and typography motion only.
-	shader_material = null
-	artwork.material = null
-
-func _update_artwork_pivot() -> void:
-	if is_instance_valid(artwork):
-		artwork.pivot_offset = artwork.size * 0.5
+	var frame := StyleBoxFlat.new()
+	frame.bg_color = Color("171c27")
+	frame.border_color = Color(ACCENT, 0.35)
+	frame.set_border_width_all(1)
+	frame.set_corner_radius_all(4)
+	draw_style_box(frame, Rect2(artwork.position - Vector2.ONE, artwork.size + Vector2.ONE * 2.0))
+	if artwork.texture == null:
+		var center := artwork.position + artwork.size * 0.5
+		var radius := artwork.size.x * 0.15
+		draw_polyline(PackedVector2Array([center + Vector2(0, -radius), center + Vector2(radius, 0), center + Vector2(0, radius), center + Vector2(-radius, 0), center + Vector2(0, -radius)]), Color(ACCENT, 0.45), 1.5, true)
+	draw_rect(rail, Color("252d3b"))
+	var segment_width := rail.size.x * 0.28
+	var x := rail.position.x + (0.5 + 0.5 * sin(phase)) * (rail.size.x - segment_width)
+	draw_rect(Rect2(x, rail.position.y, segment_width, rail.size.y), ACCENT)

@@ -13,7 +13,7 @@
 	"beat_offset": 0.11025,
 	"duration": 192.22644,
 	"seed": 1744314.0,
-	"recommended": "NORMAL • 3★ • 268 notes • 6 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 3★ • 255 notes • 5 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 14.03025,
@@ -91,26 +91,6 @@
 			"direction": 9
 		},
 		{
-			"time": 30.83025,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 31.31025,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 32.75025,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 34.19025,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 34.67025,
 			"type": "normal",
 			"direction": 7
@@ -139,11 +119,6 @@
 			"time": 40.43025,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 42.35025,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 43.79025,
@@ -269,11 +244,6 @@
 			"time": 64.91025,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 65.39025,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 66.59025,
@@ -524,11 +494,6 @@
 			"time": 89.87025,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 90.35025,
-			"type": "reverse",
-			"direction": 7
 		},
 		{
 			"time": 90.83025,
@@ -846,11 +811,6 @@
 			"direction": 9
 		},
 		{
-			"time": 128.75025,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 129.23025,
 			"type": "normal",
 			"direction": 4
@@ -1074,11 +1034,6 @@
 			"time": 151.31025,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 151.79025,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 152.27025,
@@ -1306,26 +1261,6 @@
 			"direction": 4
 		},
 		{
-			"time": 177.71025,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 178.67025,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 179.15025,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 179.63025,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 180.59025,
 			"type": "normal",
 			"direction": 6
@@ -1361,8 +1296,7 @@
 		65.39025,
 		90.35025,
 		128.75025,
-		151.79025,
-		178.67025
+		151.79025
 	],
 	"import_meta": {
 		"source_name": "Noisestorm - Crab Rave (Official Music Video) [cE0wfjsybIQ].ogg",
@@ -1498,7 +1432,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 16
+		"reverse": 14
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -1527,9 +1461,9 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 268,
-		"reverse_count": 16,
-		"space_count": 6,
+		"note_count": 255,
+		"reverse_count": 14,
+		"space_count": 5,
 		"analysis_driven": true,
 		"song_form_aware": true,
 		"local_intensity_priority": true,
@@ -1597,5 +1531,63 @@
 		"analysis_master_original_name": "Noisestorm - Crab Rave (Official Music Video) [cE0wfjsybIQ].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				30.83025,
+				34.67025
+			],
+			[
+				176.75025,
+				180.59025
+			]
+		],
+		"before": {
+			"song_id": "crab_rave",
+			"difficulty": "normal",
+			"bpm": 125.0,
+			"duration": 192.22644,
+			"notes": 268,
+			"spaces": 6,
+			"average_inputs_per_second": 1.425,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 15,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 6,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 170.4
+		},
+		"after": {
+			"song_id": "crab_rave",
+			"difficulty": "normal",
+			"bpm": 125.0,
+			"duration": 192.22644,
+			"notes": 255,
+			"spaces": 5,
+			"average_inputs_per_second": 1.353,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 14,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					30.35025,
+					34.67025
+				],
+				[
+					176.27025,
+					180.59025
+				]
+			],
+			"longest_active_run_seconds": 141.6
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

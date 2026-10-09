@@ -5,8 +5,8 @@ class_name TaikoLaneVisual
 # games. It deliberately uses only flat colour, lines, and spacing so the
 # gameplay remains readable without depending on image assets.
 
-@export var surface_color := Color(0.050, 0.070, 0.105, 0.74)
-@export var input_surface_color := Color(0.070, 0.090, 0.128, 0.86)
+@export var surface_color := Color(0.012, 0.018, 0.026, 0.86)
+@export var input_surface_color := Color(0.012, 0.018, 0.026, 0.90)
 @export var border_color := Color(0.36, 0.42, 0.56, 0.30)
 @export var guide_color := Color(0.85, 0.88, 1.0, 0.28)
 @export var tick_color := Color(0.85, 0.88, 1.0, 0.10)
@@ -58,3 +58,8 @@ func _draw() -> void:
 	# A short accent guide is the only saturated decoration on the lane.
 	var guide_half := minf(size.y * 0.32, 54.0)
 	draw_line(Vector2(receptor_x, center_y - guide_half), Vector2(receptor_x, center_y + guide_half), guide_color, 2.0)
+	# Restrained alignment marks, not orbit/ring decoration. The eye returns to
+	# the white diamond while the note field remains free of trails and bloom.
+	var guide_end := size.y * 0.5 + 62.0
+	for sign_value: float in [-1.0, 1.0]:
+		draw_line(Vector2(receptor_x, center_y + sign_value * (guide_half + 28.0)), Vector2(receptor_x, center_y + sign_value * guide_end), Color(guide_color, 0.24), 1.0)

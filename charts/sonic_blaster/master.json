@@ -13,7 +13,7 @@
 	"beat_offset": 0.188859,
 	"duration": 182.09093,
 	"seed": 1744305.0,
-	"recommended": "MASTER • 9★ • 519 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "MASTER • 9★ • 492 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.671618,
@@ -334,11 +334,6 @@
 			"time": 18.085411,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 18.395756,
-			"type": "reverse",
-			"direction": 7
 		},
 		{
 			"time": 18.809549,
@@ -711,11 +706,6 @@
 			"direction": 8
 		},
 		{
-			"time": 38.257825,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
 			"time": 38.671618,
 			"type": "normal",
 			"direction": 3
@@ -991,11 +981,6 @@
 			"direction": 3
 		},
 		{
-			"time": 58.119893,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 58.32679,
 			"type": "normal",
 			"direction": 7
@@ -1136,41 +1121,6 @@
 			"direction": 6
 		},
 		{
-			"time": 66.395756,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 66.809549,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 67.844031,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 68.050928,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 68.464721,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 69.085411,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 69.499204,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 70.119893,
 			"type": "normal",
 			"direction": 6
@@ -1244,11 +1194,6 @@
 			"time": 79.016445,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 79.637135,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 80.050928,
@@ -1399,16 +1344,6 @@
 			"time": 94.32679,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 94.430238,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 94.533687,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 94.94748,
@@ -1581,11 +1516,6 @@
 			"direction": 2
 		},
 		{
-			"time": 109.430238,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 109.844031,
 			"type": "normal",
 			"direction": 7
@@ -1614,51 +1544,6 @@
 			"time": 112.32679,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 112.740583,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 113.154376,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 113.568169,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 113.775066,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 113.981962,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 114.395756,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 114.809549,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 115.223342,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 115.637135,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 116.050928,
@@ -1764,11 +1649,6 @@
 			"time": 125.568169,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 125.981962,
-			"type": "reverse",
-			"direction": 1
 		},
 		{
 			"time": 126.395756,
@@ -1989,11 +1869,6 @@
 			"time": 138.912997,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 139.223342,
-			"type": "reverse",
-			"direction": 1
 		},
 		{
 			"time": 139.430238,
@@ -2331,11 +2206,6 @@
 			"direction": 2
 		},
 		{
-			"time": 155.775066,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
 			"time": 156.188859,
 			"type": "normal",
 			"direction": 3
@@ -2586,11 +2456,6 @@
 			"direction": 3
 		},
 		{
-			"time": 170.671618,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 171.499204,
 			"type": "reverse",
 			"direction": 8
@@ -2750,7 +2615,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 93
+		"reverse": 87
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2779,8 +2644,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 519,
-		"reverse_count": 93,
+		"note_count": 492,
+		"reverse_count": 87,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2849,5 +2714,63 @@
 		"analysis_master_original_name": "F-777 - Sonic Blaster (4th track from ＂Let's Freaking Party＂ album) [IvYD-HLAl8E.flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				66.395756,
+				69.706101
+			],
+			[
+				112.740583,
+				116.050928
+			]
+		],
+		"before": {
+			"song_id": "sonic_blaster",
+			"difficulty": "master",
+			"bpm": 145.0,
+			"duration": 182.09093,
+			"notes": 519,
+			"spaces": 10,
+			"average_inputs_per_second": 2.905,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 8,
+			"peak_five_second_inputs": 26,
+			"fast_direction_changes_under_170ms": 92,
+			"arrows_within_250ms_of_space": 14,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 171.31
+		},
+		"after": {
+			"song_id": "sonic_blaster",
+			"difficulty": "master",
+			"bpm": 145.0,
+			"duration": 182.09093,
+			"notes": 492,
+			"spaces": 10,
+			"average_inputs_per_second": 2.757,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 8,
+			"peak_five_second_inputs": 26,
+			"fast_direction_changes_under_170ms": 90,
+			"arrows_within_250ms_of_space": 3,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					65.981962,
+					70.119893
+				],
+				[
+					112.32679,
+					116.050928
+				]
+			],
+			"longest_active_run_seconds": 63.31
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

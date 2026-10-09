@@ -13,7 +13,7 @@
 	"beat_offset": 0.321518,
 	"duration": 228.24059,
 	"seed": 1744308.0,
-	"recommended": "HARD • 7★ • 518 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 7★ • 480 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 4.184697,
@@ -54,11 +54,6 @@
 			"time": 10.462363,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 11.911055,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 12.393953,
@@ -136,31 +131,6 @@
 			"direction": 4
 		},
 		{
-			"time": 23.500592,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 23.98349,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 24.707836,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 25.432182,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 26.397977,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 27.363772,
 			"type": "normal",
 			"direction": 2
@@ -184,11 +154,6 @@
 			"time": 30.38188,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 31.226951,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 32.31347,
@@ -246,11 +211,6 @@
 			"direction": 4
 		},
 		{
-			"time": 39.55693,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 40.039828,
 			"type": "normal",
 			"direction": 2
@@ -259,11 +219,6 @@
 			"time": 40.402001,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 40.522725,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 40.884898,
@@ -356,11 +311,6 @@
 			"direction": 2
 		},
 		{
-			"time": 49.214878,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 49.8185,
 			"type": "normal",
 			"direction": 9
@@ -396,16 +346,6 @@
 			"direction": 6
 		},
 		{
-			"time": 52.59516,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 52.715884,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 52.957333,
 			"type": "normal",
 			"direction": 2
@@ -429,11 +369,6 @@
 			"time": 53.923128,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 54.406025,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 54.888922,
@@ -636,11 +571,6 @@
 			"direction": 6
 		},
 		{
-			"time": 69.979466,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 70.341639,
 			"type": "normal",
 			"direction": 4
@@ -691,11 +621,6 @@
 			"direction": 3
 		},
 		{
-			"time": 73.72192,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 74.204818,
 			"type": "normal",
 			"direction": 6
@@ -734,11 +659,6 @@
 			"time": 77.585099,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 77.705824,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 78.067997,
@@ -1086,11 +1006,6 @@
 			"direction": 7
 		},
 		{
-			"time": 106.558943,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 106.800391,
 			"type": "normal",
 			"direction": 3
@@ -1321,16 +1236,6 @@
 			"direction": 6
 		},
 		{
-			"time": 124.063973,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 124.184697,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 124.426146,
 			"type": "normal",
 			"direction": 6
@@ -1421,11 +1326,6 @@
 			"direction": 9
 		},
 		{
-			"time": 131.790331,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 132.152504,
 			"type": "normal",
 			"direction": 4
@@ -1436,19 +1336,9 @@
 			"direction": 7
 		},
 		{
-			"time": 133.601196,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 133.842645,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 133.963369,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 134.566991,
@@ -1536,11 +1426,6 @@
 			"direction": 2
 		},
 		{
-			"time": 141.086106,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 141.327554,
 			"type": "normal",
 			"direction": 9
@@ -1606,11 +1491,6 @@
 			"direction": 3
 		},
 		{
-			"time": 145.552906,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 146.156528,
 			"type": "reverse",
 			"direction": 2
@@ -1639,11 +1519,6 @@
 			"time": 148.329566,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 148.450291,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 148.571015,
@@ -1686,16 +1561,6 @@
 			"direction": 7
 		},
 		{
-			"time": 150.623329,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 150.744053,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 150.985502,
 			"type": "reverse",
 			"direction": 4
@@ -1714,11 +1579,6 @@
 			"time": 152.31347,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 152.917091,
-			"type": "reverse",
-			"direction": 3
 		},
 		{
 			"time": 153.399989,
@@ -1789,16 +1649,6 @@
 			"time": 158.228963,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 158.349687,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 158.470411,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 158.71186,
@@ -2011,11 +1861,6 @@
 			"direction": 3
 		},
 		{
-			"time": 176.096166,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
 			"time": 176.579063,
 			"type": "normal",
 			"direction": 1
@@ -2049,11 +1894,6 @@
 			"time": 178.269204,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 178.389928,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 179.476448,
@@ -2231,11 +2071,6 @@
 			"direction": 3
 		},
 		{
-			"time": 193.601196,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 194.446266,
 			"type": "normal",
 			"direction": 2
@@ -2249,11 +2084,6 @@
 			"time": 194.929164,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 195.412061,
-			"type": "reverse",
-			"direction": 8
 		},
 		{
 			"time": 195.894959,
@@ -2311,11 +2141,6 @@
 			"direction": 6
 		},
 		{
-			"time": 200.603208,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 200.723932,
 			"type": "normal",
 			"direction": 9
@@ -2324,16 +2149,6 @@
 			"time": 201.20683,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 201.327554,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 201.448279,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 201.569003,
@@ -2499,11 +2314,6 @@
 			"time": 214.486508,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 214.727957,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 214.969405,
@@ -2724,7 +2534,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 62
+		"reverse": 56
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -2753,8 +2563,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 518,
-		"reverse_count": 62,
+		"note_count": 480,
+		"reverse_count": 56,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -2823,5 +2633,55 @@
 		"analysis_master_original_name": "Highscore - Nightcore [ucuc5QkLyiA].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				23.500592,
+				27.363771
+			]
+		],
+		"before": {
+			"song_id": "highscore_nightcore",
+			"difficulty": "hard",
+			"bpm": 124.25,
+			"duration": 228.24059,
+			"notes": 518,
+			"spaces": 10,
+			"average_inputs_per_second": 2.313,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 18,
+			"fast_direction_changes_under_170ms": 48,
+			"arrows_within_250ms_of_space": 14,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 222.133
+		},
+		"after": {
+			"song_id": "highscore_nightcore",
+			"difficulty": "hard",
+			"bpm": 124.25,
+			"duration": 228.24059,
+			"notes": 480,
+			"spaces": 10,
+			"average_inputs_per_second": 2.147,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 16,
+			"fast_direction_changes_under_170ms": 22,
+			"arrows_within_250ms_of_space": 4,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					23.017695,
+					27.363772
+				]
+			],
+			"longest_active_run_seconds": 198.954
+		},
+		"subdivision_notes_removed": 23,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

@@ -102,6 +102,7 @@ func close() -> void:
 	visible = false
 
 func begin_calibration() -> void:
+	instruction_label.text = "Tap SPACE on each click (or %s). Ignore the warm-up beats; collect 20 taps, then review before applying." % ("an arrow key" if UserSettingsScript.get_input_style() == "4_arrow" else "a numpad direction")
 	beat_interval_s = 60.0 / maxf(1.0, calibration_bpm)
 	tap_deltas_s.clear()
 	timing_graph.reset()

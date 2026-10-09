@@ -338,7 +338,7 @@ func _update_chevron_state() -> void:
 	_chevron.add_theme_color_override("font_color", MinimalThemeScript.PINK if _popup_open else MinimalThemeScript.CYAN)
 
 func _on_visibility_changed() -> void:
-	if not visible:
+	if not is_visible_in_tree():
 		_close_dropdown(true)
 
 func _apply_default_style() -> void:
@@ -362,7 +362,7 @@ func _closed_style(fill: Color, border: Color) -> StyleBoxFlat:
 	return style
 
 func _popup_panel_style() -> StyleBoxFlat:
-	var style := MinimalThemeScript.panel_style(Color("111720"), 9, Color(MinimalThemeScript.CYAN, 0.72), 1, 0.0)
+	var style := MinimalThemeScript.panel_style(Color("0e1219"), 4, Color(MinimalThemeScript.BORDER, 0.9), 1, 0.0)
 	return style
 
 func _popup_item_style(is_selected: bool, highlighted: bool) -> StyleBoxFlat:
@@ -370,7 +370,7 @@ func _popup_item_style(is_selected: bool, highlighted: bool) -> StyleBoxFlat:
 	if highlighted:
 		fill = Color(MinimalThemeScript.CYAN, 0.22 if is_selected else 0.11)
 	var border := Color(MinimalThemeScript.CYAN, 0.82 if is_selected else (0.48 if highlighted else 0.0))
-	var style := MinimalThemeScript.panel_style(fill, 6, border, 0, 0.0)
+	var style := MinimalThemeScript.panel_style(fill, 2, border, 0, 0.0)
 	style.border_width_left = 3 if is_selected else 0
 	style.content_margin_left = 14.0
 	style.content_margin_right = 12.0

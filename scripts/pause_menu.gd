@@ -27,15 +27,11 @@ signal timing_offsets_changed(input_offset_ms: float, audio_offset_ms: float)
 @onready var input_offset_label: Label = %InputOffsetLabel
 @onready var audio_offset_label: Label = %AudioOffsetLabel
 @onready var settings_panel: PanelContainer = %SettingsPanel
-@onready var buttons: HBoxContainer = %PauseButtons
+@onready var buttons: VBoxContainer = %PauseButtons
 @onready var resume_button: Button = %ResumeButton
 @onready var retry_button: Button = %RetryButton
 @onready var settings_button: Button = %SettingsButton
 @onready var song_list_button: Button = %SongListButton
-@onready var resume_icon: BeatUpActionIcon = $Center/MainPanel/MainVBox/PauseButtons/ResumeButton/Icon
-@onready var retry_icon: BeatUpActionIcon = $Center/MainPanel/MainVBox/PauseButtons/RetryButton/Icon
-@onready var settings_icon: BeatUpActionIcon = $Center/MainPanel/MainVBox/PauseButtons/SettingsButton/Icon
-@onready var song_list_icon: BeatUpActionIcon = $Center/MainPanel/MainVBox/PauseButtons/SongListButton/Icon
 @onready var master_slider: HSlider = %MasterSlider
 @onready var menu_sfx_toggle: CheckButton = %MenuSFXToggle
 @onready var menu_sfx_slider: HSlider = %MenuSFXSlider
@@ -48,6 +44,8 @@ signal timing_offsets_changed(input_offset_ms: float, audio_offset_ms: float)
 @onready var back_button: Button = %BackButton
 
 var action_hint: Label
+var master_value: Label
+var background_value: Label
 
 func _ready() -> void:
 	if theme_config == null:
@@ -67,9 +65,10 @@ func _ready() -> void:
 	input_offset_slider.value_changed.connect(_on_input_offset_changed)
 	audio_offset_slider.value_changed.connect(_on_audio_offset_changed)
 	_build_action_hint()
+	master_value = _add_slider_value(master_slider, "MasterValue")
+	background_value = _add_slider_value(background_slider, "BackgroundValue")
 	_apply_layout_config()
 	_apply_theme_config()
-	_wire_action_motion()
 	_wire_focus_neighbors()
 	_apply_scene_effects()
 	_refresh_settings()
@@ -83,11 +82,11 @@ func _apply_scene_effects() -> void:
 func _apply_layout_config() -> void:
 	if layout_config == null:
 		return
-	main_panel.custom_minimum_size.x = maxf(690.0, float(layout_config.menu_panel_min_width))
-	settings_panel.custom_minimum_size.x = maxf(float(layout_config.settings_panel_min_width), 560.0)
-	main_vbox.add_theme_constant_override("separation", layout_config.section_gap)
-	settings_vbox.add_theme_constant_override("separation", layout_config.compact_gap)
-	buttons.add_theme_constant_override("separation", layout_config.section_gap)
+	main_panel.custom_minimum_size = Vector2(440.0, 0.0)
+	settings_panel.custom_minimum_size = Vector2(560.0, 0.0)
+	main_vbox.add_theme_constant_override("separation", 20)
+	settings_vbox.add_theme_constant_override("separation", 8)
+	buttons.add_theme_constant_override("separation", 8)
 	settings_title.custom_minimum_size.y = layout_config.settings_title_height
 	master_label.custom_minimum_size.y = layout_config.settings_label_height
 	background_label.custom_minimum_size.y = layout_config.settings_label_height
@@ -99,14 +98,17 @@ func _apply_layout_config() -> void:
 	input_offset_slider.custom_minimum_size.y = layout_config.slider_height
 	audio_offset_slider.custom_minimum_size.y = layout_config.slider_height
 	back_button.custom_minimum_size.y = layout_config.back_button_height
-	for button in [song_list_button, retry_button, settings_button, resume_button]:
-		button.custom_minimum_size = Vector2(maxf(136.0, layout_config.pause_icon_button_size * 1.34), maxf(132.0, layout_config.pause_icon_button_size * 1.30))
+	var actions: Array[Button] = [resume_button, retry_button, settings_button, song_list_button]
+	for index in range(actions.size()):
+		buttons.move_child(actions[index], index)
+		actions[index].custom_minimum_size = Vector2(0.0, 58.0)
+	resume_button.custom_minimum_size.y = 68.0
 
 func _apply_theme_config() -> void:
 	if theme_config == null:
 		return
 	pause_label.add_theme_color_override("font_color", MinimalThemeScript.TEXT)
-	pause_label.add_theme_font_size_override("font_size", 30)
+	pause_label.add_theme_font_size_override("font_size", 36)
 	pause_label.add_theme_font_override("font", MinimalThemeScript.semibold_font())
 	settings_title.add_theme_font_override("font", MinimalThemeScript.semibold_font())
 	for label in [input_offset_label, audio_offset_label]:
@@ -118,10 +120,11 @@ func _apply_theme_config() -> void:
 		button.add_theme_color_override("font_color", theme_config.text_primary)
 		button.add_theme_color_override("font_hover_color", theme_config.text_primary)
 		button.add_theme_font_size_override("font_size", theme_config.button_size)
-	main_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s1(0.82))
-	settings_panel.add_theme_stylebox_override("panel", MinimalThemeScript.surface_s3())
-	for icon_button in [song_list_button, retry_button, settings_button, resume_button]:
-		_style_icon_only_button(icon_button)
+	main_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color(0.045, 0.055, 0.075, 0.97), 4, Color(MinimalThemeScript.BORDER, 0.55), 1, 28.0))
+	settings_panel.add_theme_stylebox_override("panel", MinimalThemeScript.panel_style(Color("0e1219"), 6, MinimalThemeScript.BORDER, 1, 24.0))
+	background_label.text = "BACKGROUND ATMOSPHERE"
+	for action in [resume_button, retry_button, settings_button, song_list_button]:
+		_style_action_button(action, action == resume_button)
 	MinimalThemeScript.apply_mono(input_offset_value, 14, MinimalThemeScript.CYAN)
 	MinimalThemeScript.apply_mono(audio_offset_value, 14, MinimalThemeScript.GOLD)
 	MinimalThemeScript.apply_mono(menu_sfx_value, 14, MinimalThemeScript.CYAN)
@@ -132,28 +135,48 @@ func _build_action_hint() -> void:
 	action_hint.custom_minimum_size.y = 24
 	action_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	action_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	MinimalThemeScript.apply_mono(action_hint, 11, Color(MinimalThemeScript.TEXT, 0.72))
+	MinimalThemeScript.apply_mono(action_hint, 11, MinimalThemeScript.MUTED)
+	action_hint.text = "ESC TO RESUME"
 	main_vbox.add_child(action_hint)
-	main_vbox.move_child(action_hint, buttons.get_index() + 1)
-	song_list_button.tooltip_text = "Song List"
-	retry_button.tooltip_text = "Retry"
-	settings_button.tooltip_text = "Settings"
-	resume_button.tooltip_text = "Resume"
+	song_list_button.set_meta("action_label", "Song Library")
+	retry_button.set_meta("action_label", "Retry")
+	settings_button.set_meta("action_label", "Quick Settings")
+	resume_button.set_meta("action_label", "Resume")
+
+func _add_slider_value(slider: HSlider, label_name: String) -> Label:
+	var parent := slider.get_parent()
+	var index := slider.get_index()
+	var row := HBoxContainer.new()
+	row.name = label_name + "Row"
+	row.add_theme_constant_override("separation", 10)
+	parent.add_child(row)
+	parent.move_child(row, index)
+	slider.reparent(row)
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var label := Label.new()
+	label.name = label_name
+	label.custom_minimum_size.x = 82
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	MinimalThemeScript.apply_mono(label, 14, MinimalThemeScript.CYAN)
+	row.add_child(label)
+	return label
 
 func _refresh_settings() -> void:
-	var master_value: float = UserSettingsScript.get_master_volume()
+	var master_percent: float = UserSettingsScript.get_master_volume()
 	var sfx_value: float = UserSettingsScript.get_menu_sfx_volume()
 	var sfx_enabled: bool = UserSettingsScript.get_menu_sfx_enabled()
 	var bg_value: float = UserSettingsScript.get_background_opacity()
 	var input_value: float = UserSettingsScript.get_input_offset_ms()
 	var audio_value: float = UserSettingsScript.get_audio_offset_ms()
-	master_slider.set_value_no_signal(master_value)
+	master_slider.set_value_no_signal(master_percent)
+	master_value.text = "%d%%" % roundi(master_percent)
 	menu_sfx_slider.set_value_no_signal(sfx_value)
 	menu_sfx_toggle.set_pressed_no_signal(sfx_enabled)
 	menu_sfx_slider.editable = sfx_enabled
 	menu_sfx_value.text = "%d%%" % roundi(sfx_value)
 	menu_sfx_value.modulate.a = 1.0 if sfx_enabled else 0.38
 	background_slider.set_value_no_signal(bg_value)
+	background_value.text = "%d%%" % roundi(bg_value)
 	input_offset_slider.set_value_no_signal(input_value)
 	audio_offset_slider.set_value_no_signal(audio_value)
 	_update_timing_labels()
@@ -162,12 +185,7 @@ func show_menu() -> void:
 	_refresh_settings()
 	main_panel.visible = true
 	settings_panel.visible = false
-	for icon in [song_list_icon, retry_icon, settings_icon, resume_icon]:
-		icon.set_active(false)
 	resume_button.grab_focus()
-	_set_action_active(resume_button, resume_icon, true)
-	if action_hint != null:
-		action_hint.text = "RESUME"
 
 func show_settings() -> void:
 	main_panel.visible = false
@@ -175,46 +193,35 @@ func show_settings() -> void:
 	master_slider.grab_focus()
 
 func _wire_focus_neighbors() -> void:
-	var action_buttons: Array[Button] = [song_list_button, retry_button, settings_button, resume_button]
+	var action_buttons: Array[Button] = [resume_button, retry_button, settings_button, song_list_button]
 	for index in range(action_buttons.size()):
 		var button: Button = action_buttons[index]
 		var previous: Button = action_buttons[posmod(index - 1, action_buttons.size())]
 		var next: Button = action_buttons[(index + 1) % action_buttons.size()]
 		button.focus_neighbor_left = button.get_path_to(previous)
 		button.focus_neighbor_right = button.get_path_to(next)
+		button.focus_neighbor_top = button.get_path_to(previous)
+		button.focus_neighbor_bottom = button.get_path_to(next)
 
-func _wire_action_motion() -> void:
-	var action_pairs: Array = [
-		[song_list_button, song_list_icon],
-		[retry_button, retry_icon],
-		[settings_button, settings_icon],
-		[resume_button, resume_icon],
-	]
-	for pair in action_pairs:
-		var button := pair[0] as Button
-		var icon := pair[1] as BeatUpActionIcon
-		button.mouse_entered.connect(_set_action_active.bind(button, icon, true))
-		button.focus_entered.connect(_set_action_active.bind(button, icon, true))
-		button.mouse_exited.connect(_set_action_active.bind(button, icon, false))
-		button.focus_exited.connect(_set_action_active.bind(button, icon, false))
-
-func _set_action_active(button: Button, icon: BeatUpActionIcon, active: bool) -> void:
-	if button == null or icon == null:
-		return
-	icon.set_active(active)
-	if active and action_hint != null:
-		action_hint.text = button.tooltip_text.to_upper()
-	var tween := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	var target_scale := Vector2.ONE * (1.035 if active else 1.0)
-	tween.tween_property(icon, "scale", target_scale, MinimalThemeScript.MOTION_FAST).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-
-func _style_icon_only_button(button: Button) -> void:
-	button.text = ""
-	var empty_style := StyleBoxEmpty.new()
-	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
-		button.add_theme_stylebox_override(state, empty_style)
+func _style_action_button(button: Button, primary: bool) -> void:
+	button.text = str(button.get_meta("action_label", ""))
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.add_theme_font_override("font", MinimalThemeScript.semibold_font() if primary else MinimalThemeScript.medium_font())
+	button.add_theme_font_size_override("font_size", 20 if primary else 16)
+	button.add_theme_color_override("font_color", MinimalThemeScript.TEXT if primary else Color(MinimalThemeScript.TEXT, 0.82))
+	button.add_theme_constant_override("h_separation", 16)
+	button.add_theme_constant_override("icon_max_width", 24)
+	button.add_theme_color_override("icon_normal_color", MinimalThemeScript.CYAN if primary else MinimalThemeScript.MUTED)
+	button.add_theme_color_override("icon_hover_color", MinimalThemeScript.TEXT)
+	var edge := MinimalThemeScript.CYAN if primary else MinimalThemeScript.BORDER
+	button.add_theme_stylebox_override("normal", MinimalThemeScript.panel_style(Color(MinimalThemeScript.CYAN, 0.07) if primary else Color(MinimalThemeScript.SURFACE, 0.32), 2, Color(edge, 0.8 if primary else 0.4), 1, 18.0))
+	button.add_theme_stylebox_override("hover", MinimalThemeScript.panel_style(Color(MinimalThemeScript.SURFACE_RAISED, 0.9), 2, MinimalThemeScript.CYAN, 1, 18.0))
+	button.add_theme_stylebox_override("pressed", MinimalThemeScript.panel_style(Color(MinimalThemeScript.CYAN, 0.14), 2, MinimalThemeScript.CYAN, 1, 18.0))
+	button.add_theme_stylebox_override("focus", MinimalThemeScript.panel_style(Color.TRANSPARENT, 2, MinimalThemeScript.TEXT, 1, 18.0))
+	button.add_theme_stylebox_override("disabled", MinimalThemeScript.panel_style(Color(MinimalThemeScript.SURFACE, 0.2), 2, Color(MinimalThemeScript.BORDER, 0.2), 1, 18.0))
 
 func _on_master_volume_changed(value: float) -> void:
+	master_value.text = "%d%%" % roundi(value)
 	UserSettingsScript.set_master_volume(value)
 
 func _on_menu_sfx_volume_changed(value: float) -> void:
@@ -227,6 +234,7 @@ func _on_menu_sfx_toggled(enabled: bool) -> void:
 	menu_sfx_value.modulate.a = 1.0 if enabled else 0.38
 
 func _on_background_opacity_changed(value: float) -> void:
+	background_value.text = "%d%%" % roundi(value)
 	UserSettingsScript.set_background_opacity(value)
 	background_opacity_changed.emit(value)
 
@@ -245,7 +253,7 @@ func _update_timing_labels() -> void:
 	audio_offset_value.text = RhythmTimingScript.format_offset_ms(audio_offset_slider.value)
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if not visible or not (event is InputEventKey):
+	if not is_visible_in_tree() or not (event is InputEventKey):
 		return
 	var key: InputEventKey = event as InputEventKey
 	if not key.pressed or key.echo or key.keycode != KEY_ESCAPE:

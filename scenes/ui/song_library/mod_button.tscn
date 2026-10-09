@@ -1,0 +1,63 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/song_library/mod_button.gd" id="1_mod"]
+[ext_resource type="Script" path="res://scripts/ui/library_vector_icon.gd" id="2_icon"]
+
+[node name="ModButton" type="Button"]
+toggle_mode = true
+focus_mode = 2
+text = ""
+script = ExtResource("1_mod")
+
+[node name="SelectionMarker" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 9.0
+offset_bottom = 9.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("2_icon")
+
+[node name="MockupContent" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="ContentRow" type="HBoxContainer" parent="MockupContent"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="IconLabel" type="TextureRect" parent="MockupContent/ContentRow"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("2_icon")
+
+[node name="Copy" type="VBoxContainer" parent="MockupContent/ContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 0
+
+[node name="TitleLabel" type="Label" parent="MockupContent/ContentRow/Copy"]
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="StateLabel" type="Label" parent="MockupContent/ContentRow/Copy"]
+layout_mode = 2
+vertical_alignment = 1

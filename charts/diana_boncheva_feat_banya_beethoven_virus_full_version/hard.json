@@ -13,7 +13,7 @@
 	"beat_offset": 0.40496,
 	"duration": 220.101995,
 	"seed": 174206.0,
-	"recommended": "HARD • 6★ • 577 notes • 10 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 6★ • 544 notes • 10 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.68496,
@@ -256,11 +256,6 @@
 			"direction": 6
 		},
 		{
-			"time": 21.68496,
-			"type": "reverse",
-			"direction": 4
-		},
-		{
 			"time": 22.06496,
 			"type": "normal",
 			"direction": 8
@@ -484,21 +479,6 @@
 			"time": 36.31496,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 36.69496,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 36.88496,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 37.07496,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 37.64496,
@@ -761,11 +741,6 @@
 			"direction": 8
 		},
 		{
-			"time": 52.46496,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 52.84496,
 			"type": "reverse",
 			"direction": 6
@@ -801,11 +776,6 @@
 			"direction": 3
 		},
 		{
-			"time": 55.21996,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 55.59996,
 			"type": "normal",
 			"direction": 1
@@ -814,11 +784,6 @@
 			"time": 55.88496,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 55.97996,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 56.35996,
@@ -1031,11 +996,6 @@
 			"direction": 6
 		},
 		{
-			"time": 70.22996,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 70.60996,
 			"type": "normal",
 			"direction": 8
@@ -1161,16 +1121,6 @@
 			"direction": 4
 		},
 		{
-			"time": 78.49496,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 78.68496,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 79.06496,
 			"type": "normal",
 			"direction": 3
@@ -1254,11 +1204,6 @@
 			"time": 85.90496,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 85.99996,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 86.75996,
@@ -1426,11 +1371,6 @@
 			"direction": 6
 		},
 		{
-			"time": 101.57996,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 101.76996,
 			"type": "normal",
 			"direction": 8
@@ -1451,46 +1391,6 @@
 			"direction": 2
 		},
 		{
-			"time": 104.04996,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 104.42996,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 105.18996,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 105.94996,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 106.89996,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 107.46996,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 108.03996,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 108.98996,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 109.84496,
 			"type": "normal",
 			"direction": 4
@@ -1499,11 +1399,6 @@
 			"time": 110.60496,
 			"type": "reverse",
 			"direction": 8
-		},
-		{
-			"time": 111.36496,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 112.12496,
@@ -1591,11 +1486,6 @@
 			"direction": 9
 		},
 		{
-			"time": 122.09996,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 122.47996,
 			"type": "normal",
 			"direction": 4
@@ -1639,16 +1529,6 @@
 			"time": 126.75496,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 127.13496,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 127.32496,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 127.89496,
@@ -1836,11 +1716,6 @@
 			"direction": 6
 		},
 		{
-			"time": 146.32496,
-			"type": "reverse",
-			"direction": 1
-		},
-		{
 			"time": 146.70496,
 			"type": "normal",
 			"direction": 8
@@ -1889,11 +1764,6 @@
 			"time": 149.36496,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 149.45996,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 149.83996,
@@ -2306,16 +2176,6 @@
 			"direction": 6
 		},
 		{
-			"time": 175.01496,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 175.20496,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 175.58496,
 			"type": "reverse",
 			"direction": 7
@@ -2519,21 +2379,6 @@
 			"time": 190.21496,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 190.59496,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 190.78496,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 190.97496,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 191.35496,
@@ -2786,16 +2631,6 @@
 			"direction": 8
 		},
 		{
-			"time": 206.93496,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 207.12496,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 207.50496,
 			"type": "normal",
 			"direction": 8
@@ -3042,7 +2877,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 69
+		"reverse": 67
 	},
 	"generator_diagnostics": {
 		"version": "17.4.19",
@@ -3080,8 +2915,8 @@
 		"longest_sub_170ms_chain_notes": 2
 	},
 	"difficulty_profile": {
-		"note_count": 577,
-		"reverse_count": 69,
+		"note_count": 544,
+		"reverse_count": 67,
 		"space_count": 10,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -3164,5 +2999,55 @@
 		"retained_direction_changes": false,
 		"space_events_changed": false,
 		"policy": "stable pressure; dense sections remain musical but no sudden unreadable wall"
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				103.76496,
+				109.84496
+			]
+		],
+		"before": {
+			"song_id": "diana_boncheva_feat_banya_beethoven_virus_full_version",
+			"difficulty": "hard",
+			"bpm": 157.894737,
+			"duration": 220.101995,
+			"notes": 577,
+			"spaces": 10,
+			"average_inputs_per_second": 2.667,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 9,
+			"arrows_within_250ms_of_space": 18,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 211.375
+		},
+		"after": {
+			"song_id": "diana_boncheva_feat_banya_beethoven_virus_full_version",
+			"difficulty": "hard",
+			"bpm": 157.894737,
+			"duration": 220.101995,
+			"notes": 544,
+			"spaces": 10,
+			"average_inputs_per_second": 2.517,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 22,
+			"fast_direction_changes_under_170ms": 2,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					103.47996,
+					109.84496
+				]
+			],
+			"longest_active_run_seconds": 104.215
+		},
+		"subdivision_notes_removed": 7,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

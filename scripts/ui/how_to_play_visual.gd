@@ -2,9 +2,8 @@ extends Control
 class_name HowToPlayVisual
 
 const UserSettingsScript = preload("res://scripts/user_settings.gd")
+const VisualTheme = preload("res://scripts/ui/minimal_theme.gd")
 
-signal practice_updated(hits: int, total: int, judgement: String)
-signal practice_completed(hits: int, total: int)
 
 const BG := Color("0b0d11")
 const SURFACE := Color("171a21")
@@ -12,37 +11,15 @@ const SURFACE_RAISED := Color("20242e")
 const BORDER := Color("303541")
 const TEXT := Color("f3f1ed")
 const MUTED := Color("9898a2")
-const PINK := Color("ee5795")
-const CYAN := Color("5bcbe0")
-const BLUE := Color("079bd8")
-const ORANGE := Color("ff9f43")
-const RED := Color("ff4d57")
-const GOLD := Color("f7c75e")
-const DANGER := Color("ff704d")
-const SUCCESS := Color("9ad878")
+const PINK := VisualTheme.PERFECT_PINK
+const CYAN := VisualTheme.GOOD_CYAN
+const BLUE := VisualTheme.NORMAL_BLUE
+const ORANGE := VisualTheme.DIAGONAL_ORANGE
+const RED := VisualTheme.REVERSE_RED
+const GOLD := VisualTheme.SPACE_GOLD
+const DANGER := VisualTheme.MISS_RED
+const SUCCESS := VisualTheme.GREAT_GREEN
 
-const PRACTICE_TARGET_TIME := 2.0
-const PRACTICE_MISS_TIME := 2.38
-const PRACTICE_SEQUENCE_8 := [
-	{"type": "normal", "display": 8, "expected": 8},
-	{"type": "normal", "display": 6, "expected": 6},
-	{"type": "normal", "display": 9, "expected": 9},
-	{"type": "reverse", "display": 6, "expected": 4},
-	{"type": "space", "display": 0, "expected": 0},
-	{"type": "normal", "display": 2, "expected": 2},
-	{"type": "reverse", "display": 8, "expected": 2},
-	{"type": "normal", "display": 7, "expected": 7},
-]
-const PRACTICE_SEQUENCE_4 := [
-	{"type": "normal", "display": 8, "expected": 8},
-	{"type": "normal", "display": 6, "expected": 6},
-	{"type": "normal", "display": 2, "expected": 2},
-	{"type": "reverse", "display": 6, "expected": 4},
-	{"type": "space", "display": 0, "expected": 0},
-	{"type": "normal", "display": 4, "expected": 4},
-	{"type": "reverse", "display": 8, "expected": 2},
-	{"type": "normal", "display": 6, "expected": 6},
-]
 const DIRECTIONS := {
 	1: Vector2(-0.72, 0.72),
 	2: Vector2(0.0, 1.0),
@@ -74,14 +51,6 @@ var highlighted_number := 0
 var highlight_timer := 0.0
 var space_flash_timer := 0.0
 
-var practice_index := 0
-var practice_clock := 0.0
-var practice_hits := 0
-var practice_resolved := false
-var practice_resolve_timer := 0.0
-var practice_finished := false
-var practice_judgement := "READY"
-var practice_judgement_color := MUTED
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -91,49 +60,22 @@ func _ready() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
+	if not is_visible_in_tree():
+		return
 	phase = fmod(phase + delta * 0.18, 1.0)
 	demo_clock = fmod(demo_clock + delta, 2.65)
 	highlight_timer = maxf(0.0, highlight_timer - delta)
 	space_flash_timer = maxf(0.0, space_flash_timer - delta)
 	if highlight_timer <= 0.0:
 		highlighted_number = 0
-	if step_index == 3 and not practice_finished:
-		_update_practice(delta)
 	queue_redraw()
 
 func set_step(index: int) -> void:
-	var next_step := clampi(index, 0, 3)
-	if next_step == 3 and step_index != 3:
-		reset_practice()
-	step_index = next_step
+	step_index = clampi(index, 0, 2)
 	queue_redraw()
 
 func get_step() -> int:
 	return step_index
-
-func reset_practice() -> void:
-	practice_index = 0
-	practice_clock = 0.0
-	practice_hits = 0
-	practice_resolved = false
-	practice_resolve_timer = 0.0
-	practice_finished = false
-	practice_judgement = "READY"
-	practice_judgement_color = MUTED
-	practice_updated.emit(practice_hits, _practice_sequence().size(), practice_judgement)
-	queue_redraw()
-
-func get_practice_progress() -> Dictionary:
-	return {
-		"hits": practice_hits,
-		"total": _practice_sequence().size(),
-		"index": practice_index,
-		"finished": practice_finished,
-		"judgement": practice_judgement,
-	}
-
-func _practice_sequence() -> Array:
-	return PRACTICE_SEQUENCE_4 if UserSettingsScript.get_input_style() == "4_arrow" else PRACTICE_SEQUENCE_8
 
 func handle_input(event: InputEvent) -> bool:
 	if not (event is InputEventKey):
@@ -141,22 +83,15 @@ func handle_input(event: InputEvent) -> bool:
 	var key_event := event as InputEventKey
 	if not key_event.pressed or key_event.echo:
 		return false
-	if step_index == 3 and (key_event.keycode == KEY_R or key_event.physical_keycode == KEY_R):
-		reset_practice()
-		return true
 	if key_event.keycode == KEY_SPACE or key_event.physical_keycode == KEY_SPACE:
 		space_flash_timer = 0.24
-		if step_index == 3:
-			_judge_practice_input(0, true)
 		queue_redraw()
-		return step_index == 2 or step_index == 3
+		return step_index == 2
 	var number := _number_from_event(key_event)
 	if number <= 0:
 		return false
 	highlighted_number = number
 	highlight_timer = 0.28
-	if step_index == 3 and number != 5:
-		_judge_practice_input(number, false)
 	queue_redraw()
 	return true
 
@@ -172,68 +107,6 @@ func _number_from_event(event: InputEventKey) -> int:
 			return int(KEYS_TO_NUMBERS[key_code])
 	return 0
 
-func _update_practice(delta: float) -> void:
-	if practice_resolved:
-		practice_resolve_timer -= delta
-		if practice_resolve_timer <= 0.0:
-			_advance_practice_note()
-		return
-	practice_clock += delta
-	if practice_clock > PRACTICE_MISS_TIME:
-		_resolve_practice_note("MISS", DANGER, false)
-
-func _judge_practice_input(number: int, is_space: bool) -> void:
-	if practice_finished or practice_resolved:
-		return
-	var timing_error := practice_clock - PRACTICE_TARGET_TIME
-	if timing_error < -0.34:
-		practice_judgement = "WAIT"
-		practice_judgement_color = MUTED
-		practice_updated.emit(practice_hits, _practice_sequence().size(), practice_judgement)
-		return
-	var cue: Dictionary = _practice_sequence()[practice_index] as Dictionary
-	var cue_type := str(cue.get("type", "normal"))
-	if cue_type == "space":
-		if not is_space:
-			_resolve_practice_note("WRONG", DANGER, false)
-			return
-	else:
-		if is_space or number != int(cue.get("expected", 0)):
-			_resolve_practice_note("WRONG", DANGER, false)
-			return
-	var absolute_error := absf(timing_error)
-	if absolute_error <= 0.09:
-		_resolve_practice_note("PERFECT", PINK, true)
-	elif absolute_error <= 0.19:
-		_resolve_practice_note("GREAT", SUCCESS, true)
-	elif absolute_error <= 0.34:
-		_resolve_practice_note("GOOD", CYAN, true)
-	else:
-		_resolve_practice_note("MISS", DANGER, false)
-
-func _resolve_practice_note(judgement: String, color: Color, hit: bool) -> void:
-	practice_resolved = true
-	practice_resolve_timer = 0.36
-	practice_judgement = judgement
-	practice_judgement_color = color
-	if hit:
-		practice_hits += 1
-	practice_updated.emit(practice_hits, _practice_sequence().size(), practice_judgement)
-
-func _advance_practice_note() -> void:
-	practice_index += 1
-	practice_clock = 0.0
-	practice_resolved = false
-	practice_resolve_timer = 0.0
-	practice_judgement = "READY"
-	practice_judgement_color = MUTED
-	if practice_index >= _practice_sequence().size():
-		practice_finished = true
-		practice_judgement = "PRACTICE COMPLETE"
-		practice_judgement_color = SUCCESS
-		practice_updated.emit(practice_hits, _practice_sequence().size(), practice_judgement)
-		practice_completed.emit(practice_hits, _practice_sequence().size())
-
 func _draw() -> void:
 	if size.x <= 2.0 or size.y <= 2.0:
 		return
@@ -243,7 +116,6 @@ func _draw() -> void:
 		0: _draw_controls()
 		1: _draw_timing()
 		2: _draw_note_types()
-		3: _draw_practice()
 
 func _draw_grid() -> void:
 	var spacing := clampf(minf(size.x, size.y) * 0.14, 44.0, 72.0)
@@ -310,7 +182,7 @@ func _draw_timing() -> void:
 		var color := Color(window_data["color"], 0.34)
 		draw_line(hit_center + Vector2(-offset, -58.0), hit_center + Vector2(-offset, 58.0), color, 1.0)
 		draw_line(hit_center + Vector2(offset, -58.0), hit_center + Vector2(offset, 58.0), color, 1.0)
-	_draw_diamond(hit_center, 52.0, Color(MUTED, 0.10), Color(MUTED, 0.48), 3.0)
+	_draw_diamond(hit_center, 52.0, Color(1, 1, 1, 0.055), Color(1, 1, 1, 0.82), 3.0)
 	_draw_note(note_center, Vector2.UP, BLUE, "normal", 42.0)
 	var judgement := "FOLLOW THE NOTE"
 	var judgement_color := MUTED
@@ -333,7 +205,7 @@ func _draw_note_types() -> void:
 	]
 	if UserSettingsScript.get_input_style() != "4_arrow":
 		examples.insert(1, {"label": "DIAGONAL", "detail": "ORANGE OUTLINE", "direction": Vector2(0.72, -0.72), "outline": ORANGE, "type": "normal"})
-	var columns := 3 if size.x >= 520.0 else 2
+	var columns := 2
 	var rows := ceili(float(examples.size()) / float(columns))
 	var gap := 12.0
 	var margin := 22.0
@@ -360,57 +232,9 @@ func _draw_note_types() -> void:
 	if space_flash_timer > 0.0:
 		draw_rect(Rect2(3.0, 3.0, size.x - 6.0, size.y - 6.0), Color(GOLD, 0.20), false, 3.0, true)
 
-func _practice_key_label(number: int) -> String:
-	if UserSettingsScript.get_input_style() == "4_arrow":
-		match number:
-			8: return "↑"
-			6: return "→"
-			2: return "↓"
-			4: return "←"
-	return str(number)
-
-func _draw_practice() -> void:
-	if practice_finished:
-		draw_rect(Rect2(size.x * 0.14, size.y * 0.22, size.x * 0.72, size.y * 0.56), Color(SURFACE, 0.92), true)
-		_draw_centered_text(body_font, Rect2(0.0, size.y * 0.31, size.x, 52.0), "PRACTICE COMPLETE", 28, SUCCESS)
-		_draw_centered_text(mono_font, Rect2(0.0, size.y * 0.47, size.x, 32.0), "%02d / %02d HITS" % [practice_hits, _practice_sequence().size()], 16, TEXT)
-		_draw_centered_text(mono_font, Rect2(0.0, size.y * 0.61, size.x, 24.0), "R = RETRY  ·  CONTINUE BELOW", 10, MUTED)
-		return
-	var lane_rect := Rect2(size.x * 0.07, size.y * 0.32, size.x * 0.86, size.y * 0.34)
-	draw_rect(lane_rect, Color(SURFACE, 0.76), true)
-	draw_line(Vector2(lane_rect.position.x, lane_rect.get_center().y), Vector2(lane_rect.end.x, lane_rect.get_center().y), Color(BORDER, 0.72), 1.0)
-	var hit_center := Vector2(size.x * 0.25, lane_rect.get_center().y)
-	var spawn_x := size.x * 0.88
-	var travel_progress := clampf(practice_clock / PRACTICE_TARGET_TIME, 0.0, 1.0)
-	var cue: Dictionary = _practice_sequence()[practice_index] as Dictionary
-	var cue_type := str(cue.get("type", "normal"))
-	var display_number := int(cue.get("display", 8))
-	var expected_number := int(cue.get("expected", display_number))
-	_draw_diamond(hit_center, 53.0, Color(MUTED, 0.10), Color(MUTED, 0.52), 3.0)
-	if cue_type == "space":
-		var approach_size := lerpf(92.0, 55.0, travel_progress)
-		_draw_diamond(hit_center, approach_size, Color.TRANSPARENT, GOLD, 3.0)
-		_draw_centered_text(mono_font, Rect2(hit_center.x - 54.0, hit_center.y - 9.0, 108.0, 20.0), "SPACE", 10, GOLD)
-	else:
-		var note_x := lerpf(spawn_x, hit_center.x, travel_progress)
-		if practice_clock > PRACTICE_TARGET_TIME:
-			note_x = lerpf(hit_center.x, hit_center.x - 72.0, clampf((practice_clock - PRACTICE_TARGET_TIME) / 0.38, 0.0, 1.0))
-		if not practice_resolved or practice_judgement == "WAIT":
-			var outline := RED if cue_type == "reverse" else (ORANGE if display_number in [1, 3, 7, 9] else BLUE)
-			_draw_note(Vector2(note_x, hit_center.y), Vector2(DIRECTIONS[display_number]), outline, cue_type, 42.0)
-	_draw_centered_text(body_font, Rect2(0.0, lane_rect.position.y - 66.0, size.x, 44.0), practice_judgement, 24, practice_judgement_color)
-	var instruction := "PRESS SPACE WHEN THE GOLD CUE CLOSES" if cue_type == "space" else "PRESS %s ON THE HIT ZONE" % _practice_key_label(expected_number)
-	if cue_type == "reverse":
-		instruction = "REVERSE · PRESS %s (OPPOSITE THE ARROW)" % _practice_key_label(expected_number)
-	_draw_centered_text(mono_font, Rect2(0.0, lane_rect.end.y + 24.0, size.x, 24.0), instruction, 11, GOLD if cue_type == "space" else CYAN)
-	_draw_text(mono_font, Vector2(24.0, 28.0), "%02d / %02d" % [practice_index + 1, _practice_sequence().size()], 11, MUTED)
-	_draw_text(mono_font, Vector2(size.x - 118.0, 28.0), "%02d HITS" % practice_hits, 11, SUCCESS)
-	var cue_label := "SPACE" if cue_type == "space" else ("REVERSE" if cue_type == "reverse" else "NORMAL")
-	_draw_centered_text(mono_font, Rect2(0.0, 24.0, size.x, 22.0), cue_label, 10, GOLD if cue_type == "space" else (RED if cue_type == "reverse" else MUTED))
-
 func _draw_note(center: Vector2, direction: Vector2, outline: Color, note_type: String, half_extent: float) -> void:
 	_draw_diamond(center + Vector2(0.0, 3.0), half_extent + 2.0, Color(0.0, 0.0, 0.0, 0.30), Color.TRANSPARENT, 0.0)
-	_draw_diamond(center, half_extent, Color(BG, 0.96), outline, 3.0)
+	_draw_diamond(center, half_extent, Color("101722"), outline, 3.0)
 	if note_type == "space":
 		_draw_centered_text(mono_font, Rect2(center - Vector2(half_extent, 10.0), Vector2(half_extent * 2.0, 22.0)), "SPACE", 9, TEXT)
 	else:

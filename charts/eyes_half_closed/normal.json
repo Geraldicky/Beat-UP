@@ -13,7 +13,7 @@
 	"beat_offset": 0.074811,
 	"duration": 405.757143,
 	"seed": 1744303.0,
-	"recommended": "NORMAL • 3★ • 624 notes • 15 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 3★ • 590 notes • 14 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 4.9637,
@@ -59,11 +59,6 @@
 			"time": 12.074811,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 12.519255,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 13.408144,
@@ -181,47 +176,7 @@
 			"direction": 6
 		},
 		{
-			"time": 33.852589,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 34.519255,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 35.630367,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 36.297033,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 36.9637,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 38.297033,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 38.519255,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 38.741478,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 38.9637,
 			"type": "normal",
 			"direction": 7
 		},
@@ -396,11 +351,6 @@
 			"direction": 2
 		},
 		{
-			"time": 62.297033,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 63.185922,
 			"type": "normal",
 			"direction": 6
@@ -559,31 +509,6 @@
 			"time": 84.519255,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 85.408144,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 86.297033,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 86.741478,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 87.185922,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 88.074811,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 88.9637,
@@ -749,11 +674,6 @@
 			"time": 112.9637,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 113.852589,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 114.297033,
@@ -964,11 +884,6 @@
 			"time": 134.297033,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 135.185922,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 136.074811,
@@ -1231,11 +1146,6 @@
 			"direction": 6
 		},
 		{
-			"time": 163.630367,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 164.074811,
 			"type": "normal",
 			"direction": 2
@@ -1461,11 +1371,6 @@
 			"direction": 4
 		},
 		{
-			"time": 190.297033,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 190.741478,
 			"type": "normal",
 			"direction": 3
@@ -1654,11 +1559,6 @@
 			"time": 213.185922,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 213.408144,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 213.630367,
@@ -1976,11 +1876,6 @@
 			"direction": 2
 		},
 		{
-			"time": 254.297033,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 254.741478,
 			"type": "normal",
 			"direction": 7
@@ -1994,36 +1889,6 @@
 			"time": 255.630367,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 256.519255,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 256.741478,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 256.9637,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 258.074811,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 258.9637,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 259.185922,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 259.630367,
@@ -2301,11 +2166,6 @@
 			"direction": 4
 		},
 		{
-			"time": 289.852589,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 290.297033,
 			"type": "normal",
 			"direction": 9
@@ -2576,11 +2436,6 @@
 			"direction": 9
 		},
 		{
-			"time": 316.519255,
-			"type": "reverse",
-			"direction": 6
-		},
-		{
 			"time": 316.9637,
 			"type": "normal",
 			"direction": 8
@@ -2776,11 +2631,6 @@
 			"direction": 1
 		},
 		{
-			"time": 337.852589,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 338.741478,
 			"type": "reverse",
 			"direction": 8
@@ -2946,24 +2796,9 @@
 			"direction": 2
 		},
 		{
-			"time": 355.630367,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 357.408144,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 359.185922,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 360.519255,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 361.852589,
@@ -3111,11 +2946,6 @@
 			"direction": 1
 		},
 		{
-			"time": 392.9637,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 394.741478,
 			"type": "normal",
 			"direction": 7
@@ -3140,7 +2970,6 @@
 		12.519255,
 		33.852589,
 		62.297033,
-		85.408144,
 		113.852589,
 		135.185922,
 		163.630367,
@@ -3322,7 +3151,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 37
+		"reverse": 36
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -3351,9 +3180,9 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 624,
-		"reverse_count": 37,
-		"space_count": 15,
+		"note_count": 590,
+		"reverse_count": 36,
+		"space_count": 14,
 		"analysis_driven": true,
 		"song_form_aware": true,
 		"local_intensity_priority": true,
@@ -3421,5 +3250,79 @@
 		"analysis_master_original_name": "Crywolf - Eyes Half Closed [gD1ALm1l2zw].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				35.630367,
+				39.185923
+			],
+			[
+				85.408144,
+				88.9637
+			],
+			[
+				256.074811,
+				259.630367
+			],
+			[
+				355.630367,
+				359.185923
+			]
+		],
+		"before": {
+			"song_id": "eyes_half_closed",
+			"difficulty": "normal",
+			"bpm": 135.0,
+			"duration": 405.757143,
+			"notes": 624,
+			"spaces": 15,
+			"average_inputs_per_second": 1.575,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 15,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 17,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 393.333
+		},
+		"after": {
+			"song_id": "eyes_half_closed",
+			"difficulty": "normal",
+			"bpm": 135.0,
+			"duration": 405.757143,
+			"notes": 590,
+			"spaces": 14,
+			"average_inputs_per_second": 1.489,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 14,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 2,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					34.519255,
+					40.297033
+				],
+				[
+					84.519255,
+					88.9637
+				],
+				[
+					255.630367,
+					259.630367
+				],
+				[
+					354.9637,
+					359.185922
+				]
+			],
+			"longest_active_run_seconds": 166.667
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

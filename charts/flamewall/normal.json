@@ -13,7 +13,7 @@
 	"beat_offset": 0.287532,
 	"duration": 410.122494,
 	"seed": 1744320.0,
-	"recommended": "NORMAL • 6★ • 934 notes • 19 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 6★ • 759 notes • 17 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.557802,
@@ -86,16 +86,6 @@
 			"direction": 2
 		},
 		{
-			"time": 11.963208,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 12.12537,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 13.422667,
 			"type": "normal",
 			"direction": 6
@@ -119,11 +109,6 @@
 			"time": 15.530775,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 15.692937,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 16.017262,
@@ -196,11 +181,6 @@
 			"direction": 1
 		},
 		{
-			"time": 25.098343,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 25.746991,
 			"type": "normal",
 			"direction": 9
@@ -256,11 +236,6 @@
 			"direction": 8
 		},
 		{
-			"time": 31.909154,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 32.39564,
 			"type": "normal",
 			"direction": 2
@@ -291,19 +266,9 @@
 			"direction": 1
 		},
 		{
-			"time": 35.152397,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 35.314559,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 35.476721,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 36.287532,
@@ -326,16 +291,6 @@
 			"direction": 4
 		},
 		{
-			"time": 37.746991,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 37.909154,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 38.233478,
 			"type": "normal",
 			"direction": 8
@@ -354,11 +309,6 @@
 			"time": 39.530775,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 39.692937,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 40.341586,
@@ -381,56 +331,6 @@
 			"direction": 1
 		},
 		{
-			"time": 41.801046,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 42.12537,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 42.287532,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 42.936181,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 43.098343,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 43.746991,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 43.909154,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 44.719964,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 45.692937,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 46.503748,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 47.152397,
 			"type": "normal",
 			"direction": 2
@@ -451,11 +351,6 @@
 			"direction": 8
 		},
 		{
-			"time": 48.12537,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 48.287532,
 			"type": "normal",
 			"direction": 9
@@ -464,11 +359,6 @@
 			"time": 48.936181,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 49.098343,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 49.746991,
@@ -516,11 +406,6 @@
 			"direction": 1
 		},
 		{
-			"time": 53.314559,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 53.476721,
 			"type": "normal",
 			"direction": 9
@@ -534,11 +419,6 @@
 			"time": 54.12537,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 54.287532,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 54.936181,
@@ -559,11 +439,6 @@
 			"time": 55.909154,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 56.719964,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 57.044289,
@@ -591,19 +466,9 @@
 			"direction": 6
 		},
 		{
-			"time": 59.152397,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 59.314559,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 59.476721,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 59.801046,
@@ -624,11 +489,6 @@
 			"time": 60.936181,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 61.098343,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 61.422667,
@@ -686,11 +546,6 @@
 			"direction": 1
 		},
 		{
-			"time": 65.314559,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 65.476721,
 			"type": "normal",
 			"direction": 6
@@ -716,11 +571,6 @@
 			"direction": 6
 		},
 		{
-			"time": 67.909154,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 68.719964,
 			"type": "reverse",
 			"direction": 8
@@ -739,11 +589,6 @@
 			"time": 70.341586,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 70.503748,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 70.990235,
@@ -766,24 +611,9 @@
 			"direction": 6
 		},
 		{
-			"time": 72.12537,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 72.449694,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 72.936181,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 73.098343,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 73.746991,
@@ -806,11 +636,6 @@
 			"direction": 9
 		},
 		{
-			"time": 75.692937,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 76.179424,
 			"type": "normal",
 			"direction": 6
@@ -829,11 +654,6 @@
 			"time": 77.152397,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 77.314559,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 77.638883,
@@ -861,19 +681,9 @@
 			"direction": 7
 		},
 		{
-			"time": 79.909154,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 80.719964,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 80.882127,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 81.692937,
@@ -889,11 +699,6 @@
 			"time": 82.990235,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 83.152397,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 83.314559,
@@ -929,11 +734,6 @@
 			"time": 87.530775,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 87.692937,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 88.503748,
@@ -986,19 +786,9 @@
 			"direction": 2
 		},
 		{
-			"time": 93.692937,
-			"type": "reverse",
-			"direction": 3
-		},
-		{
 			"time": 94.341586,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 94.503748,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 95.314559,
@@ -1041,11 +831,6 @@
 			"direction": 4
 		},
 		{
-			"time": 98.39564,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 98.719964,
 			"type": "normal",
 			"direction": 7
@@ -1054,11 +839,6 @@
 			"time": 98.882127,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 99.044289,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 99.206451,
@@ -1084,11 +864,6 @@
 			"time": 100.503748,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 100.66591,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 100.828073,
@@ -1126,11 +901,6 @@
 			"direction": 4
 		},
 		{
-			"time": 103.584829,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 103.909154,
 			"type": "normal",
 			"direction": 7
@@ -1166,19 +936,9 @@
 			"direction": 9
 		},
 		{
-			"time": 106.179424,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 106.341586,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 106.503748,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 107.152397,
@@ -1201,11 +961,6 @@
 			"direction": 2
 		},
 		{
-			"time": 109.098343,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 109.260505,
 			"type": "normal",
 			"direction": 3
@@ -1214,11 +969,6 @@
 			"time": 109.909154,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 110.071316,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 110.719964,
@@ -1246,11 +996,6 @@
 			"direction": 2
 		},
 		{
-			"time": 112.341586,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 112.990235,
 			"type": "normal",
 			"direction": 3
@@ -1271,11 +1016,6 @@
 			"direction": 2
 		},
 		{
-			"time": 114.287532,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 114.449694,
 			"type": "normal",
 			"direction": 3
@@ -1294,11 +1034,6 @@
 			"time": 115.422667,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 115.746991,
-			"type": "reverse",
-			"direction": 7
 		},
 		{
 			"time": 116.233478,
@@ -1334,11 +1069,6 @@
 			"time": 118.341586,
 			"type": "normal",
 			"direction": 1
-		},
-		{
-			"time": 118.503748,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 119.314559,
@@ -1396,11 +1126,6 @@
 			"direction": 8
 		},
 		{
-			"time": 123.692937,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 124.017262,
 			"type": "normal",
 			"direction": 1
@@ -1414,11 +1139,6 @@
 			"time": 124.503748,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 124.66591,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 124.828073,
@@ -1439,11 +1159,6 @@
 			"time": 126.12537,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 126.287532,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 126.936181,
@@ -1479,11 +1194,6 @@
 			"time": 129.044289,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 129.206451,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 129.692937,
@@ -1531,11 +1241,6 @@
 			"direction": 9
 		},
 		{
-			"time": 133.098343,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 133.422667,
 			"type": "normal",
 			"direction": 8
@@ -1544,11 +1249,6 @@
 			"time": 133.584829,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 133.909154,
-			"type": "reverse",
-			"direction": 2
 		},
 		{
 			"time": 134.719964,
@@ -1576,11 +1276,6 @@
 			"direction": 7
 		},
 		{
-			"time": 136.341586,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 136.503748,
 			"type": "normal",
 			"direction": 2
@@ -1591,11 +1286,6 @@
 			"direction": 3
 		},
 		{
-			"time": 137.314559,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 137.801046,
 			"type": "normal",
 			"direction": 6
@@ -1604,11 +1294,6 @@
 			"time": 138.12537,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 138.287532,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 138.449694,
@@ -1631,11 +1316,6 @@
 			"direction": 2
 		},
 		{
-			"time": 139.909154,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 140.719964,
 			"type": "normal",
 			"direction": 6
@@ -1654,11 +1334,6 @@
 			"time": 142.341586,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 142.503748,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 143.314559,
@@ -1681,44 +1356,9 @@
 			"direction": 4
 		},
 		{
-			"time": 145.746991,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 146.557802,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 147.206451,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 148.179424,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 149.476721,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 150.12537,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 151.422667,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 151.584829,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 151.746991,
@@ -1734,11 +1374,6 @@
 			"time": 153.368613,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 153.530775,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 153.692937,
@@ -1841,19 +1476,9 @@
 			"direction": 4
 		},
 		{
-			"time": 166.179424,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 166.341586,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 166.503748,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 166.828073,
@@ -1869,11 +1494,6 @@
 			"time": 167.314559,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 167.476721,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 167.638883,
@@ -1956,19 +1576,9 @@
 			"direction": 8
 		},
 		{
-			"time": 173.963208,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 174.12537,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 174.287532,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 174.449694,
@@ -1994,21 +1604,6 @@
 			"time": 175.746991,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 176.557802,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 176.719964,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 176.882127,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 177.206451,
@@ -2051,11 +1646,6 @@
 			"direction": 8
 		},
 		{
-			"time": 180.12537,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 180.936181,
 			"type": "normal",
 			"direction": 2
@@ -2074,11 +1664,6 @@
 			"time": 181.909154,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 182.071316,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 182.557802,
@@ -2106,19 +1691,9 @@
 			"direction": 4
 		},
 		{
-			"time": 183.692937,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 184.179424,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 184.341586,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 184.503748,
@@ -2176,11 +1751,6 @@
 			"direction": 8
 		},
 		{
-			"time": 189.530775,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 189.692937,
 			"type": "normal",
 			"direction": 2
@@ -2189,11 +1759,6 @@
 			"time": 190.017262,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 190.179424,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 190.503748,
@@ -2244,11 +1809,6 @@
 			"time": 196.179424,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 197.476721,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 198.449694,
@@ -2366,51 +1926,6 @@
 			"direction": 4
 		},
 		{
-			"time": 213.044289,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 214.017262,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 214.341586,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 215.638883,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 215.801046,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 216.449694,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 216.611856,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 217.746991,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 217.909154,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 218.233478,
 			"type": "normal",
 			"direction": 4
@@ -2421,29 +1936,14 @@
 			"direction": 2
 		},
 		{
-			"time": 219.368613,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 219.530775,
 			"type": "normal",
 			"direction": 2
 		},
 		{
-			"time": 219.692937,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 220.828073,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 220.990235,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 221.801046,
@@ -2571,16 +2071,6 @@
 			"direction": 6
 		},
 		{
-			"time": 238.66591,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 238.828073,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 239.638883,
 			"type": "normal",
 			"direction": 6
@@ -2656,11 +2146,6 @@
 			"direction": 8
 		},
 		{
-			"time": 248.233478,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 249.044289,
 			"type": "normal",
 			"direction": 3
@@ -2714,11 +2199,6 @@
 			"time": 253.260505,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 253.422667,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 253.746991,
@@ -2781,34 +2261,14 @@
 			"direction": 8
 		},
 		{
-			"time": 258.449694,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 258.611856,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 259.098343,
 			"type": "normal",
 			"direction": 3
 		},
 		{
-			"time": 259.260505,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 259.422667,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 259.584829,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 259.746991,
@@ -2829,11 +2289,6 @@
 			"time": 261.044289,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 261.206451,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 261.530775,
@@ -3081,24 +2536,9 @@
 			"direction": 6
 		},
 		{
-			"time": 283.098343,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 283.260505,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 283.422667,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 283.584829,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 283.746991,
@@ -3119,56 +2559,6 @@
 			"time": 285.368613,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 285.692937,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 285.8551,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 286.017262,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 286.828073,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 287.152397,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 287.314559,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 287.638883,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 288.449694,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 289.422667,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 289.909154,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 290.882127,
@@ -3196,19 +2586,9 @@
 			"direction": 4
 		},
 		{
-			"time": 293.638883,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 293.801046,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 293.963208,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 294.449694,
@@ -3261,16 +2641,6 @@
 			"direction": 2
 		},
 		{
-			"time": 301.098343,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 301.260505,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 301.584829,
 			"type": "normal",
 			"direction": 6
@@ -3306,11 +2676,6 @@
 			"direction": 8
 		},
 		{
-			"time": 304.017262,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 304.341586,
 			"type": "normal",
 			"direction": 2
@@ -3336,11 +2701,6 @@
 			"direction": 7
 		},
 		{
-			"time": 306.611856,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 306.936181,
 			"type": "normal",
 			"direction": 4
@@ -3364,11 +2724,6 @@
 			"time": 309.044289,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 309.206451,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 310.017262,
@@ -3401,11 +2756,6 @@
 			"direction": 7
 		},
 		{
-			"time": 313.098343,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 313.909154,
 			"type": "normal",
 			"direction": 2
@@ -3436,19 +2786,9 @@
 			"direction": 2
 		},
 		{
-			"time": 316.990235,
-			"type": "normal",
-			"direction": 9
-		},
-		{
 			"time": 317.152397,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 317.314559,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 317.801046,
@@ -3489,11 +2829,6 @@
 			"time": 321.044289,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 321.206451,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 321.530775,
@@ -3541,11 +2876,6 @@
 			"direction": 1
 		},
 		{
-			"time": 324.12537,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 324.449694,
 			"type": "normal",
 			"direction": 9
@@ -3576,19 +2906,9 @@
 			"direction": 9
 		},
 		{
-			"time": 326.071316,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 326.233478,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 326.39564,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 326.719964,
@@ -3611,19 +2931,9 @@
 			"direction": 2
 		},
 		{
-			"time": 328.341586,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 328.503748,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 328.66591,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 328.990235,
@@ -3636,11 +2946,6 @@
 			"direction": 6
 		},
 		{
-			"time": 329.314559,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 329.801046,
 			"type": "normal",
 			"direction": 9
@@ -3649,11 +2954,6 @@
 			"time": 330.611856,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 331.098343,
-			"type": "reverse",
-			"direction": 8
 		},
 		{
 			"time": 331.422667,
@@ -3701,11 +3001,6 @@
 			"direction": 4
 		},
 		{
-			"time": 334.503748,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 334.990235,
 			"type": "reverse",
 			"direction": 9
@@ -3726,11 +3021,6 @@
 			"direction": 2
 		},
 		{
-			"time": 336.12537,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 336.611856,
 			"type": "reverse",
 			"direction": 3
@@ -3744,11 +3034,6 @@
 			"time": 337.260505,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 337.422667,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 337.584829,
@@ -3796,11 +3081,6 @@
 			"direction": 8
 		},
 		{
-			"time": 340.017262,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 340.341586,
 			"type": "normal",
 			"direction": 2
@@ -3824,11 +3104,6 @@
 			"time": 341.476721,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 341.638883,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 341.963208,
@@ -3861,19 +3136,9 @@
 			"direction": 7
 		},
 		{
-			"time": 343.909154,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 344.071316,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 344.233478,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 344.39564,
@@ -3884,11 +3149,6 @@
 			"time": 345.044289,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 345.206451,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 345.8551,
@@ -3936,11 +3196,6 @@
 			"direction": 2
 		},
 		{
-			"time": 348.449694,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 348.936181,
 			"type": "normal",
 			"direction": 3
@@ -3949,11 +3204,6 @@
 			"time": 349.260505,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 349.422667,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 349.584829,
@@ -3981,11 +3231,6 @@
 			"direction": 2
 		},
 		{
-			"time": 351.368613,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 351.530775,
 			"type": "normal",
 			"direction": 3
@@ -3999,11 +3244,6 @@
 			"time": 352.179424,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 352.341586,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 352.828073,
@@ -4031,11 +3271,6 @@
 			"direction": 1
 		},
 		{
-			"time": 354.611856,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 355.098343,
 			"type": "reverse",
 			"direction": 9
@@ -4044,11 +3279,6 @@
 			"time": 355.422667,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 355.584829,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 355.909154,
@@ -4069,16 +3299,6 @@
 			"time": 356.719964,
 			"type": "reverse",
 			"direction": 2
-		},
-		{
-			"time": 357.044289,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 357.206451,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 357.8551,
@@ -4131,19 +3351,9 @@
 			"direction": 9
 		},
 		{
-			"time": 360.449694,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 360.936181,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 361.098343,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 361.260505,
@@ -4186,11 +3396,6 @@
 			"direction": 8
 		},
 		{
-			"time": 364.017262,
-			"type": "normal",
-			"direction": 7
-		},
-		{
 			"time": 364.341586,
 			"type": "normal",
 			"direction": 1
@@ -4206,11 +3411,6 @@
 			"direction": 1
 		},
 		{
-			"time": 364.990235,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 366.12537,
 			"type": "normal",
 			"direction": 2
@@ -4224,11 +3424,6 @@
 			"time": 368.071316,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 368.233478,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 368.39564,
@@ -4291,11 +3486,6 @@
 			"direction": 2
 		},
 		{
-			"time": 373.422667,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 373.746991,
 			"type": "normal",
 			"direction": 4
@@ -4309,11 +3499,6 @@
 			"time": 374.233478,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 374.39564,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 375.044289,
@@ -4336,11 +3521,6 @@
 			"direction": 9
 		},
 		{
-			"time": 376.017262,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 376.66591,
 			"type": "normal",
 			"direction": 2
@@ -4351,24 +3531,9 @@
 			"direction": 7
 		},
 		{
-			"time": 376.990235,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 377.152397,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 377.638883,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 377.801046,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 378.611856,
@@ -4391,11 +3556,6 @@
 			"direction": 2
 		},
 		{
-			"time": 379.909154,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 380.233478,
 			"type": "normal",
 			"direction": 6
@@ -4409,11 +3569,6 @@
 			"time": 381.044289,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 381.206451,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 381.8551,
@@ -4451,11 +3606,6 @@
 			"direction": 2
 		},
 		{
-			"time": 384.449694,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 384.611856,
 			"type": "normal",
 			"direction": 9
@@ -4479,11 +3629,6 @@
 			"time": 386.233478,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 386.39564,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 387.044289,
@@ -4511,19 +3656,9 @@
 			"direction": 1
 		},
 		{
-			"time": 388.990235,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 389.476721,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 389.638883,
-			"type": "normal",
-			"direction": 8
 		},
 		{
 			"time": 389.801046,
@@ -4606,11 +3741,6 @@
 			"direction": 7
 		},
 		{
-			"time": 397.260505,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 397.909154,
 			"type": "normal",
 			"direction": 4
@@ -4629,11 +3759,6 @@
 			"time": 399.8551,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 400.017262,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 400.179424,
@@ -4694,10 +3819,8 @@
 		93.692937,
 		115.746991,
 		133.909154,
-		150.12537,
 		176.719964,
 		197.476721,
-		213.044289,
 		238.66591,
 		258.449694,
 		283.098343,
@@ -4969,7 +4092,7 @@
 		"tempo_note": "Official source is variable tempo (185–300 BPM); 185 BPM is the representative display/grid tempo."
 	},
 	"special_note_counts": {
-		"reverse": 56
+		"reverse": 52
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -4998,9 +4121,9 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 934,
-		"reverse_count": 56,
-		"space_count": 19,
+		"note_count": 759,
+		"reverse_count": 52,
+		"space_count": 17,
 		"analysis_driven": true,
 		"song_form_aware": true,
 		"local_intensity_priority": true,
@@ -5068,5 +4191,79 @@
 		"analysis_master_original_name": "[FREE DL] Flamewall [Symphonic Speed Metal] [aYKN5_b7yVo].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				41.801046,
+				46.990235
+			],
+			[
+				145.584829,
+				150.774018
+			],
+			[
+				213.044289,
+				218.233478
+			],
+			[
+				285.692937,
+				290.882126
+			]
+		],
+		"before": {
+			"song_id": "flamewall",
+			"difficulty": "normal",
+			"bpm": 185.0,
+			"duration": 410.122494,
+			"notes": 934,
+			"spaces": 19,
+			"average_inputs_per_second": 2.324,
+			"peak_half_second_inputs": 5,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 20,
+			"fast_direction_changes_under_170ms": 293,
+			"arrows_within_250ms_of_space": 30,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 403.459
+		},
+		"after": {
+			"song_id": "flamewall",
+			"difficulty": "normal",
+			"bpm": 185.0,
+			"duration": 410.122494,
+			"notes": 759,
+			"spaces": 17,
+			"average_inputs_per_second": 1.892,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 17,
+			"fast_direction_changes_under_170ms": 118,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					41.476721,
+					47.152397
+				],
+				[
+					144.936181,
+					151.422667
+				],
+				[
+					211.746991,
+					218.233478
+				],
+				[
+					285.368613,
+					290.882127
+				]
+			],
+			"longest_active_run_seconds": 115.135
+		},
+		"subdivision_notes_removed": 112,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

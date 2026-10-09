@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/song_library/mode_button.gd" id="1_mode"]
+[ext_resource type="Script" path="res://scripts/ui/library_vector_icon.gd" id="2_icon"]
+
+[node name="ModeButton" type="Button"]
+toggle_mode = true
+focus_mode = 2
+text = ""
+script = ExtResource("1_mode")
+
+[node name="SelectionMarker" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 9.0
+offset_bottom = 9.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("2_icon")

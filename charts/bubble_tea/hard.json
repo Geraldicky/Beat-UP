@@ -13,7 +13,7 @@
 	"beat_offset": 0.23525,
 	"duration": 243.36839,
 	"seed": 1744323.0,
-	"recommended": "HARD • 6★ • 610 notes • 12 SPACE • Song choreography v17.4.44",
+	"recommended": "HARD • 6★ • 567 notes • 12 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 2.11025,
@@ -109,11 +109,6 @@
 			"time": 13.36025,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 13.73525,
-			"type": "normal",
-			"direction": 6
 		},
 		{
 			"time": 14.86025,
@@ -321,21 +316,6 @@
 			"direction": 6
 		},
 		{
-			"time": 28.54775,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 28.73525,
-			"type": "reverse",
-			"direction": 8
-		},
-		{
-			"time": 28.92275,
-			"type": "normal",
-			"direction": 2
-		},
-		{
 			"time": 29.48525,
 			"type": "normal",
 			"direction": 9
@@ -424,61 +404,6 @@
 			"time": 35.86025,
 			"type": "normal",
 			"direction": 9
-		},
-		{
-			"time": 36.23525,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 36.42275,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 36.61025,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 37.36025,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 37.73525,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 38.11025,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 38.48525,
-			"type": "normal",
-			"direction": 8
-		},
-		{
-			"time": 39.329,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 40.36025,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 40.73525,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 41.86025,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 42.23525,
@@ -669,11 +594,6 @@
 			"time": 57.98525,
 			"type": "normal",
 			"direction": 7
-		},
-		{
-			"time": 58.36025,
-			"type": "reverse",
-			"direction": 4
 		},
 		{
 			"time": 58.73525,
@@ -1081,11 +1001,6 @@
 			"direction": 7
 		},
 		{
-			"time": 84.23525,
-			"type": "reverse",
-			"direction": 2
-		},
-		{
 			"time": 84.79775,
 			"type": "normal",
 			"direction": 1
@@ -1326,16 +1241,6 @@
 			"direction": 9
 		},
 		{
-			"time": 99.1415,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 99.23525,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 99.79775,
 			"type": "normal",
 			"direction": 1
@@ -1549,11 +1454,6 @@
 			"time": 113.86025,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 114.23525,
-			"type": "reverse",
-			"direction": 4
 		},
 		{
 			"time": 114.79775,
@@ -1796,21 +1696,6 @@
 			"direction": 2
 		},
 		{
-			"time": 136.54775,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 136.73525,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 136.92275,
-			"type": "normal",
-			"direction": 1
-		},
-		{
 			"time": 137.48525,
 			"type": "normal",
 			"direction": 8
@@ -1891,51 +1776,6 @@
 			"direction": 3
 		},
 		{
-			"time": 144.23525,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 144.42275,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 144.61025,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 145.36025,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 145.73525,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 146.48525,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 147.329,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 148.36025,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 149.11025,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 150.23525,
 			"type": "normal",
 			"direction": 7
@@ -1979,16 +1819,6 @@
 			"time": 153.98525,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 154.73525,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 154.92275,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 155.48525,
@@ -2204,21 +2034,6 @@
 			"time": 170.67275,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 171.04775,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 171.23525,
-			"type": "reverse",
-			"direction": 9
-		},
-		{
-			"time": 171.42275,
-			"type": "normal",
-			"direction": 7
 		},
 		{
 			"time": 171.61025,
@@ -2516,16 +2331,6 @@
 			"direction": 7
 		},
 		{
-			"time": 189.04775,
-			"type": "normal",
-			"direction": 3
-		},
-		{
-			"time": 189.23525,
-			"type": "reverse",
-			"direction": 6
-		},
-		{
 			"time": 189.61025,
 			"type": "normal",
 			"direction": 1
@@ -2796,11 +2601,6 @@
 			"direction": 1
 		},
 		{
-			"time": 205.73525,
-			"type": "normal",
-			"direction": 8
-		},
-		{
 			"time": 206.29775,
 			"type": "normal",
 			"direction": 2
@@ -2929,21 +2729,6 @@
 			"time": 220.17275,
 			"type": "normal",
 			"direction": 8
-		},
-		{
-			"time": 220.54775,
-			"type": "normal",
-			"direction": 2
-		},
-		{
-			"time": 220.73525,
-			"type": "normal",
-			"direction": 1
-		},
-		{
-			"time": 220.92275,
-			"type": "normal",
-			"direction": 3
 		},
 		{
 			"time": 221.11025,
@@ -3291,7 +3076,7 @@
 		"timestamp_policy": "grid_locked_flac_onset_evidence"
 	},
 	"special_note_counts": {
-		"reverse": 73
+		"reverse": 67
 	},
 	"generator_diagnostics": {
 		"version": "17.4.5.4",
@@ -3320,8 +3105,8 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 610,
-		"reverse_count": 73,
+		"note_count": 567,
+		"reverse_count": 67,
 		"space_count": 12,
 		"analysis_driven": true,
 		"song_form_aware": true,
@@ -3390,5 +3175,63 @@
 		"analysis_master_original_name": "dark cat - BUBBLE TEA (feat. juu & cinders) [7PYe57MwxPI].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				36.23525,
+				42.23525
+			],
+			[
+				144.23525,
+				150.23525
+			]
+		],
+		"before": {
+			"song_id": "bubble_tea",
+			"difficulty": "hard",
+			"bpm": 160.0,
+			"duration": 243.36839,
+			"notes": 610,
+			"spaces": 12,
+			"average_inputs_per_second": 2.556,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 7,
+			"peak_five_second_inputs": 23,
+			"fast_direction_changes_under_170ms": 2,
+			"arrows_within_250ms_of_space": 23,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 229.219
+		},
+		"after": {
+			"song_id": "bubble_tea",
+			"difficulty": "hard",
+			"bpm": 160.0,
+			"duration": 243.36839,
+			"notes": 567,
+			"spaces": 12,
+			"average_inputs_per_second": 2.379,
+			"peak_half_second_inputs": 4,
+			"peak_one_second_inputs": 6,
+			"peak_five_second_inputs": 23,
+			"fast_direction_changes_under_170ms": 1,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					35.86025,
+					42.23525
+				],
+				[
+					143.86025,
+					150.23525
+				]
+			],
+			"longest_active_run_seconds": 101.625
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

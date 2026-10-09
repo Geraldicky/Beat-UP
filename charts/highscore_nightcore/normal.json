@@ -13,7 +13,7 @@
 	"beat_offset": 0.321518,
 	"duration": 228.24059,
 	"seed": 1744308.0,
-	"recommended": "NORMAL • 4★ • 346 notes • 8 SPACE • Song choreography v17.4.44",
+	"recommended": "NORMAL • 4★ • 335 notes • 8 SPACE • Song choreography v17.4.44",
 	"events": [
 		{
 			"time": 3.7018,
@@ -102,26 +102,6 @@
 		},
 		{
 			"time": 20.120311,
-			"type": "normal",
-			"direction": 4
-		},
-		{
-			"time": 22.0519,
-			"type": "normal",
-			"direction": 7
-		},
-		{
-			"time": 23.500592,
-			"type": "normal",
-			"direction": 9
-		},
-		{
-			"time": 23.98349,
-			"type": "normal",
-			"direction": 6
-		},
-		{
-			"time": 25.432182,
 			"type": "normal",
 			"direction": 4
 		},
@@ -304,11 +284,6 @@
 			"time": 53.923128,
 			"type": "normal",
 			"direction": 4
-		},
-		{
-			"time": 54.406025,
-			"type": "normal",
-			"direction": 2
 		},
 		{
 			"time": 54.888922,
@@ -521,11 +496,6 @@
 			"direction": 9
 		},
 		{
-			"time": 79.516689,
-			"type": "normal",
-			"direction": 6
-		},
-		{
 			"time": 80.482484,
 			"type": "normal",
 			"direction": 1
@@ -729,11 +699,6 @@
 			"time": 104.144456,
 			"type": "normal",
 			"direction": 6
-		},
-		{
-			"time": 104.627353,
-			"type": "normal",
-			"direction": 1
 		},
 		{
 			"time": 105.11025,
@@ -944,11 +909,6 @@
 			"time": 129.25512,
 			"type": "normal",
 			"direction": 3
-		},
-		{
-			"time": 129.738017,
-			"type": "normal",
-			"direction": 9
 		},
 		{
 			"time": 130.220914,
@@ -1174,11 +1134,6 @@
 			"time": 152.192745,
 			"type": "normal",
 			"direction": 2
-		},
-		{
-			"time": 152.917091,
-			"type": "normal",
-			"direction": 4
 		},
 		{
 			"time": 153.399989,
@@ -1526,11 +1481,6 @@
 			"direction": 2
 		},
 		{
-			"time": 195.412061,
-			"type": "normal",
-			"direction": 3
-		},
-		{
 			"time": 195.894959,
 			"type": "normal",
 			"direction": 4
@@ -1711,11 +1661,6 @@
 			"direction": 6
 		},
 		{
-			"time": 220.522725,
-			"type": "normal",
-			"direction": 4
-		},
-		{
 			"time": 221.48852,
 			"type": "normal",
 			"direction": 2
@@ -1891,7 +1836,7 @@
 		"readability_policy": "burst_budget_v17454"
 	},
 	"difficulty_profile": {
-		"note_count": 346,
+		"note_count": 335,
 		"reverse_count": 21,
 		"space_count": 8,
 		"analysis_driven": true,
@@ -1961,5 +1906,55 @@
 		"analysis_master_original_name": "Highscore - Nightcore [ucuc5QkLyiA].flac",
 		"analysis_master_format": "flac",
 		"analysis_master_bundled": false
+	},
+	"pacing_meta": {
+		"revision": "library_2026_10_05",
+		"rest_intervals": [
+			[
+				23.500592,
+				27.363771
+			]
+		],
+		"before": {
+			"song_id": "highscore_nightcore",
+			"difficulty": "normal",
+			"bpm": 124.25,
+			"duration": 228.24059,
+			"notes": 346,
+			"spaces": 8,
+			"average_inputs_per_second": 1.551,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 14,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 8,
+			"rest_threshold_seconds": 3.0,
+			"rests": [],
+			"longest_active_run_seconds": 222.616
+		},
+		"after": {
+			"song_id": "highscore_nightcore",
+			"difficulty": "normal",
+			"bpm": 124.25,
+			"duration": 228.24059,
+			"notes": 335,
+			"spaces": 8,
+			"average_inputs_per_second": 1.503,
+			"peak_half_second_inputs": 3,
+			"peak_one_second_inputs": 5,
+			"peak_five_second_inputs": 13,
+			"fast_direction_changes_under_170ms": 0,
+			"arrows_within_250ms_of_space": 0,
+			"rest_threshold_seconds": 3.0,
+			"rests": [
+				[
+					22.0519,
+					27.363772
+				]
+			],
+			"longest_active_run_seconds": 198.954
+		},
+		"subdivision_notes_removed": 0,
+		"historical_generator_metadata": "Describes original generation; pacing_meta.after describes this revision."
 	}
 }

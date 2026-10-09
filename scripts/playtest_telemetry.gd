@@ -435,6 +435,10 @@ func _sort_event_by_target(a: Dictionary, b: Dictionary) -> bool:
     return a_time < b_time
 
 
+func get_result_events() -> Array:
+    # Read-only presentation snapshot; no persistence or judgement mutation.
+    return (_session.get("events", []) as Array).duplicate(true)
+
 func _current_event_count() -> int:
     var raw_events: Variant = _session.get("events", [])
     if raw_events is Array:

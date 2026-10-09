@@ -9,6 +9,11 @@ var route_changes: Array[Dictionary] = []
 var completions: Array[Dictionary] = []
 var navigation: Node
 var shell: Control
+var monitor_continuity := false
+var continuity_frames := 0
+var continuity_background_changes := 0
+var continuity_origin_path := ""
+var continuity_song_id := ""
 
 func _initialize() -> void:
 	if OS.get_environment(QA_ENVIRONMENT_VARIABLE) != QA_ENVIRONMENT_VALUE:
@@ -35,79 +40,60 @@ func _run() -> void:
 	var library: Control = shell.get("song_library_screen") as Control
 	var startup: Control = shell.get("startup_screen") as Control
 	var gameplay: Control = shell.get("gameplay_screen") as Control
-	var chart_host: Control = shell.get("chart_studio_screen") as Control
 	var song_select: Control = library.get("song_select") as Control
+	process_frame.connect(_observe_continuity)
+	root.get_node("BackgroundSession").connect("background_changed", _on_background_changed)
 	var play_connection_count := song_select.get_signal_connection_list("play_requested").size()
 
-	# A stalled lazy load is bounded locally and restores every Main Menu owner.
-	_configure_music(false)
-	shell.call("set_chart_studio_load_timeout_for_test", 0.05)
-	shell.call("set_navigation_test_failure", "chart_studio_stall", true)
+	_check(not navigation.has_method("request_chart_studio"), "Retired Chart Studio route is still callable.")
+	_check(shell.get_node("ScreenHost").get_child_count() == 3, "Unexpected resident route.")
 	var states_before := navigation_states.size()
 	var route_count_before := route_changes.size()
 	var completions_before := completions.size()
-	startup.call("_on_chart_studio_pressed")
-	await _wait_for_navigation()
-	_check(str(shell.call("get_active_route")) == "main_menu", "Chart Studio timeout did not restore Main Menu.")
-	_check(startup.visible and startup.process_mode == Node.PROCESS_MODE_INHERIT, "Chart Studio timeout did not restore Main Menu visibility/process state.")
-	_check(not chart_host.visible and chart_host.process_mode == Node.PROCESS_MODE_DISABLED, "Chart Studio timeout left the attempted route active.")
-	_check(not bool(startup.get("in_transition")), "Main Menu remained locally locked after Chart Studio timeout.")
-	_check(_all_menu_buttons_enabled(startup), "Main Menu controls remained disabled after Chart Studio timeout.")
-	_check(navigation_states.slice(states_before) == [true, false], "Chart Studio timeout broke navigation-state signal pairing.")
-	_check(completions.size() == completions_before + 1, "Chart Studio timeout did not complete exactly once.")
-	var main_timeout_result: Dictionary = completions.back()
-	_check(str(main_timeout_result.get("outcome", "")) == "failure", "Chart Studio timeout did not report failure.")
-	_check(str(main_timeout_result.get("reason", "")).contains("timed out"), "Chart Studio timeout did not report its bounded-load reason.")
-	_check(route_changes.size() == route_count_before, "Timed-out Chart Studio entry emitted a false route change.")
-	_check(not bool(root.get_node("MusicSession").call("is_paused")), "Shell did not restore music that it paused for timed-out Chart Studio entry.")
-	_check(not bool(navigation.call("is_navigating")), "Chart Studio timeout left NavigationController locked.")
-	await process_frame
-	_check(_focus_is_within(startup), "Main Menu focus was not restored after Chart Studio failure.")
-	# Releasing the injected stall cannot let the expired generation commit later.
-	shell.call("set_navigation_test_failure", "chart_studio_stall", false)
-	for _frame in range(6):
-		await process_frame
-	_check(str(shell.call("get_active_route")) == "main_menu", "A stale Chart Studio completion committed after timeout.")
-	_check(route_changes.size() == route_count_before, "A stale Chart Studio completion emitted a route change.")
 
 	# Main Menu <-> Song Library is repeatable and each transaction completes once.
 	for _cycle in range(2):
-		await _expect_success("request_song_library", [], "song_library")
+		continuity_song_id = "bad_apple" if _cycle == 0 else "crab_rave"
+		# Force a different resident presentation, including an unfinished detail tween.
+		song_select.call("_select_song", "night_of_nights")
+		monitor_continuity = true
+		continuity_frames = 0
+		continuity_background_changes = 0
+		continuity_origin_path = str(root.get_node("BackgroundSession").call("get_background_path"))
+		await _expect_success("request_song_library", [continuity_song_id, false], "song_library")
+		_check(continuity_frames > 0, "No continuity tween frames were exercised.")
+		_check(continuity_background_changes == 1, "Library visit did not publish exactly one prepared background.")
+		var visual: Control = song_select.get("backdrop_visual") as Control
+		var session: Node = root.get_node("BackgroundSession")
+		var revealed_path := str(session.call("get_background_path"))
+		_check(str(visual.get("current_background_path")) == revealed_path, "Library revealed before its background was applied.")
+		_check(str(visual.get("pending_background_path")).is_empty() and float(visual.get("background_fade")) == 1.0, "Library revealed a pending/unfinished background swap.")
+		await create_timer(0.5).timeout
+		_check(str(session.call("get_background_path")) == revealed_path and continuity_background_changes == 1, "Library background changed again after reveal.")
+		_check(str(song_select.call("get_selected_song_id")) == continuity_song_id, "Late detail completion changed destination selection.")
+		var background: TextureRect = startup.get("menu_background") as TextureRect
+		var controller: RefCounted = startup.get("main_menu_background_controller") as RefCounted
+		controller.call("animate_visit")
+		_check(background.scale == Vector2.ONE and background.modulate == Color.WHITE, "Hidden Main Menu animated based on child visibility.")
+		continuity_background_changes = 0
+		continuity_origin_path = str(session.call("get_background_path"))
 		await _expect_success("request_main_menu", [0], "main_menu")
+		_check(continuity_background_changes == 1, "Main Menu visit published more than one background.")
+		revealed_path = str(session.call("get_background_path"))
+		_check(background.texture == session.call("get_texture"), "Main Menu revealed a stale texture.")
+		_check(background.scale == Vector2.ONE and background.modulate == Color.WHITE, "Main Menu added a visit fade/zoom.")
+		await create_timer(0.8).timeout
+		_check(str(session.call("get_background_path")) == revealed_path and continuity_background_changes == 1, "Main Menu background changed again after reveal.")
+		_check(background.scale == Vector2.ONE and background.modulate == Color.WHITE, "Late Main Menu animation altered the final destination.")
+		_check((startup.get("menu_dim") as ColorRect).visible, "Main Menu lost its continuity scrim.")
+		monitor_continuity = false
 
 	await _expect_success("request_song_library", [], "song_library")
-	# A user-paused MusicSession must remain paused after a timed-out entry, and
-	# Song Library's caller-local action lock must be released.
-	_configure_music(true)
-	shell.call("set_navigation_test_failure", "chart_studio_stall", true)
-	states_before = navigation_states.size()
-	route_count_before = route_changes.size()
-	completions_before = completions.size()
-	library.call("_on_chart_editor_requested")
-	await _wait_for_navigation()
-	_check(str(shell.call("get_active_route")) == "song_library", "Chart Studio timeout did not restore Song Library.")
-	_check(library.visible and library.process_mode == Node.PROCESS_MODE_INHERIT, "Chart Studio timeout did not restore Song Library visibility/process state.")
-	_check(not bool(library.get("action_locked")), "Song Library action lock survived timed-out Chart Studio entry.")
-	_check(bool(root.get_node("MusicSession").call("is_paused")), "Chart Studio timeout resumed music that was already user-paused.")
-	_check(not bool(shell.get("chart_studio_music_paused_by_shell")), "Shell retained temporary Chart Studio music ownership after rollback.")
-	_check(navigation_states.slice(states_before) == [true, false], "Song Library Chart Studio timeout broke navigation-state signal pairing.")
-	_check(completions.size() == completions_before + 1, "Song Library Chart Studio timeout did not complete exactly once.")
-	var library_timeout_result: Dictionary = completions.back()
-	_check(str(library_timeout_result.get("outcome", "")) == "failure", "Song Library Chart Studio timeout did not report failure.")
-	_check(route_changes.size() == route_count_before, "Timed-out Chart Studio entry committed a route.")
-	await process_frame
-	_check(_focus_matches_route("song_library"), "Song Library focus policy was not restored after Chart Studio failure.")
-	shell.call("set_navigation_test_failure", "chart_studio_stall", false)
-	shell.call("set_chart_studio_load_timeout_for_test", -1.0)
-	root.get_node("MusicSession").call("set_paused", false)
-
-	# Song Library <-> lazily-instantiated Chart Studio is repeatable.
-	for _cycle in range(2):
-		await _expect_success("request_chart_studio", [], "chart_studio")
-		_check(is_instance_valid(shell.get("chart_studio_instance")), "Successful Chart Studio route has no usable editor instance.")
-		await _expect_chart_studio_return("song_library")
-
 	# Failed gameplay preparation never suspends or commits the resident player.
+	_configure_music(true)
+	var paused_stream: AudioStream = (root.get_node("MusicSession").get("player") as AudioStreamPlayer).stream
+	states_before = navigation_states.size()
+	completions_before = completions.size()
 	route_count_before = route_changes.size()
 	library.call("_on_play_requested", "qa_missing_song", "normal", false)
 	await _wait_for_navigation()
@@ -115,6 +101,13 @@ func _run() -> void:
 	_check(not bool(library.get("action_locked")), "Failed gameplay preparation left Song Library locked.")
 	_check(not gameplay.visible, "Failed gameplay preparation exposed GameplayScreen.")
 	_check(route_changes.size() == route_count_before, "Failed gameplay preparation emitted a route change.")
+
+	_check(bool(root.get_node("MusicSession").call("is_paused")), "Failed launch resumed user-paused music.")
+	_check((root.get_node("MusicSession").get("player") as AudioStreamPlayer).stream == paused_stream, "Failed launch replaced the user-paused stream.")
+	_check(navigation_states.slice(states_before) == [true, false], "Failed launch broke state signal pairing.")
+	_check(completions.size() == completions_before + 1, "Failed launch did not finish exactly once.")
+	_check(not bool(root.get_node("SceneTransition").call("is_transitioning")), "Failed launch retained its loading overlay lock.")
+	root.get_node("MusicSession").call("set_paused", false)
 
 	# A post-preparation activation failure rolls lifecycle back atomically.
 	shell.call("set_navigation_test_failure", "gameplay", true)
@@ -148,7 +141,7 @@ func _run() -> void:
 	var routes_before := route_changes.size()
 	completions_before = completions.size()
 	navigation.call("request_song_library")
-	var duplicate_value: Variant = await navigation.call("request_chart_studio")
+	var duplicate_value: Variant = await navigation.call("request_main_menu")
 	var duplicate: Dictionary = duplicate_value as Dictionary if duplicate_value is Dictionary else {}
 	_check(str(duplicate.get("outcome", "")) == "cancelled", "Concurrent navigation was not explicitly cancelled.")
 	await _wait_for_navigation()
@@ -158,7 +151,6 @@ func _run() -> void:
 	_check(completions.size() == completions_before + 2, "Concurrent requests did not each complete exactly once.")
 
 	_check(shell.get_node("ScreenHost").get_child_count() == resident_count, "Repeated navigation duplicated a resident screen.")
-	_check(chart_host.get_child_count() == 3, "Repeated Chart Studio entry duplicated its lazy editor instance.")
 	_check(song_select.get_signal_connection_list("play_requested").size() == play_connection_count, "Repeated navigation duplicated Song Library signal connections.")
 	var navigation_source := FileAccess.get_file_as_string("res://scripts/navigation_controller.gd")
 	_check(not navigation_source.contains("range(180)"), "Navigation still depends on the 180-frame polling watchdog.")
@@ -171,12 +163,53 @@ func _run() -> void:
 	_cleanup_new_orphan_nodes(baseline_orphans)
 	call_deferred("_finish", 1 if failures > 0 else 0)
 
+func _on_background_changed(_state: Dictionary) -> void:
+	if monitor_continuity:
+		continuity_background_changes += 1
+
+func _observe_continuity() -> void:
+	if not monitor_continuity or not is_instance_valid(shell) or not bool(shell.get("switching")):
+		return
+	continuity_frames += 1
+	var startup: Control = shell.get("startup_screen") as Control
+	var library: Control = shell.get("song_library_screen") as Control
+	_check(not (startup.is_visible_in_tree() and startup.modulate.a > 0.001 and library.is_visible_in_tree() and library.modulate.a > 0.001), "Resident foregrounds overlap during transition.")
+	if shell.get_node_or_null("RouteBackdrop") == null:
+		# Preload holds the origin fully visible; foreground animation has not
+		# started yet. No global background publication is permitted here.
+		var origin: Control = startup if str(shell.call("get_active_route")) == "main_menu" else library
+		_check(origin.is_visible_in_tree() and origin.modulate.a == 1.0, "Preload altered the outgoing foreground before preparation finished.")
+		_check(str(root.get_node("BackgroundSession").call("get_background_path")) == continuity_origin_path, "Preload published the background before the foreground handoff.")
+		return
+	for screen: Control in [startup, library]:
+		for item: CanvasItem in screen.call("shell_background_items"):
+			_check(not item.visible, "Screen-local background participated in the foreground fade.")
+	if library.is_visible_in_tree() and library.modulate.a > 0.001:
+		var select: Control = library.get("song_select") as Control
+		_check(str(select.call("get_selected_song_id")) == continuity_song_id, "Incoming Library revealed the previous selection.")
+		var row_index: int = select.filtered_song_ids.find(continuity_song_id)
+		_check(row_index >= 0 and (select.song_buttons[row_index] as Button).button_pressed, "Incoming Library row selection is stale.")
+		if row_index >= 0:
+			_check((select.song_scroll as Control).get_global_rect().intersects((select.song_groups[row_index] as Control).get_global_rect()), "Destination selection is offscreen during reveal.")
+		var rep: Dictionary = select.call("_representative", continuity_song_id)
+		_check((select.get("detail_title") as Label).text.to_upper() == str(rep.get("title", "")).to_upper(), "Incoming Library title changed after reveal.")
+		var expected_art: Texture2D = select.call("_song_banner_texture", continuity_song_id, str(rep.get("background", "")))
+		_check((select.get("album_flow_artwork") as TextureRect).texture == expected_art, "Incoming Library revealed stale artwork.")
+		var visual: Control = select.get("backdrop_visual") as Control
+		_check(str(visual.get("current_background_path")) == str(root.get_node("BackgroundSession").call("get_background_path")) and float(visual.get("background_fade")) == 1.0, "Incoming Library frame used an unfinished background.")
+	if startup.is_visible_in_tree() and startup.modulate.a > 0.001:
+		_check((startup.get("menu_visual") as Control).modulate.a == 1.0, "Main Menu brand has an independent reveal after route preparation.")
+
 func _expect_success(method_name: String, arguments: Array, expected_route: String, max_frames: int = 600) -> void:
 	var previous_route := str(shell.call("get_active_route"))
 	var states_before := navigation_states.size()
 	var routes_before := route_changes.size()
 	var completions_before := completions.size()
+	var started_at := Time.get_ticks_msec()
 	var result_value: Variant = await navigation.callv(method_name, arguments)
+	if previous_route != expected_route and previous_route in ["main_menu", "song_library"] and expected_route in ["main_menu", "song_library"]:
+		var minimum_motion := (BeatUpAppShell.MENU_EXIT_DURATION + BeatUpAppShell.MENU_ENTER_DURATION) * 0.8
+		_check(float(Time.get_ticks_msec() - started_at) / 1000.0 >= minimum_motion, "Menu transition skipped its fluid foreground motion.")
 	var result: Dictionary = result_value as Dictionary if result_value is Dictionary else {}
 	_check(str(result.get("outcome", "")) == "success", "%s did not complete successfully: %s" % [method_name, str(result.get("reason", "missing result"))])
 	_check(str(result.get("previous_route", "")) == previous_route, "%s reported the wrong previous route." % method_name)
@@ -202,19 +235,6 @@ func _wait_for_navigation(max_frames: int = 600) -> void:
 			return
 		await process_frame
 	_check(false, "Navigation did not complete within the test deadline.")
-
-func _expect_chart_studio_return(expected_route: String) -> void:
-	var states_before := navigation_states.size()
-	var routes_before := route_changes.size()
-	var completions_before := completions.size()
-	var editor: Control = shell.get("chart_studio_instance") as Control
-	editor.call("return_to_game")
-	await _wait_for_navigation()
-	_check(str(shell.call("get_active_route")) == expected_route, "Chart Studio Back did not restore its originating route.")
-	_check(navigation_states.slice(states_before) == [true, false], "Chart Studio Back broke navigation-state pairing.")
-	_check(route_changes.size() == routes_before + 1, "Chart Studio Back did not commit exactly one route change.")
-	_check(completions.size() == completions_before + 1, "Chart Studio Back did not complete exactly once.")
-	_check(_focus_matches_route(expected_route), "Chart Studio Back did not restore origin focus policy.")
 
 func _configure_music(paused: bool) -> void:
 	var session: Node = root.get_node("MusicSession")

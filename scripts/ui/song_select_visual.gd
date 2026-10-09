@@ -8,7 +8,6 @@ const GRID := Color("1b2430")
 const CYAN := Color("7db4ce")
 const GOLD := Color("f5c96a")
 const PINK := Color("d3a4ff")
-const BACKGROUND_ROOT := "res://assets/song_backgrounds"
 
 var difficulty := "normal"
 var current_texture: Texture2D
@@ -20,6 +19,7 @@ var pending_generation := 0
 var current_song_id := ""
 
 func _ready() -> void:
+	preload("res://scripts/ui/procedural_background.gd").install(self, "library")
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resized.connect(queue_redraw)
 	queue_redraw()
@@ -43,6 +43,17 @@ func set_song(song_id: String, difficulty_id: String, background_path: String = 
 func set_audio_levels(_levels: PackedFloat32Array) -> void:
 	pass
 
+func apply_prepared_background(path: String, texture: Texture2D) -> void:
+	# Retire any old poll before a route reveal. Its late completion cannot
+	# overwrite the prepared texture or start another ambient crossfade.
+	pending_generation += 1
+	pending_background_path = ""
+	previous_texture = null
+	current_texture = texture
+	current_background_path = path
+	background_fade = 1.0
+	queue_redraw()
+
 func get_audio_levels() -> PackedFloat32Array:
 	return PackedFloat32Array()
 
@@ -53,16 +64,9 @@ func _accent() -> Color:
 		_:
 			return CYAN
 
-func _resolve_background_path(song_id: String, explicit_path: String) -> String:
-	var candidates: Array[String] = []
-	if not explicit_path.is_empty():
-		candidates.append(explicit_path)
-	var safe_id := song_id.to_lower().replace(" ", "_")
-	for extension in ["png", "webp", "jpg", "jpeg"]:
-		candidates.append("%s/%s.%s" % [BACKGROUND_ROOT, safe_id, extension])
-	for path in candidates:
-		if ResourceLoader.exists(path):
-			return path
+func _resolve_background_path(_song_id: String, explicit_path: String) -> String:
+	if not explicit_path.is_empty() and ResourceLoader.exists(explicit_path):
+		return explicit_path
 	return ""
 
 func _request_background_async(path: String) -> void:
@@ -107,6 +111,8 @@ func _apply_loaded_background(path: String, texture: Texture2D) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	if has_node("ProceduralAtmosphere"):
+		return
 	if size.x <= 1.0 or size.y <= 1.0:
 		return
 	draw_rect(Rect2(Vector2.ZERO, size), BG)
