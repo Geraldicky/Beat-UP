@@ -33,5 +33,5 @@ On Windows this is typically similar to:
 - It does **not** upload telemetry anywhere.
 - If you filter multiple songs at once, the heatmap asks you to choose a single song before rendering the timeline.
 
-## Included demo data
-This package also includes 4 sample telemetry sessions in `tools/playtest_heatmap_analyzer/samples/`. You can load them manually with the file picker to test the analyzer immediately.
+## Local session data
+Captured sessions are not included in the public repository or player exports. Load your own files from the local telemetry directory using the file picker. `tools/playtest_heatmap_analyzer/samples/` is ignored for local copies; the previous four captures are preserved in an external local archive. Sessions contain timestamps, session identifiers and play results, so review them before sharing.
