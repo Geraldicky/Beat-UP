@@ -10,8 +10,8 @@ The current gate protects:
 - current build/version identity and export hygiene;
 - frozen gameplay timing, scoring, rank, and Reverse presentation contracts;
 - Main Menu pause/resume and Previous/Next transport behavior;
-- player-facing manual Chart Studio creation with developer-only auto generation;
-- waveform/editor regression coverage;
+- Chart Studio retirement with chart import/export and persisted sources retained;
+- retained generator/analysis and waveform storage regression coverage;
 - exported audio loading, complete built-in audio references, asynchronous Song
   Library loading, MusicSession type safety, and typography assets;
 - Song Library release architecture: reusable component scenes, canonical SVG

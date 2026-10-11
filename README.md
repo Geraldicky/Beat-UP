@@ -7,8 +7,8 @@ Beat UP! is a desktop rhythm game built with Godot. Notes travel along a horizon
 - **Directional gameplay:** 8-key numpad controls with an alternative 4-key mode.
 - **Three difficulties:** Normal, Hard, and Master charts.
 - **Performance tracking:** timing judgments, combos, scores, ranks, and personal bests.
-- **Song Library:** browse tracks, choose difficulties, and access practice and replay features.
-- **Chart Studio:** import audio, create and edit charts manually, and share custom levels using `.beatup-pack` files.
+- **Song Library:** browse tracks, choose difficulties, and access replay features.
+- **Custom levels:** import charts and `.beatup-pack` files, and export installed custom songs. Chart Studio has been retired.
 
 ## Controls
 
@@ -41,5 +41,7 @@ Beat UP! is a desktop rhythm game built with Godot. Notes travel along a horizon
 ## Development Status
 
 Beat UP! is currently in development. There is no public GitHub release yet.
+
+Developer setup and checks are described in [`docs/PROJECT_STRUCTURE.md`](docs/PROJECT_STRUCTURE.md). Major milestones are recorded in [`CHANGELOG.md`](CHANGELOG.md).
 
 Music and artwork may belong to third-party rights holders. Verify redistribution permissions before repackaging those assets. Credits and license details for the menu music and sound effects are documented in [`music/menu/LICENSE.md`](music/menu/LICENSE.md) and [`audio/SFX-SOURCES.md`](audio/SFX-SOURCES.md).

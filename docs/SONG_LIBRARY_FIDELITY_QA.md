@@ -10,7 +10,7 @@ The player-facing Song Library uses a three-part Album Flow composition:
 
 - left: dense song browser with official jacket thumbnails;
 - center: selected artwork and Best Record;
-- right: song identity, NORMAL/HARD/MASTER, 4K/8K, Random, Practice and Play.
+- right: song identity, NORMAL/HARD/MASTER, 4K/8K, Random and Play.
 
 The top bar exposes Back, Song Library title, Search, Artist, Difficulty and only
 two sort modes: `BPM Asc` and `BPM Desc`. Historical release-facing Title,
@@ -54,8 +54,8 @@ and the selected artwork panel.
   song-row tree unless an active progress filter actually depends on record state.
 - Preview switching remains debounced/preloaded through SongPreviewController
   and MusicSession.
-- Missing/invalid audio disables Play/Practice and displays the unavailable state.
-- Practice remains an action (`SELECT`), not a fictitious ON/OFF modifier.
+- Missing/invalid audio disables Play and displays the unavailable state.
+- The former Practice action has been removed from the current Library UI.
 
 ## Motion contract
 

@@ -4,5 +4,5 @@ Current:
 - `CURRENT_RELEASE_GATE.md`
 - `BETA_TESTING_GUIDE.md`
 
-Historical QA is under `archive/v17/` and `archive/v18/`.
+Historical QA reports are preserved in a local archive outside Git.
 Executable tests live under `res://tests/`.

@@ -16,10 +16,29 @@ venv/
 *.tmp
 *.bak
 *.log
+/tests/result.png
+/tests/result.png.import
+/tests/captures/
+/tests/test-results/
+
+# Local history, design deliverables and captured playtest sessions
+/changelog/
+/qa/archive/
+/design/
+/tools/playtest_heatmap_analyzer/samples/
+/docs/PROJECT_CLEANUP_REPORT_*.md
+/docs/BEAT_UP_DESIGN_DOCUMENTATION.md
+/docs/ALBUM_FLOW_REMAKE.md
+/docs/PLAYER_CREATOR_GUIDE.md
+/patch_backups/
 
 # OS / editor noise
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # Local AI agent and project-memory state
 .claude/
